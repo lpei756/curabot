@@ -14,6 +14,7 @@ const UserSchema = new mongoose.Schema({
   address: { type: String, required: true },
   phone: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  password: { type: String, required: true, select: false },
   emergencyContact: {
     name: { type: String, required: true },
     phone: { type: String, required: true },
@@ -26,8 +27,7 @@ const UserSchema = new mongoose.Schema({
     medicationList: { type: String, required: true, enum: ['No', 'Other'] },
     allergies: { type: String, required: true, enum: ['No', 'Other'] },
   },
-  gp: { type: String, default: 'Not assigned',
-  },
+  gp: { type: String, default: 'Not assigned' },
   insurance: {
     provider: { type: String, required: true, enum: ['No', 'Other'] },
     policyNumber: { type: String },
@@ -36,7 +36,6 @@ const UserSchema = new mongoose.Schema({
     { visitID: String, date: Date },
   ],
 });
-
 UserSchema.pre('save', async function (next) {
   if (this.isNew) {
     this.patientID = crypto.randomInt(100000, 1000000).toString();
