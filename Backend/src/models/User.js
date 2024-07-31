@@ -1,91 +1,50 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema({
-  username: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: true,
-  },
-  firstName: {
-    type: String,
-    required: true,
-  },
-  middleName: {
-    type: String,
-  },
-  lastName: {
-    type: String,
-    required: true,
-  },
-  dateOfBirth: {
-    type: Date,
-    required: true,
-  },
-  gender: {
-    type: String,
-    required: true,
-    enum: ['male', 'female', 'non-binary', 'FTM', 'MTF', 'Genderqueer', 'Other', 'Prefer not to say'],
-  },
-  contactAddress: {
-    type: String,
-    required: true,
-  },
-  contactPhone: {
-    type: String,
-    required: true,
-  },
-  contactEmail: {
-    type: String,
-    required: true,
-  },
+  patientID: { type: String, unique: true },
+  nhi: { type: String, unique: true },
+  firstName: { type: String, required: true },
+  middleName: { type: String },
+  lastName: { type: String, required: true },
+  dateOfBirth: { type: Date, required: true },
+  gender: { type: String, required: true, enum: ['Male', 'Female', 'Non-binary', 'FTM', 'MTF', 'Genderqueer', 'Other', 'Prefer not to say'] },
+  bloodGroup: { type: String, required: true, enum: ['A', 'B', 'AB', 'O', 'N', 'A'] },
+  ethnicity: { type: String, required: true, enum: ['European', 'Māori', 'Pacific Peoples', 'Asian', 'MELAA', 'Other ethnicity'] },
+  address: { type: String, required: true },
+  phone: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   emergencyContact: {
     name: { type: String, required: true },
     phone: { type: String, required: true },
     relationship: { type: String, required: true },
   },
   medicalHistory: {
-    chronicDiseases: { type: String, required: true },
-    pastSurgeries: { type: String, required: true },
-    familyMedicalHistory: { type: String, required: true },
-    medicationList: { type: String, required: true },
-    allergies: { type: String, required: true },
+    chronicDiseases: { type: String, required: true, enum: ['No', 'Other'] },
+    pastSurgeries: { type: String, required: true, enum: ['No', 'Other'] },
+    familyMedicalHistory: { type: String, required: true, enum: ['No', 'Other'] },
+    medicationList: { type: String, required: true, enum: ['No', 'Other'] },
+    allergies: { type: String, required: true, enum: ['No', 'Other'] },
+  },
+  gp: { type: String, default: 'Not assigned',
   },
   insurance: {
-    provider: { type: String, required: true },
+    provider: { type: String, required: true, enum: ['No', 'Other'] },
     policyNumber: { type: String },
-    coverageDetails: { type: String },
   },
   appointments: [
-    {
-      visitID: String,
-      date: Date,
-      reasonForVisit: String,
-      physicianNotes: String,
-      prescriptionsIssued: String,
-    },
+    { visitID: String, date: Date },
   ],
-  patientID: {
-    type: String,
-    unique: true,
-  },
 });
 
 UserSchema.pre('save', async function (next) {
   if (this.isNew) {
-    // Generate a unique patient ID
-    this.patientID = `PAT${Date.now()}${Math.floor(Math.random() * 1000)}`;
-  }
+    this.patientID = crypto.randomInt(100000, 1000000).toString();
 
-  if (this.isModified('password')) {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
+    const letters = crypto.randomBytes(3).toString('hex').toUpperCase().slice(0, 3);
+    const numbers = Math.floor(1000 + Math.random() * 9000);
+    this.nhi = `${letters}${numbers}`;
   }
-
   next();
 });
 
