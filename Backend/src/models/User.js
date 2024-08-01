@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const crypto = require('crypto');
+import mongoose from 'mongoose';
+import crypto from 'crypto';
 
 const UserSchema = new mongoose.Schema({
   patientID: { type: String, unique: true },
@@ -47,4 +47,5 @@ UserSchema.pre('save', async function (next) {
   next();
 });
 
-module.exports = mongoose.model('User', UserSchema);
+const UserModel = mongoose.model('User', UserSchema);
+export default UserModel;

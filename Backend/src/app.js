@@ -1,11 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const userRoutes = require('./routes/authRoutes');
+// src/app.js
+import express from 'express';
+import authRoutes from './routes/authRoutes.js';
 
 const app = express();
 
-app.use(bodyParser.json());
+app.use(express.json());
+app.use('/api/auth', authRoutes);
 
-app.use('/api/auth', userRoutes);
-
-module.exports = app;
+export default app;
