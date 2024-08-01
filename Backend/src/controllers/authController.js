@@ -1,18 +1,20 @@
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
+import User from '../models/User.js';
 import {
   register as registerService,
   login as loginService
-} from '../services/authService.js'; // Ensure the correct path and filename
+} from '../services/authService.js';
 
 // Register a new user
 export const register = async (req, res) => {
   try {
     // Register user and get the user object
     const user = await registerService(req.body);
-    
+
     // Generate JWT token using user ID (adjust if using different identifier)
     const token = generateToken(user._id); // or user.patientID if that's the correct identifier
-    
+
     // Respond with user info and token
     res.status(201).json({ user, token });
   } catch (error) {
@@ -24,13 +26,26 @@ export const register = async (req, res) => {
 // Login an existing user
 export const login = async (req, res) => {
   try {
-    // Login user and get the user object and token
-    const { user, token } = await loginService(req.body);
-    
+    const { email, password } = req.body;
+
+    // Query the user and include the password field explicitly
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) throw new Error('User not found');
+
+    console.log('User found:', user); // 调试信息
+
+    // Compare the password
+    const isMatch = await bcrypt.compare(password, user.password);
+    console.log('Password match:', isMatch); // 调试信息
+
+    if (!isMatch) throw new Error('Invalid credentials');
+
+    // Generate JWT token using user ID
+    const token = generateToken(user._id);
+
     // Respond with user info and token
     res.status(200).json({ user, token });
   } catch (error) {
-    // Respond with error message if login fails
     res.status(400).json({ message: error.message });
   }
 };
