@@ -39,8 +39,13 @@ const loginSchema = Joi.object({
     password: Joi.string().min(6).required()
 });
 
+const userSchema = Joi.object({
+    id: Joi.string().required() // Assuming 'id' is the parameter used to identify the user
+});
+
 // Export the schema validations
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
+    [authPathBase.user]: userSchema,
 };
