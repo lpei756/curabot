@@ -9,9 +9,9 @@ export const buildPathWithBase = (paths) => {
 export const AUTH_PATHS = {
     register: '/register',
     login: '/login',
-    user: '/user',
+    user: '/user/:id',
     updateUser: '/user/:id',
     logout: '/user/:id/logout'
   };
-  
+
 

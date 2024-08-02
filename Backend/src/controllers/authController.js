@@ -50,6 +50,21 @@ export const login = async (req, res) => {
   }
 };
 
+// Read an existing user
+export const readUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Find the user by ID
+    const user = await User.findById(id).select('-password'); // Exclude the password field
+    if (!user) throw new Error('User not found');
+
+    // Respond with user info
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 // Utility function to generate JWT
 const generateToken = (userId) => {
   if (!process.env.JWT_SECRET) {

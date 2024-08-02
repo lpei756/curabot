@@ -1,5 +1,5 @@
 import express from 'express';
-import { register, login } from '../controllers/authController.js'; // Ensure the correct path and filename
+import {register, login, readUser} from '../controllers/authController.js'; // Ensure the correct path and filename
 import schemaValidator from '../middlewares/schemaValidator.js'; // Ensure the correct path and filename
 import { AUTH_PATHS, buildPathWithBase } from './path.js'; // Ensure the correct path and filename
 
@@ -15,4 +15,6 @@ router.post(AUTH_PATHS.register, schemaValidator(authPathBase.register), registe
 // Login route
 router.post(AUTH_PATHS.login, schemaValidator(authPathBase.login), login);
 
+// Read route
+router.get(AUTH_PATHS.user, schemaValidator(authPathBase.user), readUser);
 export default router;
