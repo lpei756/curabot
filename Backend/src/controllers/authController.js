@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
-import {
-  register as registerService,
-  login as loginService
-} from '../services/authService.js';
+import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService } from '../services/authService.js';
+
+// Register a new user
 
 // Register a new user
 export const register = async (req, res) => {
@@ -50,21 +49,40 @@ export const login = async (req, res) => {
   }
 };
 
+
 // Read an existing user
 export const readUser = async (req, res) => {
   try {
     const { id } = req.params;
-
-    // Find the user by ID
-    const user = await User.findById(id).select('-password'); // Exclude the password field
-    if (!user) throw new Error('User not found');
-
-    // Respond with user info
+    const user = await readUserService(id);
     res.status(200).json(user);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
+
+// Update an existing user
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const user = await updateUserService(id, updateData);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Logout a user
+export const logout = (req, res) => {
+  try {
+    const response = logoutService();
+    res.status(200).json(response);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
 // Utility function to generate JWT
 const generateToken = (userId) => {
   if (!process.env.JWT_SECRET) {

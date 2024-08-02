@@ -59,3 +59,24 @@ export const login = async ({ email, password }) => {
 
   return user;
 };
+
+// Read a user
+export const readUser = async (id) => {
+    const user = await User.findById(id).select('-password'); // Exclude the password field
+    if (!user) throw new Error('User not found');
+    return user;
+};
+
+// Update a user
+export const updateUser = async (id, updateData) => {
+    const user = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password'); // Exclude the password field
+    if (!user) throw new Error('User not found');
+    return user;
+};
+
+// Logout a user
+export const logout = () => {
+    // Perform logout actions if any (e.g., token blacklist, session destroy, etc.)
+    return { message: 'Successfully logged out' };
+};
+
