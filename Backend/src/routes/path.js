@@ -11,7 +11,7 @@ export const AUTH_PATHS = {
     login: '/login',
     user: '/user/:id',
     updateUser: '/user/:id',
-    logout: '/user/:id/logout'
-  };
+    logout: '/logout'
+};
 
 
