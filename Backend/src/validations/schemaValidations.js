@@ -1,6 +1,8 @@
 import Joi from 'joi';
-import { AUTH_PATHS, buildPathWithBase } from '../routes/path.js';
+import { AUTH_PATHS, APPOINTMENT_PATHS, buildPathWithBase } from '../routes/path.js';
+
 const authPathBase = buildPathWithBase(AUTH_PATHS);
+const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 
 // Define Joi schema validations for different routes
 const registerSchema = Joi.object({
@@ -39,8 +41,20 @@ const loginSchema = Joi.object({
     password: Joi.string().min(6).required()
 });
 
+const createAppointmentSchema = Joi.object({
+    dateTime: Joi.date().required(),
+    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Emergency').required(),
+    purposeOfVisit: Joi.string().required(),
+    clinic: Joi.string().required(),
+    assignedGP: Joi.string().required(),
+    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').required(),
+    notes: Joi.string().optional(),
+    prescriptionsIssued: Joi.string().optional()
+  });
+
 // Export the schema validations
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
+    [appointmentPathBase.create]: createAppointmentSchema
 };

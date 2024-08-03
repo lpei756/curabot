@@ -1,17 +1,27 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import crypto from 'crypto';
 
-const appointmentSchema = new mongoose.Schema({
-  AppointmentID: { type: String, required: true },
-  PatientID: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  PatientName: String,
-  DateTime: { type: Date, required: true },
-  TypeOfVisit: String,
-  PurposeOfVisit: String,
-  AssignedGP: String,
-  Location: String,
-  Status: String,
-  Notes: String,
-  PrescriptionsIssued: String
+const AppointmentSchema = new mongoose.Schema({
+  appointmentID: { type: String, unique: true },
+  patientID: { type: String, required: true },
+  patientName: { type: String, required: true },
+  dateTime: { type: Date, required: true },
+  typeOfVisit: { type: String, required: true },
+  purposeOfVisit: { type: String, required: true },
+  assignedGP: { type:String, required: true },
+  clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
+  status: { type: String, default: 'Scheduled' },
+  notes: { type: String },
+  prescriptionsIssued: { type: String },
 });
 
-module.exports = mongoose.model('Appointment', appointmentSchema);
+AppointmentSchema.pre('save', async function (next) {
+  if (this.isNew) {
+    this.appointmentID = crypto.randomInt(100000, 1000000).toString();
+  }
+  next();
+});
+
+const AppointmentModel = mongoose.model('Appointment', AppointmentSchema);
+export default AppointmentModel;
+
