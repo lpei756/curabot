@@ -1,10 +1,9 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
-import {
-  register as registerService,
-  login as loginService
-} from '../services/authService.js';
+import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService } from '../services/authService.js';
+
+// Register a new user
 
 // Register a new user
 export const register = async (req, res) => {
@@ -45,6 +44,40 @@ export const login = async (req, res) => {
 
     // Respond with user info and token
     res.status(200).json({ user, token });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+
+// Read an existing user
+export const readUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await readUserService(id);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Update an existing user
+export const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+    const user = await updateUserService(id, updateData);
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+// Logout a user
+export const logout = (req, res) => {
+  try {
+    const response = logoutService();
+    res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

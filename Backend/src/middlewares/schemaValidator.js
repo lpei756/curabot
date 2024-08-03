@@ -1,6 +1,7 @@
 import schemas from '../validations/schemaValidations.js';
 
-const supportedMethods = ['post', 'put', 'patch', 'delete'];
+// Supported HTTP methods for validation
+const supportedMethods = ['post','get', 'put', 'patch', 'delete'];
 
 const validationOptions = {
   abortEarly: false,
@@ -25,7 +26,11 @@ const schemaValidator = (path, useJoiError = true) => {
       return next();
     }
 
-    const { error, value } = schema.validate(req.body, validationOptions);
+    // Determine the source of validation based on the method
+    const source = method === 'get' ? req.params : req.body;
+
+    // Validate request against schema
+    const { error, value } = schema.validate(source, validationOptions);
 
     if (error) {
       const unifiedError = {
@@ -44,7 +49,13 @@ const schemaValidator = (path, useJoiError = true) => {
       return res.status(422).json(unifiedError);
     }
 
-    req.body = value;
+    // validation
+    if (method === 'get') {
+      req.params = value;
+    } else {
+      req.body = value;
+    }
+
     return next();
   };
 };

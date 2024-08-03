@@ -5,11 +5,11 @@ export const buildPathWithBase = (paths) => {
 };
 
 export const AUTH_PATHS = {
-  register: '/register',
-  login: '/login',
-  user: '/user',
-  updateUser: '/user/:id',
-  logout: '/user/:id/logout'
+    register: '/register',
+    login: '/login',
+    user: '/user/:id',
+    updateUser: '/user/:id',
+    logout: '/logout'
 };
 
 export const APPOINTMENT_PATHS = {
