@@ -3,27 +3,25 @@ import schemas from '../validations/schemaValidations.js';
 // Supported HTTP methods for validation
 const supportedMethods = ['post','get', 'put', 'patch', 'delete'];
 
-// Joi validation options
 const validationOptions = {
   abortEarly: false,
   allowUnknown: false,
   stripUnknown: false
 };
 
-// Middleware to validate request body against Joi schema
 const schemaValidator = (path, useJoiError = true) => {
-  const schema = schemas[path]; // Get schema for the path
+  const schema = schemas[path];
 
   // Check if schema exists for the path
   if (!schema) {
+    console.log(`Requested path: ${path}`);
+    console.log(`Available schemas: ${Object.keys(schemas)}`);
     throw new Error(`Schema not found for path: ${path}`);
   }
 
-  // Return middleware function
   return (req, res, next) => {
     const method = req.method.toLowerCase();
 
-    // Check if method is supported
     if (!supportedMethods.includes(method)) {
       return next();
     }
@@ -35,7 +33,6 @@ const schemaValidator = (path, useJoiError = true) => {
     const { error, value } = schema.validate(source, validationOptions);
 
     if (error) {
-      // Refactored error handling to always use a unified error format
       const unifiedError = {
         status: 'failed',
         error: 'Invalid request. Please review request and try again.',
@@ -43,14 +40,10 @@ const schemaValidator = (path, useJoiError = true) => {
       };
 
       if (useJoiError && error.details) {
-        // Process Joi error details for field-specific messages
         error.details.forEach(({ message, path }) => {
-          const fieldName = path.join('.'); // Convert array path to dot notation
-          unifiedError.fields[fieldName] = message.replace(/['"]/g, ''); // Clean message
+          const fieldName = path.join('.');
+          unifiedError.fields[fieldName] = message.replace(/['"]/g, '');
         });
-      } else {
-        // For custom errors, you could optionally add a general message to `fields`
-        // unifiedError.fields.general = unifiedError.error;
       }
 
       return res.status(422).json(unifiedError);
