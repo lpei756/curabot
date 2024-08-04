@@ -13,5 +13,7 @@ export const AUTH_PATHS = {
 };
 
 export const APPOINTMENT_PATHS = {
-  create: '/appointments/create'
+    create: '/appointments/create',
+    read: '/appointments/:id',
+    update: '/appointments/:id/update'
 };

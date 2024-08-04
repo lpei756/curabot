@@ -49,3 +49,37 @@ export const createAppointment = async ({ dateTime, typeOfVisit, purposeOfVisit,
     return { error: true, status: 500, message: 'Internal server error' };
   }
 };
+
+export const readAppointmentService = async (appointmentId, patientID) => {
+  try {
+    const appointment = await Appointment.findOne({ _id: appointmentId, patientID });
+
+    if (!appointment) {
+      return { error: true, status: 404, message: 'Appointment not found' };
+    }
+
+    return appointment;
+  } catch (error) {
+    console.error('Error reading appointment:', error);
+    return { error: true, status: 500, message: 'Internal server error' };
+  }
+};
+
+export const updateAppointmentService = async (appointmentId, updateData, patientID) => {
+  try {
+    const appointment = await Appointment.findOneAndUpdate(
+        { _id: appointmentId, patientID },
+        updateData,
+        { new: true }
+    );
+
+    if (!appointment) {
+      return { error: true, status: 404, message: 'Appointment not found or not authorized to update' };
+    }
+
+    return appointment;
+  } catch (error) {
+    console.error('Error updating appointment:', error);
+    return { error: true, status: 500, message: 'Internal server error' };
+  }
+};

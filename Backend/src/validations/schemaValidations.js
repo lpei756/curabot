@@ -87,11 +87,28 @@ const createAppointmentSchema = Joi.object({
     prescriptionsIssued: Joi.string().optional()
 });
 
+const readAppointmentSchema = Joi.object({
+    id: Joi.string().required()
+});
+
+const updateAppointmentSchema = Joi.object({
+    dateTime: Joi.date().optional(),
+    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Emergency').optional(),
+    purposeOfVisit: Joi.string().optional(),
+    clinic: Joi.string().optional(),
+    assignedGP: Joi.string().optional(),
+    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').optional(),
+    notes: Joi.string().optional(),
+    prescriptionsIssued: Joi.string().optional()
+});
+
 // Export the schema validations
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
     [appointmentPathBase.create]: createAppointmentSchema,
+    [appointmentPathBase.read]: readAppointmentSchema,
+    [appointmentPathBase.update]: updateAppointmentSchema,
     [authPathBase.user]: userSchema,
     [authPathBase.updateUser]: updateUserSchema,
 };
