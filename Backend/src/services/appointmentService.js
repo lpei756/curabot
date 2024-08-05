@@ -83,3 +83,19 @@ export const updateAppointmentService = async (appointmentId, updateData, patien
     return { error: true, status: 500, message: 'Internal server error' };
   }
 };
+
+export const deleteAppointment = async (appointmentId) => {
+    try {
+      // Use findByIdAndDelete to directly delete the appointment
+      const appointment = await Appointment.findByIdAndDelete(appointmentId);
+  
+      if (!appointment) {
+        return { error: true, status: 404, message: 'Appointment not found' };
+      }
+  
+      return { error: false, message: 'Appointment successfully deleted' };
+    } catch (error) {
+      console.error('Error deleting appointment in service:', error);
+      return { error: true, status: 500, message: 'Internal server error' };
+    }
+  };

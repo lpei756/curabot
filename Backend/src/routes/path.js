@@ -15,5 +15,6 @@ export const AUTH_PATHS = {
 export const APPOINTMENT_PATHS = {
     create: '/appointments/create',
     read: '/appointments/:id',
-    update: '/appointments/:id/update'
+    update: '/appointments/:id/update',
+    delete: '/appointments/:appointmentId'
 };
