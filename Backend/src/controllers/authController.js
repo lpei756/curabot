@@ -4,8 +4,6 @@ import User from '../models/User.js';
 import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService } from '../services/authService.js';
 
 // Register a new user
-
-// Register a new user
 export const register = async (req, res) => {
   try {
     // Register user and get the user object
