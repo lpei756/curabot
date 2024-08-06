@@ -3,20 +3,31 @@ import Doctor from '../models/Doctor.js';
 import Clinic from '../models/Clinic.js';
 import User from '../models/User.js';
 
-export const createAppointment = async ({ dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP, status, notes, prescriptionsIssued, patientID }) => {
+export const createAppointment = async ({
+  dateTime,
+  typeOfVisit,
+  purposeOfVisit,
+  clinic,
+  assignedGP,
+  status,
+  notes,
+  prescriptionsIssued,
+  patientID,
+  patientName
+}) => {
   try {
-    // Validate patient ID
     if (!patientID) {
       return { error: true, status: 400, message: 'Patient ID is required' };
     }
 
-    // Fetch user to get their name
-    const user = await User.findOne({ patientID });
-    if (!user) {
-      return { error: true, status: 404, message: 'User not found' };
+    if (!patientName) {
+      const user = await User.findOne({ patientID });
+      if (!user) {
+        return { error: true, status: 404, message: 'User not found' };
+      }
+      patientName = `${user.firstName} ${user.lastName}`;
     }
 
-    // Validate clinic existence
     const clinicData = await Clinic.findById(clinic);
     if (!clinicData) {
       return { error: true, status: 404, message: 'Clinic not found' };
@@ -28,7 +39,6 @@ export const createAppointment = async ({ dateTime, typeOfVisit, purposeOfVisit,
       return { error: true, status: 404, message: 'Doctor not found for the selected clinic' };
     }
 
-    // Create and save appointment
     const newAppointment = new Appointment({
       dateTime,
       typeOfVisit,
@@ -39,7 +49,7 @@ export const createAppointment = async ({ dateTime, typeOfVisit, purposeOfVisit,
       notes,
       prescriptionsIssued,
       patientID,
-      patientName: `${user.firstName} ${user.lastName}`
+      patientName
     });
 
     await newAppointment.save();

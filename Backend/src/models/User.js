@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
     policyNumber: { type: String },
   },
   appointments: [
-    { visitID: String, date: Date },
+    { appointmentID: String, date: Date },
   ],
 });
 UserSchema.pre('save', async function (next) {
