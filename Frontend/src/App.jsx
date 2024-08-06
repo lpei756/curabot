@@ -5,6 +5,7 @@ import AppHeader from './component/AppHeader';
 import ChatBot from './component/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
+import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -35,7 +36,7 @@ function App() {
           boxShadow: 3,
         }}
       >
-        <SmartToyRoundedIcon fontSize="large" />
+        {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
       </IconButton>
     </div>
   )
