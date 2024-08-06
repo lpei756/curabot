@@ -78,9 +78,9 @@ export const readAppointment = async (appointmentId, patientID) => {
 export const updateAppointment = async (appointmentId, updateData, patientID) => {
   try {
     const appointment = await Appointment.findOneAndUpdate(
-        { _id: appointmentId, patientID },
-        updateData,
-        { new: true }
+      { _id: appointmentId, patientID },
+      updateData,
+      { new: true }
     );
 
     if (!appointment) {
@@ -95,17 +95,17 @@ export const updateAppointment = async (appointmentId, updateData, patientID) =>
 };
 
 export const deleteAppointment = async (appointmentId) => {
-    try {
-      // Use findByIdAndDelete to directly delete the appointment
-      const appointment = await Appointment.findByIdAndDelete(appointmentId);
+  try {
+    // Use findByIdAndDelete to directly delete the appointment
+    const appointment = await Appointment.findByIdAndDelete(appointmentId);
 
-      if (!appointment) {
-        return { error: true, status: 404, message: 'Appointment not found' };
-      }
-
-      return { error: false, message: 'Appointment successfully deleted' };
-    } catch (error) {
-      console.error('Error deleting appointment in service:', error);
-      return { error: true, status: 500, message: 'Internal server error' };
+    if (!appointment) {
+      return { error: true, status: 404, message: 'Appointment not found' };
     }
-  };
+
+    return { error: false, message: 'Appointment successfully deleted' };
+  } catch (error) {
+    console.error('Error deleting appointment in service:', error);
+    return { error: true, status: 500, message: 'Internal server error' };
+  }
+};
