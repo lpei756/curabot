@@ -6,6 +6,22 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+// Define the extractUserIdFromToken function
+function extractUserIdFromToken(token) {
+  if (!token) {
+    throw new Error('No token provided');
+  }
+
+  try {
+    const tokenWithoutPrefix = token.startsWith('Bearer ') ? token.slice(7) : token;
+    const decoded = jwt.verify(tokenWithoutPrefix, process.env.JWT_SECRET);
+    console.log('Decoded Token:', decoded); // Log token content for debugging
+    return decoded.user._id; // Access user._id from the token payload
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
+
 export const handleChat = async (req, res) => {
   try {
     const userMessage = req.body.message;
@@ -15,10 +31,12 @@ export const handleChat = async (req, res) => {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
 
-    // Extract user ID from the JWT
     const userId = extractUserIdFromToken(authToken);
 
-    // Call the chat completions method
+    if (!userId) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+    }
+
     const response = await openai.chat.completions.create({
       model: 'gpt-4o-mini', // Ensure this model exists and is correctly named
       messages: [{ role: 'user', content: userMessage }],
@@ -26,29 +44,39 @@ export const handleChat = async (req, res) => {
 
     const aiResponse = response.choices[0].message.content;
 
-    // Check if the message indicates a request to list appointments
-    if (userMessage.toLowerCase().includes('delete my appointment') || 
-        userMessage.toLowerCase().includes('show my appointments') ||
-        userMessage.toLowerCase().includes('list my appointments') ||
-        aiResponse.toLowerCase().includes('delete my appointment') ||
-        aiResponse.toLowerCase().includes('show my appointments') ||
-        aiResponse.toLowerCase().includes('list my appointments')) {
+    console.log('User Message:', userMessage);
+    console.log('AI Response:', aiResponse);
 
-      // Fetch the user's appointments
-      const appointmentsResponse = await axios.get(`http://localhost:3001/api/appointments/${appointmentId}`, {
+    const appointmentRequestKeywords = [
+      'show my appointments',
+      'list my appointments',
+      'my appointments',
+      'appointments',
+    ];
+
+    if (appointmentRequestKeywords.some(keyword => 
+        userMessage.toLowerCase().includes(keyword) ||
+        aiResponse.toLowerCase().includes(keyword))) {
+
+      console.log('Fetching appointments for user:', userId);
+
+      const userResponse = await axios.get(`http://localhost:3001/api/auth/user/${userId}`, {
         headers: {
-          'Authorization': authToken, // Include the token in the request headers
+          'Authorization': authToken,
         },
       });
 
-      const appointments = appointmentsResponse.data;
+      console.log('User Data Response:', userResponse.data);
+
+      const user = userResponse.data;
+      const appointments = user.appointments || [];
 
       if (appointments.length === 0) {
         return res.json({ reply: 'You have no appointments scheduled.' });
       }
 
       const appointmentList = appointments.map(appt => 
-        `ID: ${appt.appointmentID}, Date: ${appt.dateTime}, Type: ${appt.typeOfVisit}`
+        `ID: ${appt.appointmentID}, Date: ${new Date(appt.date).toLocaleDateString()}`
       ).join('\n');
       
       return res.json({ reply: `Here are your appointments:\n${appointmentList}` });
@@ -60,22 +88,3 @@ export const handleChat = async (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 };
-
-// Helper function to extract user ID from JWT
-function extractUserIdFromToken(token) {
-  if (!token) {
-    throw new Error('No token provided');
-  }
-
-  try {
-    // Remove 'Bearer ' prefix if present
-    const tokenWithoutPrefix = token.startsWith('Bearer ') ? token.slice(7) : token;
-
-    // Verify and decode the token
-    const decoded = jwt.verify(tokenWithoutPrefix, process.env.JWT_SECRET);
-
-    return decoded.userId; // Adjust according to your token structure
-  } catch (error) {
-    throw new Error('Invalid token');
-  }
-}

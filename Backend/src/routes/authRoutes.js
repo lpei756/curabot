@@ -14,7 +14,7 @@ router.post(AUTH_PATHS.register, schemaValidator(authPathBase.register), registe
 router.post(AUTH_PATHS.login, schemaValidator(authPathBase.login), login);
 
 // Read route
-router.get(AUTH_PATHS.user, schemaValidator(authPathBase.user), readUser);
+router.get(AUTH_PATHS.user, readUser);
 
 // Update route
 router.put(AUTH_PATHS.updateUser, schemaValidator(authPathBase.updateUser), updateUser);
