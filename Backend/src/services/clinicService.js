@@ -15,3 +15,13 @@ export const getClinicByIdService = async (clinicId) => {
     return { error: true, status: 500, message: 'Internal server error' };
   }
 };
+
+export const getAllClinics = async () => {
+  try {
+    const clinics = await Clinic.find({}).populate('doctors'); // Populate doctors for each clinic
+    return clinics;
+  } catch (error) {
+    console.error('Error fetching clinics:', error);
+    throw new Error('Error fetching clinics');
+  }
+};
