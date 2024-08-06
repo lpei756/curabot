@@ -1,6 +1,6 @@
 import User from '../models/User.js';
-import { createAppointment as createAppointmentService , deleteAppointment as deleteAppointmentService} from '../services/appointmentService.js';
-import Appointment from '../models/Appointment.js';
+import { createAppointment as createAppointmentService , readAppointment as readAppointmentService , updateAppointment as updateAppointmentService , deleteAppointment as deleteAppointmentService} from '../services/appointmentService.js';
+
 
 export const createAppointment = async (req, res) => {
   try {
@@ -51,19 +51,20 @@ export const readAppointment = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Find the appointment by ID
-    const appointment = await Appointment.findOne({ _id: appointmentId, patientID: user.patientID });
+    // Use the service to read the appointment
+    const result = await readAppointmentService(appointmentId, user.patientID);
 
-    if (!appointment) {
-      return res.status(404).json({ message: 'Appointment not found' });
+    if (result.error) {
+      return res.status(result.status).json({ message: result.message });
     }
 
-    res.status(200).json(appointment);
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error reading appointment:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
+
 
 export const updateAppointment = async (req, res) => {
   try {
@@ -73,22 +74,18 @@ export const updateAppointment = async (req, res) => {
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
-    // Fetch the user to get their name (optional, if needed for additional checks)
+    // Fetch the user to get their patient ID
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Find the appointment by ID and update it
-    const appointment = await Appointment.findOneAndUpdate(
-        { _id: appointmentId, patientID: user.patientID },
-        updateData,
-        { new: true }
-    );
+    // Use the service to update the appointment
+    const result = await updateAppointmentService(appointmentId, updateData, user.patientID);
 
-    if (!appointment) {
-      return res.status(404).json({ message: 'Appointment not found or not authorized to update' });
+    if (result.error) {
+      return res.status(result.status).json({ message: result.message });
     }
 
-    res.status(200).json(appointment);
+    res.status(200).json(result);
   } catch (error) {
     console.error('Error updating appointment:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -98,13 +95,13 @@ export const updateAppointment = async (req, res) => {
 export const deleteAppointment = async (req, res) => {
     try {
       const { appointmentId } = req.params;
-  
+
       const result = await deleteAppointmentService(appointmentId);
-  
+
       if (result.error) {
         return res.status(result.status).json({ message: result.message });
       }
-  
+
       res.status(200).json({ message: 'Appointment deleted successfully' });
     } catch (error) {
       console.error('Error deleting appointment:', error);

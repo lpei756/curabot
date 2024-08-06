@@ -2,69 +2,84 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 
 // Register a new user
-export const register = async ({
-    email,
-    password,
-    firstName,
-    middleName,
-    lastName,
-    dateOfBirth,
-    gender,
-    bloodGroup,
-    ethnicity,
-    address,
-    phone,
-    emergencyContact,
-    medicalHistory,
-    insurance,
-}) => {
-  // Check if the user already exists
-  const existingUser = await User.findOne({ email });
-  if (existingUser) throw new Error('User already exists');
+export const register = async (userData) => {
+    const {
+        email,
+        password,
+        firstName,
+        middleName,
+        lastName,
+        dateOfBirth,
+        gender,
+        bloodGroup,
+        ethnicity,
+        address,
+        phone,
+        emergencyContact,
+        medicalHistory,
+        insurance,
+    } = userData;
 
-  // Hash the password
-  const salt = await bcrypt.genSalt(10);
-  const hashedPassword = await bcrypt.hash(password, salt);
+    // Check if the user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) throw new Error('User already exists');
 
-  // Create a new user
-  const user = new User({
-    email,
-    password: hashedPassword,
-    firstName,
-    middleName,
-    lastName,
-    dateOfBirth,
-    gender,
-    bloodGroup,
-    ethnicity,
-    address,
-    phone,
-    emergencyContact,
-    medicalHistory,
-    insurance,
-  });
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
 
-  await user.save();
-  return user;
+    // Create a new user
+    const user = new User({
+        email,
+        password: hashedPassword,
+        firstName,
+        middleName,
+        lastName,
+        dateOfBirth,
+        gender,
+        bloodGroup,
+        ethnicity,
+        address,
+        phone,
+        emergencyContact,
+        medicalHistory,
+        insurance,
+    });
+
+    await user.save();
+    return user;
 };
 
 // Log in a user
 export const login = async ({ email, password }) => {
-  const user = await User.findOne({ email });
-  if (!user) throw new Error('User not found');
+    const user = await User.findOne({ email }).select('+password');
+    if (!user) throw new Error('User not found');
 
-  // Compare the password
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) throw new Error('Invalid credentials');
+    // Compare the password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) throw new Error('Invalid credentials');
 
-  return user;
+    return user;
 };
 
 // Read a user
 export const readUser = async (id) => {
-    const user = await User.findById(id).select('-password'); // Exclude the password field
-    if (!user) throw new Error('User not found');
-    return user;
+    console.log('readUserService called with ID:', id);
+    try {
+        const user = await User.findById(id);
+        console.log('Database query result for user:', user);
+
+        if (!user) {
+            console.error('User not found with ID:', id);
+            throw new Error('User not found');
+        }
+
+        console.log('User found:', user);
+        return user;
+    } catch (error) {
+        console.error('Error in readUserService:', error.message);
+        throw new Error('Error reading user');
+    }
 };
 
 // Update a user
@@ -79,4 +94,3 @@ export const logout = () => {
     // Perform logout actions if any (e.g., token blacklist, session destroy, etc.)
     return { message: 'Successfully logged out' };
 };
-
