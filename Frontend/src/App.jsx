@@ -17,8 +17,25 @@ function App() {
     <div className="app-container">
       <AppHeader />
       {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot}/>}
-      <IconButton className="chatbot-button" color="primary" onClick={toggleChatbot}>
-        <SmartToyRoundedIcon />
+      <IconButton 
+        className="chatbot-button" 
+        color="primary" 
+        onClick={toggleChatbot} 
+        sx={{
+          position: 'fixed',
+          bottom: 16,
+          right: 16,
+          backgroundColor: '#7AE0F2',
+          color: 'white',
+          '&:hover': {
+            backgroundColor: '#68cde6'
+          },
+          padding: '16px',
+          borderRadius: '50%',
+          boxShadow: 3,
+        }}
+      >
+        <SmartToyRoundedIcon fontSize="large" />
       </IconButton>
     </div>
   )
