@@ -22,3 +22,7 @@ export const APPOINTMENT_PATHS = {
 export const CLINIC_PATHS = {
   read: '/:id'
 };
+
+export const DOCTOR_PATHS = {
+    read: '/:id'
+};

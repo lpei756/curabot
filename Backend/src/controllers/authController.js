@@ -1,6 +1,4 @@
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import User from '../models/User.js';
 import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService } from '../services/authService.js';
 
 // Register a new user
@@ -10,7 +8,7 @@ export const register = async (req, res) => {
     const user = await registerService(req.body);
 
     // Generate JWT token using user ID (adjust if using different identifier)
-    const token = generateToken(user._id); // or user.patientID if that's the correct identifier
+    const token = generateToken(user._id);
 
     // Respond with user info and token
     res.status(201).json({ user, token });
@@ -25,24 +23,16 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Query the user and include the password field explicitly
-    const user = await User.findOne({ email }).select('+password');
+    const user = await loginService({ email, password });
     if (!user) throw new Error('User not found');
 
-    console.log('User found:', user); // 调试信息
-
-    // Compare the password
-    const isMatch = await bcrypt.compare(password, user.password);
-    console.log('Password match:', isMatch); // 调试信息
-
-    if (!isMatch) throw new Error('Invalid credentials');
-
-    // Generate JWT token using user ID
     const token = generateToken(user._id);
+    console.log('JWT token generated:', token);
 
-    // Respond with user info and token
     res.status(200).json({ user, token });
+    console.log('Response sent with user data and token');
   } catch (error) {
+    console.error('Error during login:', error.message);
     res.status(400).json({ message: error.message });
   }
 };
@@ -51,10 +41,16 @@ export const login = async (req, res) => {
 // Read an existing user
 export const readUser = async (req, res) => {
   try {
-    const { id } = req.params;
-    const user = await readUserService(id);
+    const userId = req.params.id;
+    console.log('Read user request received for ID:', userId);
+
+    const user = await readUserService(userId);
+    if (!user) throw new Error('User not found');
+
     res.status(200).json(user);
+    console.log('User data sent:', user);
   } catch (error) {
+    console.error('Error during read user:', error.message);
     res.status(400).json({ message: error.message });
   }
 };

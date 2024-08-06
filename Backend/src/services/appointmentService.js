@@ -50,7 +50,7 @@ export const createAppointment = async ({ dateTime, typeOfVisit, purposeOfVisit,
   }
 };
 
-export const readAppointmentService = async (appointmentId, patientID) => {
+export const readAppointment = async (appointmentId, patientID) => {
   try {
     const appointment = await Appointment.findOne({ _id: appointmentId, patientID });
 
@@ -65,7 +65,7 @@ export const readAppointmentService = async (appointmentId, patientID) => {
   }
 };
 
-export const updateAppointmentService = async (appointmentId, updateData, patientID) => {
+export const updateAppointment = async (appointmentId, updateData, patientID) => {
   try {
     const appointment = await Appointment.findOneAndUpdate(
         { _id: appointmentId, patientID },
@@ -88,11 +88,11 @@ export const deleteAppointment = async (appointmentId) => {
     try {
       // Use findByIdAndDelete to directly delete the appointment
       const appointment = await Appointment.findByIdAndDelete(appointmentId);
-  
+
       if (!appointment) {
         return { error: true, status: 404, message: 'Appointment not found' };
       }
-  
+
       return { error: false, message: 'Appointment successfully deleted' };
     } catch (error) {
       console.error('Error deleting appointment in service:', error);

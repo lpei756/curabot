@@ -1,5 +1,3 @@
-// controllers/clinicController.js
-
 import { getClinicByIdService } from '../services/clinicService.js';
 
 export const getClinicById = async (req, res) => {

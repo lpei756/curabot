@@ -1,5 +1,3 @@
-// services/clinicService.js
-
 import Clinic from '../models/Clinic.js';
 
 export const getClinicByIdService = async (clinicId) => {
