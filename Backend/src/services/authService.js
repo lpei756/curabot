@@ -64,22 +64,10 @@ export const login = async ({ email, password }) => {
 
 // Read a user
 export const readUser = async (id) => {
-    console.log('readUserService called with ID:', id);
-    try {
-        const user = await User.findById(id);
-        console.log('Database query result for user:', user);
-
-        if (!user) {
-            console.error('User not found with ID:', id);
-            throw new Error('User not found');
-        }
-
-        console.log('User found:', user);
-        return user;
-    } catch (error) {
-        console.error('Error in readUserService:', error.message);
-        throw new Error('Error reading user');
-    }
+    // Find the user by their ID
+    const user = await User.findById(id).select('-password'); // Exclude password from response
+    if (!user) throw new Error('User not found');
+    return user;
 };
 
 // Update a user
