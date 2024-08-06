@@ -1,23 +1,27 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import './App.css';
+import AppHeader from './component/AppHeader';
+import ChatBot from './component/ChatBot';
+import IconButton from '@mui/material/IconButton';
+import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+
+  const toggleChatbot = () => {
+    setIsChatbotOpen(!isChatbotOpen);
+  }
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-    </>
+    <div className="app-container">
+      <AppHeader />
+      {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot}/>}
+      <IconButton className="chatbot-button" color="primary" onClick={toggleChatbot}>
+        <SmartToyRoundedIcon />
+      </IconButton>
+    </div>
   )
 }
 
-export default App
+export default App;
