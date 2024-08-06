@@ -12,3 +12,17 @@ export const authenticate = async (req, res, next) => {
     next();
   });
 };
+
+export function extractUserIdFromToken(token) {
+  if (!token) {
+    throw new Error('No token provided');
+  }
+
+  try {
+    const tokenWithoutPrefix = token.startsWith('Bearer ') ? token.slice(7) : token;
+    const decoded = jwt.verify(tokenWithoutPrefix, process.env.JWT_SECRET);
+    return decoded.user._id;
+  } catch (error) {
+    throw new Error('Invalid token');
+  }
+}
