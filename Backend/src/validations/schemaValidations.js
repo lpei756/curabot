@@ -42,7 +42,7 @@ const loginSchema = Joi.object({
 });
 
 const userSchema = Joi.object({
-    id: Joi.string().length(24).required()
+    id: Joi.string().required()
 });
 
 const updateUserSchema = Joi.object({

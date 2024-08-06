@@ -1,5 +1,4 @@
 import express from 'express';
-
 import {register, login, readUser, updateUser, logout} from '../controllers/authController.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
 import { AUTH_PATHS, buildPathWithBase } from './path.js';
@@ -14,7 +13,8 @@ router.post(AUTH_PATHS.register, schemaValidator(authPathBase.register), registe
 router.post(AUTH_PATHS.login, schemaValidator(authPathBase.login), login);
 
 // Read route
-router.get(AUTH_PATHS.user, readUser);
+// routes/authRoutes.js
+router.get(AUTH_PATHS.user, schemaValidator(authPathBase.user), readUser);
 
 // Update route
 router.put(AUTH_PATHS.updateUser, schemaValidator(authPathBase.updateUser), updateUser);

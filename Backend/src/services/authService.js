@@ -64,8 +64,7 @@ export const login = async ({ email, password }) => {
 
 // Read a user
 export const readUser = async (id) => {
-    // Find the user by their ID
-    const user = await User.findById(id).select('-password'); // Exclude password from response
+    const user = await User.findById(id).select('-password'); // Exclude the password field
     if (!user) throw new Error('User not found');
     return user;
 };

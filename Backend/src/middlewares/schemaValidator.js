@@ -1,62 +1,63 @@
+// schemaValidator middleware for validating request body against Joi schema
 import schemas from '../validations/schemaValidations.js';
 
-const supportedMethods = ['post', 'put', 'patch', 'delete', 'get'];
+// Supported HTTP methods for validation
+const supportedMethods = ['post', 'put', 'patch', 'delete'];
+
+// Joi validation options
 const validationOptions = {
-    abortEarly: false,
-    allowUnknown: true,
-    stripUnknown: true 
+  abortEarly: false,
+  allowUnknown: false,
+  stripUnknown: false
 };
 
+// Middleware to validate request body against Joi schema
 const schemaValidator = (path, useJoiError = true) => {
-    const schema = schemas[path];
+  const schema = schemas[path]; // Get schema for the path
 
-    if (!schema) {
-        console.log(`Requested path: ${path}`);
-        console.log(`Available schemas: ${Object.keys(schemas)}`);
-        throw new Error(`Schema not found for path: ${path}`);
+  // Check if schema exists for the path
+  if (!schema) {
+    throw new Error(`Schema not found for path: ${path}`);
+  }
+
+  // Return middleware function
+  return (req, res, next) => {
+    const method = req.method.toLowerCase();
+
+    // Check if method is supported
+    if (!supportedMethods.includes(method)) {
+      return next();
     }
 
-    return (req, res, next) => {
-        const method = req.method.toLowerCase();
+    // Validate request body against schema
+    const { error, value } = schema.validate(req.body, validationOptions);
 
-        if (!supportedMethods.includes(method)) {
-            return next();
-        }
+    if (error) {
+      // Refactored error handling to always use a unified error format
+      const unifiedError = {
+        status: 'failed',
+        error: 'Invalid request. Please review request and try again.',
+        fields: {}
+      };
 
-        let source;
-        if (method === 'get') {
-            source = req.params;
-        } else {
-            source = req.body;
-        }
+      if (useJoiError && error.details) {
+        // Process Joi error details for field-specific messages
+        error.details.forEach(({ message, path }) => {
+          const fieldName = path.join('.'); // Convert array path to dot notation
+          unifiedError.fields[fieldName] = message.replace(/['"]/g, ''); // Clean message
+        });
+      } else {
+        // For custom errors, you could optionally add a general message to `fields`
+        // unifiedError.fields.general = unifiedError.error;
+      }
 
-        const { error, value } = schema.validate(source, validationOptions);
+      return res.status(422).json(unifiedError);
+    }
 
-        if (error) {
-            const unifiedError = {
-                status: 'failed',
-                error: 'Invalid request. Please review request and try again.',
-                fields: {}
-            };
-
-            if (useJoiError && error.details) {
-                error.details.forEach(({ message, path }) => {
-                    const fieldName = path.join('.');
-                    unifiedError.fields[fieldName] = message.replace(/['"]/g, '');
-                });
-            }
-
-            return res.status(422).json(unifiedError);
-        }
-
-        if (method === 'get') {
-            req.params = value;
-        } else {
-            req.body = value;
-        }
-
-        return next();
-    };
+    // validation successful
+    req.body = value;
+    return next();
+  };
 };
 
 export default schemaValidator;
