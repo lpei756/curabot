@@ -1,12 +1,15 @@
+// App.jsx
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
 import './App.css';
-import AppHeader from './components/AppHeader'; // Ensure the correct path
-import ChatBot from './components/ChatBot'; // Ensure the correct path
+import AppHeader from './components/AppHeader';
+import ChatBot from './components/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { AuthProvider } from './context/AuthContext'; // Import AuthProvider
+import { AuthProvider } from './context/AuthContext';
+import Appointment from './components/Appointment'; // Import the Appointment component
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -16,31 +19,37 @@ function App() {
   }
 
   return (
-    <AuthProvider> 
-      <div className="app-container">
-        <AppHeader />
-        {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
-        <IconButton 
-          className="chatbot-button" 
-          color="primary" 
-          onClick={toggleChatbot} 
-          sx={{
-            position: 'fixed',
-            bottom: 16,
-            right: 16,
-            backgroundColor: '#7AE0F2',
-            color: 'white',
-            '&:hover': {
-              backgroundColor: '#68cde6'
-            },
-            padding: '16px',
-            borderRadius: '50%',
-            boxShadow: 3,
-          }}
-        >
-          {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
-        </IconButton>
-      </div>
+    <AuthProvider>
+      <Router>
+        <div className="app-container">
+          <AppHeader />
+          {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
+          <IconButton 
+            className="chatbot-button" 
+            color="primary" 
+            onClick={toggleChatbot} 
+            sx={{
+              position: 'fixed',
+              bottom: 16,
+              right: 16,
+              backgroundColor: '#7AE0F2',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: '#68cde6'
+              },
+              padding: '16px',
+              borderRadius: '50%',
+              boxShadow: 3,
+            }}
+          >
+            {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
+          </IconButton>
+          <Routes> {/* Use Routes instead of Switch */}
+            <Route path="/appointment/new" element={<Appointment />} /> {/* Use element with JSX */}
+            <Route path="/appointment/edit/:id" element={<Appointment />} />
+          </Routes>
+        </div>
+      </Router>
     </AuthProvider>
   );
 }
