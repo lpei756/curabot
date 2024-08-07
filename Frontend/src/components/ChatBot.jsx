@@ -12,12 +12,12 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
-import { AuthContext } from '../context/AuthContext'; // Import your context
-import { sendChatMessage } from '../services/chatService'; // Import service function
+import { AuthContext } from '../context/AuthContext'; 
+import { sendChatMessage } from '../services/chatService'; 
 import "../App.css";
 
 function ChatBot({ isOpen, toggleChatbot }) {
-    const { authToken } = useContext(AuthContext); // Use context for token
+    const { authToken } = useContext(AuthContext); 
     const [messages, setMessages] = useState([
         { type: 'bot', message: 'Kia Ora! My name is Cura. How can I assist you today?' }
     ]);
@@ -87,7 +87,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                 left: '50%',
                                 transform: 'translateX(-50%)'
                             }}>
-                                ChatBot
+                                Cura
                             </Typography>
                             <IconButton edge="end" color="inherit" onClick={toggleChatbot} sx={{ zIndex: 1 }}>
                                 <CloseIcon />
@@ -104,7 +104,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                 justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
                             >
                                 {msg.type === 'bot' && (
-                                    <Avatar alt="Bot Avatar" src="/images/icon.png" sx={{ 
+                                    <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{ 
                                         width: 40, 
                                         height: 40,
                                         bgcolor: '#5BC0DE',
