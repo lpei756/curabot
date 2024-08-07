@@ -35,6 +35,7 @@ const UserSchema = new mongoose.Schema({
   appointments: [
     { appointmentID: String, date: Date },
   ],
+  images: [{ type: String }],
 });
 UserSchema.pre('save', async function (next) {
   if (this.isNew) {
