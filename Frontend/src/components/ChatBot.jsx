@@ -87,7 +87,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                 left: '50%',
                                 transform: 'translateX(-50%)'
                             }}>
-                                ChatBot
+                                Cura
                             </Typography>
                             <IconButton edge="end" color="inherit" onClick={toggleChatbot} sx={{ zIndex: 1 }}>
                                 <CloseIcon />
@@ -104,7 +104,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                 justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
                             >
                                 {msg.type === 'bot' && (
-                                    <Avatar alt="Bot Avatar" src="/images/icon.png" sx={{ 
+                                    <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{ 
                                         width: 40, 
                                         height: 40,
                                         bgcolor: '#5BC0DE',

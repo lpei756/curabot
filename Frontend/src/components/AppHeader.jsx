@@ -81,6 +81,9 @@ function AppHeader() {
                       textDecoration: 'none',
                       letterSpacing: '.2rem',
                       textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                      position: 'absolute',
+                      left: '50%',
+                      transform: 'translateX(-50%)',
                     }}
                 >
                   Cura

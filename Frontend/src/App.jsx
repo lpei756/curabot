@@ -16,7 +16,7 @@ function App() {
   }
 
   return (
-    <AuthProvider> {/* Wrap the app with AuthProvider */}
+    <AuthProvider> 
       <div className="app-container">
         <AppHeader />
         {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
