@@ -32,24 +32,43 @@ function ChatBot({ isOpen, toggleChatbot }) {
     };
 
     return (
-        <Paper elevation={6} className="chatbot-container" sx={{ width: '400px', height: '600px' }}>
-            <Draggable nodeRef={nodeRef}>
-                <Box className="chatbot-container" ref={nodeRef}>
-                    <Box display="flex" flexDirection="column" height="100%">
-                        <AppBar position="static" sx={{ 
-                            backgroundColor: '#7AE0F2', 
-                            boxShadow: 'none', 
-                            borderTopLeftRadius: '20px', 
-                            borderTopRightRadius: '20px',
-                            height: '60px'
-                        }}>
-                            <Toolbar sx={{ justifyContent: 'space-between' }}>
-                                <IconButton edge="start" color="inherit" sx={{ visibility: 'hidden' }}>
-                                    <CloseIcon />
+        <Draggable nodeRef={nodeRef}>
+        <Box 
+            ref={nodeRef}
+            className="chatbot-container" 
+            sx={{ 
+                width: '400px', 
+                height: '600px',
+                position: 'fixed',
+                bottom: '20px',
+                right: '20px',
+                borderRadius: '20px',
+                overflow: 'hidden',
+                boxShadow: '0 0 10px rgba(0,0,0,0.1)'
+            }}
+        >
+            <Box display="flex" flexDirection="column" height="100%">
+                <AppBar position="static" sx={{ 
+                    backgroundColor: '#7AE0F2', 
+                    boxShadow: 'none', 
+                    borderTopLeftRadius: '20px', 
+                    borderTopRightRadius: '20px',
+                    height: '60px'
+                }}>
+                           <Toolbar sx={{ justifyContent: 'space-between', position: 'relative' }}>
+                           <Box sx={{ flex: 1 }} />
+                           <Typography variant="h6" sx={{ 
+                                fontWeight: 'bold', 
+                                color: 'white',
+                                position: 'absolute',
+                                left: '50%',
+                                transform: 'translateX(-50%)'
+                            }}>
+                                ChatBot
+                            </Typography>
+                            <IconButton edge="end" color="inherit" onClick={toggleChatbot} sx={{ zIndex: 1  }}>
+                                <CloseIcon />
                                 </IconButton>
-                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'white' }}>
-                                    ChatBot
-                                </Typography>
                             </Toolbar>
                         </AppBar>
                         <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5' }}>
@@ -118,7 +137,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                     </Box>
                 </Box>
             </Draggable>
-        </Paper>
+    
     );
 }
 
