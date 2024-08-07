@@ -1,14 +1,11 @@
-import axios from 'axios';
+import axiosApiInstance from '../utils/axiosInstance';
 
-export const sendChatMessage = async (message, token) => {
-    try {
-        const response = await axios.post('http://localhost:3001/api/chat', { message }, {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        });
-        return response;
-    } catch (error) {
-        throw new Error('Error sending chat message');
-    }
+export const sendChatMessage = async (message) => {
+  try {
+    const response = await axiosApiInstance.post('/chat', { message });
+    return response;
+  } catch (error) {
+    console.error('Error sending chat message:', error.response?.data);
+    throw new Error('Error sending chat message');
+  }
 };

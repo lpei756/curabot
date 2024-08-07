@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import axios from 'axios';
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
@@ -12,12 +11,12 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Draggable from 'react-draggable';
 import Paper from '@mui/material/Paper';
-import { AuthContext } from '../context/AuthContext'; // Import your context
-import { sendChatMessage } from '../services/chatService'; // Import service function
+import { AuthContext } from '../context/AuthContext';
+import { sendChatMessage } from '../services/chatService';
 import "../App.css";
 
 function ChatBot({ isOpen, toggleChatbot }) {
-    const { authToken } = useContext(AuthContext); // Use context for token
+    const { authToken } = useContext(AuthContext);
     const [messages, setMessages] = useState([
         { type: 'bot', message: 'Kia Ora! My name is Cura. How can I assist you today?' }
     ]);
@@ -37,6 +36,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
         setIsLoading(true);
 
         try {
+            console.log('Auth Token:', authToken); // Debugging
             const response = await sendChatMessage(inputValue, authToken);
 
             setMessages((prevMessages) => [
