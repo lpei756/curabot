@@ -12,3 +12,14 @@ export const login = async (email, password) => {
     }
 };
 
+const uploadImage = async (userId, imageUrl) => {
+    try {
+        const response = await axios.post('http://localhost:3001/api/images/uploadImage', { userId, imageUrl });
+        console.log('Image uploaded:', response.data);
+    } catch (error) {
+        console.error('Error uploading image:', error);
+    }
+};
+
+// 示例用法
+uploadImage('user-id-here', 'https://example.com/image.jpg');
