@@ -1,9 +1,9 @@
 // App.jsx
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
 import './App.css';
 import AppHeader from './components/AppHeader';
+import Register from './components/Register';
 import ChatBot from './components/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
@@ -13,16 +13,24 @@ import Appointment from './components/Appointment'; // Import the Appointment co
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+
 
   const toggleChatbot = () => {
     setIsChatbotOpen(!isChatbotOpen);
   }
 
+  const toggleRegister = () => {
+    setIsRegisterOpen(!isRegisterOpen);
+  };
+
+
   return (
     <AuthProvider>
       <Router>
         <div className="app-container">
-          <AppHeader />
+        <AppHeader toggleRegister={toggleRegister} />
+        {isRegisterOpen && <Register onClose={toggleRegister} />}
           {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
           <IconButton 
             className="chatbot-button" 
