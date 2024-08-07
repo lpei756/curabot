@@ -29,10 +29,10 @@ export const getAppointmentsForUser = async (userId, authToken) => {
                 month: 'long',
                 day: 'numeric',
             }) : "Invalid Date";
-            return `ID: ${appt.appointmentID}, Date: ${formattedDate}`;
-        }).join('\n');
-
-        return `Here are your appointments:\n${appointmentList}\nLet me know if you would like to make an appointment, update an appointment, or delete an appointment.`;
+            return `<li><strong>ID:</strong> ${appt.appointmentID}, <strong>Date:</strong> ${formattedDate}</li>`;
+        }).join('');
+        
+        return `Here are your appointments:<ul>${appointmentList}</ul>Let me know if you would like to make an appointment, update an appointment, or delete an appointment.`;
     } catch (error) {
         console.error('Error fetching user data:', error);
         throw new Error('Error fetching user data');

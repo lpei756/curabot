@@ -97,43 +97,47 @@ function ChatBot({ isOpen, toggleChatbot }) {
                     <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5' }}>
                         {messages.map((msg, index) => (
                             <Box
-                                key={index}
-                                display="flex"
-                                mb={2}
-                                alignItems="flex-start"
-                                justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
+                            key={index}
+                            display="flex"
+                            mb={2}
+                            alignItems="flex-start"
+                            justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
+                        >
+                            {msg.type === 'bot' && (
+                                <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{ 
+                                    width: 40, 
+                                    height: 40,
+                                    bgcolor: '#5BC0DE',
+                                    '& .MuiAvatar-img': {
+                                        objectFit: 'cover', 
+                                        width: '100%',  
+                                        height: '100%',
+                                        p: 0.5,
+                                    }
+                                }} />
+                            )}
+                            <Paper
+                                elevation={0}
+                                sx={{
+                                    ml: msg.type === 'bot' ? 2 : 0,
+                                    mr: msg.type === 'user' ? 2 : 0,
+                                    bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#5BC0DE',
+                                    color: msg.type === 'bot' ? '#333' : 'white',
+                                    p: 2,
+                                    borderRadius: 3,
+                                    maxWidth: "75%",
+                                }}
                             >
-                                {msg.type === 'bot' && (
-                                    <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{ 
-                                        width: 40, 
-                                        height: 40,
-                                        bgcolor: '#5BC0DE',
-                                        '& .MuiAvatar-img': {
-                                            objectFit: 'cover', 
-                                            width: '100%',  
-                                            height: '100%',
-                                            p: 0.5,
-                                        }
-                                    }} />
-                                )}
-                                <Paper
-                                    elevation={0}
-                                    sx={{
-                                        ml: msg.type === 'bot' ? 2 : 0,
-                                        mr: msg.type === 'user' ? 2 : 0,
-                                        bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#5BC0DE',
-                                        color: msg.type === 'bot' ? '#333' : 'white',
-                                        p: 2,
-                                        borderRadius: 3,
-                                        maxWidth: "75%",
-                                    }}
-                                >
+                                {msg.type === 'bot' ? (
+                                    <Typography component="div" dangerouslySetInnerHTML={{ __html: msg.message }} />
+                                ) : (
                                     <Typography>{msg.message}</Typography>
-                                </Paper>
-                                {msg.type === 'user' && (
-                                    <Avatar alt="User Avatar" sx={{ bgcolor: '#7AE0F2', width: 40, height: 40 }} />
                                 )}
-                            </Box>
+                            </Paper>
+                            {msg.type === 'user' && (
+                                <Avatar alt="User Avatar" sx={{ bgcolor: '#7AE0F2', width: 40, height: 40 }} />
+                            )}
+                        </Box>
                         ))}
                         {isLoading && (
                             <Box display="flex" justifyContent="center" p={2}>
