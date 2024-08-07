@@ -21,5 +21,4 @@ const uploadImage = async (userId, imageUrl) => {
     }
 };
 
-// 示例用法
 uploadImage('user-id-here', 'https://example.com/image.jpg');
