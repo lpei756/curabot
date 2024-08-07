@@ -4,7 +4,7 @@ export const buildPathWithBase = (paths) => {
   );
 };
 
-export const AUTH_PATHS = buildPathWithBase({
+export const AUTH_PATHS = ({
   register: '/register',
   login: '/login',
   user: '/user/:id',
@@ -12,27 +12,27 @@ export const AUTH_PATHS = buildPathWithBase({
   logout: '/logout'
 });
 
-export const APPOINTMENT_PATHS = buildPathWithBase({
+export const APPOINTMENT_PATHS = ({
   create: '/create',
   read: '/:id',
   update: '/:id/update',
   delete: '/:appointmentId'
 });
 
-export const CLINIC_PATHS = buildPathWithBase({
+export const CLINIC_PATHS = ({
   read: '/:id',
   all: '/'
 });
 
-export const DOCTOR_PATHS = buildPathWithBase({
+export const DOCTOR_PATHS = ({
   read: '/:id'
 });
 
-export const CHAT_PATHS = buildPathWithBase({
+export const CHAT_PATHS = ({
   chat: '/chat',
 });
 
-export const IMAGE_PATHS = buildPathWithBase({
+export const IMAGE_PATHS = ({
   save: '/uploadImage',
   read: '/user/:userId',
   delete: '/:imageId'
