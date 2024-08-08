@@ -6,6 +6,7 @@ import clinicRoutes from './routes/clinicRoutes.js';
 import doctorRoutes from "./routes/doctorRoutes.js";
 import chatRoutes from './routes/chatRoutes.js';
 import imageRoutes from "./routes/imageRoutes.js";
+import adminRoutes from './routes/adminRoutes.js';
 
 const app = express();
 
@@ -18,5 +19,6 @@ app.use('/api/clinics', clinicRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/images', imageRoutes);
+app.use('/api/admin', adminRoutes);
 
 export default app;

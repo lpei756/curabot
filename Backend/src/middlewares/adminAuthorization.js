@@ -1,0 +1,33 @@
+// middlewares/adminAuthorization.js
+import jwt from 'jsonwebtoken';
+import Admin from '../models/Admin.js';
+
+const adminAuthorization = (roles) => async (req, res, next) => {
+  try {
+    const token = req.headers.authorization.split(' ')[1];
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+
+    console.log('Token:', token);
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    console.log('Decoded:', decoded);
+
+    // Check if the user is an admin and if their role is allowed
+    const admin = await Admin.findById(decoded.user._id);
+
+    console.log('Admin:', admin);
+
+    if (!admin || !roles.includes(decoded.user.role)) {
+      return res.status(403).json({ message: 'Forbidden' });
+    }
+
+    req.admin = admin;
+    next();
+  } catch (error) {
+    console.error('Error in adminAuthorization:', error);
+    res.status(401).json({ message: 'Unauthorized' });
+  }
+};
+
+export default adminAuthorization;

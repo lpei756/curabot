@@ -37,3 +37,7 @@ export const IMAGE_PATHS = {
   read: '/user/:userId',
   delete: '/:imageId'
 };
+
+export const ADMIN_PATHS = {
+  getAllPatients: '/patients',
+};
