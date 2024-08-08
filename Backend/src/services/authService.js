@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
+import Admin from '../models/Admin.js'; // Import the Admin model
 
 // Register a new user
 export const register = async (userData) => {
@@ -52,7 +53,12 @@ export const register = async (userData) => {
 
 // Log in a user
 export const login = async ({ email, password }) => {
-    const user = await User.findOne({ email }).select('+password');
+    // Try to find the user in the User database
+    let user = await User.findOne({ email }).select('+password');
+    if (!user) {
+        // If not found, try to find the user in the Admin database
+        user = await Admin.findOne({ email }).select('+password');
+    }
     if (!user) throw new Error('User not found');
 
     // Compare the password
