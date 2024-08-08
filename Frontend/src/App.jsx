@@ -1,6 +1,6 @@
 // App.jsx
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'; // Import Routes instead of Switch
+import { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
 import AppHeader from './components/AppHeader';
 import Register from './components/Register';
@@ -9,7 +9,7 @@ import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { AuthProvider } from './context/AuthContext';
-import Appointment from './components/Appointment'; // Import the Appointment component
+import Appointment from './components/Appointment';
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -32,10 +32,10 @@ function App() {
         <AppHeader toggleRegister={toggleRegister} />
         {isRegisterOpen && <Register onClose={toggleRegister} />}
           {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
-          <IconButton 
-            className="chatbot-button" 
-            color="primary" 
-            onClick={toggleChatbot} 
+          <IconButton
+            className="chatbot-button"
+            color="primary"
+            onClick={toggleChatbot}
             sx={{
               position: 'fixed',
               bottom: 16,
