@@ -1,23 +1,29 @@
 import User from '../models/User.js';
-import { createAppointment as createAppointmentService , readAppointment as readAppointmentService , updateAppointment as updateAppointmentService , deleteAppointment as deleteAppointmentService} from '../services/appointmentService.js';
-
+import { createAppointment as createAppointmentService, readAppointment as readAppointmentService, updateAppointment as updateAppointmentService, deleteAppointment as deleteAppointmentService } from '../services/appointmentService.js';
 
 export const createAppointment = async (req, res) => {
   try {
     const appointmentData = req.body;
     const userId = req.user?.user?._id;
+    const userRole = req.user?.user?.role; // Extract role from the user object
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
+    // Exclude notes and prescriptionsIssued if the user is a patient
+    if (userRole !== 'doctor' && userRole !== 'nurse') {
+      delete appointmentData.notes;
+      delete appointmentData.prescriptionsIssued;
+    }
+
     const patientName = `${user.firstName} ${user.lastName}`;
 
-    const appointment = await createAppointmentService({ 
-      ...appointmentData, 
-      patientID: user.patientID, 
-      patientName 
+    const appointment = await createAppointmentService({
+      ...appointmentData,
+      patientID: user.patientID,
+      patientName
     });
 
     if (appointment.error) {
