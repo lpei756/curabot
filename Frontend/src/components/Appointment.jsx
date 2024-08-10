@@ -1,136 +1,91 @@
-// components/Appointment.jsx
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
-import { useParams } from 'react-router-dom';
-import { createAppointment, getAppointmentById, updateAppointment } from '../services/appointmentService';
+import Box from '@mui/material/Box';
+import { createAppointment } from '../services/appointmentService';
 
-const Appointment = () => {
-    const { id: appointmentId } = useParams(); // Get appointment ID from route params if available
-    const isUpdateMode = Boolean(appointmentId);
-
-    const [formData, setFormData] = useState({
+const AppointmentForm = () => {
+    const [formValues, setFormValues] = useState({
         dateTime: '',
         typeOfVisit: '',
         purposeOfVisit: '',
         clinic: '',
         assignedGP: '',
-        notes: '',
-        prescriptionsIssued: '',
     });
 
-    useEffect(() => {
-        if (isUpdateMode) {
-            const fetchAppointment = async () => {
-                try {
-                    const appointment = await getAppointmentById(appointmentId);
-                    setFormData(appointment);
-                } catch (error) {
-                    console.error('Failed to fetch appointment:', error);
-                }
-            };
-
-            fetchAppointment();
-        }
-    }, [appointmentId, isUpdateMode]);
-
-    const handleChange = (e) => {
+    const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        setFormValues({
+            ...formValues,
+            [name]: value,
+        });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault();
         try {
-            if (isUpdateMode) {
-                await updateAppointment(appointmentId, formData);
-                alert('Appointment successfully updated!');
-            } else {
-                await createAppointment(formData);
-                alert('Appointment successfully created!');
-            }
-            // Optionally, redirect to a different page after updating or creating
+            const createdAppointment = await createAppointment(formValues);
+            console.log('Appointment created:', createdAppointment);
         } catch (error) {
-            alert('Failed to save appointment');
+            console.error('Error saving appointment:', error.message);
         }
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, margin: '0 auto' }}
+        >
             <TextField
-                name="dateTime"
                 label="Date & Time"
                 type="datetime-local"
-                value={formData.dateTime}
-                onChange={handleChange}
+                name="dateTime"
+                value={formValues.dateTime}
+                onChange={handleInputChange}
                 InputLabelProps={{
                     shrink: true,
                 }}
-                fullWidth
-                margin="normal"
             />
             <TextField
-                name="typeOfVisit"
-                label="Type of Visit"
                 select
-                value={formData.typeOfVisit}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
+                label="Type of Visit"
+                name="typeOfVisit"
+                value={formValues.typeOfVisit}
+                onChange={handleInputChange}
             >
+                <MenuItem value="">Select Type of Visit</MenuItem>
                 <MenuItem value="Consultation">Consultation</MenuItem>
                 <MenuItem value="Follow-up">Follow-up</MenuItem>
                 <MenuItem value="Urgent">Urgent</MenuItem>
             </TextField>
             <TextField
-                name="purposeOfVisit"
                 label="Purpose of Visit"
-                value={formData.purposeOfVisit}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
+                type="text"
+                name="purposeOfVisit"
+                value={formValues.purposeOfVisit}
+                onChange={handleInputChange}
             />
             <TextField
+                label="Clinic ID"
+                type="text"
                 name="clinic"
-                label="Clinic"
-                value={formData.clinic}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
+                value={formValues.clinic}
+                onChange={handleInputChange}
             />
             <TextField
-                name="assignedGP"
                 label="Assigned GP"
-                value={formData.assignedGP}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                name="notes"
-                label="Notes"
-                value={formData.notes}
-                onChange={handleChange}
-                multiline
-                rows={4}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                name="prescriptionsIssued"
-                label="Prescriptions Issued"
-                value={formData.prescriptionsIssued}
-                onChange={handleChange}
-                fullWidth
-                margin="normal"
+                type="text"
+                name="assignedGP"
+                value={formValues.assignedGP}
+                onChange={handleInputChange}
             />
             <Button type="submit" variant="contained" color="primary">
-                {isUpdateMode ? 'Update Appointment' : 'Create Appointment'}
+                Create Appointment
             </Button>
-        </form>
+        </Box>
     );
 };
 
-export default Appointment;
+export default AppointmentForm;

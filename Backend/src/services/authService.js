@@ -1,8 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
-import Admin from '../models/Admin.js'; // Import the Admin model
+import Admin from '../models/Admin.js';
 
-// Register a new user
 export const register = async (userData) => {
     const {
         email,
@@ -21,15 +20,12 @@ export const register = async (userData) => {
         insurance,
     } = userData;
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new Error('User already exists');
 
-    // Hash the password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create a new user
     const user = new User({
         email,
         password: hashedPassword,
@@ -51,39 +47,31 @@ export const register = async (userData) => {
     return user;
 };
 
-// Log in a user
 export const login = async ({ email, password }) => {
-    // Try to find the user in the User database
     let user = await User.findOne({ email }).select('+password');
     if (!user) {
-        // If not found, try to find the user in the Admin database
         user = await Admin.findOne({ email }).select('+password');
     }
     if (!user) throw new Error('User not found');
 
-    // Compare the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error('Invalid credentials');
 
     return user;
 };
 
-// Read a user
 export const readUser = async (id) => {
-    const user = await User.findById(id).select('-password'); // Exclude the password field
+    const user = await User.findById(id).select('-password');
     if (!user) throw new Error('User not found');
     return user;
 };
 
-// Update a user
 export const updateUser = async (id, updateData) => {
     const user = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password'); // Exclude the password field
     if (!user) throw new Error('User not found');
     return user;
 };
 
-// Logout a user
 export const logout = () => {
-    // Perform logout actions if any (e.g., token blacklist, session destroy, etc.)
     return { message: 'Successfully logged out' };
 };

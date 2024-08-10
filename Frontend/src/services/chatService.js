@@ -1,4 +1,3 @@
-// chatService.js
 import axiosApiInstance from '../utils/axiosInstance';
 
 export const sendChatMessage = async (message, authToken) => {

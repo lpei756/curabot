@@ -5,14 +5,13 @@ export const createAppointment = async (req, res) => {
   try {
     const appointmentData = req.body;
     const userId = req.user?.user?._id;
-    const userRole = req.user?.user?.role; // Extract role from the user object
+    const userRole = req.user?.user?.role;
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Exclude notes and prescriptionsIssued if the user is a patient
     if (userRole !== 'doctor' && userRole !== 'nurse') {
       delete appointmentData.notes;
       delete appointmentData.prescriptionsIssued;
@@ -53,11 +52,9 @@ export const readAppointment = async (req, res) => {
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
-    // Fetch the user to get their patient ID
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Use the service to read the appointment
     const result = await readAppointmentService(appointmentId, user.patientID);
 
     if (result.error) {
@@ -71,7 +68,6 @@ export const readAppointment = async (req, res) => {
   }
 };
 
-
 export const updateAppointment = async (req, res) => {
   try {
     const appointmentId = req.params.id;
@@ -80,11 +76,9 @@ export const updateAppointment = async (req, res) => {
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
-    // Fetch the user to get their patient ID
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Use the service to update the appointment
     const result = await updateAppointmentService(appointmentId, updateData, user.patientID);
 
     if (result.error) {

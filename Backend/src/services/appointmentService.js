@@ -33,7 +33,6 @@ export const createAppointment = async ({
       return { error: true, status: 404, message: 'Clinic not found' };
     }
 
-    // Check if doctor exists in the selected clinic
     const doctor = await Doctor.findOne({ doctorID: assignedGP, clinic });
     if (!doctor) {
       return { error: true, status: 404, message: 'Doctor not found for the selected clinic' };
@@ -55,8 +54,9 @@ export const createAppointment = async ({
     await newAppointment.save();
     return { error: false, appointment: newAppointment };
   } catch (error) {
-    console.error('Error creating appointment in service:', error);
-    return { error: true, status: 500, message: 'Internal server error' };
+    const errorMessage = error.response?.data?.message || 'An error occurred';
+    console.error('Error creating appointment:', errorMessage);
+    alert(errorMessage);
   }
 };
 
@@ -96,7 +96,6 @@ export const updateAppointment = async (appointmentId, updateData, patientID) =>
 
 export const deleteAppointment = async (appointmentId) => {
   try {
-    // Use findByIdAndDelete to directly delete the appointment
     const appointment = await Appointment.findByIdAndDelete(appointmentId);
 
     if (!appointment) {

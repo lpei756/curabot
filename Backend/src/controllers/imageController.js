@@ -1,6 +1,5 @@
 import { saveImage as saveImageService, getImagesByUser, deleteImage } from '../services/imageService.js';
 
-// 保存图片
 export const saveImage = async (req, res) => {
     try {
         const { userId, imageUrl } = req.body;
@@ -11,7 +10,6 @@ export const saveImage = async (req, res) => {
     }
 };
 
-// 获取用户的所有图片
 export const getUserImages = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -22,7 +20,6 @@ export const getUserImages = async (req, res) => {
     }
 };
 
-// 删除图片
 export const removeImage = async (req, res) => {
     try {
         const { imageId } = req.params;

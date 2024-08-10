@@ -78,11 +78,11 @@ const updateUserSchema = Joi.object({
 
 const createAppointmentSchema = Joi.object({
     dateTime: Joi.date().required(),
-    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Emergency').required(),
+    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Urgent').required(),
     purposeOfVisit: Joi.string().required(),
     clinic: Joi.string().required(),
     assignedGP: Joi.string().required(),
-    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').required(),
+    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').optional(),
     notes: Joi.string().optional(),
     prescriptionsIssued: Joi.string().optional()
 });

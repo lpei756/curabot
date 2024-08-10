@@ -24,4 +24,3 @@ AppointmentSchema.pre('save', async function (next) {
 
 const AppointmentModel = mongoose.model('Appointment', AppointmentSchema);
 export default AppointmentModel;
-

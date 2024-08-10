@@ -1,4 +1,3 @@
-// App.jsx
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import './App.css';
@@ -15,7 +14,6 @@ function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
-
   const toggleChatbot = () => {
     setIsChatbotOpen(!isChatbotOpen);
   }
@@ -24,13 +22,12 @@ function App() {
     setIsRegisterOpen(!isRegisterOpen);
   };
 
-
   return (
     <AuthProvider>
       <Router>
         <div className="app-container">
-        <AppHeader toggleRegister={toggleRegister} />
-        {isRegisterOpen && <Register onClose={toggleRegister} />}
+          <AppHeader toggleRegister={toggleRegister} />
+          {isRegisterOpen && <Register onClose={toggleRegister} />}
           {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
           <IconButton
             className="chatbot-button"
@@ -52,8 +49,8 @@ function App() {
           >
             {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
           </IconButton>
-          <Routes> {/* Use Routes instead of Switch */}
-            <Route path="/appointment/new" element={<Appointment />} /> {/* Use element with JSX */}
+          <Routes>
+            <Route path="/appointment/new" element={<Appointment />} />
             <Route path="/appointment/edit/:id" element={<Appointment />} />
           </Routes>
         </div>

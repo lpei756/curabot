@@ -1,4 +1,3 @@
-// middlewares/adminAuthorization.js
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
 
@@ -13,7 +12,6 @@ const adminAuthorization = (roles) => async (req, res, next) => {
 
     console.log('Decoded:', decoded);
 
-    // Check if the user is an admin and if their role is allowed
     const admin = await Admin.findById(decoded.user._id);
 
     console.log('Admin:', admin);
