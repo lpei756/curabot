@@ -78,17 +78,17 @@ function ChatBot({ isOpen, toggleChatbot }) {
         }
     };
 
-        const handleQuickChat = (message) => {
-            handleSend(null, message);
-        };
+    const handleQuickChat = (message) => {
+        handleSend(null, message);
+    };
 
     return (
         <Draggable nodeRef={nodeRef}>
-            <Box 
+            <Box
                 ref={nodeRef}
-                className="chatbot-container" 
-                sx={{ 
-                    width: '400px', 
+                className="chatbot-container"
+                sx={{
+                    width: '400px',
                     height: '600px',
                     position: 'fixed',
                     bottom: '20px',
@@ -100,17 +100,17 @@ function ChatBot({ isOpen, toggleChatbot }) {
                 }}
             >
                 <Box display="flex" flexDirection="column" height="100%">
-                    <AppBar position="static" sx={{ 
-                        backgroundColor: '#7AE0F2', 
-                        boxShadow: 'none', 
-                        borderTopLeftRadius: '20px', 
+                    <AppBar position="static" sx={{
+                        backgroundColor: '#7AE0F2',
+                        boxShadow: 'none',
+                        borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px',
                         height: '60px'
                     }}>
                         <Toolbar sx={{ justifyContent: 'space-between', position: 'relative' }}>
                             <Box sx={{ flex: 1 }} />
-                            <Typography variant="h6" sx={{ 
-                                fontWeight: 'bold', 
+                            <Typography variant="h6" sx={{
+                                fontWeight: 'bold',
                                 color: 'white',
                                 position: 'absolute',
                                 left: '50%',
@@ -134,13 +134,13 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                 justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
                             >
                                 {msg.type === 'bot' && (
-                                    <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{ 
-                                        width: 40, 
+                                    <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{
+                                        width: 40,
                                         height: 40,
                                         bgcolor: '#5BC0DE',
                                         '& .MuiAvatar-img': {
-                                            objectFit: 'cover', 
-                                            width: '100%',  
+                                            objectFit: 'cover',
+                                            width: '100%',
                                             height: '100%',
                                             p: 0.5,
                                         }
@@ -176,9 +176,9 @@ function ChatBot({ isOpen, toggleChatbot }) {
                         <IconButton onClick={() => scroll(-100)} size="small">
                             <ChevronLeftIcon />
                         </IconButton>
-                        <Box 
+                        <Box
                             ref={scrollContainerRef}
-                            sx={{ 
+                            sx={{
                                 display: 'flex',
                                 overflowX: 'hidden',
                                 flexGrow: 1,
@@ -192,7 +192,7 @@ function ChatBot({ isOpen, toggleChatbot }) {
                                     key={index}
                                     label={chat}
                                     onClick={() => handleQuickChat(chat)}
-                                    sx={{ 
+                                    sx={{
                                         mr: 1,
                                         bgcolor: '#7AE0F2',
                                         color: 'white',
@@ -209,15 +209,15 @@ function ChatBot({ isOpen, toggleChatbot }) {
                         </IconButton>
                     </Box>
 
-                    <Paper component="form" onSubmit={handleSend} elevation={0} sx={{ 
-                            p: 2, 
-                            display: 'flex', 
-                            alignItems: 'center',
-                            bgcolor: 'white',
-                            borderTop: '1px solid #e0e0e0' 
-                            }}
+                    <Paper component="form" onSubmit={handleSend} elevation={0} sx={{
+                        p: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        bgcolor: 'white',
+                        borderTop: '1px solid #e0e0e0'
+                    }}
                     >
-                        
+
                         <IconButton color="primary" aria-label="add">
                             <AttachFileRoundedIcon />
                         </IconButton>
@@ -234,14 +234,14 @@ function ChatBot({ isOpen, toggleChatbot }) {
                         />
                         {inputValue.trim() !== '' && (
                             <IconButton type="submit" color="primary" aria-label="send" disabled={inputValue.trim() === ''}
-                            sx={{
-                                bgcolor: inputValue.trim() !== '' ? '#7AE0F2' : 'transparent',
-                                color: inputValue.trim() !== '' ? 'white' : 'inherit',
-                                '&:hover': {
-                                    bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
-                                },
-                                transition: 'all 0.3s ease',
-                            }}>
+                                sx={{
+                                    bgcolor: inputValue.trim() !== '' ? '#7AE0F2' : 'transparent',
+                                    color: inputValue.trim() !== '' ? 'white' : 'inherit',
+                                    '&:hover': {
+                                        bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
+                                    },
+                                    transition: 'all 0.3s ease',
+                                }}>
                                 <SendRoundedIcon />
                             </IconButton>
                         )}

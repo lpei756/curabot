@@ -6,7 +6,6 @@ export const handleChat = async (req, res) => {
     const userMessage = req.body.message;
     const authToken = req.headers.authorization;
 
-    // Define appointment request keywords
     const appointmentRequestKeywords = [
       'show my appointments',
       'list my appointments',
@@ -14,7 +13,6 @@ export const handleChat = async (req, res) => {
       'appointments',
     ];
 
-    // If user message includes keywords for appointments
     if (appointmentRequestKeywords.some(keyword => userMessage.toLowerCase().includes(keyword))) {
       if (!authToken) {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.' });
@@ -29,7 +27,6 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    // Process general chat with OpenAI if not an appointment request
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
       res.json({ reply: aiResponse });

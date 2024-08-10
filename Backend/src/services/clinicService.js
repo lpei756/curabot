@@ -2,7 +2,6 @@ import Clinic from '../models/Clinic.js';
 
 export const getClinicByIdService = async (clinicId) => {
   try {
-    // Fetch clinic by ID
     const clinic = await Clinic.findById(clinicId);
 
     if (!clinic) {
@@ -18,7 +17,7 @@ export const getClinicByIdService = async (clinicId) => {
 
 export const getAllClinics = async () => {
   try {
-    const clinics = await Clinic.find({}).populate('doctors'); // Populate doctors for each clinic
+    const clinics = await Clinic.find({}).populate('doctors');
     return clinics;
   } catch (error) {
     console.error('Error fetching clinics:', error);

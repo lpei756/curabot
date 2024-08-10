@@ -25,4 +25,4 @@ export function extractUserIdFromToken(token) {
   } catch (error) {
     throw new Error('Invalid token');
   }
-}
+};

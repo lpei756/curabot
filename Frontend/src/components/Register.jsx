@@ -294,7 +294,6 @@ const Register = ({ onClose }) => {
     );
 };
 
-// Add PropTypes validation
 Register.propTypes = {
     onClose: PropTypes.func.isRequired,
 };

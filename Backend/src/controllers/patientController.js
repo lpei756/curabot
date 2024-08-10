@@ -1,4 +1,3 @@
-// controllers/patientController.js
 import UserModel from '../models/User.js';
 
 export const getAllPatients = async (req, res) => {

@@ -2,7 +2,6 @@ import Doctor from '../models/Doctor.js';
 
 export const getDoctorByIdService = async (doctorId) => {
   try {
-    // Fetch doctor by ID
     const doctor = await Doctor.findById(doctorId);
 
     if (!doctor) {

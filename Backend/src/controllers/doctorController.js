@@ -1,5 +1,6 @@
 import Clinic from '../models/Clinic.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
+
 export const getDoctorsByClinic = async (req, res) => {
   const { clinicId } = req.params;
   try {
@@ -11,6 +12,7 @@ export const getDoctorsByClinic = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 export const getDoctorById = async (req, res) => {
   try {
     const { id } = req.params;

@@ -39,5 +39,5 @@ export const IMAGE_PATHS = {
 };
 
 export const ADMIN_PATHS = {
-  getAllPatients: '/patients',
+  getAllPatients: '/patients'
 };

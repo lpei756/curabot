@@ -1,6 +1,5 @@
 import Image from '../models/Image.js';
 
-// 保存图片
 export const saveImage = async (userId, imageUrl) => {
     try {
         if (!userId || !imageUrl) {
@@ -19,7 +18,6 @@ export const saveImage = async (userId, imageUrl) => {
     }
 };
 
-// 获取用户的所有图片
 export const getImagesByUser = async (userId) => {
     try {
         const images = await Image.find({ userId }).sort({ createdAt: -1 });
@@ -29,7 +27,6 @@ export const getImagesByUser = async (userId) => {
     }
 };
 
-// 根据图片ID删除图片
 export const deleteImage = async (imageId) => {
     try {
         const deletedImage = await Image.findByIdAndDelete(imageId);
