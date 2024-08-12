@@ -21,15 +21,15 @@ const UserSchema = new mongoose.Schema({
     relationship: { type: String, required: true },
   },
   medicalHistory: {
-    chronicDiseases: { type: String, required: true, enum: ['No', 'Other'] },
-    pastSurgeries: { type: String, required: true, enum: ['No', 'Other'] },
-    familyMedicalHistory: { type: String, required: true, enum: ['No', 'Other'] },
-    medicationList: { type: String, required: true, enum: ['No', 'Other'] },
-    allergies: { type: String, required: true, enum: ['No', 'Other'] },
+    chronicDiseases: { type: String, required: true },
+    pastSurgeries: { type: String, required: true },
+    familyMedicalHistory: { type: String, required: true },
+    medicationList: { type: String, required: true },
+    allergies: { type: String, required: true },
   },
   gp: { type: String, default: 'Not assigned' },
   insurance: {
-    provider: { type: String, required: true, enum: ['No', 'Other'] },
+    provider: { type: String, required: true },
     policyNumber: { type: String },
   },
   appointments: [{

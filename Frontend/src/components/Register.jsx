@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
+import { register } from '../services/authService';
 
-const Register = ({ onClose }) => {
+const Register = ({ onClose, onSuccess }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         middleName: '',
@@ -15,30 +16,78 @@ const Register = ({ onClose }) => {
         phone: '',
         email: '',
         password: '',
-        emergencyContactName: '',
-        emergencyContactPhone: '',
-        emergencyContactRelationship: '',
-        chronicDiseases: '',
-        pastSurgeries: '',
-        familyMedicalHistory: '',
-        medicationList: '',
-        allergies: '',
-        gp: '',
-        insuranceProvider: '',
-        policyNumber: '',
+        emergencyContact: {
+            name: '',
+            phone: '',
+            relationship: ''
+        },
+        medicalHistory: {
+            chronicDiseases: '',
+            pastSurgeries: '',
+            familyMedicalHistory: '',
+            medicationList: '',
+            allergies: ''
+        },
+        insurance: {
+            provider: '',
+            policyNumber: ''
+        },
     });
 
+    const [error, setError] = useState(null);
+
     const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value,
-        });
+        const { name, value } = e.target;
+
+        // Handle nested fields
+        const nameParts = name.split('.');
+        if (nameParts.length > 1) {
+            setFormData((prevData) => ({
+                ...prevData,
+                [nameParts[0]]: {
+                    ...prevData[nameParts[0]],
+                    [nameParts[1]]: value,
+                },
+            }));
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log('Form Data:', formData);
-        onClose();
+        // Convert dateOfBirth from string to Date object
+        const convertedFormData = {
+            ...formData,
+            dateOfBirth: new Date(formData.dateOfBirth),  // Convert dateOfBirth to Date object
+        };
+        // Log each form field's value and its data type
+        Object.entries(convertedFormData).forEach(([key, value]) => {
+            if (typeof value === 'object' && value !== null) {
+                // Log the nested object fields
+                console.log(`Field: ${key}, Value: ${JSON.stringify(value)}, Data Type: ${typeof value}`);
+                Object.entries(value).forEach(([nestedKey, nestedValue]) => {
+                    console.log(`  - Nested Field: ${nestedKey}, Value: ${nestedValue}, Data Type: ${typeof nestedValue}`);
+                });
+            } else {
+                // Log the top-level fields
+                console.log(`Field: ${key}, Value: ${value}, Data Type: ${typeof value}`);
+            }
+        });
+        try {
+            const data = await register(convertedFormData);
+            console.log('Registered user:', data);
+            if (onSuccess) {
+                onSuccess(data.user); // Pass the user data to the parent component
+            }
+            onClose();
+        } catch (err) {
+            console.error('Error during registration:', err);
+            setError('Registration failed. Please try again.');
+        }
     };
 
     return (
@@ -176,8 +225,8 @@ const Register = ({ onClose }) => {
             <TextField
                 label="Emergency Contact Name"
                 variant="standard"
-                name="emergencyContactName"
-                value={formData.emergencyContactName}
+                name="emergencyContact.name"
+                value={formData.emergencyContact.name}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -186,8 +235,8 @@ const Register = ({ onClose }) => {
             <TextField
                 label="Emergency Contact Phone"
                 variant="standard"
-                name="emergencyContactPhone"
-                value={formData.emergencyContactPhone}
+                name="emergencyContact.phone"
+                value={formData.emergencyContact.phone}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -196,93 +245,80 @@ const Register = ({ onClose }) => {
             <TextField
                 label="Emergency Contact Relationship"
                 variant="standard"
-                name="emergencyContactRelationship"
-                value={formData.emergencyContactRelationship}
+                name="emergencyContact.relationship"
+                value={formData.emergencyContact.relationship}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
                 required
             />
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Chronic Diseases</InputLabel>
-                <Select
-                    name="chronicDiseases"
-                    value={formData.chronicDiseases}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Past Surgeries</InputLabel>
-                <Select
-                    name="pastSurgeries"
-                    value={formData.pastSurgeries}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Family Medical History</InputLabel>
-                <Select
-                    name="familyMedicalHistory"
-                    value={formData.familyMedicalHistory}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Medication List</InputLabel>
-                <Select
-                    name="medicationList"
-                    value={formData.medicationList}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Allergies</InputLabel>
-                <Select
-                    name="allergies"
-                    value={formData.allergies}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
             <TextField
-                label="GP"
+                label="Chronic Diseases"
                 variant="standard"
-                name="gp"
-                value={formData.gp}
+                name="medicalHistory.chronicDiseases"
+                placeholder="Enter details or type 'No'"
+                value={formData.medicalHistory.chronicDiseases}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
+                required
+            /><TextField
+                label="Past Surgeries"
+                variant="standard"
+                name="medicalHistory.pastSurgeries"
+                placeholder="Enter details or type 'No'"
+                value={formData.medicalHistory.pastSurgeries}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
             />
-            <FormControl variant="standard" fullWidth margin="normal" required>
-                <InputLabel>Insurance Provider</InputLabel>
-                <Select
-                    name="insuranceProvider"
-                    value={formData.insuranceProvider}
-                    onChange={handleChange}
-                >
-                    <MenuItem value="No">No</MenuItem>
-                    <MenuItem value="Other">Other</MenuItem>
-                </Select>
-            </FormControl>
+            <TextField
+                label="Family Medical History"
+                variant="standard"
+                name="medicalHistory.familyMedicalHistory"
+                placeholder="Enter details or type 'No'"
+                value={formData.medicalHistory.familyMedicalHistory}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+            /><TextField
+                label="Medication List"
+                variant="standard"
+                name="medicalHistory.medicationList"
+                placeholder="Enter details or type 'No'"
+                value={formData.medicalHistory.medicationList}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+            /><TextField
+                label="Allergies"
+                variant="standard"
+                name="medicalHistory.allergies"
+                placeholder="Enter details or type 'No'"
+                value={formData.medicalHistory.allergies}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+            /><TextField
+                label="Insurance Provider"
+                variant="standard"
+                name="insurance.provider"
+                placeholder="Enter details or type 'No'"
+                value={formData.insurance.provider}
+                onChange={handleChange}
+                fullWidth
+                margin="normal"
+                required
+            />
             <TextField
                 label="Policy Number"
                 variant="standard"
-                name="policyNumber"
-                value={formData.policyNumber}
+                name="insurance.policyNumber"
+                value={formData.insurance.policyNumber}
                 onChange={handleChange}
                 fullWidth
                 margin="normal"
@@ -296,6 +332,7 @@ const Register = ({ onClose }) => {
 
 Register.propTypes = {
     onClose: PropTypes.func.isRequired,
+    onSuccess: PropTypes.func,
 };
 
 export default Register;
