@@ -10,7 +10,7 @@ const AppointmentSchema = new mongoose.Schema({
   purposeOfVisit: { type: String, required: true },
   assignedGP: { type:String, required: true },
   clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-  status: { type: String, default: 'Scheduled' },
+  status: { type: String, default: 'scheduled', enum: ['scheduled', 'cancelled'] },
   notes: { type: String },
   prescriptionsIssued: { type: String },
 });

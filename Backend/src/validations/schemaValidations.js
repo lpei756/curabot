@@ -4,7 +4,6 @@ import { AUTH_PATHS, APPOINTMENT_PATHS, buildPathWithBase } from '../routes/path
 const authPathBase = buildPathWithBase(AUTH_PATHS);
 const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 
-// Define Joi schema validations for different routes
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
@@ -82,7 +81,7 @@ const createAppointmentSchema = Joi.object({
     purposeOfVisit: Joi.string().required(),
     clinic: Joi.string().required(),
     assignedGP: Joi.string().required(),
-    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').optional(),
+    status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
     notes: Joi.string().optional(),
     prescriptionsIssued: Joi.string().optional()
 });
@@ -97,12 +96,11 @@ const updateAppointmentSchema = Joi.object({
     purposeOfVisit: Joi.string().optional(),
     clinic: Joi.string().optional(),
     assignedGP: Joi.string().optional(),
-    status: Joi.string().valid('Confirmed', 'Pending', 'Cancelled').optional(),
+    status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
     notes: Joi.string().optional(),
     prescriptionsIssued: Joi.string().optional()
 });
 
-// Export the schema validations
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
