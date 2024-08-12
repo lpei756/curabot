@@ -9,7 +9,7 @@ export const createAppointment = async ({
   purposeOfVisit,
   clinic,
   assignedGP,
-  status,
+  status = 'scheduled',
   notes,
   prescriptionsIssued,
   patientID,
@@ -111,15 +111,32 @@ export const updateAppointment = async (appointmentId, updateData, patientID) =>
 
 export const deleteAppointment = async (appointmentId) => {
   try {
-    const appointment = await Appointment.findOneAndDelete({ appointmentID: appointmentId });
+    const appointment = await Appointment.findOneAndUpdate(
+      { appointmentID: appointmentId },
+      { status: 'cancelled' },
+      { new: true }
+    );
 
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };
     }
 
-    return { error: false, message: 'Appointment successfully deleted' };
+    const user = await User.findOne({ 'appointments.appointmentID': appointmentId });
+
+    if (user) {
+      await User.updateOne(
+        { 'appointments.appointmentID': appointmentId },
+        {
+          $set: {
+            'appointments.$.status': 'cancelled'
+          }
+        }
+      );
+    }
+
+    return { error: false, message: 'Appointment cancelled successfully' };
   } catch (error) {
-    console.error('Error deleting appointment in service:', error);
+    console.error('Error cancelling appointment in service:', error);
     return { error: true, status: 500, message: 'Internal server error' };
   }
 };

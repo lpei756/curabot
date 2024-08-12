@@ -111,11 +111,11 @@ export const updateAppointment = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-// src/controllers/appointmentController.js
+
 export const deleteAppointment = async (req, res) => {
   try {
     const { appointmentID } = req.params;
-    console.log(`Attempting to delete appointment with ID: ${appointmentID}`); // Add logging
+    console.log(`Attempting to cancel appointment with ID: ${appointmentID}`);
 
     const result = await deleteAppointmentService(appointmentID);
 
@@ -123,9 +123,9 @@ export const deleteAppointment = async (req, res) => {
       return res.status(result.status).json({ message: result.message });
     }
 
-    res.status(200).json({ message: 'Appointment deleted successfully' });
+    res.status(200).json({ message: 'Appointment cancelled successfully' });
   } catch (error) {
-    console.error('Error deleting appointment:', error);
+    console.error('Error cancelling appointment:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };

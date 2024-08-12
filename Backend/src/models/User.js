@@ -32,11 +32,14 @@ const UserSchema = new mongoose.Schema({
     provider: { type: String, required: true, enum: ['No', 'Other'] },
     policyNumber: { type: String },
   },
-  appointments: [
-    { appointmentID: String, date: Date },
-  ],
+  appointments: [{
+    appointmentID: String,
+    date: Date,
+    status: { type: String, default: 'scheduled', enum: ['scheduled', 'cancelled'] }
+  }],
   images: [{ type: String }],
 });
+
 UserSchema.pre('save', async function (next) {
   if (this.isNew) {
     this.patientID = crypto.randomInt(100000, 1000000).toString();
