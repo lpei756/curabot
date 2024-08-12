@@ -10,7 +10,7 @@ export const API_PATH = {
   },
   appointment: {
     create: buildApiPath('/api/appointments/create'),
-    delete: buildApiPath('/api/appointments/:id'), // Ensure this matches
+    delete: buildApiPath('/api/appointments/:id'),
     read: buildApiPath('/api/appointments/:id'),
     update: buildApiPath('/api/appointments/:id'),
     all: buildApiPath('/api/appointments')
