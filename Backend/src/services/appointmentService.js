@@ -60,9 +60,24 @@ export const createAppointment = async ({
   }
 };
 
+export const getAppointmentsForUser = async (patientID) => {
+  try {
+    if (typeof patientID !== 'string') {
+      throw new Error('Invalid patientID format');
+    }
+
+    const appointments = await Appointment.find({ patientID });
+
+    return appointments;
+  } catch (error) {
+    console.error('Error fetching appointments in service:', error);
+    throw new Error('Internal server error');
+  }
+};
+
 export const readAppointment = async (appointmentId, patientID) => {
   try {
-    const appointment = await Appointment.findOne({ _id: appointmentId, patientID });
+    const appointment = await Appointment.findOne({ appointmentID: appointmentId, patientID });
 
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };
@@ -78,7 +93,7 @@ export const readAppointment = async (appointmentId, patientID) => {
 export const updateAppointment = async (appointmentId, updateData, patientID) => {
   try {
     const appointment = await Appointment.findOneAndUpdate(
-      { _id: appointmentId, patientID },
+      { appointmentID: appointmentId, patientID },
       updateData,
       { new: true }
     );
@@ -96,7 +111,7 @@ export const updateAppointment = async (appointmentId, updateData, patientID) =>
 
 export const deleteAppointment = async (appointmentId) => {
   try {
-    const appointment = await Appointment.findByIdAndDelete(appointmentId);
+    const appointment = await Appointment.findOneAndDelete({ appointmentID: appointmentId });
 
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };

@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import { createAppointment as createAppointmentService, readAppointment as readAppointmentService, updateAppointment as updateAppointmentService, deleteAppointment as deleteAppointmentService } from '../services/appointmentService.js';
+import { createAppointment as createAppointmentService, readAppointment as readAppointmentService, updateAppointment as updateAppointmentService, deleteAppointment as deleteAppointmentService, getAppointmentsForUser } from '../services/appointmentService.js';
 
 export const createAppointment = async (req, res) => {
   try {
@@ -47,7 +47,7 @@ export const createAppointment = async (req, res) => {
 
 export const readAppointment = async (req, res) => {
   try {
-    const appointmentId = req.params.id;
+    const { appointmentID } = req.params;
     const userId = req.user?.user?._id;
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
@@ -55,7 +55,7 @@ export const readAppointment = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const result = await readAppointmentService(appointmentId, user.patientID);
+    const result = await readAppointmentService(appointmentID, user.patientID);
 
     if (result.error) {
       return res.status(result.status).json({ message: result.message });
@@ -68,9 +68,29 @@ export const readAppointment = async (req, res) => {
   }
 };
 
+export const fetchAllAppointments = async (req, res) => {
+  try {
+    const userId = req.user?.user?._id;
+    if (!userId) return res.status(401).json({ message: 'User not authenticated' });
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const patientID = user.patientID;
+    if (!patientID) return res.status(400).json({ message: 'Patient ID not found' });
+
+    const appointments = await getAppointmentsForUser(patientID);
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error fetching appointments:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
 export const updateAppointment = async (req, res) => {
   try {
-    const appointmentId = req.params.id;
+    const { appointmentID } = req.params;
     const updateData = req.body;
     const userId = req.user?.user?._id;
 
@@ -79,7 +99,7 @@ export const updateAppointment = async (req, res) => {
     const user = await User.findById(userId);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const result = await updateAppointmentService(appointmentId, updateData, user.patientID);
+    const result = await updateAppointmentService(appointmentID, updateData, user.patientID);
 
     if (result.error) {
       return res.status(result.status).json({ message: result.message });
@@ -91,20 +111,21 @@ export const updateAppointment = async (req, res) => {
     res.status(500).json({ message: 'Internal server error' });
   }
 };
-
+// src/controllers/appointmentController.js
 export const deleteAppointment = async (req, res) => {
-    try {
-      const { appointmentId } = req.params;
+  try {
+    const { appointmentID } = req.params;
+    console.log(`Attempting to delete appointment with ID: ${appointmentID}`); // Add logging
 
-      const result = await deleteAppointmentService(appointmentId);
+    const result = await deleteAppointmentService(appointmentID);
 
-      if (result.error) {
-        return res.status(result.status).json({ message: result.message });
-      }
-
-      res.status(200).json({ message: 'Appointment deleted successfully' });
-    } catch (error) {
-      console.error('Error deleting appointment:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    if (result.error) {
+      return res.status(result.status).json({ message: result.message });
     }
-  };
+
+    res.status(200).json({ message: 'Appointment deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting appointment:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
