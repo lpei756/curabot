@@ -1,5 +1,5 @@
 import express from 'express';
-import { createAppointment, readAppointment, updateAppointment, deleteAppointment } from '../controllers/appointmentController.js';
+import { fetchAllAppointments, createAppointment, readAppointment, updateAppointment, deleteAppointment } from '../controllers/appointmentController.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
 import { APPOINTMENT_PATHS, buildPathWithBase } from './path.js';
@@ -12,5 +12,6 @@ router.post(APPOINTMENT_PATHS.create, authenticate, schemaValidator(appointmentP
 router.get(APPOINTMENT_PATHS.read, authenticate, schemaValidator(appointmentPathBase.read), readAppointment);
 router.put(APPOINTMENT_PATHS.update, authenticate, schemaValidator(appointmentPathBase.update), updateAppointment);
 router.delete(APPOINTMENT_PATHS.delete, authenticate, deleteAppointment);
+router.get(APPOINTMENT_PATHS.all, authenticate, fetchAllAppointments);
 
 export default router;

@@ -8,7 +8,9 @@ import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import { AuthProvider } from './context/AuthContext';
-import Appointment from './components/Appointment';
+import Appointment from './components/createAppointment';
+import ReadAppointment from './components/readAppointment';
+import AppointmentList from './components/AppointmentList';
 
 function App() {
   const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -51,7 +53,8 @@ function App() {
           </IconButton>
           <Routes>
             <Route path="/appointment/new" element={<Appointment />} />
-            <Route path="/appointment/edit/:id" element={<Appointment />} />
+            <Route path="/appointment" element={<AppointmentList />} />
+            <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
           </Routes>
         </div>
       </Router>

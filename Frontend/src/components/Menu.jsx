@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
 import ReadUser from './ReadUser.jsx';
 import UpdateUser from './UpdateUser.jsx';
-import Appointment from './Appointment';
+import Appointment from './createAppointment';
 
 const UserOptionsList = ({ options, userId }) => {
     const [selectedOption, setSelectedOption] = useState(null);

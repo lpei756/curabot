@@ -14,9 +14,10 @@ export const AUTH_PATHS = {
 
 export const APPOINTMENT_PATHS = {
   create: '/create',
-  read: '/:id',
-  update: '/:id/update',
-  delete: '/:appointmentId'
+  read: '/:appointmentID',
+  update: '/:appointmentID/update',
+  delete: '/:appointmentID',
+  all: '/'
 };
 
 export const CLINIC_PATHS = {

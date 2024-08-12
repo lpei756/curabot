@@ -9,7 +9,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Login from './Login';
-import UserOptionsList from './List';
+import UserOptionsList from './Menu';
 import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
 import '../App.css';
