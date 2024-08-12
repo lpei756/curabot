@@ -16,3 +16,15 @@ export const login = async (email, password) => {
     throw error;
   }
 };
+
+export const register = async (userData) => {
+  try {
+    const url = API_PATH.auth.register;
+    console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+    const response = await axiosApiInstance.post(url, userData);
+    return response.data;
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  }
+};
