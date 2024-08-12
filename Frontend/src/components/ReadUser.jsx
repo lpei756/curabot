@@ -5,23 +5,26 @@ import { Typography, Box, Divider } from '@mui/material';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axiosApiInstance.get(`/auth/user/${userId}`);
-                setUserData(response.data.user); // 访问response.data.user，因为Postman返回的数据包含user字段
-            } catch (error) {
-                console.error('Error fetching user data:', error);
+                const response = await axiosApiInstance.get(`/api/auth/user/${userId}`);
+                setUserData(response.data.user);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchUserData();
     }, [userId]);
 
-    if (!userData) {
-        return <Typography>Loading...</Typography>;
-    }
+    if (loading) return <Typography>Loading...</Typography>;
+    if (error) return <Typography>Error: {error}</Typography>;
 
     return (
         <Box>
