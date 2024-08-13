@@ -92,7 +92,7 @@ function AppHeader() {
               >
                 <MenuIcon sx={{ color: 'black' }} />
               </MenuIconButton>
-
+              <Link to="/">
               <Typography
                 variant="h5"
                 noWrap
@@ -111,6 +111,7 @@ function AppHeader() {
                 <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
                 FRW Healthcare
               </Typography>
+              </Link>
             </Box>
 
             {isLoggedIn ? (
