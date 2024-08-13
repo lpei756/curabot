@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import { createAppointment } from '../services/appointmentService';
+import { getClinics } from '../services/clinicService'; // Service to fetch clinics
+import { getDoctorsByClinic } from '../services/doctorService'; // Service to fetch doctors
 
 const AppointmentForm = () => {
     const [formValues, setFormValues] = useState({
@@ -14,6 +16,43 @@ const AppointmentForm = () => {
         assignedGP: '',
     });
 
+    const [clinics, setClinics] = useState([]);
+    const [doctors, setDoctors] = useState([]);
+
+    useEffect(() => {
+        // Fetch clinics from the server when the component mounts
+        const fetchClinics = async () => {
+            try {
+                const clinicsData = await getClinics();
+                setClinics(clinicsData);
+            } catch (error) {
+                console.error('Error fetching clinics:', error.message);
+            }
+        };
+
+        fetchClinics();
+    }, []);
+
+    useEffect(() => {
+        // Fetch doctors when a clinic is selected
+        if (formValues.clinic) {
+            const fetchDoctors = async () => {
+                try {
+                    const doctorsData = await getDoctorsByClinic(formValues.clinic);
+                    console.log('Doctors data:', doctorsData); // Inspect the response
+                    setDoctors(doctorsData);
+                } catch (error) {
+                    console.error('Error fetching doctors:', error.message);
+                    setDoctors([]); // Set doctors to an empty array in case of error
+                }
+            };
+
+            fetchDoctors();
+        } else {
+            setDoctors([]);
+        }
+    }, [formValues.clinic]);
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormValues({
@@ -22,15 +61,45 @@ const AppointmentForm = () => {
         });
     };
 
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            const createdAppointment = await createAppointment(formValues);
-            console.log('Appointment created:', createdAppointment);
-        } catch (error) {
-            console.error('Error saving appointment:', error.message);
+    // Example validation on form submission
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+      
+        const { dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP } = formValues;
+      
+        if (!dateTime || !typeOfVisit || !purposeOfVisit || !clinic || !assignedGP) {
+          console.error('All fields are required');
+          return;
         }
-    };
+      
+        // Check if selected clinic and doctor are valid
+        if (!clinics.some(c => c._id === clinic)) {
+          console.error('Selected clinic is not valid');
+          return;
+        }
+      
+        if (!doctors.some(d => d.doctorID === assignedGP)) {
+          console.error('Selected GP is not valid');
+          return;
+        }
+      
+        const appointmentData = {
+          dateTime,
+          typeOfVisit,
+          purposeOfVisit,
+          clinic,
+          assignedGP,
+        };
+      
+        console.log('Submitting Appointment Data:', appointmentData);
+      
+        try {
+          const result = await createAppointment(appointmentData);
+          console.log('Appointment Created:', result);
+        } catch (error) {
+          console.error('Error saving appointment:', error.response ? error.response.data : error.message);
+        }
+      };
 
     return (
         <Box
@@ -68,19 +137,33 @@ const AppointmentForm = () => {
                 onChange={handleInputChange}
             />
             <TextField
-                label="Clinic ID"
-                type="text"
+                select
+                label="Choose Clinic"
                 name="clinic"
                 value={formValues.clinic}
                 onChange={handleInputChange}
-            />
+            >
+                <MenuItem value="">Select Clinic</MenuItem>
+                {clinics.map((clinic) => (
+                    <MenuItem key={clinic._id} value={clinic._id}>
+                        {clinic.name} {/* Assuming each clinic has a `name` property */}
+                    </MenuItem>
+                ))}
+            </TextField>
             <TextField
-                label="Assigned GP"
-                type="text"
+                select
+                label="Choose GP"
                 name="assignedGP"
                 value={formValues.assignedGP}
                 onChange={handleInputChange}
-            />
+            >
+                <MenuItem value="">Select GP</MenuItem>
+                {doctors.map((doctor) => (
+                    <MenuItem key={doctor.doctorID} value={doctor.doctorID}>
+                        {doctor.firstName} {doctor.lastName}
+                    </MenuItem>
+                ))}
+            </TextField>
             <Button type="submit" variant="contained" color="primary">
                 Create Appointment
             </Button>

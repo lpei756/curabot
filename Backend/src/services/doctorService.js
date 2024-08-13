@@ -2,7 +2,7 @@ import Doctor from '../models/Doctor.js';
 
 export const getDoctorByIdService = async (doctorId) => {
   try {
-    const doctor = await Doctor.findById(doctorId);
+    const doctor = await Doctor.findOne({ doctorID: doctorId }); // Change findById to findOne
 
     if (!doctor) {
       return { error: true, status: 404, message: 'Doctor not found' };

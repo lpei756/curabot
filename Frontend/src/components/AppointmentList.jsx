@@ -49,7 +49,8 @@ const handleDelete = async (appointmentID) => {
               <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
               <p>Type: {appointment.typeOfVisit}</p>
               <p>Status: {appointment.status}</p>
-              <button onClick={() => handleDelete(appointment.appointmentID)}>Delete</button>
+              <button>Edit</button>
+              <button onClick={() => handleDelete(appointment.appointmentID)}>Cancel</button>
             </li>
           ))}
         </ul>
