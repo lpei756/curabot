@@ -64,22 +64,9 @@ const Register = ({ onClose, onSuccess }) => {
             ...formData,
             dateOfBirth: new Date(formData.dateOfBirth),  // Convert dateOfBirth to Date object
         };
-        // Log each form field's value and its data type
-        Object.entries(convertedFormData).forEach(([key, value]) => {
-            if (typeof value === 'object' && value !== null) {
-                // Log the nested object fields
-                console.log(`Field: ${key}, Value: ${JSON.stringify(value)}, Data Type: ${typeof value}`);
-                Object.entries(value).forEach(([nestedKey, nestedValue]) => {
-                    console.log(`  - Nested Field: ${nestedKey}, Value: ${nestedValue}, Data Type: ${typeof nestedValue}`);
-                });
-            } else {
-                // Log the top-level fields
-                console.log(`Field: ${key}, Value: ${value}, Data Type: ${typeof value}`);
-            }
-        });
         try {
             const data = await register(convertedFormData);
-            console.log('Registered user:', data);
+            console.log('Registered user:', data.user.firstName, data.user.lastName, data.user.email);
             if (onSuccess) {
                 onSuccess(data.user); // Pass the user data to the parent component
             }
