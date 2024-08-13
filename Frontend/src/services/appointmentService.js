@@ -1,5 +1,6 @@
 import axiosApiInstance from '../utils/axiosInstance';
 import { API_PATH } from '../utils/urlRoutes';
+import axios from 'axios';
 
 // 用于解析和检查 token 是否有效的函数
 function parseToken(token) {
@@ -23,13 +24,39 @@ function parseToken(token) {
 }
 
 // 创建预约
+const API_URL = 'http://localhost:3001/api/appointments';
+
+// Function to create an appointment
 export const createAppointment = async (appointmentData) => {
   try {
-    const response = await axiosApiInstance.post(API_PATH.appointment.create, appointmentData);
+    // Example token (replace with your actual token retrieval method)
+    const token = localStorage.getItem('authToken');
+
+    // Make POST request to create the appointment
+    const response = await axios.post(`${API_URL}/create`, appointmentData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    // Return the response data
     return response.data;
   } catch (error) {
-    console.error('Error creating appointment:', error.message);
-    throw error;
+    // Handle errors
+    if (error.response) {
+      // Server responded with a status other than 2xx
+      console.error('Error response:', error.response.data);
+      throw new Error(error.response.data.message || 'Error creating appointment');
+    } else if (error.request) {
+      // Request was made but no response received
+      console.error('Error request:', error.request);
+      throw new Error('No response received from the server');
+    } else {
+      // Something happened in setting up the request
+      console.error('Error message:', error.message);
+      throw new Error('Error setting up the request');
+    }
   }
 };
 

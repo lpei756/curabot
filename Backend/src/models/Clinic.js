@@ -9,7 +9,11 @@ const ClinicSchema = new mongoose.Schema({
   fax: { type: String },
   healthlinkEDI: { type: String },
   email: { type: String, required: true },
-  doctors: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Doctor' }] // Reference to Doctor model
+  doctors: [{
+    firstName: String,
+    lastName: String,
+    doctorID: String
+  }]
 });
 
 const ClinicModel = mongoose.model('Clinic', ClinicSchema);

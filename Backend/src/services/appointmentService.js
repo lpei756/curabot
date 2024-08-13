@@ -16,6 +16,19 @@ export const createAppointment = async ({
   patientName
 }) => {
   try {
+    console.log('Appointment Data to be sent:', {
+      dateTime,
+      typeOfVisit,
+      purposeOfVisit,
+      clinic,
+      assignedGP,
+      status,
+      notes,
+      prescriptionsIssued,
+      patientID,
+      patientName
+    });
+
     if (!patientID) {
       return { error: true, status: 400, message: 'Patient ID is required' };
     }
@@ -33,10 +46,11 @@ export const createAppointment = async ({
       return { error: true, status: 404, message: 'Clinic not found' };
     }
 
-    const doctor = await Doctor.findOne({ doctorID: assignedGP, clinic });
-    if (!doctor) {
-      return { error: true, status: 404, message: 'Doctor not found for the selected clinic' };
-    }
+    //const doctor = await Doctor.findOne({ doctorID: assignedGP, clinic });
+    //if (!doctor) {
+    //  console.log('Querying for doctor with:', { doctorID: assignedGP, clinic });
+    //  return { error: true, status: 404, message: 'Doctor not found for the selected clinic' };
+    //}
 
     const newAppointment = new Appointment({
       dateTime,
@@ -54,9 +68,8 @@ export const createAppointment = async ({
     await newAppointment.save();
     return { error: false, appointment: newAppointment };
   } catch (error) {
-    const errorMessage = error.response?.data?.message || 'An error occurred';
-    console.error('Error creating appointment:', errorMessage);
-    alert(errorMessage);
+    console.error('Error creating appointment:', error.message);
+    return { error: true, status: 500, message: 'An error occurred while creating the appointment' };
   }
 };
 

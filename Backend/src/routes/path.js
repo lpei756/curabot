@@ -22,11 +22,12 @@ export const APPOINTMENT_PATHS = {
 
 export const CLINIC_PATHS = {
   read: '/:id',
-  all: '/'
+  all: '/',
+  doctor: '/:clinicId/doctors'
 };
 
 export const DOCTOR_PATHS = {
-  read: '/:id'
+  read: '/:doctorID'
 };
 
 export const CHAT_PATHS = {
