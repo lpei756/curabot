@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import axiosApiInstance from '../utils/axiosInstance';
 import { Typography, Box, Divider, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import ImageDisplay from './ImageDisplay';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);
@@ -10,7 +11,7 @@ function ReadUser({ userId }) {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [updatedData, setUpdatedData] = useState({});
-    const navigate = useNavigate(); // 使用 useNavigate 进行页面导航
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -35,9 +36,9 @@ function ReadUser({ userId }) {
     const updateUserData = async () => {
         try {
             const response = await axiosApiInstance.put(`/api/auth/user/${userId}`, updatedData);
-            setUserData(response.data.user);  // 更新用户数据
-            setEditMode(false);  // 退出编辑模式
-            navigate(`/user`);  // 跳转到 /user 页面
+            setUserData(response.data.user);
+            setEditMode(false);
+            navigate(`/user`);
         } catch (err) {
             setError(err.message);
         }
@@ -144,14 +145,7 @@ function ReadUser({ userId }) {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">Images</Typography>
-                    {userData.images.length > 0 ? (
-                        userData.images.map((image, index) => (
-                            <Typography key={index}><strong>Image {index + 1}:</strong> {image}</Typography>
-                        ))
-                    ) : (
-                        <Typography>No images available.</Typography>
-                    )}
+                    <ImageDisplay userId={userId} />
 
                     <Divider sx={{ my: 2 }} />
 
@@ -162,7 +156,6 @@ function ReadUser({ userId }) {
     );
 }
 
-// Add PropTypes validation
 ReadUser.propTypes = {
     userId: PropTypes.string.isRequired,
 };
