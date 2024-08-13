@@ -138,7 +138,7 @@ function ChatBot({ toggleChatbot }) {
                             justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
                         >
                             {msg.type === 'bot' && (
-                                <Avatar alt="Bot Avatar" src="/public/icon.png" sx={{
+                                <Avatar alt="Bot Avatar" src="icon.png" sx={{
                                     width: 45,
                                     height: 45
                                 }} />
