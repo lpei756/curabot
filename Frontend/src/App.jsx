@@ -16,23 +16,17 @@ import Homepage from './components/Homepage';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-    const [isRegisterOpen, setIsRegisterOpen] = useState(false);
 
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
         console.log('Chatbot toggled:', !isChatbotOpen); // Debugging
     }
 
-    const toggleRegister = () => {
-        setIsRegisterOpen(!isRegisterOpen);
-    };
-
     return (
         <AuthProvider>
             <Router>
                 <div className="app-container">
-                    <AppHeader toggleRegister={toggleRegister} />
-                    {isRegisterOpen && <Register onClose={toggleRegister} />}
+                    <AppHeader />
                     {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
                     <IconButton
                         className="chatbot-button"
@@ -57,6 +51,7 @@ function App() {
                     </IconButton>
                     <Routes>
                         <Route path="/" element={<Homepage />} />
+                        <Route path="/register" element={<Register />} />
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<Appointment />} />
                         <Route path="/appointment" element={<AppointmentList />} />

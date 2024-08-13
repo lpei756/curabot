@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -43,7 +43,7 @@ const AnimatedButton = styled('button')(({ variant }) => ({
   },
 }));
 
-function AppHeader({ toggleRegister }) {
+function AppHeader() {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -83,7 +83,7 @@ function AppHeader({ toggleRegister }) {
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <MenuIconButton
+              <MenuIconButton
                 size="large"
                 edge="start"
                 color="inherit"
@@ -92,7 +92,7 @@ function AppHeader({ toggleRegister }) {
               >
                 <MenuIcon sx={{ color: 'black' }} />
               </MenuIconButton>
-              
+
               <Typography
                 variant="h5"
                 noWrap
@@ -119,9 +119,11 @@ function AppHeader({ toggleRegister }) {
               </AnimatedButton>
             ) : (
               <Box sx={{ display: 'flex', gap: 2 }}>
-                <AnimatedButton onClick={toggleRegister}>
-                  <span>Register</span>
-                </AnimatedButton>
+                <Link to="/register">
+                  <AnimatedButton>
+                    <span>Register</span>
+                  </AnimatedButton>
+                </Link>
                 <AnimatedButton variant="login" onClick={toggleLogin}>
                   <span>Login</span>
                 </AnimatedButton>
@@ -174,9 +176,5 @@ function AppHeader({ toggleRegister }) {
     </>
   );
 }
-
-AppHeader.propTypes = {
-  toggleRegister: PropTypes.func.isRequired,
-};
 
 export default AppHeader;
