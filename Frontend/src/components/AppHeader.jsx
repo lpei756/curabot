@@ -13,30 +13,41 @@ import UserOptionsList from './Menu';
 import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
 import '../App.css';
+import logo from '../../public/logo.png';
+
+const MenuIconButton = styled(IconButton)(({ theme }) => ({
+  backgroundColor: 'transparent',
+  border: '2px solid black',
+  borderRadius: '50%',
+  height: 30,
+  width: 30,
+  padding: 20
+}));
+
+const AnimatedButton = styled('button')(({ variant }) => ({
+  background: variant === 'login' ? '#03035d' : 'transparent',
+  border: '2px solid black',
+  borderRadius: 20,
+  boxShadow: 'none',
+  color: variant === 'login' ? 'white' : 'black',
+  height: 40,
+  padding: '0 30px',
+  fontWeight: 'bold',
+  transition: 'all 0.3s ease-in-out',
+  cursor: 'pointer',
+  '&:hover': {
+    background: variant === 'login' ? '#03035d' : 'rgba(0, 0, 0, 0.1)',
+    transform: 'scale(1.05)',
+    boxShadow: 'none',
+    borderColor: 'black'
+  },
+}));
 
 function AppHeader({ toggleRegister }) {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userId, setUserId] = useState(null);
-
-  const AnimatedButton = styled('button')({
-    background: 'linear-gradient(45deg, #7AE0F2 30%, #5BC0DE 90%)',
-    border: 0,
-    borderRadius: 20,
-    boxShadow: '0 3px 3px 2px rgba(91, 192, 222, .3)',
-    color: 'white',
-    height: 40,
-    padding: '0 30px',
-    fontWeight: 'bold',
-    transition: 'all 0.3s ease-in-out',
-    cursor: 'pointer',
-    '&:hover': {
-      background: 'linear-gradient(45deg, #5BC0DE 30%, #7AE0F2 90%)',
-      transform: 'scale(1.05)',
-      boxShadow: '0 4px 3px 2px rgba(91, 192, 222, .4)',
-    },
-  });
 
   const toggleLogin = () => {
     setIsLoginOpen(!isLoginOpen);
@@ -52,7 +63,7 @@ function AppHeader({ toggleRegister }) {
 
   useEffect(() => {
     const token = localStorage.getItem('token');
-    const storedUserId = localStorage.getItem('userId'); // 获取 userId
+    const storedUserId = localStorage.getItem('userId');
     if (token) {
       setIsLoggedIn(true);
     }
@@ -68,30 +79,27 @@ function AppHeader({ toggleRegister }) {
 
   return (
     <>
-      <AppBar position="static" sx={{
-        backgroundColor: '#7AE0F2',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-      }}>
+      <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
         <Container maxWidth="xl">
           <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <IconButton
+            <MenuIconButton
                 size="large"
                 edge="start"
                 color="inherit"
                 aria-label="menu"
-                sx={{ mr: 2 }}
                 onClick={toggleDrawer}
               >
-                <MenuIcon />
-              </IconButton>
+                <MenuIcon sx={{ color: 'black' }} />
+              </MenuIconButton>
+              
               <Typography
                 variant="h5"
                 noWrap
                 component="div"
                 sx={{
                   fontWeight: 'bold',
-                  color: 'white',
+                  color: 'black',
                   textDecoration: 'none',
                   letterSpacing: '.2rem',
                   textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
@@ -100,12 +108,13 @@ function AppHeader({ toggleRegister }) {
                   transform: 'translateX(-50%)',
                 }}
               >
-                Cura
+                <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
+                FRW Healthcare
               </Typography>
             </Box>
 
             {isLoggedIn ? (
-              <AnimatedButton onClick={handleLogout}>
+              <AnimatedButton variant="login" onClick={handleLogout}>
                 <span>Logout</span>
               </AnimatedButton>
             ) : (
@@ -113,7 +122,7 @@ function AppHeader({ toggleRegister }) {
                 <AnimatedButton onClick={toggleRegister}>
                   <span>Register</span>
                 </AnimatedButton>
-                <AnimatedButton onClick={toggleLogin}>
+                <AnimatedButton variant="login" onClick={toggleLogin}>
                   <span>Login</span>
                 </AnimatedButton>
               </Box>

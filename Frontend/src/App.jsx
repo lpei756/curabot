@@ -12,6 +12,7 @@ import Appointment from './components/createAppointment';
 import ReadAppointment from './components/readAppointment';
 import AppointmentList from './components/AppointmentList';
 import ReadUser from "./components/ReadUser.jsx";
+import Homepage from './components/Homepage';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -19,6 +20,7 @@ function App() {
 
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
+        console.log('Chatbot toggled:', !isChatbotOpen); // Debugging
     }
 
     const toggleRegister = () => {
@@ -40,8 +42,9 @@ function App() {
                             position: 'fixed',
                             bottom: 16,
                             right: 16,
-                            backgroundColor: '#7AE0F2',
+                            backgroundColor: '#03035d',
                             color: 'white',
+                            zIndex: 9999, // Ensure it appears on top
                             '&:hover': {
                                 backgroundColor: '#68cde6'
                             },
@@ -53,6 +56,7 @@ function App() {
                         {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
                     </IconButton>
                     <Routes>
+                        <Route path="/" element={<Homepage />} />
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<Appointment />} />
                         <Route path="/appointment" element={<AppointmentList />} />
