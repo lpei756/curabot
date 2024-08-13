@@ -30,7 +30,7 @@ const registerSchema = Joi.object({
     }).optional(),
     insurance: Joi.object({
         provider: Joi.string().required(),
-        policyNumber: Joi.string().optional(),
+        policyNumber: Joi.string().allow("").optional(),
         coverageDetails: Joi.string().optional()
     }).required()
 });
