@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';  // 新增路径模块
 import authRoutes from './routes/authRoutes.js';
 import appointmentRoutes from './routes/appointmentRoutes.js';
 import clinicRoutes from './routes/clinicRoutes.js';
@@ -12,6 +13,10 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+// 设置静态文件夹
+const __dirname = path.resolve();  // 如果使用 ES6 模块，需要使用 path.resolve 来获得当前目录
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
