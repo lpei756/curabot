@@ -2,6 +2,7 @@ import Appointment from '../models/Appointment.js';
 import Doctor from '../models/Doctor.js';
 import Clinic from '../models/Clinic.js';
 import User from '../models/User.js';
+import { getDoctorByIdService } from './doctorService.js';
 
 export const createAppointment = async ({
   dateTime,
@@ -79,9 +80,30 @@ export const getAppointmentsForUser = async (patientID) => {
       throw new Error('Invalid patientID format');
     }
 
-    const appointments = await Appointment.find({ patientID });
+    const appointments = await Appointment.find({ patientID })
+      .populate('clinic') // Assuming you want to populate clinic details
+      .exec();
 
-    return appointments;
+    // Log fetched appointments for debugging
+    console.log('Fetched appointments:', appointments);
+
+    const appointmentsWithDoctorNames = await Promise.all(appointments.map(async (appointment) => {
+      // Debugging doctor fetching
+      console.log('Fetching doctor with ID:', appointment.assignedGP);
+      const doctorResult = await getDoctorByIdService(appointment.assignedGP);
+
+      if (doctorResult.error) {
+        console.log('Error fetching doctor:', doctorResult.message);
+      }
+
+      return {
+        ...appointment._doc,
+        clinicName: appointment.clinic?.name || 'Unknown Clinic',
+        doctorName: doctorResult.doctor ? `${doctorResult.doctor.firstName} ${doctorResult.doctor.lastName}` : 'Unknown Doctor',
+      };
+    }));
+
+    return appointmentsWithDoctorNames;
   } catch (error) {
     console.error('Error fetching appointments in service:', error);
     throw new Error('Internal server error');
