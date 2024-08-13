@@ -21,15 +21,13 @@ const AppointmentList = () => {
     loadAppointments();
   }, []);
 
-// Example delete button handler
-const handleDelete = async (appointmentID) => {
+  const handleDelete = async (appointmentID) => {
     try {
       console.log(`Attempting to delete appointment with ID: ${appointmentID}`);
       await deleteAppointment(appointmentID);
-      // Optionally, update the UI or state to reflect the deletion
+      setAppointments(appointments.filter(app => app.appointmentID !== appointmentID));
     } catch (error) {
       console.error('Error deleting appointment:', error);
-      // Optionally, show an error message to the user
     }
   };
 
@@ -49,7 +47,9 @@ const handleDelete = async (appointmentID) => {
               <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
               <p>Type: {appointment.typeOfVisit}</p>
               <p>Status: {appointment.status}</p>
-              <button>Edit</button>
+              <p>Clinic: {appointment.clinicName}</p>
+              <p>Doctor: {appointment.doctorName}</p> {/* Ensure this matches the field returned */}
+              <button style={{ border: '2px solid #03035d' }}>Edit</button>
               <button onClick={() => handleDelete(appointment.appointmentID)}>Cancel</button>
             </li>
           ))}

@@ -105,7 +105,7 @@ const AppointmentForm = () => {
         <Box
             component="form"
             onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, margin: '0 auto' }}
+            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, margin: '0 auto', marginTop: 10 }}
         >
             <TextField
                 label="Date & Time"
@@ -164,7 +164,7 @@ const AppointmentForm = () => {
                     </MenuItem>
                 ))}
             </TextField>
-            <Button type="submit" variant="contained" color="primary">
+            <Button type="submit" variant="contained" style={{ backgroundColor: '#03035d' }}>
                 Create Appointment
             </Button>
         </Box>
