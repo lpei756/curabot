@@ -1,9 +1,10 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 import { register } from '../services/authService';
 
-const Register = ({ onClose, onSuccess }) => {
+const Register = ({ onSuccess }) => {
     const [formData, setFormData] = useState({
         firstName: '',
         middleName: '',
@@ -36,6 +37,7 @@ const Register = ({ onClose, onSuccess }) => {
 
     const [error, setError] = useState(null);
     const [passwordError, setPasswordError] = useState('');
+    const navigate = useNavigate(); 
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -84,10 +86,10 @@ const Register = ({ onClose, onSuccess }) => {
         try {
             const data = await register(convertedFormData);
             console.log('Registered user:', data.user.firstName, data.user.lastName, data.user.email);
+            navigate('/'); // Navigate to home page after successful registration
             if (onSuccess) {
                 onSuccess(data.user); // Pass the user data to the parent component
             }
-            onClose();
         } catch (err) {
             console.error('Error during registration:', err);
             setError('Registration failed. Please try again.');
@@ -337,7 +339,6 @@ const Register = ({ onClose, onSuccess }) => {
 };
 
 Register.propTypes = {
-    onClose: PropTypes.func.isRequired,
     onSuccess: PropTypes.func,
 };
 
