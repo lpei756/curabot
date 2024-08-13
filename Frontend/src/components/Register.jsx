@@ -35,10 +35,11 @@ const Register = ({ onClose, onSuccess }) => {
     });
 
     const [error, setError] = useState(null);
+    const [passwordError, setPasswordError] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-
+    
         // Handle nested fields
         const nameParts = name.split('.');
         if (nameParts.length > 1) {
@@ -55,10 +56,26 @@ const Register = ({ onClose, onSuccess }) => {
                 [name]: value,
             });
         }
+    
+        // Password length check
+        if (name === 'password') {
+            if (value.length < 6) {
+                setPasswordError('Password must be at least 6 characters long.');
+            } else {
+                setPasswordError('');
+            }
+        }
     };
+    
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        // Check if there is a password error
+        if (passwordError) {
+            return;
+        }
+
         // Convert dateOfBirth from string to Date object
         const convertedFormData = {
             ...formData,
@@ -208,6 +225,8 @@ const Register = ({ onClose, onSuccess }) => {
                 fullWidth
                 margin="normal"
                 required
+                error={!!passwordError} 
+                helperText={passwordError} 
             />
             <TextField
                 label="Emergency Contact Name"
