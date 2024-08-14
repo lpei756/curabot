@@ -51,7 +51,7 @@ const AppointmentList = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <h1>My Appointments</h1>
+      <h1 style={{ color: 'black' }}>My Appointments</h1>
       <button
         onClick={handleBookingClick}
         style={{
@@ -84,6 +84,7 @@ const AppointmentList = () => {
                 key={appointment._id}
                 style={{
                   border: '2px solid #03035d',
+                  color: 'black',
                   margin: '10px',
                   padding: '10px',
                   borderRadius: '15px',
@@ -118,6 +119,7 @@ const AppointmentList = () => {
             flexDirection: 'column',
             justifyContent: 'center',
             transition: 'width 0.3s ease',
+            color: 'black'
           }}>
             <h2>Details</h2>
             <p><strong>Patient Name:</strong> {selectedAppointment.patientName}</p>

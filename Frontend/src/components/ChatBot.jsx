@@ -64,7 +64,7 @@ function ChatBot({ toggleChatbot }) {
             const response = await sendChatMessage(messageToSend, authToken);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { type: 'bot', message: response.data.reply }
+                { type: 'bot', message: response.data.reply, isHtml: true }
             ]);
         } catch (error) {
             console.error('Error:', error);
@@ -82,7 +82,6 @@ function ChatBot({ toggleChatbot }) {
     };
 
     const handleImageUpload = (uploadedImage) => {
-        // 处理上传的图片，例如在消息中显示图片链接或更新UI
         console.log('Uploaded image:', uploadedImage);
         setMessages((prevMessages) => [
             ...prevMessages,
@@ -155,7 +154,11 @@ function ChatBot({ toggleChatbot }) {
                                     maxWidth: "75%",
                                 }}
                             >
-                                <Typography>{msg.message}</Typography>
+                                {msg.isHtml ? (
+                                    <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
+                                ) : (
+                                    <Typography>{msg.message}</Typography>
+                                )}
                             </Paper>
                             {msg.type === 'user' && (
                                 <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
