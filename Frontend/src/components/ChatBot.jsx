@@ -109,7 +109,7 @@ function ChatBot({ toggleChatbot }) {
                 }}
             >
                 <AppBar position="static" sx={{
-                    backgroundColor: '#7AE0F2',
+                    backgroundColor: '#03035D',
                     boxShadow: 'none',
                     borderTopLeftRadius: '20px',
                     borderTopRightRadius: '20px',
@@ -148,7 +148,7 @@ function ChatBot({ toggleChatbot }) {
                                 sx={{
                                     ml: msg.type === 'bot' ? 2 : 0,
                                     mr: msg.type === 'user' ? 2 : 0,
-                                    bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#5BC0DE',
+                                    bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#03035D',
                                     color: msg.type === 'bot' ? '#333' : 'white',
                                     p: 2,
                                     borderRadius: 3,
@@ -158,7 +158,7 @@ function ChatBot({ toggleChatbot }) {
                                 <Typography>{msg.message}</Typography>
                             </Paper>
                             {msg.type === 'user' && (
-                                <Avatar alt="User Avatar" sx={{ bgcolor: '#7AE0F2', width: 40, height: 40 }} />
+                                <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
                             )}
                         </Box>
                     ))}
@@ -169,7 +169,7 @@ function ChatBot({ toggleChatbot }) {
                     )}
                 </Box>
 
-                <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#e0f7fa', p: 1 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>
                     <IconButton onClick={() => scroll(-100)} size="small">
                         <ChevronLeftIcon />
                     </IconButton>
@@ -191,7 +191,7 @@ function ChatBot({ toggleChatbot }) {
                                 onClick={() => handleQuickChat(chat)}
                                 sx={{
                                     mr: 1,
-                                    bgcolor: '#7AE0F2',
+                                    bgcolor: '#03035D',
                                     color: 'white',
                                     '&:hover': {
                                         bgcolor: '#5BC0DE',
@@ -230,7 +230,7 @@ function ChatBot({ toggleChatbot }) {
                     {inputValue.trim() !== '' && (
                         <IconButton type="submit" color="primary" aria-label="send"
                                     sx={{
-                                        bgcolor: inputValue.trim() !== '' ? '#7AE0F2' : 'transparent',
+                                        bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
                                         color: inputValue.trim() !== '' ? 'white' : 'inherit',
                                         '&:hover': {
                                             bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
