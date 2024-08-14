@@ -33,6 +33,7 @@ const AppointmentList = () => {
       console.log(`Attempting to delete appointment with ID: ${appointmentID}`);
       await deleteAppointment(appointmentID);
       setAppointments(appointments.filter(app => app.appointmentID !== appointmentID));
+      window.location.reload();
     } catch (error) {
       console.error('Error deleting appointment:', error);
     }
