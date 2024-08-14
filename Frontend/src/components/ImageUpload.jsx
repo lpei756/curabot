@@ -8,20 +8,19 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { AuthContext } from '../context/AuthContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
-import PropTypes from 'prop-types';  // 引入 PropTypes
+import PropTypes from 'prop-types';
 
 function ImageUpload({ open, onClose, onImageUploaded }) {
-    const [selectedFile, setSelectedFile] = useState(null); // 确保 selectedFile 已定义
+    const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState(null);
-    const [uploading, setUploading] = useState(false); // 添加上传状态
+    const [uploading, setUploading] = useState(false);
     const { authToken } = useContext(AuthContext);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            // 检查文件类型和大小
             const fileType = file.type.split('/')[0];
-            const fileSizeMB = file.size / 1024 / 1024; // 转换为MB
+            const fileSizeMB = file.size / 1024 / 1024;
             if (fileType !== 'image') {
                 setError('Please upload a valid image file.');
                 return;
@@ -31,18 +30,18 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
                 return;
             }
             setSelectedFile(file);
-            setError(null); // 清除之前的错误信息
+            setError(null);
         }
     };
 
     const handleUpload = async () => {
-        if (!selectedFile) return; // 如果没有选中文件，直接返回
+        if (!selectedFile) return;
 
-        setUploading(true); // 设置上传状态为true
+        setUploading(true);
 
         const formData = new FormData();
         formData.append('image', selectedFile);
-        formData.append('userId', '66b156c604e94197067c31a8'); // 确保这个是正确的
+        formData.append('userId', '66b156c604e94197067c31a8');
 
         try {
             const response = await axios.post('http://localhost:3001/api/images/uploadImage', formData, {
@@ -51,13 +50,13 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
                     'Authorization': `Bearer ${authToken}`
                 }
             });
-            onImageUploaded(response.data); // 成功上传后调用回调
-            onClose(); // 关闭对话框
+            onImageUploaded(response.data);
+            onClose();
         } catch (error) {
             console.error('Image upload failed:', error);
             setError('Image upload failed. Please try again.');
         } finally {
-            setUploading(false); // 恢复上传状态为false
+            setUploading(false);
         }
     };
 
@@ -65,7 +64,7 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>Upload Image</DialogTitle>
             <DialogContent>
-                <input type="file" onChange={handleFileChange} /> {/* 文件选择器 */}
+                <input type="file" onChange={handleFileChange} />
                 {error && <Typography color="error" variant="body2">{error}</Typography>}
             </DialogContent>
             <DialogActions>
@@ -78,7 +77,6 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
     );
 }
 
-// 添加 PropTypes 验证
 ImageUpload.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
