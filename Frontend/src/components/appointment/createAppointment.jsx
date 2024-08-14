@@ -3,13 +3,11 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
-import { useParams, useNavigate } from 'react-router-dom';
-import { readAppointment, updateAppointment } from '../services/appointmentService';
-import { getClinics } from '../services/clinicService';
-import { getDoctorsByClinic } from '../services/doctorService';
+import { createAppointment } from '../../services/appointmentService';
+import { getClinics } from '../../services/clinicService'; // Service to fetch clinics
+import { getDoctorsByClinic } from '../../services/doctorService'; // Service to fetch doctors
 
-const UpdateAppointment = () => {
-    const { appointmentID } = useParams();
+const AppointmentForm = () => {
     const [formValues, setFormValues] = useState({
         dateTime: '',
         typeOfVisit: '',
@@ -20,29 +18,9 @@ const UpdateAppointment = () => {
 
     const [clinics, setClinics] = useState([]);
     const [doctors, setDoctors] = useState([]);
-    const [error, setError] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchAppointment = async () => {
-            try {
-                const appointment = await readAppointment(appointmentID);
-                setFormValues({
-                    dateTime: appointment.dateTime,
-                    typeOfVisit: appointment.typeOfVisit,
-                    purposeOfVisit: appointment.purposeOfVisit,
-                    clinic: appointment.clinic,
-                    assignedGP: appointment.assignedGP,
-                });
-            } catch (err) {
-                setError('Failed to load appointment details.');
-            }
-        };
-
-        fetchAppointment();
-    }, [appointmentID]);
-
-    useEffect(() => {
+        // Fetch clinics from the server when the component mounts
         const fetchClinics = async () => {
             try {
                 const clinicsData = await getClinics();
@@ -56,14 +34,16 @@ const UpdateAppointment = () => {
     }, []);
 
     useEffect(() => {
+        // Fetch doctors when a clinic is selected
         if (formValues.clinic) {
             const fetchDoctors = async () => {
                 try {
                     const doctorsData = await getDoctorsByClinic(formValues.clinic);
+                    console.log('Doctors data:', doctorsData); // Inspect the response
                     setDoctors(doctorsData);
                 } catch (error) {
                     console.error('Error fetching doctors:', error.message);
-                    setDoctors([]);
+                    setDoctors([]); // Set doctors to an empty array in case of error
                 }
             };
 
@@ -81,42 +61,45 @@ const UpdateAppointment = () => {
         });
     };
 
+    // Example validation on form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+      
         const { dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP } = formValues;
-
+      
         if (!dateTime || !typeOfVisit || !purposeOfVisit || !clinic || !assignedGP) {
-            setError('All fields are required');
-            return;
+          console.error('All fields are required');
+          return;
         }
-
+      
+        // Check if selected clinic and doctor are valid
         if (!clinics.some(c => c._id === clinic)) {
-            setError('Selected clinic is not valid');
-            return;
+          console.error('Selected clinic is not valid');
+          return;
         }
-
+      
         if (!doctors.some(d => d.doctorID === assignedGP)) {
-            setError('Selected GP is not valid');
-            return;
+          console.error('Selected GP is not valid');
+          return;
         }
-
+      
         const appointmentData = {
-            dateTime,
-            typeOfVisit,
-            purposeOfVisit,
-            clinic,
-            assignedGP,
+          dateTime,
+          typeOfVisit,
+          purposeOfVisit,
+          clinic,
+          assignedGP,
         };
-
+      
+        console.log('Submitting Appointment Data:', appointmentData);
+      
         try {
-            const result = await updateAppointment(appointmentID, appointmentData);
-            console.log('Appointment Updated:', result);
-            navigate('/appointment');
+          const result = await createAppointment(appointmentData);
+          console.log('Appointment Created:', result);
         } catch (error) {
-            setError('Failed to update appointment.');
+          console.error('Error saving appointment:', error.response ? error.response.data : error.message);
         }
-    };
+      };
 
     return (
         <Box
@@ -124,7 +107,6 @@ const UpdateAppointment = () => {
             onSubmit={handleSubmit}
             sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, margin: '0 auto', marginTop: 10 }}
         >
-            {error && <p style={{ color: 'red' }}>{error}</p>}
             <TextField
                 label="Date & Time"
                 type="datetime-local"
@@ -164,7 +146,7 @@ const UpdateAppointment = () => {
                 <MenuItem value="">Select Clinic</MenuItem>
                 {clinics.map((clinic) => (
                     <MenuItem key={clinic._id} value={clinic._id}>
-                        {clinic.name}
+                        {clinic.name} {/* Assuming each clinic has a `name` property */}
                     </MenuItem>
                 ))}
             </TextField>
@@ -183,10 +165,10 @@ const UpdateAppointment = () => {
                 ))}
             </TextField>
             <Button type="submit" variant="contained" style={{ backgroundColor: '#03035d' }}>
-                Update Appointment
+                Create Appointment
             </Button>
         </Box>
     );
 };
 
-export default UpdateAppointment;
+export default AppointmentForm;

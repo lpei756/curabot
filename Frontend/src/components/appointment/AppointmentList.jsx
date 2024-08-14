@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchUserAppointments, deleteAppointment } from '../services/appointmentService';
+import { fetchUserAppointments, deleteAppointment } from '../../services/appointmentService';
 import { useNavigate } from 'react-router-dom';
 
 const AppointmentList = () => {

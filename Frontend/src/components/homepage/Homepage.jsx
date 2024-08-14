@@ -1,5 +1,5 @@
 import Lottie from 'lottie-react';
-import animationData from '../assets/homepage.json';
+import animationData from '../../assets/homepage.json';
 
 function Homepage() {
     return (

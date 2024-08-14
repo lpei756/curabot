@@ -9,7 +9,7 @@ import {
   Container,
   Box,
 } from '@mui/material';
-import { readAppointment } from '../services/appointmentService';
+import { readAppointment } from '../../services/appointmentService';
 
 const ReadAppointment = () => {
   const { appointmentId } = useParams();

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import axiosApiInstance from '../utils/axiosInstance';
+import axiosApiInstance from '../../utils/axiosInstance';
 import { Typography, Box, Divider, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import ImageDisplay from './ImageDisplay';
+import ImageDisplay from '../image/ImageDisplay';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);

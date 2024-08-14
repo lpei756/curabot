@@ -2,7 +2,7 @@ import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { AuthContext } from '../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 function ImageDisplay({ userId }) {
     const [images, setImages] = useState([]);
