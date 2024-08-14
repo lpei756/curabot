@@ -97,6 +97,10 @@ const AppointmentForm = () => {
         }
     };
 
+    const handleCreateClick = () => {
+        window.location.href = 'http://localhost:5173/appointment';
+      };
+
     return (
         <Box
             component="form"
@@ -160,7 +164,7 @@ const AppointmentForm = () => {
                     </MenuItem>
                 ))}
             </TextField>
-            <Button type="submit" variant="contained" style={{ backgroundColor: '#03035d' }}>
+            <Button type="submit" variant="contained" onClick={handleCreateClick} style={{ backgroundColor: '#03035d' }}>
                 Create Appointment
             </Button>
         </Box>
