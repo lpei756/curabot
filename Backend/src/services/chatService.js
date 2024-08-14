@@ -20,7 +20,11 @@ export const getAppointmentsForUser = async (userId, authToken) => {
             return 'You have no appointments scheduled.';
         }
 
-        const appointmentList = appointments.map(appt => {
+        // Get the last 3 appointments
+        const lastThreeAppointments = appointments.slice(-3);
+
+        // Format the last 3 appointments as blocks
+        const appointmentList = lastThreeAppointments.map(appt => {
             const dateStr = appt.date.$date || appt.date;
             const date = new Date(dateStr);
             const formattedDate = !isNaN(date.getTime()) ? date.toLocaleDateString('en-US', {
@@ -29,10 +33,21 @@ export const getAppointmentsForUser = async (userId, authToken) => {
                 month: 'long',
                 day: 'numeric',
             }) : "Invalid Date";
-            return `<li><strong>ID:</strong> ${appt.appointmentID}, <strong>Date:</strong> ${formattedDate}</li>`;
+            return `<div style="margin-bottom: 10px; padding: 10px; border: 1px solid #03035d; border-radius: 5px;">
+                        <p><strong>ID:</strong> ${appt.appointmentID}</p>
+                        <p><strong>Date:</strong> ${formattedDate}</p>
+                        <p><strong>Status:</strong> ${appt.status}</p>
+                    </div>`;
         }).join('');
         
-        return `Here are your appointments:<ul>${appointmentList}</ul>Let me know if you would like to make an appointment, update an appointment, or delete an appointment.`;
+        return `
+    Here are your appointments:
+    <div>${appointmentList}</div>
+    <br>
+    <a href="http://localhost:5173/appointment" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#03035D; text-decoration:none; border-radius:5px; margin-bottom:10px;">View Details</a>
+    <br>
+    Let me know if you would like to make an appointment, update an appointment, or delete an appointment.
+`;
     } catch (error) {
         console.error('Error fetching user data:', error);
         throw new Error('Error fetching user data');
