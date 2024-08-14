@@ -30,12 +30,12 @@ function ChatBot({ toggleChatbot }) {
     const scrollContainerRef = useRef(null);
 
     const quickChats = [
-        "How to deposit",
-        "How to open an account",
-        "Agent service",
-        "Trading hours",
-        "Fee structure",
-        "Account security"
+        "How can I book a new appointment",
+        "How do I cancel my appointment",
+        "Change my appointment time",
+        "When is my next appointment",
+        "How do I check my insurance details",
+        "How can I get my medical records",
     ];
 
     const scroll = (scrollOffset) => {
