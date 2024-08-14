@@ -43,7 +43,6 @@ export const getAppointmentsForUser = async (userId, authToken) => {
         return `
     Here are your appointments:
     <div>${appointmentList}</div>
-    <br>
     <a href="http://localhost:5173/appointment" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#03035D; text-decoration:none; border-radius:5px; margin-bottom:10px;">View Details</a>
     <br>
     Let me know if you would like to make an appointment, update an appointment, or delete an appointment.
