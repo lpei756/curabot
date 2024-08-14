@@ -20,10 +20,8 @@ export const getAppointmentsForUser = async (userId, authToken) => {
             return 'You have no appointments scheduled.';
         }
 
-        // Get the last 3 appointments
         const lastThreeAppointments = appointments.slice(-3);
 
-        // Format the last 3 appointments as blocks
         const appointmentList = lastThreeAppointments.map(appt => {
             const dateStr = appt.date.$date || appt.date;
             const date = new Date(dateStr);
@@ -39,7 +37,7 @@ export const getAppointmentsForUser = async (userId, authToken) => {
                         <p><strong>Status:</strong> ${appt.status}</p>
                     </div>`;
         }).join('');
-        
+
         return `
     Here are your appointments:
     <div>${appointmentList}</div>

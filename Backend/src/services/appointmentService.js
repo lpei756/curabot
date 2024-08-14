@@ -81,14 +81,13 @@ export const getAppointmentsForUser = async (patientID) => {
     }
 
     const appointments = await Appointment.find({ patientID })
-      .populate('clinic') // Assuming you want to populate clinic details
+      .populate('clinic')
       .exec();
 
-    // Log fetched appointments for debugging
     console.log('Fetched appointments:', appointments);
 
     const appointmentsWithDoctorNames = await Promise.all(appointments.map(async (appointment) => {
-      // Debugging doctor fetching
+
       console.log('Fetching doctor with ID:', appointment.assignedGP);
       const doctorResult = await getDoctorByIdService(appointment.assignedGP);
 
