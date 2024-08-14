@@ -168,7 +168,7 @@ function AppHeader() {
           onKeyDown={toggleDrawer}
         >
           {isLoggedIn ? (
-            <UserOptionsList options={['Profile', 'Setting', 'Appointment']} userId={userId} />
+            <UserOptionsList options={['Profile', 'Appointment']} userId={userId} />
           ) : (
             <Typography>Please login to see user information</Typography>
           )}
