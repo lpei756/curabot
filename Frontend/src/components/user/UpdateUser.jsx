@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import axiosApiInstance from '../utils/axiosInstance';
-import { API_PATH } from '../utils/urlRoutes';
+import axiosApiInstance from '../../utils/axiosInstance';
+import { API_PATH } from '../../utils/urlRoutes';
 import { Box, TextField, Button, Typography } from '@mui/material';
 
 function UpdateUser({ userId, onSuccess }) {

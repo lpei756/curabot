@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Select, MenuItem, Button, InputLabel, FormControl, Box, Typography } from '@mui/material';
 import PropTypes from 'prop-types';
-import { register } from '../services/authService';
+import { register } from '../../../services/authService';
 
 const Register = ({ onSuccess }) => {
     const [formData, setFormData] = useState({

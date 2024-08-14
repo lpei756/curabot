@@ -14,9 +14,9 @@ import Box from '@mui/material/Box';
 import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
-import ImageUpload from './ImageUpload';
-import { AuthContext } from '../context/AuthContext';
-import { sendChatMessage } from '../services/chatService';
+import ImageUpload from '../image/ImageUpload';
+import { AuthContext } from '../../context/AuthContext';
+import { sendChatMessage } from '../../services/chatService';
 import "../App.css";
 
 function ChatBot({ toggleChatbot }) {

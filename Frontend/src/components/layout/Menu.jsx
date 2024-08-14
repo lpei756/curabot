@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
-import ReadUser from './ReadUser.jsx';
-import Appointment from './createAppointment';
+import ReadUser from '../user/ReadUser.jsx';
+import Appointment from '../appointment/createAppointment';
 
 const UserOptionsList = ({ options, userId }) => {
     const [selectedOption, setSelectedOption] = useState(null);
