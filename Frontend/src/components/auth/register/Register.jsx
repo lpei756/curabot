@@ -88,13 +88,20 @@ const Register = ({ onSuccess }) => {
             }
         } catch (err) {
             console.error('Error during registration:', err);
-            setError('Registration failed. Please try again.');
+            setError('Registration alredy exists. Please use another email address.');
         }
     };
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: '600px', mx: 'auto', mt: 4 }}>
             <Typography variant="h4" component="h1" gutterBottom>Register</Typography>
+
+            {error && (
+                <Typography variant="body2" color="error" gutterBottom>
+                    {error}
+                </Typography>
+            )}
+            
             <TextField
                 label="First Name"
                 variant="standard"
@@ -212,6 +219,8 @@ const Register = ({ onSuccess }) => {
                 fullWidth
                 margin="normal"
                 required
+                error={!!passwordError} 
+                helperText={passwordError} 
             />
             <TextField
                 label="Password"
