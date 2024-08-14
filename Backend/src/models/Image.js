@@ -6,7 +6,7 @@ const imageSchema = new mongoose.Schema({
         ref: 'User',
         required: true,
     },
-    filename: {  // 这个字段用来存储 GridFS 中的文件名
+    filename: {
         type: String,
         required: true,
     },
@@ -18,4 +18,3 @@ const imageSchema = new mongoose.Schema({
 
 const Image = mongoose.model('Image', imageSchema);
 export default Image;
-

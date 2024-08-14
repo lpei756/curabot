@@ -6,7 +6,6 @@ export const getDoctorsByClinic = async (req, res) => {
   console.log('Fetching doctors for clinicId:', clinicId);
 
   try {
-    // Fetch the clinic by ID
     const clinic = await Clinic.findById(clinicId);
     console.log('Clinic found:', clinic);
 
@@ -14,7 +13,6 @@ export const getDoctorsByClinic = async (req, res) => {
       return res.status(404).json({ error: 'Clinic not found' });
     }
 
-    // Directly use the embedded doctors
     if (!clinic.doctors || clinic.doctors.length === 0) {
       return res.status(404).json({ error: 'No doctors found for this clinic' });
     }
