@@ -14,3 +14,4 @@ export const getDoctorsByClinic = async (clinicId) => {
       throw error;
     }
   };
+  

@@ -83,40 +83,40 @@ const UpdateAppointment = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-      
+
         const { dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP } = formValues;
-      
+
         if (!dateTime || !typeOfVisit || !purposeOfVisit || !clinic || !assignedGP) {
-          setError('All fields are required');
-          return;
+            setError('All fields are required');
+            return;
         }
-      
+
         if (!clinics.some(c => c._id === clinic)) {
-          setError('Selected clinic is not valid');
-          return;
+            setError('Selected clinic is not valid');
+            return;
         }
-      
+
         if (!doctors.some(d => d.doctorID === assignedGP)) {
-          setError('Selected GP is not valid');
-          return;
+            setError('Selected GP is not valid');
+            return;
         }
-      
+
         const appointmentData = {
-          dateTime,
-          typeOfVisit,
-          purposeOfVisit,
-          clinic,
-          assignedGP,
+            dateTime,
+            typeOfVisit,
+            purposeOfVisit,
+            clinic,
+            assignedGP,
         };
-      
+
         try {
-          const result = await updateAppointment(appointmentID, appointmentData);
-          console.log('Appointment Updated:', result);
-          navigate('/appointments');
+            const result = await updateAppointment(appointmentID, appointmentData);
+            console.log('Appointment Updated:', result);
+            navigate('/appointment');
         } catch (error) {
-          setError('Failed to update appointment.');
+            setError('Failed to update appointment.');
         }
-      };
+    };
 
     return (
         <Box

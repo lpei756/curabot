@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { fetchUserAppointments, deleteAppointment } from '../services/appointmentService';
+import { useNavigate } from 'react-router-dom';
 
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadAppointments = async () => {
@@ -21,6 +23,10 @@ const AppointmentList = () => {
 
     loadAppointments();
   }, []);
+
+  const handleEditClick = (appointmentID) => {
+    navigate(`/appointment/${appointmentID}/update`);
+  };
 
   const handleDelete = async (appointmentID) => {
     try {
@@ -122,14 +128,15 @@ const AppointmentList = () => {
             <p><strong>Doctor:</strong> {selectedAppointment.doctorName}</p>
 
             <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px' }}>
-              <button style={{
-                border: '2px solid #03035d',
-                marginRight: '10px',
-                padding: '10px 20px',
-                cursor: 'pointer',
-                backgroundColor: 'transparent',
-                color: '#03035d'
-              }}>
+              <button
+                onClick={() => handleEditClick(selectedAppointment.appointmentID)}
+                style={{
+                  border: '2px solid #03035d',
+                  marginRight: '5px',
+                  padding: '5px 10px',
+                  cursor: 'pointer',
+                }}
+              >
                 Edit Appointment
               </button>
               <button

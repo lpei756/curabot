@@ -93,24 +93,24 @@ function AppHeader() {
                 <MenuIcon sx={{ color: 'black' }} />
               </MenuIconButton>
               <Link to="/">
-              <Typography
-                variant="h5"
-                noWrap
-                component="div"
-                sx={{
-                  fontWeight: 'bold',
-                  color: 'black',
-                  textDecoration: 'none',
-                  letterSpacing: '.2rem',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-                  position: 'absolute',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                }}
-              >
-                <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
-                FRW Healthcare
-              </Typography>
+                <Typography
+                  variant="h5"
+                  noWrap
+                  component="div"
+                  sx={{
+                    fontWeight: 'bold',
+                    color: 'black',
+                    textDecoration: 'none',
+                    letterSpacing: '.2rem',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                    position: 'absolute',
+                    left: '50%',
+                    transform: 'translateX(-50%)',
+                  }}
+                >
+                  <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
+                  FRW Healthcare
+                </Typography>
               </Link>
             </Box>
 

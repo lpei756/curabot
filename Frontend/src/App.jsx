@@ -11,6 +11,7 @@ import { AuthProvider, AuthContext } from './context/AuthContext';
 import Appointment from './components/createAppointment';
 import ReadAppointment from './components/readAppointment';
 import AppointmentList from './components/AppointmentList';
+import UpdateAppointment from './components/updateAppointment';
 import ReadUser from "./components/ReadUser.jsx";
 import Homepage from './components/Homepage';
 
@@ -55,6 +56,7 @@ function App() {
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<Appointment />} />
                         <Route path="/appointment" element={<AppointmentList />} />
+                        <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                         <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
                     </Routes>
                 </div>

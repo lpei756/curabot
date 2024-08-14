@@ -11,7 +11,6 @@ function Homepage() {
             overflow: 'hidden',
             height: '100%'
         }}>
-            {/* Text elements */}
             <div style={{
                 position: 'absolute',
                 top: '50%',
@@ -44,16 +43,15 @@ function Homepage() {
             }}>
                 <div>Effortless booking</div>
             </div>
-            
-            {/* Lottie animation */}
-            <Lottie 
-                animationData={animationData} 
-                style={{ 
-                    width: '700px', 
-                    height: '700px', 
-                    zIndex: 1, // Ensure the animation is on top
+
+            <Lottie
+                animationData={animationData}
+                style={{
+                    width: '700px',
+                    height: '700px',
+                    zIndex: 1,
                     justifyContent: 'center',
-                    pointerEvents: 'auto' // Ensure it can receive pointer events
+                    pointerEvents: 'auto'
                 }}
             />
         </div>

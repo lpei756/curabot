@@ -37,11 +37,11 @@ const Register = ({ onSuccess }) => {
 
     const [error, setError] = useState(null);
     const [passwordError, setPasswordError] = useState('');
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-    
+
         // Handle nested fields
         const nameParts = name.split('.');
         if (nameParts.length > 1) {
@@ -58,7 +58,7 @@ const Register = ({ onSuccess }) => {
                 [name]: value,
             });
         }
-    
+
         // Password length check
         if (name === 'password') {
             if (value.length < 6) {
@@ -68,27 +68,25 @@ const Register = ({ onSuccess }) => {
             }
         }
     };
-    
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Check if there is a password error
         if (passwordError) {
             return;
         }
 
-        // Convert dateOfBirth from string to Date object
         const convertedFormData = {
             ...formData,
-            dateOfBirth: new Date(formData.dateOfBirth),  // Convert dateOfBirth to Date object
+            dateOfBirth: new Date(formData.dateOfBirth),
         };
         try {
             const data = await register(convertedFormData);
             console.log('Registered user:', data.user.firstName, data.user.lastName, data.user.email);
-            navigate('/'); // Navigate to home page after successful registration
+            navigate('/');
             if (onSuccess) {
-                onSuccess(data.user); // Pass the user data to the parent component
+                onSuccess(data.user);
             }
         } catch (err) {
             console.error('Error during registration:', err);
@@ -227,8 +225,8 @@ const Register = ({ onSuccess }) => {
                 fullWidth
                 margin="normal"
                 required
-                error={!!passwordError} 
-                helperText={passwordError} 
+                error={!!passwordError}
+                helperText={passwordError}
             />
             <TextField
                 label="Emergency Contact Name"

@@ -229,14 +229,14 @@ function ChatBot({ toggleChatbot }) {
                     />
                     {inputValue.trim() !== '' && (
                         <IconButton type="submit" color="primary" aria-label="send"
-                                    sx={{
-                                        bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
-                                        color: inputValue.trim() !== '' ? 'white' : 'inherit',
-                                        '&:hover': {
-                                            bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
-                                        },
-                                        transition: 'all 0.3s ease',
-                                    }}>
+                            sx={{
+                                bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
+                                color: inputValue.trim() !== '' ? 'white' : 'inherit',
+                                '&:hover': {
+                                    bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
+                                },
+                                transition: 'all 0.3s ease',
+                            }}>
                             <SendRoundedIcon />
                         </IconButton>
                     )}
