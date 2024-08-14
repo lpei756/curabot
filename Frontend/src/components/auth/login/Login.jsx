@@ -13,7 +13,8 @@ function Login({ onClose, onSuccess }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
 
-    const handleLogin = async () => {
+    const handleLogin = async (e) => {
+        e.preventDefault(); // Prevent default form submission behavior
         try {
             const data = await login(email, password);
             console.log('Login successful:', data);
@@ -26,7 +27,7 @@ function Login({ onClose, onSuccess }) {
     };
 
     return (
-        <Box>
+        <Box component="form" onSubmit={handleLogin}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography id="login-modal-title" variant="h6" component="h2">
                     Login
@@ -42,6 +43,7 @@ function Login({ onClose, onSuccess }) {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
+                required
             />
             <TextField
                 margin="normal"
@@ -51,9 +53,15 @@ function Login({ onClose, onSuccess }) {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
+                required
             />
             {error && <Typography color="error">{error}</Typography>}
-            <Button variant="contained" color="primary" onClick={handleLogin}>
+            <Button
+                variant="contained"
+                color="primary"
+                type="submit" // Change button type to "submit"
+                fullWidth
+            >
                 Login
             </Button>
         </Box>
