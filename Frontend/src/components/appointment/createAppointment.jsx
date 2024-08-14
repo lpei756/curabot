@@ -3,6 +3,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
 import { createAppointment } from '../../services/appointmentService';
 import { getClinics } from '../../services/clinicService';
 import { getDoctorsByClinic } from '../../services/doctorService';
@@ -99,74 +100,82 @@ const AppointmentForm = () => {
 
     const handleCreateClick = () => {
         window.location.href = 'http://localhost:5173/appointment';
-      };
+    };
 
     return (
-        <Box
-            component="form"
-            onSubmit={handleSubmit}
-            sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 300, margin: '0 auto', marginTop: 10 }}
-        >
-            <TextField
-                label="Date & Time"
-                type="datetime-local"
-                name="dateTime"
-                value={formValues.dateTime}
-                onChange={handleInputChange}
-                InputLabelProps={{
-                    shrink: true,
-                }}
-            />
-            <TextField
-                select
-                label="Type of Visit"
-                name="typeOfVisit"
-                value={formValues.typeOfVisit}
-                onChange={handleInputChange}
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 600, margin: '0 auto', marginTop: 10 }}>
+            <Typography variant="h4" align="center" gutterBottom>
+            Make an Appointment
+        </Typography>
+        <Typography variant="h5" align="center" gutterBottom>
+            It's Quick an Easy.
+        </Typography>
+            <Box
+                component="form"
+                onSubmit={handleSubmit}
+                sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: 400, margin: '0 auto' }}
             >
-                <MenuItem value="">Select Type of Visit</MenuItem>
-                <MenuItem value="Consultation">Consultation</MenuItem>
-                <MenuItem value="Follow-up">Follow-up</MenuItem>
-                <MenuItem value="Urgent">Urgent</MenuItem>
-            </TextField>
-            <TextField
-                label="Purpose of Visit"
-                type="text"
-                name="purposeOfVisit"
-                value={formValues.purposeOfVisit}
-                onChange={handleInputChange}
-            />
-            <TextField
-                select
-                label="Choose Clinic"
-                name="clinic"
-                value={formValues.clinic}
-                onChange={handleInputChange}
-            >
-                <MenuItem value="">Select Clinic</MenuItem>
-                {clinics.map((clinic) => (
-                    <MenuItem key={clinic._id} value={clinic._id}>
-                        {clinic.name}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <TextField
-                select
-                label="Choose GP"
-                name="assignedGP"
-                value={formValues.assignedGP}
-                onChange={handleInputChange}
-            >
-                <MenuItem value="">Select GP</MenuItem>
-                {doctors.map((doctor) => (
-                    <MenuItem key={doctor.doctorID} value={doctor.doctorID}>
-                        {doctor.firstName} {doctor.lastName}
-                    </MenuItem>
-                ))}
-            </TextField>
-            <Button type="submit" variant="contained" onClick={handleCreateClick} style={{ backgroundColor: '#03035d' }}>
-                Create Appointment
-            </Button>
+                <TextField
+                    label="Date & Time"
+                    type="datetime-local"
+                    name="dateTime"
+                    value={formValues.dateTime}
+                    onChange={handleInputChange}
+                    InputLabelProps={{
+                        shrink: true,
+                    }}
+                />
+                <TextField
+                    select
+                    label="Type of Visit"
+                    name="typeOfVisit"
+                    value={formValues.typeOfVisit}
+                    onChange={handleInputChange}
+                >
+                    <MenuItem value="">Select Type of Visit</MenuItem>
+                    <MenuItem value="Consultation">Consultation</MenuItem>
+                    <MenuItem value="Follow-up">Follow-up</MenuItem>
+                    <MenuItem value="Urgent">Urgent</MenuItem>
+                </TextField>
+                <TextField
+                    label="Purpose of Visit"
+                    type="text"
+                    name="purposeOfVisit"
+                    value={formValues.purposeOfVisit}
+                    onChange={handleInputChange}
+                />
+                <TextField
+                    select
+                    label="Choose Clinic"
+                    name="clinic"
+                    value={formValues.clinic}
+                    onChange={handleInputChange}
+                >
+                    <MenuItem value="">Select Clinic</MenuItem>
+                    {clinics.map((clinic) => (
+                        <MenuItem key={clinic._id} value={clinic._id}>
+                            {clinic.name}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <TextField
+                    select
+                    label="Choose GP"
+                    name="assignedGP"
+                    value={formValues.assignedGP}
+                    onChange={handleInputChange}
+                >
+                    <MenuItem value="">Select GP</MenuItem>
+                    {doctors.map((doctor) => (
+                        <MenuItem key={doctor.doctorID} value={doctor.doctorID}>
+                            {doctor.firstName} {doctor.lastName}
+                        </MenuItem>
+                    ))}
+                </TextField>
+                <Button type="submit" variant="contained" onClick={handleCreateClick} style={{ backgroundColor: '#03035d' }}>
+                    Create Appointment
+                </Button>
+            </Box>
         </Box>
     );
 };
