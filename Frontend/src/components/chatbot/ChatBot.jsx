@@ -17,7 +17,7 @@ import Chip from '@mui/material/Chip';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
 import { sendChatMessage } from '../../services/chatService';
-import "../App.css";
+import "../../App.css";
 
 function ChatBot({ toggleChatbot }) {
     const { authToken } = useContext(AuthContext);

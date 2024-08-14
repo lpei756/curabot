@@ -1,6 +1,12 @@
-import axios from 'axios';
+import axiosApiInstance from '../utils/axiosInstance';
+import { API_PATH } from '../utils/urlRoutes';
 
 export const getClinics = async () => {
-    const response = await axios.get('http://localhost:3001/api/clinics');
+  try {
+    const response = await axiosApiInstance.get(API_PATH.clinic.all);
     return response.data;
+  } catch (error) {
+    console.error('Error fetching clinics:', error);
+    throw error;
+  }
 };

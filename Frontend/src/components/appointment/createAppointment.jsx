@@ -4,8 +4,8 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import { createAppointment } from '../../services/appointmentService';
-import { getClinics } from '../../services/clinicService'; // Service to fetch clinics
-import { getDoctorsByClinic } from '../../services/doctorService'; // Service to fetch doctors
+import { getClinics } from '../../services/clinicService';
+import { getDoctorsByClinic } from '../../services/doctorService';
 
 const AppointmentForm = () => {
     const [formValues, setFormValues] = useState({
@@ -20,7 +20,6 @@ const AppointmentForm = () => {
     const [doctors, setDoctors] = useState([]);
 
     useEffect(() => {
-        // Fetch clinics from the server when the component mounts
         const fetchClinics = async () => {
             try {
                 const clinicsData = await getClinics();
@@ -34,16 +33,15 @@ const AppointmentForm = () => {
     }, []);
 
     useEffect(() => {
-        // Fetch doctors when a clinic is selected
         if (formValues.clinic) {
             const fetchDoctors = async () => {
                 try {
                     const doctorsData = await getDoctorsByClinic(formValues.clinic);
-                    console.log('Doctors data:', doctorsData); // Inspect the response
+                    console.log('Doctors data:', doctorsData);
                     setDoctors(doctorsData);
                 } catch (error) {
                     console.error('Error fetching doctors:', error.message);
-                    setDoctors([]); // Set doctors to an empty array in case of error
+                    setDoctors([]);
                 }
             };
 
@@ -61,45 +59,43 @@ const AppointmentForm = () => {
         });
     };
 
-    // Example validation on form submission
     const handleSubmit = async (e) => {
         e.preventDefault();
-      
+
         const { dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP } = formValues;
-      
+
         if (!dateTime || !typeOfVisit || !purposeOfVisit || !clinic || !assignedGP) {
-          console.error('All fields are required');
-          return;
+            console.error('All fields are required');
+            return;
         }
-      
-        // Check if selected clinic and doctor are valid
+
         if (!clinics.some(c => c._id === clinic)) {
-          console.error('Selected clinic is not valid');
-          return;
+            console.error('Selected clinic is not valid');
+            return;
         }
-      
+
         if (!doctors.some(d => d.doctorID === assignedGP)) {
-          console.error('Selected GP is not valid');
-          return;
+            console.error('Selected GP is not valid');
+            return;
         }
-      
+
         const appointmentData = {
-          dateTime,
-          typeOfVisit,
-          purposeOfVisit,
-          clinic,
-          assignedGP,
+            dateTime,
+            typeOfVisit,
+            purposeOfVisit,
+            clinic,
+            assignedGP,
         };
-      
+
         console.log('Submitting Appointment Data:', appointmentData);
-      
+
         try {
-          const result = await createAppointment(appointmentData);
-          console.log('Appointment Created:', result);
+            const result = await createAppointment(appointmentData);
+            console.log('Appointment Created:', result);
         } catch (error) {
-          console.error('Error saving appointment:', error.response ? error.response.data : error.message);
+            console.error('Error saving appointment:', error.response ? error.response.data : error.message);
         }
-      };
+    };
 
     return (
         <Box
@@ -146,7 +142,7 @@ const AppointmentForm = () => {
                 <MenuItem value="">Select Clinic</MenuItem>
                 {clinics.map((clinic) => (
                     <MenuItem key={clinic._id} value={clinic._id}>
-                        {clinic.name} {/* Assuming each clinic has a `name` property */}
+                        {clinic.name}
                     </MenuItem>
                 ))}
             </TextField>

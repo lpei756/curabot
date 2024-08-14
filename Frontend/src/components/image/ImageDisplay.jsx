@@ -3,6 +3,7 @@ import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
+import { API_PATH } from '../../utils/urlRoutes';
 
 function ImageDisplay({ userId }) {
     const [images, setImages] = useState([]);
@@ -13,15 +14,15 @@ function ImageDisplay({ userId }) {
     useEffect(() => {
         const fetchUserImages = async () => {
             try {
-                const response = await axios.get(`http://localhost:3001/api/images/user/${userId}`, {
+                const response = await axios.get(API_PATH.images.userImages.replace(':id', userId), {
                     headers: {
                         'Authorization': `Bearer ${authToken}`
                     }
                 });
                 setImages(response.data);
-                setLoading(false);
             } catch (err) {
                 setError(err.message);
+            } finally {
                 setLoading(false);
             }
         };
@@ -45,7 +46,7 @@ function ImageDisplay({ userId }) {
                     <Box key={image._id} sx={{ my: 2 }}>
                         <Typography><strong>Image {index + 1}:</strong> {image.filename}</Typography>
                         <img
-                            src={`http://localhost:3001/uploads/${image.filename}`}
+                            src={`${import.meta.env.VITE_API_URL}/uploads/${image.filename}`}
                             alt={`User uploaded ${image.filename}`}
                             style={{ maxWidth: '100%', height: 'auto' }}
                         />

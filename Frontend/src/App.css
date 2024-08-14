@@ -66,9 +66,9 @@ body {
 }
 
 .bot-message .message-box {
-  background-color: #e0e0e0; /* Grey */
+  background-color: #e0e0e0;
 }
 
 .user-message .message-box {
-  background-color: #134670; /* Light Blue */
+  background-color: #134670;
 }

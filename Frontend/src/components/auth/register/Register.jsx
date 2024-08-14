@@ -42,7 +42,6 @@ const Register = ({ onSuccess }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Handle nested fields
         const nameParts = name.split('.');
         if (nameParts.length > 1) {
             setFormData((prevData) => ({
@@ -59,7 +58,6 @@ const Register = ({ onSuccess }) => {
             });
         }
 
-        // Password length check
         if (name === 'password') {
             if (value.length < 6) {
                 setPasswordError('Password must be at least 6 characters long.');
