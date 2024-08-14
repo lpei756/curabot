@@ -5,6 +5,7 @@ const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedAppointment, setSelectedAppointment] = useState(null);
 
   useEffect(() => {
     const loadAppointments = async () => {
@@ -35,62 +36,118 @@ const AppointmentList = () => {
     window.location.href = 'http://localhost:5173/appointment/new';
   };
 
+  const handleAppointmentClick = (appointment) => {
+    setSelectedAppointment(selectedAppointment === appointment ? null : appointment);
+  };
+
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
       <h1>My Appointments</h1>
-      <button 
+      <button
         onClick={handleBookingClick}
         style={{
-          margin: '10px', 
-          padding: '10px 20px', 
-          backgroundColor: '#03035d', 
-          color: '#fff', 
-          border: 'none', 
-          borderRadius: '5px', 
+          margin: '10px',
+          padding: '10px 20px',
+          backgroundColor: '#03035d',
+          color: '#fff',
+          border: 'none',
+          borderRadius: '5px',
           cursor: 'pointer'
         }}
       >
         Booking +
       </button>
-      <ul style={{ listStyleType: 'none', padding: 0, width: '80%', maxWidth: '600px' }}>
-        {appointments.length === 0 ? (
-          <p>No appointments found.</p>
-        ) : (
-          appointments.map((appointment) => (
-            <li key={appointment._id} style={{ 
-              border: '2px solid #03035d', 
-              margin: '10px', 
-              padding: '10px', 
-              borderRadius: '15px',
-              textAlign: 'center', 
-              backgroundColor: '#f9f9f9' // Optional: for better visual appeal
-            }}>
-              <p>Patient Name: {appointment.patientName}</p>
-              <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-              <p>Type: {appointment.typeOfVisit}</p>
-              <p>Status: {appointment.status}</p>
-              <p>Clinic: {appointment.clinicName}</p>
-              <p>Doctor: {appointment.doctorName}</p>
-              <div>
-                <button style={{ border: '2px solid #03035d', marginRight: '5px' }}>Edit</button>
-                <button
-                  onClick={() => handleDelete(appointment.appointmentID)}
-                  style={{
-                    backgroundColor: '#03035d',
-                    color: '#fff',
-                    cursor: 'pointer'
-                  }}
-                >
-                  Cancel
-                </button>
-              </div>
-            </li>
-          ))
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '1200px' }}>
+        <ul style={{
+          listStyleType: 'none',
+          padding: 0,
+          width: selectedAppointment ? '50%' : '50%',
+          transition: 'width 0.3s ease',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}>
+          {appointments.length === 0 ? (
+            <p>No appointments found.</p>
+          ) : (
+            appointments.map((appointment) => (
+              <li
+                key={appointment._id}
+                style={{
+                  border: '2px solid #03035d',
+                  margin: '10px',
+                  padding: '10px',
+                  borderRadius: '15px',
+                  textAlign: 'center',
+                  backgroundColor: '#f9f9f9',
+                  cursor: 'pointer',
+                  width: selectedAppointment === appointment ? '80%' : '90%',
+                  transition: 'width 0.3s ease',
+                }}
+                onClick={() => handleAppointmentClick(appointment)}
+              >
+                <div>
+                  <p>Patient Name: {appointment.patientName}</p>
+                  <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
+                  <p>Type: {appointment.typeOfVisit}</p>
+                  <p>Status: {appointment.status}</p>
+                  <p>Clinic: {appointment.clinicName}</p>
+                  <p>Doctor: {appointment.doctorName}</p>
+                </div>
+              </li>
+            ))
+          )}
+        </ul>
+        {selectedAppointment && (
+          <div style={{
+            width: '50%',
+            padding: '10px',
+            borderLeft: '2px solid #03035d',
+            backgroundColor: '#f8f6f6',
+            boxSizing: 'border-box',
+            display: 'flex',
+            flexDirection: 'column',
+            justifyContent: 'center',
+            transition: 'width 0.3s ease',
+          }}>
+            <h2>Details</h2>
+            <p><strong>Patient Name:</strong> {selectedAppointment.patientName}</p>
+            <p><strong>Date:</strong> {new Date(selectedAppointment.dateTime).toLocaleString()}</p>
+            <p><strong>Type:</strong> {selectedAppointment.typeOfVisit}</p>
+            <p><strong>Status:</strong> {selectedAppointment.status}</p>
+            <p><strong>Clinic:</strong> {selectedAppointment.clinicName}</p>
+            <p><strong>Doctor:</strong> {selectedAppointment.doctorName}</p>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-start', marginTop: '10px' }}>
+              <button style={{
+                border: '2px solid #03035d',
+                marginRight: '10px',
+                padding: '10px 20px',
+                cursor: 'pointer',
+                backgroundColor: 'transparent',
+                color: '#03035d'
+              }}>
+                Edit Appointment
+              </button>
+              <button
+                onClick={() => handleDelete(selectedAppointment.appointmentID)}
+                style={{
+                  backgroundColor: '#03035d',
+                  color: '#fff',
+                  padding: '10px 20px',
+                  border: 'none',
+                  cursor: 'pointer',
+                }}
+              >
+                Cancel Appointment
+              </button>
+            </div>
+          </div>
         )}
-      </ul>
+      </div>
     </div>
   );
 };
