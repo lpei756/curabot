@@ -2,14 +2,19 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
 import ReadUser from './ReadUser.jsx';
-import UpdateUser from './UpdateUser.jsx';
 import Appointment from './createAppointment';
 
 const UserOptionsList = ({ options, userId }) => {
     const [selectedOption, setSelectedOption] = useState(null);
 
     const handleOptionClick = (option) => {
-        setSelectedOption(option);
+        if (option === 'Profile') {
+            window.location.href = 'http://localhost:5173/user';
+        } else if (option === 'Appointment') {
+            window.location.href = 'http://localhost:5173/appointment';
+        } else {
+            setSelectedOption(option);
+        }
     };
 
     return (
@@ -23,7 +28,6 @@ const UserOptionsList = ({ options, userId }) => {
             </List>
 
             {selectedOption === 'Profile' && <ReadUser userId={userId} />}
-            {selectedOption === 'Setting' && <UpdateUser userId={userId} />}
             {selectedOption === 'Appointment' && <Appointment userId={userId} />}
         </>
     );
