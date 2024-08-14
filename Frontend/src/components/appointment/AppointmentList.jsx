@@ -80,33 +80,36 @@ const AppointmentList = () => {
           {appointments.length === 0 ? (
             <p>No appointments found.</p>
           ) : (
-            appointments.map((appointment) => (
-              <li
-                key={appointment._id}
-                style={{
-                  border: '2px solid #03035d',
-                  color: 'black',
-                  margin: '10px',
-                  padding: '10px',
-                  borderRadius: '15px',
-                  textAlign: 'center',
-                  backgroundColor: '#f9f9f9',
-                  cursor: 'pointer',
-                  width: selectedAppointment === appointment ? '80%' : '90%',
-                  transition: 'width 0.3s ease',
-                }}
-                onClick={() => handleAppointmentClick(appointment)}
-              >
-                <div>
-                  <p>Patient Name: {appointment.patientName}</p>
-                  <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-                  <p>Type: {appointment.typeOfVisit}</p>
-                  <p>Status: {appointment.status}</p>
-                  <p>Clinic: {appointment.clinicName}</p>
-                  <p>Doctor: {appointment.doctorName}</p>
-                </div>
-              </li>
-            ))
+            appointments
+              .slice()
+              .reverse()
+              .map((appointment) => (
+                <li
+                  key={appointment._id}
+                  style={{
+                    border: '2px solid #03035d',
+                    color: 'black',
+                    margin: '10px',
+                    padding: '10px',
+                    borderRadius: '15px',
+                    textAlign: 'center',
+                    backgroundColor: '#f9f9f9',
+                    cursor: 'pointer',
+                    width: selectedAppointment === appointment ? '80%' : '90%',
+                    transition: 'width 0.3s ease',
+                  }}
+                  onClick={() => handleAppointmentClick(appointment)}
+                >
+                  <div>
+                    <p>Patient Name: {appointment.patientName}</p>
+                    <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
+                    <p>Type: {appointment.typeOfVisit}</p>
+                    <p>Status: {appointment.status}</p>
+                    <p>Clinic: {appointment.clinicName}</p>
+                    <p>Doctor: {appointment.doctorName}</p>
+                  </div>
+                </li>
+              ))
           )}
         </ul>
         {selectedAppointment && (
