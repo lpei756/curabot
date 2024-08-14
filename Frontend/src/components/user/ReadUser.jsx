@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import axiosApiInstance from '../../utils/axiosInstance';
 import { Typography, Box, Divider, TextField, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
+import { fetchUserData, updateUserData } from '../../services/userService';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);
@@ -14,10 +14,10 @@ function ReadUser({ userId }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const loadUserData = async () => {
             try {
-                const response = await axiosApiInstance.get(`/api/auth/user/${userId}`);
-                setUserData(response.data.user);
+                const data = await fetchUserData(userId);
+                setUserData(data);
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -25,7 +25,7 @@ function ReadUser({ userId }) {
             }
         };
 
-        fetchUserData();
+        loadUserData();
     }, [userId]);
 
     const handleInputChange = (e) => {
@@ -33,10 +33,10 @@ function ReadUser({ userId }) {
         setUpdatedData({ ...updatedData, [name]: value });
     };
 
-    const updateUserData = async () => {
+    const handleUpdate = async () => {
         try {
-            const response = await axiosApiInstance.put(`/api/auth/user/${userId}`, updatedData);
-            setUserData(response.data.user);
+            const data = await updateUserData(userId, updatedData);
+            setUserData(data);
             setEditMode(false);
             navigate(`/user`);
         } catch (err) {
@@ -85,8 +85,8 @@ function ReadUser({ userId }) {
                         fullWidth
                         margin="normal"
                     />
-                    {/* 其他表单字段 */}
-                    <Button variant="contained" color="primary" onClick={updateUserData}>Update</Button>
+                    {/* Other form fields */}
+                    <Button variant="contained" color="primary" onClick={handleUpdate}>Update</Button>
                     <Button variant="outlined" color="secondary" onClick={() => setEditMode(false)}>Cancel</Button>
                 </Box>
             ) : (

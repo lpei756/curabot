@@ -9,6 +9,7 @@ import { AuthContext } from '../../context/AuthContext';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
+import { API_PATH } from '../../utils/urlRoutes';
 
 function ImageUpload({ open, onClose, onImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -41,10 +42,9 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
 
         const formData = new FormData();
         formData.append('image', selectedFile);
-        formData.append('userId', '66b156c604e94197067c31a8');
 
         try {
-            const response = await axios.post('http://localhost:3001/api/images/uploadImage', formData, {
+            const response = await axios.post(API_PATH.images.uploadImage, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${authToken}`

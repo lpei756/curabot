@@ -14,5 +14,18 @@ export const API_PATH = {
     read: buildApiPath('/api/appointments/:id'),
     update: buildApiPath('/api/appointments/:id'),
     all: buildApiPath('/api/appointments')
+  },
+  chat: {
+    send: buildApiPath('/api/chat')
+  },
+  clinic: {
+    all: buildApiPath('/api/clinics')
+  },
+  doctor:{
+    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`)
+  },
+  images: {
+    userImages: buildApiPath('/api/images/user/:id'),
+    uploadImage: buildApiPath('/api/images/uploadImage')
   }
 };

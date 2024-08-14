@@ -8,12 +8,12 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
-import Login from './Login';
+import Login from '../auth/login/Login';
 import UserOptionsList from './Menu';
 import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
-import '../App.css';
-import logo from '../../public/logo.png';
+import '../../App.css';
+import logo from '../../../public/logo.png';
 
 const MenuIconButton = styled(IconButton)(({ theme }) => ({
   backgroundColor: 'transparent',
