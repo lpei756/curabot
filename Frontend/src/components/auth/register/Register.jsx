@@ -94,7 +94,7 @@ const Register = ({ onSuccess }) => {
 
     return (
         <Box component="form" onSubmit={handleSubmit} sx={{ maxWidth: '600px', mx: 'auto', mt: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>Register</Typography>
+            <Typography variant="h4" component="h1" gutterBottom style={{ color: 'black', textAlign: 'center' }}>Register</Typography>
 
             {error && (
                 <Typography variant="body2" color="error" gutterBottom>
@@ -336,7 +336,13 @@ const Register = ({ onSuccess }) => {
                 fullWidth
                 margin="normal"
             />
-            <Button variant="contained" color="primary" type="submit" fullWidth sx={{ mt: 2 }}>
+            <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} style={{
+                    backgroundColor: '#03035d',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}>
                 Register
             </Button>
         </Box>
