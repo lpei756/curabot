@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 
 function Login({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');
@@ -29,11 +29,11 @@ function Login({ onClose, onSuccess }) {
     return (
         <Box component="form" onSubmit={handleLogin}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography id="login-modal-title" variant="h6" component="h2">
+                <Typography id="login-modal-title" variant="h6" component="h2"  style={{ color: 'black', textAlign: 'center' }}>
                     Login
                 </Typography>
                 <IconButton onClick={onClose}>
-                    <CloseIcon />
+                    <ClearRoundedIcon />
                 </IconButton>
             </Box>
             <TextField
@@ -58,9 +58,14 @@ function Login({ onClose, onSuccess }) {
             {error && <Typography color="error">{error}</Typography>}
             <Button
                 variant="contained"
-                color="primary"
-                type="submit" // Change button type to "submit"
-                fullWidth
+                type="submit"
+                style={{
+                    backgroundColor: '#03035d',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '5px',
+                    cursor: 'pointer'
+                  }}
             >
                 Login
             </Button>

@@ -4,7 +4,7 @@ import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
+import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -122,7 +122,7 @@ function ChatBot({ toggleChatbot }) {
                             Cura
                         </Typography>
                         <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
-                            <CloseIcon />
+                            <ClearRoundedIcon />
                         </IconButton>
                     </Toolbar>
                 </AppBar>
