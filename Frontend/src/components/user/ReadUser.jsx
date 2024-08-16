@@ -48,10 +48,24 @@ function ReadUser({ userId }) {
     if (error) return <Typography>Error: {error}</Typography>;
 
     return (
-        <Box>
+        <Box
+            sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                width: '100%',
+                maxWidth: '800px',
+                margin: 'auto',
+                padding: '20px',
+                border: '2px solid #03035d',
+                borderRadius: '15px',
+                backgroundColor: '#f9f9f9',
+                boxSizing: 'border-box'
+            }}
+        >
             {editMode ? (
-                <Box>
-                    <Typography variant="h6">Edit User Information</Typography>
+                <Box sx={{ width: '100%' }}>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit User Information</Typography>
                     <TextField
                         label="First Name"
                         name="firstName"
@@ -86,12 +100,32 @@ function ReadUser({ userId }) {
                         margin="normal"
                     />
                     {/* Other form fields */}
-                    <Button variant="contained" color="primary" onClick={handleUpdate}>Update</Button>
-                    <Button variant="outlined" color="secondary" onClick={() => setEditMode(false)}>Cancel</Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#03035d',
+                            color: '#fff',
+                            margin: '10px 0'
+                        }}
+                        onClick={handleUpdate}
+                    >
+                        Update
+                    </Button>
+                    <Button
+                        variant="outlined"
+                        sx={{
+                            borderColor: '#03035d',
+                            color: '#03035d',
+                            margin: '10px 0'
+                        }}
+                        onClick={() => setEditMode(false)}
+                    >
+                        Cancel
+                    </Button>
                 </Box>
             ) : (
                 <>
-                    <Typography variant="h6">User Information</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>User Information</Typography>
                     <Typography><strong>Patient ID:</strong> {userData.patientID}</Typography>
                     <Typography><strong>NHI:</strong> {userData.nhi}</Typography>
                     <Typography><strong>First Name:</strong> {userData.firstName}</Typography>
@@ -107,14 +141,14 @@ function ReadUser({ userId }) {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">Emergency Contact</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>Emergency Contact</Typography>
                     <Typography><strong>Name:</strong> {userData.emergencyContact.name}</Typography>
                     <Typography><strong>Phone:</strong> {userData.emergencyContact.phone}</Typography>
                     <Typography><strong>Relationship:</strong> {userData.emergencyContact.relationship}</Typography>
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">Medical History</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>Medical History</Typography>
                     <Typography><strong>Chronic Diseases:</strong> {userData.medicalHistory.chronicDiseases}</Typography>
                     <Typography><strong>Past Surgeries:</strong> {userData.medicalHistory.pastSurgeries}</Typography>
                     <Typography><strong>Family Medical History:</strong> {userData.medicalHistory.familyMedicalHistory}</Typography>
@@ -123,18 +157,18 @@ function ReadUser({ userId }) {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">General Practitioner (GP)</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>General Practitioner (GP)</Typography>
                     <Typography><strong>GP:</strong> {userData.gp}</Typography>
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">Insurance</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>Insurance</Typography>
                     <Typography><strong>Provider:</strong> {userData.insurance.provider}</Typography>
                     <Typography><strong>Policy Number:</strong> {userData.insurance.policyNumber || 'N/A'}</Typography>
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6">Appointments</Typography>
+                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>Appointments</Typography>
                     {userData.appointments.length > 0 ? (
                         userData.appointments.map((appointment, index) => (
                             <Typography key={index}><strong>Appointment {index + 1}:</strong> {new Date(appointment.date).toLocaleDateString()} - ID: {appointment.appointmentID}</Typography>
@@ -149,7 +183,17 @@ function ReadUser({ userId }) {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Button variant="contained" color="primary" onClick={() => setEditMode(true)}>Edit</Button>
+                    <Button
+                        variant="contained"
+                        sx={{
+                            backgroundColor: '#03035d',
+                            color: '#fff',
+                            marginTop: '10px',
+                        }}
+                        onClick={() => setEditMode(true)}
+                    >
+                        Edit
+                    </Button>
                 </>
             )}
         </Box>
