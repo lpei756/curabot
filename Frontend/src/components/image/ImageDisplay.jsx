@@ -77,9 +77,7 @@ function ImageDisplay({ userId }) {
                             }
                         }}
                     >
-                        {/*<Typography sx={{ marginBottom: '10px' }}>*/}
-                        {/*    <strong>Image {index + 1}:</strong> {image.filename}*/}
-                        {/*</Typography>*/}
+
                         <Box
                             sx={{
                                 position: 'relative',

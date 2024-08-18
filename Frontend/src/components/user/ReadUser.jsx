@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Box, Divider, TextField, Button } from '@mui/material';
+import { Typography, Box, Divider, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
-import { fetchUserData, updateUserData } from '../../services/userService';
+import { fetchUserData } from '../../services/userService';
+import EditUser from './EditUser';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
-    const [updatedData, setUpdatedData] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -27,22 +27,6 @@ function ReadUser({ userId }) {
 
         loadUserData();
     }, [userId]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setUpdatedData({ ...updatedData, [name]: value });
-    };
-
-    const handleUpdate = async () => {
-        try {
-            const data = await updateUserData(userId, updatedData);
-            setUserData(data);
-            setEditMode(false);
-            navigate(`/user`);
-        } catch (err) {
-            setError(err.message);
-        }
-    };
 
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
@@ -64,65 +48,12 @@ function ReadUser({ userId }) {
             }}
         >
             {editMode ? (
-                <Box sx={{ width: '100%' }}>
-                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit User Information</Typography>
-                    <TextField
-                        label="First Name"
-                        name="firstName"
-                        defaultValue={userData.firstName}
-                        onChange={handleInputChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Middle Name"
-                        name="middleName"
-                        defaultValue={userData.middleName}
-                        onChange={handleInputChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Last Name"
-                        name="lastName"
-                        defaultValue={userData.lastName}
-                        onChange={handleInputChange}
-                        fullWidth
-                        margin="normal"
-                    />
-                    <TextField
-                        label="Date of Birth"
-                        name="dateOfBirth"
-                        defaultValue={new Date(userData.dateOfBirth).toISOString().split('T')[0]}
-                        onChange={handleInputChange}
-                        type="date"
-                        fullWidth
-                        margin="normal"
-                    />
-                    {/* Other form fields */}
-                    <Button
-                        variant="contained"
-                        sx={{
-                            backgroundColor: '#03035d',
-                            color: '#fff',
-                            margin: '10px 0'
-                        }}
-                        onClick={handleUpdate}
-                    >
-                        Update
-                    </Button>
-                    <Button
-                        variant="outlined"
-                        sx={{
-                            borderColor: '#03035d',
-                            color: '#03035d',
-                            margin: '10px 0'
-                        }}
-                        onClick={() => setEditMode(false)}
-                    >
-                        Cancel
-                    </Button>
-                </Box>
+                <EditUser
+                    userData={userData}
+                    setUserData={setUserData}
+                    userId={userId}
+                    setEditMode={setEditMode}
+                />
             ) : (
                 <>
                     <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>User Information</Typography>
