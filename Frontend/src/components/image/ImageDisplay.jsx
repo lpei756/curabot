@@ -4,11 +4,13 @@ import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress } from '@mui/material';
 import { AuthContext } from '../../context/AuthContext';
 import { API_PATH } from '../../utils/urlRoutes';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
 
 function ImageDisplay({ userId }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [zoomedImage, setZoomedImage] = useState(null);
     const { authToken } = useContext(AuthContext);
 
     useEffect(() => {
@@ -30,8 +32,16 @@ function ImageDisplay({ userId }) {
         fetchUserImages();
     }, [userId, authToken]);
 
+    const handleImageClick = (imageId) => {
+        setZoomedImage(zoomedImage === imageId ? null : imageId);
+    };
+
     if (loading) {
-        return <CircularProgress />;
+        return (
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100px' }}>
+                <CircularProgress />
+            </Box>
+        );
     }
 
     if (error) {
@@ -39,17 +49,69 @@ function ImageDisplay({ userId }) {
     }
 
     return (
-        <Box>
-            <Typography variant="h6">User Images</Typography>
+        <Box
+            sx={{
+                width: '100%',
+                maxWidth: '800px',
+                margin: '20px auto',
+                padding: '20px',
+                boxSizing: 'border-box'
+            }}
+        >
+            <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px', textAlign: 'center' }}>
+                User Images
+            </Typography>
+
             {images.length > 0 ? (
                 images.map((image, index) => (
-                    <Box key={image._id} sx={{ my: 2 }}>
-                        <Typography><strong>Image {index + 1}:</strong> {image.filename}</Typography>
-                        <img
-                            src={`${import.meta.env.VITE_API_URL}/uploads/${image.filename}`}
-                            alt={`User uploaded ${image.filename}`}
-                            style={{ maxWidth: '100%', height: 'auto' }}
-                        />
+                    <Box
+                        key={image._id}
+                        sx={{
+                            position: 'relative',
+                            my: 2,
+                            textAlign: 'center',
+                            display: 'inline-block',
+                            '&:hover .zoom-icon': {
+                                opacity: 1,
+                                transition: 'opacity 0.3s ease-in-out',
+                            }
+                        }}
+                    >
+                        {/*<Typography sx={{ marginBottom: '10px' }}>*/}
+                        {/*    <strong>Image {index + 1}:</strong> {image.filename}*/}
+                        {/*</Typography>*/}
+                        <Box
+                            sx={{
+                                position: 'relative',
+                                display: 'inline-block',
+                                cursor: 'pointer',
+                                '& img': {
+                                    maxWidth: zoomedImage === image._id ? '100%' : '150px',
+                                    height: 'auto',
+                                    borderRadius: '10px',
+                                    border: '1px solid #03035d',
+                                    transition: 'max-width 0.3s ease-in-out',
+                                }
+                            }}
+                            onClick={() => handleImageClick(image._id)}
+                        >
+                            <img
+                                src={`${import.meta.env.VITE_API_URL}/uploads/${image.filename}`}
+                                alt={`User uploaded ${image.filename}`}
+                            />
+                            <ZoomInIcon
+                                className="zoom-icon"
+                                sx={{
+                                    position: 'absolute',
+                                    top: '50%',
+                                    left: '50%',
+                                    transform: 'translate(-50%, -50%)',
+                                    fontSize: '30px',
+                                    color: '#fff',
+                                    opacity: 0,
+                                }}
+                            />
+                        </Box>
                     </Box>
                 ))
             ) : (
