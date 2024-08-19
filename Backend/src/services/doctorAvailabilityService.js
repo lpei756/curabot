@@ -1,4 +1,6 @@
 import DoctorAvailability from '../models/DoctorAvailability.js';
+import Clinic from '../models/Clinic.js';
+import Doctor from '../models/Doctor.js';
 
 export const setAvailability = async (doctorID, date, startTime, endTime, isBooked, bookedBy) => {
     const availability = new DoctorAvailability({
@@ -16,6 +18,30 @@ export const setAvailability = async (doctorID, date, startTime, endTime, isBook
 export const getAvailabilityByDoctorID = async (doctorID) => {
     return await DoctorAvailability.findOne({ doctorID });
 };
+
+export const getAllAvailabilityByDate = async (date) => {
+    return await DoctorAvailability.find({ date });
+};
+
+export const getAvailabilityByAddress = async (address) => {
+    // Find the clinic by address
+    const clinic = await Clinic.findOne({ address });
+    if (!clinic) throw new Error('Clinic not found');
+  
+    // Find doctors associated with the clinic
+    const doctors = await Doctor.find({ clinic: clinic._id });
+    if (doctors.length === 0) throw new Error('No doctors found for this clinic');
+  
+    // Get doctor IDs
+    const doctorIDs = doctors.map((doctor) => doctor.doctorID);
+  
+    // Find availability slots for the doctors
+    const availabilitySlots = await DoctorAvailability.find({
+      doctorID: { $in: doctorIDs },
+    });
+  
+    return availabilitySlots;
+  };
 
 export const updateAvailability = async (doctorID, slotId, updates) => {
     try {
