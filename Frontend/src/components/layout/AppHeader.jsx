@@ -13,7 +13,7 @@ import UserOptionsList from './Menu';
 import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
 import '../../App.css';
-import logo from '../../../public/logo.png';
+import logo from '/logo.png';
 
 const MenuIconButton = styled(IconButton)(({ theme }) => ({
   backgroundColor: 'transparent',
