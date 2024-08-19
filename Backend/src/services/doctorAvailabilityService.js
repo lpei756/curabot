@@ -1,6 +1,5 @@
 import DoctorAvailability from '../models/DoctorAvailability.js';
 import Clinic from '../models/Clinic.js';
-import Doctor from '../models/Doctor.js';
 
 export const setAvailability = async (doctorID, date, startTime, endTime, isBooked, bookedBy) => {
     const availability = new DoctorAvailability({
@@ -23,25 +22,31 @@ export const getAllAvailabilityByDate = async (date) => {
     return await DoctorAvailability.find({ date });
 };
 
-export const getAvailabilityByAddress = async (address) => {
-    // Find the clinic by address
-    const clinic = await Clinic.findOne({ address });
-    if (!clinic) throw new Error('Clinic not found');
-  
-    // Find doctors associated with the clinic
-    const doctors = await Doctor.find({ clinic: clinic._id });
-    if (doctors.length === 0) throw new Error('No doctors found for this clinic');
-  
-    // Get doctor IDs
-    const doctorIDs = doctors.map((doctor) => doctor.doctorID);
-  
-    // Find availability slots for the doctors
-    const availabilitySlots = await DoctorAvailability.find({
-      doctorID: { $in: doctorIDs },
-    });
-  
-    return availabilitySlots;
-  };
+export const getAvailabilityByAddress = async (partialAddress) => {
+    try {
+        console.log('Searching for clinics with partial address:', partialAddress);
+        const clinic = await Clinic.findOne({
+            address: { $regex: partialAddress, $options: 'i' }
+        }).exec();
+
+        if (!clinic) {
+            console.error('Clinic not found for partial address:', partialAddress);
+            throw new Error('Clinic not found');
+        }
+
+        console.log('Clinic found:', clinic);
+        const doctorIDs = clinic.doctors.map(doctor => doctor.doctorID);
+
+        console.log('Doctor IDs from clinic:', doctorIDs);
+        const availability = await DoctorAvailability.find({ doctorID: { $in: doctorIDs } }).exec();
+
+        console.log('Availability found:', availability);
+        return availability;
+    } catch (error) {
+        console.error('Error fetching availability by address:', error);
+        throw error;
+    }
+};
 
 export const updateAvailability = async (doctorID, slotId, updates) => {
     try {

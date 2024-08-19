@@ -3,7 +3,8 @@ import {
     getAvailabilityByDoctorID,
     updateAvailability,
     deleteAvailability,
-    getAllAvailabilityByDate
+    getAllAvailabilityByDate,
+    getAvailabilityByAddress
 } from '../services/doctorAvailabilityService.js';
 
 export const setDoctorAvailability = async (req, res) => {
@@ -44,6 +45,26 @@ export const getAvailabilityByDate = async (req, res) => {
         res.status(200).json(availability);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const getDoctorAvailabilityByAddress = async (req, res) => {
+    try {
+        const { address } = req.params;
+
+        const decodedAddress = decodeURIComponent(address);
+        console.log('Searching for clinics with partial address:', decodedAddress);
+
+        const availability = await getAvailabilityByAddress(decodedAddress);
+
+        if (!availability || availability.length === 0) {
+            return res.status(404).json({ message: 'No availability found for this address' });
+        }
+
+        res.status(200).json(availability);
+    } catch (error) {
+        console.error('Error fetching doctor availability by address:', error);
+        res.status(500).json({ message: 'Internal server error', error: error.message });
     }
 };
 

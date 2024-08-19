@@ -126,6 +126,11 @@ const getDoctorAvailabilityByDateSchema = Joi.object({
     date: Joi.date().required()
 });
 
+const getDoctorAvailabilityByAddressSchema = Joi.object({
+    address: Joi.string().required()
+});
+
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -137,5 +142,6 @@ export default {
     [doctorAvailabilityPathBase.set]: setDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.getByDate]: getDoctorAvailabilityByDateSchema,
-    [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema
+    [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema,
+    [doctorAvailabilityPathBase.getByAddress]: getDoctorAvailabilityByAddressSchema
 };
