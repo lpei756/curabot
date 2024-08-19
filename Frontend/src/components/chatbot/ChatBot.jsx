@@ -1,5 +1,7 @@
 import { useState, useContext, useRef } from 'react';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import PropTypes from 'prop-types';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
@@ -21,7 +23,7 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
       transform: 'scale(1.1)',
     },
   }));
-  
+
   const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     color: isActive ? '#5BC0DE': theme.palette.text.secondary,
     transition: 'all 0.3s ease',
@@ -38,6 +40,8 @@ function ChatBot({ toggleChatbot }) {
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
+    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
     const scrollContainerRef = useRef(null);
 
     const quickChats = [
@@ -96,8 +100,16 @@ function ChatBot({ toggleChatbot }) {
         console.log('Uploaded image:', uploadedImage);
         setMessages((prevMessages) => [
             ...prevMessages,
-            { type: 'user', message: `Image uploaded: ${uploadedImage.filename}` }
+            {
+                type: 'user',
+                message: `Image uploaded: ${uploadedImage.filename}`,
+                imageUrl: uploadedImage.url
+            }
         ]);
+    };
+    const handleImageClick = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setIsImageDialogOpen(true);
     };
 
     const handleFeedback = (index, feedback) => {
@@ -175,6 +187,13 @@ function ChatBot({ toggleChatbot }) {
                             >
                                 {msg.isHtml ? (
                                     <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
+                                ) : msg.imageUrl ? (
+                                    <img
+                                        src={msg.imageUrl}
+                                        alt="Uploaded"
+                                        style={{ maxWidth: '100px', cursor: 'pointer' }}
+                                        onClick={() => handleImageClick(msg.imageUrl)}
+                                    />
                                 ) : (
                                     <Typography>{msg.message}</Typography>
                                 )}
@@ -190,7 +209,7 @@ function ChatBot({ toggleChatbot }) {
                                             </ThumbIcon>
                                             </StyledIconButton>
                                             <StyledIconButton
-                                        
+
                                             onClick={() => handleFeedback(index, false)}
                                             aria-label="thumbs down"
                                         >
@@ -200,7 +219,7 @@ function ChatBot({ toggleChatbot }) {
                                             </StyledIconButton>
                                     </Box>
                                 )}
-                                
+
                             </Paper>
                             {msg.type === 'user' && (
                                 <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
@@ -293,6 +312,13 @@ function ChatBot({ toggleChatbot }) {
                 onClose={() => setIsImageUploadOpen(false)}
                 onImageUploaded={handleImageUpload}
             />
+            <Dialog open={isImageDialogOpen} onClose={() => setIsImageDialogOpen(false)} maxWidth="md">
+                <DialogContent>
+                    {selectedImage && (
+                        <img src={selectedImage} alt="Full Size" style={{ width: '100%', height: 'auto' }} />
+                    )}
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
