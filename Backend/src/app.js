@@ -8,6 +8,7 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import chatRoutes from './routes/chatRoutes.js';
 import imageRoutes from "./routes/imageRoutes.js";
 import adminRoutes from './routes/adminRoutes.js';
+import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
 
 const app = express();
 
@@ -27,5 +28,6 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 
 export default app;
