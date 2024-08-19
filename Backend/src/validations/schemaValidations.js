@@ -122,6 +122,10 @@ const updateDoctorAvailabilitySchema = Joi.object({
     bookedBy: Joi.string().allow(null).optional()
 });
 
+const getDoctorAvailabilityByDateSchema = Joi.object({
+    date: Joi.date().required()
+});
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -132,5 +136,6 @@ export default {
     [authPathBase.updateUser]: updateUserSchema,
     [doctorAvailabilityPathBase.set]: setDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema,
+    [doctorAvailabilityPathBase.getByDate]: getDoctorAvailabilityByDateSchema,
     [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema
 };

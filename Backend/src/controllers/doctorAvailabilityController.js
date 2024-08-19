@@ -2,7 +2,8 @@ import {
     setAvailability,
     getAvailabilityByDoctorID,
     updateAvailability,
-    deleteAvailability
+    deleteAvailability,
+    getAllAvailabilityByDate
 } from '../services/doctorAvailabilityService.js';
 
 export const setDoctorAvailability = async (req, res) => {
@@ -31,6 +32,18 @@ export const getDoctorAvailability = async (req, res) => {
     } catch (error) {
         console.error('Error fetching doctor availability:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+export const getAvailabilityByDate = async (req, res) => {
+    try {
+        const { date } = req.params;
+
+        const availability = await getAllAvailabilityByDate(date);
+
+        res.status(200).json(availability);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
