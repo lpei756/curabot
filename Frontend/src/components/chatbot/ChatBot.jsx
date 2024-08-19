@@ -1,25 +1,34 @@
 import { useState, useContext, useRef } from 'react';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
 import PropTypes from 'prop-types';
-import AppBar from '@mui/material/AppBar';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import TextField from '@mui/material/TextField';
-import Paper from '@mui/material/Paper';
-import Chip from '@mui/material/Chip';
+import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
+import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
 import { AuthContext } from '../../context/AuthContext';
 import { sendChatMessage } from '../../services/chatService';
 import "../../App.css";
+
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'rgba(25, 118, 210, 0.04)',
+      transform: 'scale(1.1)',
+    },
+  }));
+  
+  const ThumbIcon = styled('div')(({ theme, isActive }) => ({
+    color: isActive ? '#5BC0DE': theme.palette.text.secondary,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      color: '#5BC0DE',
+    },
+  }));
 
 function ChatBot({ toggleChatbot }) {
     const { authToken } = useContext(AuthContext);
@@ -29,8 +38,6 @@ function ChatBot({ toggleChatbot }) {
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
-    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
-    const [selectedImage, setSelectedImage] = useState(null);
     const scrollContainerRef = useRef(null);
 
     const quickChats = [
@@ -64,6 +71,7 @@ function ChatBot({ toggleChatbot }) {
         setIsLoading(true);
 
         try {
+            console.log('Auth Token:', authToken);
             const response = await sendChatMessage(messageToSend, authToken);
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -85,20 +93,19 @@ function ChatBot({ toggleChatbot }) {
     };
 
     const handleImageUpload = (uploadedImage) => {
-        console.log('Uploaded Image:', uploadedImage); // 确认响应内容
+        console.log('Uploaded image:', uploadedImage);
         setMessages((prevMessages) => [
             ...prevMessages,
-            {
-                type: 'user',
-                message: `Image uploaded: ${uploadedImage.filename}`,
-                imageUrl: uploadedImage.url
-            }
+            { type: 'user', message: `Image uploaded: ${uploadedImage.filename}` }
         ]);
     };
 
-    const handleImageClick = (imageUrl) => {
-        setSelectedImage(imageUrl);
-        setIsImageDialogOpen(true);
+    const handleFeedback = (index, feedback) => {
+        setMessages(prevMessages =>
+            prevMessages.map((msg, i) =>
+                i === index ? { ...msg, liked: feedback } : msg
+            )
+        );
     };
 
     return (
@@ -168,16 +175,32 @@ function ChatBot({ toggleChatbot }) {
                             >
                                 {msg.isHtml ? (
                                     <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
-                                ) : msg.imageUrl ? (
-                                    <img
-                                        src={msg.imageUrl}
-                                        alt="Uploaded"
-                                        style={{ maxWidth: '100px', cursor: 'pointer' }}
-                                        onClick={() => handleImageClick(msg.imageUrl)}
-                                    />
                                 ) : (
                                     <Typography>{msg.message}</Typography>
                                 )}
+
+                                {msg.type === 'bot' && index !== 0 &&(
+                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                        <StyledIconButton
+                                            onClick={() => handleFeedback(index, true)}
+                                            aria-label="thumbs up"
+                                        >
+                                            <ThumbIcon isActive={msg.liked === true}>
+                                            <ThumbUpOutlinedIcon />
+                                            </ThumbIcon>
+                                            </StyledIconButton>
+                                            <StyledIconButton
+                                        
+                                            onClick={() => handleFeedback(index, false)}
+                                            aria-label="thumbs down"
+                                        >
+                                            <ThumbIcon isActive={msg.liked === false}>
+                                            <ThumbDownOutlinedIcon />
+                                            </ThumbIcon>
+                                            </StyledIconButton>
+                                    </Box>
+                                )}
+                                
                             </Paper>
                             {msg.type === 'user' && (
                                 <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
@@ -251,14 +274,14 @@ function ChatBot({ toggleChatbot }) {
                     />
                     {inputValue.trim() !== '' && (
                         <IconButton type="submit" color="primary" aria-label="send"
-                                    sx={{
-                                        bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
-                                        color: inputValue.trim() !== '' ? 'white' : 'inherit',
-                                        '&:hover': {
-                                            bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
-                                        },
-                                        transition: 'all 0.3s ease',
-                                    }}>
+                            sx={{
+                                bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
+                                color: inputValue.trim() !== '' ? 'white' : 'inherit',
+                                '&:hover': {
+                                    bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
+                                },
+                                transition: 'all 0.3s ease',
+                            }}>
                             <SendRoundedIcon />
                         </IconButton>
                     )}
@@ -270,14 +293,6 @@ function ChatBot({ toggleChatbot }) {
                 onClose={() => setIsImageUploadOpen(false)}
                 onImageUploaded={handleImageUpload}
             />
-
-            <Dialog open={isImageDialogOpen} onClose={() => setIsImageDialogOpen(false)} maxWidth="md">
-                <DialogContent>
-                    {selectedImage && (
-                        <img src={selectedImage} alt="Full Size" style={{ width: '100%', height: 'auto' }} />
-                    )}
-                </DialogContent>
-            </Dialog>
         </>
     );
 }
