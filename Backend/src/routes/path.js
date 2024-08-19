@@ -46,5 +46,7 @@ export const ADMIN_PATHS = {
 
 export const DOCTOR_AVAILABILITY_PATHS = {
   set: '/:doctorID/set',
-  get: '/:doctorID'
+  getByDoctor: '/:doctorID',
+  update: '/:doctorID/slot/:slotId',
+  delete: '/:doctorID/slot/:slotId'
 };
