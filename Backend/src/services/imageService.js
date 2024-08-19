@@ -35,17 +35,30 @@ export const upload = multer({
     }
 });
 
-// 保存图片的服务逻辑
 export const saveImageService = async (userId, filename) => {
     console.log('Saving image for user:', userId, 'with filename:', filename);
+
+    // 构建图片的访问URL
+    const imageUrl = `${process.env.BASE_URL}/uploads/${filename}`;
+    console.log('Constructed image URL:', imageUrl); // 确保 URL 被正确生成
+    // 创建并保存新的图片文档
     const newImage = new Image({
         userId: userId,
         filename: filename,
     });
 
     const savedImage = await newImage.save();
-    return savedImage;
+
+    // 返回完整的JSON响应
+    return {
+        _id: savedImage._id,
+        userId: savedImage.userId,
+        filename: savedImage.filename,
+        url: imageUrl,
+        createdAt: savedImage.createdAt
+    };
 };
+
 
 // 获取用户图片的服务逻辑
 export const getImagesByUser = async (userId) => {

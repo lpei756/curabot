@@ -15,6 +15,8 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Chip from '@mui/material/Chip';
 import ImageUpload from '../image/ImageUpload';
+import Dialog from '@mui/material/Dialog';
+import DialogContent from '@mui/material/DialogContent';
 import { AuthContext } from '../../context/AuthContext';
 import { sendChatMessage } from '../../services/chatService';
 import "../../App.css";
@@ -27,6 +29,8 @@ function ChatBot({ toggleChatbot }) {
     const [inputValue, setInputValue] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
+    const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
     const scrollContainerRef = useRef(null);
 
     const quickChats = [
@@ -60,7 +64,6 @@ function ChatBot({ toggleChatbot }) {
         setIsLoading(true);
 
         try {
-            console.log('Auth Token:', authToken);
             const response = await sendChatMessage(messageToSend, authToken);
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -82,11 +85,20 @@ function ChatBot({ toggleChatbot }) {
     };
 
     const handleImageUpload = (uploadedImage) => {
-        console.log('Uploaded image:', uploadedImage);
+        console.log('Uploaded Image:', uploadedImage); // 确认响应内容
         setMessages((prevMessages) => [
             ...prevMessages,
-            { type: 'user', message: `Image uploaded: ${uploadedImage.filename}` }
+            {
+                type: 'user',
+                message: `Image uploaded: ${uploadedImage.filename}`,
+                imageUrl: uploadedImage.url
+            }
         ]);
+    };
+
+    const handleImageClick = (imageUrl) => {
+        setSelectedImage(imageUrl);
+        setIsImageDialogOpen(true);
     };
 
     return (
@@ -156,6 +168,13 @@ function ChatBot({ toggleChatbot }) {
                             >
                                 {msg.isHtml ? (
                                     <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
+                                ) : msg.imageUrl ? (
+                                    <img
+                                        src={msg.imageUrl}
+                                        alt="Uploaded"
+                                        style={{ maxWidth: '100px', cursor: 'pointer' }}
+                                        onClick={() => handleImageClick(msg.imageUrl)}
+                                    />
                                 ) : (
                                     <Typography>{msg.message}</Typography>
                                 )}
@@ -232,14 +251,14 @@ function ChatBot({ toggleChatbot }) {
                     />
                     {inputValue.trim() !== '' && (
                         <IconButton type="submit" color="primary" aria-label="send"
-                            sx={{
-                                bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
-                                color: inputValue.trim() !== '' ? 'white' : 'inherit',
-                                '&:hover': {
-                                    bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
-                                },
-                                transition: 'all 0.3s ease',
-                            }}>
+                                    sx={{
+                                        bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
+                                        color: inputValue.trim() !== '' ? 'white' : 'inherit',
+                                        '&:hover': {
+                                            bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
+                                        },
+                                        transition: 'all 0.3s ease',
+                                    }}>
                             <SendRoundedIcon />
                         </IconButton>
                     )}
@@ -251,6 +270,14 @@ function ChatBot({ toggleChatbot }) {
                 onClose={() => setIsImageUploadOpen(false)}
                 onImageUploaded={handleImageUpload}
             />
+
+            <Dialog open={isImageDialogOpen} onClose={() => setIsImageDialogOpen(false)} maxWidth="md">
+                <DialogContent>
+                    {selectedImage && (
+                        <img src={selectedImage} alt="Full Size" style={{ width: '100%', height: 'auto' }} />
+                    )}
+                </DialogContent>
+            </Dialog>
         </>
     );
 }
