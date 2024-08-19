@@ -13,7 +13,6 @@ conn.once('open', () => {
     console.log('GridFS initialized');
 });
 
-// 配置 GridFS 存储引擎
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
@@ -26,7 +25,6 @@ const storage = new GridFsStorage({
     }
 });
 
-// 创建 multer 中间件并导出
 export const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
@@ -38,10 +36,8 @@ export const upload = multer({
 export const saveImageService = async (userId, filename) => {
     console.log('Saving image for user:', userId, 'with filename:', filename);
 
-    // 构建图片的访问URL
     const imageUrl = `${process.env.BASE_URL}/uploads/${filename}`;
-    console.log('Constructed image URL:', imageUrl); // 确保 URL 被正确生成
-    // 创建并保存新的图片文档
+    console.log('Constructed image URL:', imageUrl);
     const newImage = new Image({
         userId: userId,
         filename: filename,
@@ -49,7 +45,6 @@ export const saveImageService = async (userId, filename) => {
 
     const savedImage = await newImage.save();
 
-    // 返回完整的JSON响应
     return {
         _id: savedImage._id,
         userId: savedImage.userId,
@@ -59,8 +54,6 @@ export const saveImageService = async (userId, filename) => {
     };
 };
 
-
-// 获取用户图片的服务逻辑
 export const getImagesByUser = async (userId) => {
     try {
         const images = await Image.find({ userId }).sort({ createdAt: -1 });
@@ -70,7 +63,6 @@ export const getImagesByUser = async (userId) => {
     }
 };
 
-// 删除图片的服务逻辑
 export const deleteImage = async (imageId) => {
     try {
         const deletedImage = await Image.findByIdAndDelete(imageId);
@@ -78,7 +70,6 @@ export const deleteImage = async (imageId) => {
             throw new Error('Image not found');
         }
 
-        // 删除 GridFS 中的文件
         gfs.remove({ filename: deletedImage.filename, root: 'uploads' }, (err) => {
             if (err) {
                 console.error(`Error deleting file from GridFS: ${err.message}`);
@@ -92,7 +83,6 @@ export const deleteImage = async (imageId) => {
     }
 };
 
-// 获取图片流的服务逻辑（用于显示图片）
 export const getImageStream = async (filename) => {
     try {
         const file = await gfs.files.findOne({ filename });

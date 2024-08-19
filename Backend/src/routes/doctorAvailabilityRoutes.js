@@ -4,7 +4,8 @@ import {
   getDoctorAvailability,
   updateDoctorAvailability,
   deleteDoctorAvailability,
-  getAvailabilityByDate
+  getAvailabilityByDate,
+  getDoctorAvailabilityByAddress
 } from '../controllers/doctorAvailabilityController.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import adminAuthorization from '../middlewares/adminAuthorization.js';
@@ -18,6 +19,7 @@ const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
 router.post(DOCTOR_AVAILABILITY_PATHS.set, authenticate, adminAuthorization(['doctor', 'nurse']), schemaValidator(doctorAvailabilityPathBase.set), setDoctorAvailability);
 router.get(DOCTOR_AVAILABILITY_PATHS.getByDoctor, authenticate, schemaValidator(doctorAvailabilityPathBase.get), getDoctorAvailability);
 router.get(DOCTOR_AVAILABILITY_PATHS.getByDate, authenticate, schemaValidator(doctorAvailabilityPathBase.getByDate), getAvailabilityByDate);
+router.get(DOCTOR_AVAILABILITY_PATHS.getByAddress, authenticate, schemaValidator(doctorAvailabilityPathBase.getByAddress), getDoctorAvailabilityByAddress);
 router.put(DOCTOR_AVAILABILITY_PATHS.update, authenticate, adminAuthorization(['doctor', 'nurse']), schemaValidator(doctorAvailabilityPathBase.update), updateDoctorAvailability);
 router.delete(DOCTOR_AVAILABILITY_PATHS.delete, authenticate, adminAuthorization(['doctor', 'nurse']), deleteDoctorAvailability);
 
