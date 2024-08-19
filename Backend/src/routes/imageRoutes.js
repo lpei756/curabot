@@ -22,16 +22,14 @@ router.post(IMAGE_PATHS.save, upload.single('image'), (req, res, next) => {
     console.log('Request body:', req.body);
     console.log('Request file:', req.file);
     if (req.file) {
-        next(); // 文件上传成功，继续执行下一个中间件（即 saveImage）
+        next();
     } else {
         res.status(400).send('No file uploaded');
     }
 }, saveImage);
 
-// 获取用户的图片信息
 router.get(IMAGE_PATHS.read, getUserImages);
 
-// 删除图片信息和文件
 router.delete(IMAGE_PATHS.delete, removeImage);
 
 export default router;

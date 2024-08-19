@@ -1,8 +1,9 @@
 import Joi from 'joi';
-import { AUTH_PATHS, APPOINTMENT_PATHS, buildPathWithBase } from '../routes/path.js';
+import { AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, buildPathWithBase } from '../routes/path.js';
 
 const authPathBase = buildPathWithBase(AUTH_PATHS);
 const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
+const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
 
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
@@ -101,6 +102,22 @@ const updateAppointmentSchema = Joi.object({
     prescriptionsIssued: Joi.string().optional()
 });
 
+const setDoctorAvailabilitySchema = Joi.object({
+    date: Joi.date().required(),
+    slots: Joi.array().items(
+        Joi.object({
+            startTime: Joi.date().required(),
+            endTime: Joi.date().required(),
+            isBooked: Joi.boolean().default(false),
+            bookedBy: Joi.string().allow(null).optional()
+        })
+    ).required()
+});
+
+const getDoctorAvailabilitySchema = Joi.object({
+    date: Joi.date().optional()
+});
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -109,4 +126,6 @@ export default {
     [appointmentPathBase.update]: updateAppointmentSchema,
     [authPathBase.user]: userSchema,
     [authPathBase.updateUser]: updateUserSchema,
+    [doctorAvailabilityPathBase.set]: setDoctorAvailabilitySchema,
+    [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema
 };

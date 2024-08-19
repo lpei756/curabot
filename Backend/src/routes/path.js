@@ -43,3 +43,8 @@ export const IMAGE_PATHS = {
 export const ADMIN_PATHS = {
   getAllPatients: '/patients'
 };
+
+export const DOCTOR_AVAILABILITY_PATHS = {
+  set: '/:doctorID/set',
+  get: '/:doctorID'
+};
