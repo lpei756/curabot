@@ -104,18 +104,22 @@ const updateAppointmentSchema = Joi.object({
 
 const setDoctorAvailabilitySchema = Joi.object({
     date: Joi.date().required(),
-    slots: Joi.array().items(
-        Joi.object({
-            startTime: Joi.date().required(),
-            endTime: Joi.date().required(),
-            isBooked: Joi.boolean().default(false),
-            bookedBy: Joi.string().allow(null).optional()
-        })
-    ).required()
+    startTime: Joi.date().required(),
+    endTime: Joi.date().required(),
+    isBooked: Joi.boolean().default(false),
+    bookedBy: Joi.string().allow(null).optional()
 });
 
 const getDoctorAvailabilitySchema = Joi.object({
     date: Joi.date().optional()
+});
+
+const updateDoctorAvailabilitySchema = Joi.object({
+    date: Joi.date().required(),
+    startTime: Joi.date().required(),
+    endTime: Joi.date().required(),
+    isBooked: Joi.boolean().default(false),
+    bookedBy: Joi.string().allow(null).optional()
 });
 
 export default {
@@ -127,5 +131,6 @@ export default {
     [authPathBase.user]: userSchema,
     [authPathBase.updateUser]: updateUserSchema,
     [doctorAvailabilityPathBase.set]: setDoctorAvailabilitySchema,
-    [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema
+    [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema,
+    [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema
 };

@@ -3,48 +3,28 @@ import mongoose from 'mongoose';
 const doctorAvailabilitySchema = new mongoose.Schema({
   doctorID: {
     type: String,
-    required: true,
-    unique: true,
-    ref: 'Doctor'
+    required: true
   },
   date: {
     type: Date,
     required: true
   },
-  slots: [
-    {
-      startTime: {
-        type: Date,
-        required: true
-      },
-      endTime: {
-        type: Date,
-        required: true
-      },
-      isBooked: {
-        type: Boolean,
-        default: false
-      },
-      bookedBy: {
-        type: String,
-        ref: 'Patient',
-        default: null
-      }
-    }
-  ],
-  createdAt: {
+  startTime: {
     type: Date,
-    default: Date.now
+    required: true
   },
-  updatedAt: {
+  endTime: {
     type: Date,
-    default: Date.now
+    required: true
+  },
+  isBooked: {
+    type: Boolean,
+    default: false
+  },
+  bookedBy: {
+    type: String,
+    default: null
   }
-});
-
-doctorAvailabilitySchema.pre('save', function (next) {
-  this.updatedAt = Date.now();
-  next();
 });
 
 const DoctorAvailability = mongoose.model('DoctorAvailability', doctorAvailabilitySchema);
