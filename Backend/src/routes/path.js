@@ -49,6 +49,7 @@ export const DOCTOR_AVAILABILITY_PATHS = {
   getByDoctor: '/:doctorID',
   getByDate: '/date/:date',
   getByAddress: '/address/:address',
+  getAll: '/all/slots',
   update: '/:doctorID/slot/:slotId',
   delete: '/:doctorID/slot/:slotId'
 };

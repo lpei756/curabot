@@ -48,6 +48,15 @@ export const getAvailabilityByAddress = async (partialAddress) => {
     }
 };
 
+export const getAllAvailableSlots = async () => {
+    try {
+        return await DoctorAvailability.find({ isBooked: false }).exec();
+    } catch (error) {
+        console.error('Error fetching all available slots:', error);
+        throw new Error('Failed to fetch available slots');
+    }
+};
+
 export const updateAvailability = async (doctorID, slotId, updates) => {
     try {
         const doctorAvailability = await DoctorAvailability.findOne({
