@@ -9,19 +9,19 @@ let gfs;
 
 conn.once('open', () => {
     gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads'); // 设置文件存储的集合名称
+    gfs.collection('uploads');
     console.log('GridFS initialized');
 });
 
 // 配置 GridFS 存储引擎
 const storage = new GridFsStorage({
-    url: process.env.MONGO_URI, // 使用你的 MongoDB Cloud 连接字符串
+    url: process.env.MONGO_URI,
     options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
-        console.log('GridFS Storing file:', file.originalname); // 打印文件名，检查是否正确传递
+        console.log('GridFS Storing file:', file.originalname);
         return {
             filename: Date.now() + '-' + file.originalname,
-            bucketName: 'uploads' // 文件存储在 'uploads' 集合中
+            bucketName: 'uploads'
         };
     }
 });
@@ -30,8 +30,8 @@ const storage = new GridFsStorage({
 export const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
-        console.log('File filter:', file); // 打印过滤器的信息
-        cb(null, true); // 允许所有文件通过
+        console.log('File filter:', file);
+        cb(null, true);
     }
 });
 

@@ -11,8 +11,7 @@ function ReadUser({ userId }) {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
-    const navigate = useNavigate();
-
+    useNavigate();
     useEffect(() => {
         const loadUserData = async () => {
             try {

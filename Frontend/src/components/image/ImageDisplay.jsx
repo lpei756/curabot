@@ -65,10 +65,11 @@ function ImageDisplay({ userId }) {
             {images.length > 0 ? (
                 images.map((image, index) => (
                     <Box
-                        key={image._id}
+                        key={`${image._id}-${index}`}
                         sx={{
                             position: 'relative',
-                            my: 2,
+                            my: 0.5, // 垂直间距 5px
+                            mx: 0.5, // 水平间距 5px
                             textAlign: 'center',
                             display: 'inline-block',
                             '&:hover .zoom-icon': {
@@ -85,17 +86,18 @@ function ImageDisplay({ userId }) {
                                 cursor: 'pointer',
                                 '& img': {
                                     maxWidth: zoomedImage === image._id ? '100%' : '150px',
-                                    height: 'auto',
+                                    height: zoomedImage === image._id ? 'auto' : '200px',
+                                    objectFit: zoomedImage === image._id ? 'contain' : 'cover',
                                     borderRadius: '10px',
                                     border: '1px solid #03035d',
-                                    transition: 'max-width 0.3s ease-in-out',
+                                    transition: 'max-width 0.3s ease-in-out, height 0.3s ease-in-out',
                                 }
                             }}
                             onClick={() => handleImageClick(image._id)}
                         >
                             <img
                                 src={`${import.meta.env.VITE_API_URL}/uploads/${image.filename}`}
-                                alt={`User uploaded ${image.filename}`}
+                                alt={`User uploaded ${image.filename} - ${index}`}
                             />
                             <ZoomInIcon
                                 className="zoom-icon"
@@ -115,6 +117,7 @@ function ImageDisplay({ userId }) {
             ) : (
                 <Typography>No images available.</Typography>
             )}
+
         </Box>
     );
 }

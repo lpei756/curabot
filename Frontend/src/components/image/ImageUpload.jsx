@@ -15,7 +15,7 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState(null);
     const [uploading, setUploading] = useState(false);
-    const { authToken } = useContext(AuthContext);
+    const { authToken, userId } = useContext(AuthContext);
 
     const handleFileChange = (event) => {
         const file = event.target.files[0];
@@ -42,6 +42,8 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
 
         const formData = new FormData();
         formData.append('image', selectedFile);
+        formData.append('userId', userId);
+        console.log([...formData]);
 
         try {
             const response = await axios.post(API_PATH.images.uploadImage, formData, {
