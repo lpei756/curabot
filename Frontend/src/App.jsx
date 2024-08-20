@@ -1,6 +1,7 @@
+import './App.css';
 import { useState, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import './App.css';
+import { AuthProvider, AuthContext } from './context/AuthContext';
 import AppHeader from './components/layout/AppHeader';
 import Register from './components/auth/register/Register';
 import AdminRegister from './components/auth/register/AdminRegister';
@@ -8,13 +9,13 @@ import ChatBot from './components/chatbot/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import { AuthProvider, AuthContext } from './context/AuthContext';
 import AppointmentForm from './components/appointment/createAppointment';
 import ReadAppointment from './components/appointment/readAppointment';
 import AppointmentList from './components/appointment/AppointmentList';
 import UpdateAppointment from './components/appointment/updateAppointment';
 import ReadUser from './components/user/ReadUser';
 import Homepage from './components/homepage/Homepage';
+import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -60,6 +61,7 @@ function App() {
                         <Route path="/appointment" element={<AppointmentList />} />
                         <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                         <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
+                        <Route path="/appointment/slot" element={<AvailableSlotsCalendar />} />
                     </Routes>
                 </div>
             </Router>

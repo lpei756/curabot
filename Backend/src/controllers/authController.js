@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService } from '../services/authService.js';
+import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService ,getUserGP} from '../services/authService.js';
 
 export const register = async (req, res) => {
   try {
@@ -65,6 +65,30 @@ export const logout = (req, res) => {
     res.status(200).json(response);
   } catch (error) {
     res.status(400).json({ message: error.message });
+  }
+};
+
+export const getGP = async (req, res) => {
+  try {
+    const { id } = req.params; // Extract ID from URL params
+
+    console.log("Request user ID:", id);
+
+    // Validate ID format
+    if (!id || typeof id !== 'string') {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const gp = await getUserGP(id);
+
+    if (!gp) {
+      return res.status(404).json({ message: 'GP not found' });
+    }
+
+    res.json(gp); // Return the GP information
+  } catch (error) {
+    console.error('Error fetching GP:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 

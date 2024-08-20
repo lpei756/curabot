@@ -4,13 +4,18 @@ import {
     updateAvailability,
     deleteAvailability,
     getAllAvailabilityByDate,
-    getAvailabilityByAddress
+    getAvailabilityByAddress,
+    getAllAvailableSlots
 } from '../services/doctorAvailabilityService.js';
 
 export const setDoctorAvailability = async (req, res) => {
     try {
         const { doctorID } = req.params;
         const { date, startTime, endTime, isBooked, bookedBy } = req.body;
+
+        if (!doctorID || !date || !startTime || !endTime) {
+            return res.status(400).json({ message: 'Required fields are missing' });
+        }
 
         const availability = await setAvailability(doctorID, date, startTime, endTime, isBooked, bookedBy);
         res.status(201).json({ message: 'Availability set successfully', availability });
@@ -65,6 +70,21 @@ export const getDoctorAvailabilityByAddress = async (req, res) => {
     } catch (error) {
         console.error('Error fetching doctor availability by address:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
+    }
+};
+
+export const getAvailableSlots = async (req, res) => {
+    try {
+        const availableSlots = await getAllAvailableSlots();
+
+        if (!availableSlots || availableSlots.length === 0) {
+            return res.status(404).json({ message: 'Availability not found' });
+        }
+
+        res.status(200).json(availableSlots);
+    } catch (error) {
+        console.error('Error fetching available slots:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 

@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
+import Doctor from '../models/Doctor.js';
 
 export const register = async (userData) => {
     const {
@@ -75,3 +76,30 @@ export const updateUser = async (id, updateData) => {
 export const logout = () => {
     return { message: 'Successfully logged out' };
 };
+
+export const getUserGP = async (id) => {
+    try {
+      console.log("Fetching user with ID:", id);
+      if (!id || typeof id !== 'string') {
+        throw new Error('Invalid userId');
+      }
+      const user = await User.findById(id);
+  
+      if (!user) {
+        throw new Error('User not found');
+      }
+  
+      console.log("User found:", user);
+  
+      const gp = await Doctor.findOne({ doctorID: user.gp });
+  
+      if (!gp) {
+        throw new Error('GP not found');
+      }
+  
+      return gp; // Return the GP details
+    } catch (error) {
+      console.error('Error fetching GP from service:', error);
+      throw error;
+    }
+  };

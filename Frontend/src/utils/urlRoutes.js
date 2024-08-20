@@ -6,7 +6,8 @@ export const API_PATH = {
     register: buildApiPath('/api/auth/register'),
     read: buildApiPath('/api/auth/user/:id'),
     update: buildApiPath('/api/auth/user/:id'),
-    logout: buildApiPath('/api/auth/logout')
+    logout: buildApiPath('/api/auth/logout'),
+    getGP: buildApiPath('/api/auth/gp/:id')
   },
   appointment: {
     create: buildApiPath('/api/appointments/create'),
@@ -32,5 +33,10 @@ export const API_PATH = {
   images: {
     userImages: buildApiPath('/api/images/user/:id'),
     uploadImage: buildApiPath('/api/images/uploadImage')
+  },
+  availability: {
+    getByDate: buildApiPath('/api/doctor-availability/date/:date'),
+    getAll: buildApiPath('/api/doctor-availability/all/slots'),
+    getByDoctor: buildApiPath('/api/doctor-availability/:doctorID')
   }
 };

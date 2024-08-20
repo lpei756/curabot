@@ -10,6 +10,7 @@ export const AUTH_PATHS = {
   user: '/user/:id',
   updateUser: '/user/:id',
   logout: '/logout',
+  getGP: '/gp/:id', // 添加getGP路径
 };
 
 export const APPOINTMENT_PATHS = {
@@ -27,15 +28,14 @@ export const CLINIC_PATHS = {
 };
 
 export const DOCTOR_PATHS = {
-  read: '/:doctorID',                 // 获取单个医生的信息
-  doctorRegister: '/doctors/register',// 医生注册
-  doctorLogin: '/doctors/login',       // 医生登录
-  update: '/:doctorID',               // 更新医生信息
-  delete: '/:doctorID',               // 删除医生
-  all: '/doctors',                           // 获取所有医生
-  clinicDoctors: '/clinic/:clinicId/doctors',  // 获取指定诊所的医生列表
+  read: '/:doctorID',
+  doctorRegister: '/doctors/register',
+  doctorLogin: '/doctors/login',
+  update: '/:doctorID',
+  delete: '/:doctorID',
+  all: '/doctors',
+  clinicDoctors: '/clinic/:clinicId/doctors',
 };
-
 
 export const CHAT_PATHS = {
   chat: '/chat',
@@ -56,6 +56,7 @@ export const DOCTOR_AVAILABILITY_PATHS = {
   getByDoctor: '/:doctorID',
   getByDate: '/date/:date',
   getByAddress: '/address/:address',
+  getAll: '/all/slots',
   update: '/:doctorID/slot/:slotId',
   delete: '/:doctorID/slot/:slotId'
 };
