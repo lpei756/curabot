@@ -1,12 +1,18 @@
 import DoctorAvailability from '../models/DoctorAvailability.js';
 import Clinic from '../models/Clinic.js';
+import moment from 'moment';
 
 export const setAvailability = async (doctorID, date, startTime, endTime, isBooked, bookedBy) => {
+    const utcDate = moment(date, 'YYYY-MM-DD').utc().startOf('day').toDate();
+
+    const utcStartTime = moment(startTime, 'YYYY-MM-DD h:mm A').utc().toDate();
+    const utcEndTime = moment(endTime, 'YYYY-MM-DD h:mm A').utc().toDate();
+
     const availability = new DoctorAvailability({
         doctorID,
-        date,
-        startTime,
-        endTime,
+        date: utcDate,
+        startTime: utcStartTime,
+        endTime: utcEndTime,
         isBooked,
         bookedBy
     });
