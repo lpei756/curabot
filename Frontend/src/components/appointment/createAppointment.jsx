@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
@@ -108,7 +108,7 @@ const AppointmentForm = () => {
             Make an Appointment
         </Typography>
         <Typography variant="h5" align="center" gutterBottom>
-            It's Quick an Easy.
+            It&apos;s Quick an Easy.
         </Typography>
             <Box
                 component="form"

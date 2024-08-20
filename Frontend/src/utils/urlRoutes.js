@@ -23,7 +23,12 @@ export const API_PATH = {
     all: buildApiPath('/api/clinics')
   },
   doctor:{
-    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`)
+    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`),
+    adminLogin: buildApiPath('/api/doctors/login'),
+    adminRegister: buildApiPath('/api/doctors/register'),
+    adminRead: buildApiPath('/api/doctors/user/:id'),
+    adminUpdate: buildApiPath('/api/doctors/user/:id'),
+    adminLogout: buildApiPath('/api/doctors/logout')
   },
   images: {
     userImages: buildApiPath('/api/images/user/:id'),

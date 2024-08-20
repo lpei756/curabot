@@ -2,12 +2,13 @@ import './App.css';
 import { useState, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
+import AppHeader from './components/layout/AppHeader';
+import Register from './components/auth/register/Register';
+import AdminRegister from './components/auth/register/AdminRegister';
+import ChatBot from './components/chatbot/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import AppHeader from './components/layout/AppHeader';
-import Register from './components/auth/register/Register';
-import ChatBot from './components/chatbot/ChatBot';
 import AppointmentForm from './components/appointment/createAppointment';
 import ReadAppointment from './components/appointment/readAppointment';
 import AppointmentList from './components/appointment/AppointmentList';
@@ -54,6 +55,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/register" element={<Register />} />
+                        <Route path="/adminRegister" element={<AdminRegister />} />
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<AppointmentForm />} />
                         <Route path="/appointment" element={<AppointmentList />} />

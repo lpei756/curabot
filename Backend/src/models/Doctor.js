@@ -4,8 +4,11 @@ const DoctorSchema = new mongoose.Schema({
   doctorID: { type: String, unique: true },
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
   clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-  languagesSpoken: [{ type: String }]
+  languagesSpoken: [{ type: String }],
+  specialty: { type: String },
 });
 
 const DoctorModel = mongoose.model('Doctor', DoctorSchema);

@@ -10,7 +10,7 @@ export const AUTH_PATHS = {
   user: '/user/:id',
   updateUser: '/user/:id',
   logout: '/logout',
-  getGP:'/gp/:id'
+  getGP: '/gp/:id', // 添加getGP路径
 };
 
 export const APPOINTMENT_PATHS = {
@@ -28,7 +28,13 @@ export const CLINIC_PATHS = {
 };
 
 export const DOCTOR_PATHS = {
-  read: '/:doctorID'
+  read: '/:doctorID',
+  doctorRegister: '/doctors/register',
+  doctorLogin: '/doctors/login',
+  update: '/:doctorID',
+  delete: '/:doctorID',
+  all: '/doctors',
+  clinicDoctors: '/clinic/:clinicId/doctors',
 };
 
 export const CHAT_PATHS = {
