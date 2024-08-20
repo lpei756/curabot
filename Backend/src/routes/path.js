@@ -9,7 +9,8 @@ export const AUTH_PATHS = {
   login: '/login',
   user: '/user/:id',
   updateUser: '/user/:id',
-  logout: '/logout'
+  logout: '/logout',
+  getGP:'/gp/:id'
 };
 
 export const APPOINTMENT_PATHS = {

@@ -37,12 +37,10 @@ export const AuthProvider = ({ children }) => {
   );
 };
 
-// 添加 PropTypes 验证
 AuthProvider.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-// 假设你有一个函数可以从token中解析userId
 function parseUserIdFromToken(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
