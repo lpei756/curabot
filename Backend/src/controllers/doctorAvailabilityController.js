@@ -13,6 +13,10 @@ export const setDoctorAvailability = async (req, res) => {
         const { doctorID } = req.params;
         const { date, startTime, endTime, isBooked, bookedBy } = req.body;
 
+        if (!doctorID || !date || !startTime || !endTime) {
+            return res.status(400).json({ message: 'Required fields are missing' });
+        }
+
         const availability = await setAvailability(doctorID, date, startTime, endTime, isBooked, bookedBy);
         res.status(201).json({ message: 'Availability set successfully', availability });
     } catch (error) {
