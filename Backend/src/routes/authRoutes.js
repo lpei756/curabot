@@ -1,8 +1,7 @@
 import express from 'express';
-import {register, login, readUser, updateUser, logout} from '../controllers/authController.js';
+import { register, login, readUser, updateUser, logout, doctorRegister, doctorLogin } from '../controllers/authController.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
-import { AUTH_PATHS, buildPathWithBase } from './path.js';
-
+import {AUTH_PATHS, buildPathWithBase, DOCTOR_PATHS} from './path.js';
 
 const router = express.Router();
 

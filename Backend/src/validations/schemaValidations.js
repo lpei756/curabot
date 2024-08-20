@@ -1,9 +1,10 @@
 import Joi from 'joi';
-import { AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, buildPathWithBase } from '../routes/path.js';
+import { AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, DOCTOR_PATHS, buildPathWithBase } from '../routes/path.js';
 
 const authPathBase = buildPathWithBase(AUTH_PATHS);
 const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
+const doctorPathBase = buildPathWithBase(DOCTOR_PATHS); // 新增
 
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
@@ -130,6 +131,20 @@ const getDoctorAvailabilityByAddressSchema = Joi.object({
     address: Joi.string().required()
 });
 
+const doctorRegisterSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    clinic: Joi.string().required(), // 关联诊所ID，确保在注册医生时提供诊所信息
+    languagesSpoken: Joi.array().items(Joi.string()).optional(), // 医生所说的语言
+    specialty: Joi.string().optional(), // 医生的专科
+});
+
+const doctorLoginSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+});
 
 export default {
     [authPathBase.register]: registerSchema,
@@ -143,5 +158,7 @@ export default {
     [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.getByDate]: getDoctorAvailabilityByDateSchema,
     [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema,
-    [doctorAvailabilityPathBase.getByAddress]: getDoctorAvailabilityByAddressSchema
+    [doctorAvailabilityPathBase.getByAddress]: getDoctorAvailabilityByAddressSchema,
+    [doctorPathBase.doctorRegister]: doctorRegisterSchema,
+    [doctorPathBase.doctorLogin]: doctorLoginSchema,
 };

@@ -77,3 +77,34 @@ const generateToken = (userId, role) => {
     expiresIn: '1h',
   });
 };
+
+export const doctorRegister = async (req, res) => {
+  try {
+    const { email, password, ...otherData } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const doctor = new DoctorModel({ email, password: hashedPassword, ...otherData });
+    await doctor.save();
+
+    const token = generateToken(doctor._id, 'doctor');
+
+    res.status(201).json({ doctor, token });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+export const doctorLogin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const doctor = await DoctorModel.findOne({ email });
+
+    if (!doctor || !(await bcrypt.compare(password, doctor.password))) {
+      throw new Error('Invalid credentials');
+    }
+
+    const token = generateToken(doctor._id, 'doctor');
+    res.status(200).json({ doctor, token });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};

@@ -9,7 +9,7 @@ export const AUTH_PATHS = {
   login: '/login',
   user: '/user/:id',
   updateUser: '/user/:id',
-  logout: '/logout'
+  logout: '/logout',
 };
 
 export const APPOINTMENT_PATHS = {
@@ -27,8 +27,15 @@ export const CLINIC_PATHS = {
 };
 
 export const DOCTOR_PATHS = {
-  read: '/:doctorID'
+  read: '/:doctorID',                 // 获取单个医生的信息
+  doctorRegister: '/doctors/register',// 医生注册
+  doctorLogin: '/doctors/login',       // 医生登录
+  update: '/:doctorID',               // 更新医生信息
+  delete: '/:doctorID',               // 删除医生
+  all: '/doctors',                           // 获取所有医生
+  clinicDoctors: '/clinic/:clinicId/doctors',  // 获取指定诊所的医生列表
 };
+
 
 export const CHAT_PATHS = {
   chat: '/chat',
