@@ -1,6 +1,5 @@
 import { saveImageService, getImagesByUser, deleteImage, getImageStream } from '../services/imageService.js';
 
-// 保存图片的控制器
 export const saveImage = async (req, res) => {
     try {
         console.log('req.file:', req.file);
@@ -22,7 +21,6 @@ export const saveImage = async (req, res) => {
     }
 };
 
-// 获取用户图片信息的控制器
 export const getUserImages = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -33,7 +31,6 @@ export const getUserImages = async (req, res) => {
     }
 };
 
-// 删除图片信息的控制器
 export const removeImage = async (req, res) => {
     try {
         const { imageId } = req.params;
@@ -44,7 +41,6 @@ export const removeImage = async (req, res) => {
     }
 };
 
-// 获取图片流的控制器（用于显示图片）
 export const getImageByFilename = async (req, res) => {
     try {
         const { filename } = req.params;
@@ -54,7 +50,7 @@ export const getImageByFilename = async (req, res) => {
             return res.status(404).json({ message: 'Image not found' });
         });
 
-        res.set('Content-Type', 'image/jpeg'); // 根据需要设置图片的内容类型
+        res.set('Content-Type', 'image/jpeg');
         imageStream.pipe(res);
     } catch (error) {
         res.status(500).json({ message: error.message });

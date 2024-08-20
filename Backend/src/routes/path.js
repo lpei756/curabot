@@ -10,7 +10,7 @@ export const AUTH_PATHS = {
   user: '/user/:id',
   updateUser: '/user/:id',
   logout: '/logout',
-  getGP: '/gp/:id', // 添加getGP路径
+  getGP: '/gp/:id',
 };
 
 export const APPOINTMENT_PATHS = {

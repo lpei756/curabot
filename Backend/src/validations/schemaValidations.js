@@ -136,9 +136,9 @@ const doctorRegisterSchema = Joi.object({
     password: Joi.string().min(6).required(),
     firstName: Joi.string().required(),
     lastName: Joi.string().required(),
-    clinic: Joi.string().required(), // 关联诊所ID，确保在注册医生时提供诊所信息
-    languagesSpoken: Joi.array().items(Joi.string()).optional(), // 医生所说的语言
-    specialty: Joi.string().optional(), // 医生的专科
+    clinic: Joi.string().required(),
+    languagesSpoken: Joi.array().items(Joi.string()).optional(),
+    specialty: Joi.string().optional(),
 });
 
 const doctorLoginSchema = Joi.object({

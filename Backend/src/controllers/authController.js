@@ -70,11 +70,10 @@ export const logout = (req, res) => {
 
 export const getGP = async (req, res) => {
   try {
-    const { id } = req.params; // Extract ID from URL params
+    const { id } = req.params;
 
     console.log("Request user ID:", id);
 
-    // Validate ID format
     if (!id || typeof id !== 'string') {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
@@ -85,7 +84,7 @@ export const getGP = async (req, res) => {
       return res.status(404).json({ message: 'GP not found' });
     }
 
-    res.json(gp); // Return the GP information
+    res.json(gp);
   } catch (error) {
     console.error('Error fetching GP:', error);
     res.status(500).json({ message: 'Server error' });

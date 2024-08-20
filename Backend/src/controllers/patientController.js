@@ -1,6 +1,5 @@
 import UserModel from '../models/User.js';
 
-// 获取所有病人信息
 export const getAllPatients = async (req, res) => {
   try {
     const patients = await UserModel.find();
@@ -10,7 +9,6 @@ export const getAllPatients = async (req, res) => {
   }
 };
 
-// 创建新病人
 export const createPatient = async (req, res) => {
   try {
     const patient = new UserModel(req.body);
@@ -21,7 +19,6 @@ export const createPatient = async (req, res) => {
   }
 };
 
-// 更新病人信息
 export const updatePatient = async (req, res) => {
   try {
     const { id } = req.params;
@@ -35,7 +32,6 @@ export const updatePatient = async (req, res) => {
   }
 };
 
-// 删除病人信息
 export const deletePatient = async (req, res) => {
   try {
     const { id } = req.params;

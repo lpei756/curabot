@@ -9,7 +9,7 @@ export const adminLogin = async (email, password) => {
         const url = API_PATH.doctor.adminLogin;
         console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
         const response = await axiosApiInstance.post(url, { email, password });
-        tokenStorage.save(response.data.token, 'adminToken'); // Save admin token with a different key
+        tokenStorage.save(response.data.token, 'adminToken');
         return response.data;
     } catch (error) {
         console.error('Admin login error:', error);
