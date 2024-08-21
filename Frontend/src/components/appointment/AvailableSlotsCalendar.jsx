@@ -9,6 +9,7 @@ import { fetchUserData } from '../../services/userService';
 import { fetchAvailableSlotsByDate, fetchAllAvailableSlots, fetchGpSlotsByDoctorId, fetchSlotsByAddress } from '../../services/availabilityService';
 import { AuthContext } from '../../context/AuthContext';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
+import AppointmentDetail from './AppointmentDetail';
 
 const localizer = dateFnsLocalizer({
     format,
@@ -172,6 +173,8 @@ const AvailableSlotsCalendar = () => {
     const [address, setAddress] = useState('');
     const { userId } = useContext(AuthContext);
     const [selectedLocation, setSelectedLocation] = useState('');
+    const [selectedEvent, setSelectedEvent] = useState(null);
+    const [modalOpen, setModalOpen] = useState(false);
 
     useEffect(() => {
         const fetchSlots = async () => {
@@ -293,56 +296,75 @@ const AvailableSlotsCalendar = () => {
         setAddress(location);
     };
 
+    const handleEventClick = (event) => {
+        setSelectedEvent(event);
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+        setSelectedEvent(null);
+    };
+
     return (
-        <Box p={2} display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="h4" align="center" gutterBottom>
-                Make an Appointment
-            </Typography>
-            <Typography variant="h5" align="center" gutterBottom>
-                It&apos;s Quick an Easy.
-            </Typography>
+        <Box p={2} display="flex">
+            <Box flex={1} display="flex" flexDirection="column">
+                <Typography variant="h4" align="center" gutterBottom>
+                    Make an Appointment
+                </Typography>
+                <Typography variant="h5" align="center" gutterBottom>
+                    It&apos;s Quick and Easy.
+                </Typography>
+    
+                <StyledPaper style={{ backgroundColor: '#f9f9f9' }}>
+                    <BigCalendar
+                        localizer={localizer}
+                        events={events}
+                        step={15}
+                        startAccessor="start"
+                        endAccessor="end"
+                        min={new Date(0, 0, 0, 8, 0, 0)}
+                        max={new Date(0, 0, 0, 16, 0, 0)}
+                        style={{ height: '100%', width: '100%' }}
+                        views={['week']}
+                        defaultView="week"
+                        components={{
+                            toolbar: (props) => (
+                                <CustomToolbar
+                                    {...props}
+                                    onShowGpSlots={handleShowGpSlots}
+                                    onSelectLocation={handleLocationChange}
+                                    selectedLocation={selectedLocation}
+                                    onSearchAddress={handleAddressChange}
+                                />
+                            )
+                        }}
+                        onNavigate={(newDate) => {
+                            setDate(newDate);
+    
+                            const newViewStart = startOfWeek(newDate, { weekStartsOn: 0 });
+                            const newViewEnd = addWeeks(newViewStart, 1);
+                            const isNavigatingWeek = newViewStart.getTime() !== currentViewRange.start.getTime();
+    
+                            if (isNavigatingWeek) {
+                                setEvents(allSlots.filter(slot =>
+                                    slot.start >= newViewStart && slot.end < newViewEnd
+                                ));
+                                setCurrentViewRange({ start: newViewStart, end: newViewEnd });
+                            } else {
+                                handleDateChange(newDate);
+                            }
+                        }}
+                        onSelectEvent={handleEventClick}
+                    />
+                </StyledPaper>
+            </Box>
 
-            <StyledPaper style={{ backgroundColor: '#f9f9f9' }}>
-                <BigCalendar
-                    localizer={localizer}
-                    events={events}
-                    step={15}
-                    startAccessor="start"
-                    endAccessor="end"
-                    min={new Date(0, 0, 0, 8, 0, 0)}
-                    max={new Date(0, 0, 0, 16, 0, 0)}
-                    style={{ height: '100%', width: 1000 }}
-                    views={['week']}
-                    defaultView="week"
-                    components={{
-                        toolbar: (props) => (
-                            <CustomToolbar
-                                {...props}
-                                onShowGpSlots={handleShowGpSlots}
-                                onSelectLocation={handleLocationChange}
-                                selectedLocation={selectedLocation}
-                                onSearchAddress={handleAddressChange}
-                            />
-                        )
-                    }}
-                    onNavigate={(newDate) => {
-                        setDate(newDate);
-
-                        const newViewStart = startOfWeek(newDate, { weekStartsOn: 0 });
-                        const newViewEnd = addWeeks(newViewStart, 1);
-                        const isNavigatingWeek = newViewStart.getTime() !== currentViewRange.start.getTime();
-
-                        if (isNavigatingWeek) {
-                            setEvents(allSlots.filter(slot =>
-                                slot.start >= newViewStart && slot.end < newViewEnd
-                            ));
-                            setCurrentViewRange({ start: newViewStart, end: newViewEnd });
-                        } else {
-                            handleDateChange(newDate);
-                        }
-                    }}
-                />
-            </StyledPaper>
+            <AppointmentDetail
+                open={modalOpen}
+                onClose={handleCloseModal}
+                event={selectedEvent}
+            />
         </Box>
     );
 };
