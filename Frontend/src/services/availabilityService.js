@@ -15,8 +15,7 @@ export const fetchAvailableSlotsByDate = async (date) => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching slots:', error);
         throw error;
@@ -38,19 +37,18 @@ export const fetchAllAvailableSlots = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching all slots:', error);
         throw error;
     }
 };
 
-export const fetchAvailableSlotsByDoctor = async (doctorID) => {
+export const fetchGpSlotsByDoctorId = async (doctorId) => {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorID), {
+        const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorId), {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -61,10 +59,31 @@ export const fetchAvailableSlotsByDoctor = async (doctorID) => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
-        console.error('Error fetching slots by doctor:', error);
+        console.error('Error fetching GP slots:', error);
+        throw error;
+    }
+};
+
+export const fetchSlotsByAddress = async (address) => {
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch(API_PATH.availability.getByAddress.replace(':address', encodeURIComponent(address)), {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching slots by address:', error);
         throw error;
     }
 };

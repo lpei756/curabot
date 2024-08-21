@@ -97,9 +97,10 @@ export const getUserGP = async (id) => {
         throw new Error('GP not found');
       }
   
-      return gp; // Return the GP details
+      return gp;
     } catch (error) {
       console.error('Error fetching GP from service:', error);
       throw error;
     }
   };
+  

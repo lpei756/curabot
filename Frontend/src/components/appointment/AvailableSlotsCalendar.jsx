@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Paper } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
+import { Box, Typography, Paper, Button, TextField } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addWeeks } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import { fetchAvailableSlotsByDate, fetchAllAvailableSlots } from '../../services/availabilityService';
+import { fetchUserData } from '../../services/userService';
+import { fetchAvailableSlotsByDate, fetchAllAvailableSlots, fetchGpSlotsByDoctorId, fetchSlotsByAddress } from '../../services/availabilityService';
+import { AuthContext } from '../../context/AuthContext';
 
 const localizer = dateFnsLocalizer({
     format,
@@ -25,6 +27,9 @@ const AvailableSlotsCalendar = () => {
     const [date, setDate] = useState(new Date());
     const [allSlots, setAllSlots] = useState([]);
     const [currentViewRange, setCurrentViewRange] = useState({ start: new Date(), end: new Date() });
+    const [gpSlots, setGpSlots] = useState([]);
+    const [address, setAddress] = useState('');
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchSlots = async () => {
@@ -84,6 +89,62 @@ const AvailableSlotsCalendar = () => {
         }
     };
 
+    const fetchGpSlots = async () => {
+        try {
+            const userData = await fetchUserData(userId);
+            const gpId = userData.gp;
+
+            if (!gpId || gpId === 'Not assigned') {
+                setGpSlots([]);
+                return;
+            }
+
+            const gpSlotsData = await fetchGpSlotsByDoctorId(gpId);
+
+            const gpSlotsArray = Array.isArray(gpSlotsData) ? gpSlotsData : [gpSlotsData];
+
+            if (gpSlotsArray.length > 0) {
+                const formattedGpSlots = gpSlotsArray.map(slot => ({
+                    title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
+                    start: new Date(slot.startTime),
+                    end: new Date(slot.endTime),
+                    allDay: false,
+                }));
+                setGpSlots(formattedGpSlots);
+                setEvents(formattedGpSlots);
+            } else {
+                setGpSlots([]);
+                setEvents([]);
+            }
+        } catch (error) {
+            console.error('Error fetching GP slots:', error);
+        }
+    };
+
+    const handleShowGpSlots = () => {
+        console.log('Clicked Show My GP\'s Slots button.');
+        fetchGpSlots();
+    };
+
+    const handleAddressChange = async () => {
+        try {
+            const data = await fetchSlotsByAddress(address);
+            if (data && data.length > 0) {
+                const formattedEvents = data.map(slot => ({
+                    title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
+                    start: new Date(slot.startTime),
+                    end: new Date(slot.endTime),
+                    allDay: false,
+                }));
+                setEvents(formattedEvents);
+            } else {
+                setEvents([]);
+            }
+        } catch (error) {
+            console.error('Error fetching slots by address:', error);
+        }
+    };
+
     return (
         <Box p={2} display="flex" flexDirection="column" alignItems="center">
             <Typography variant="h5" gutterBottom>
@@ -119,6 +180,22 @@ const AvailableSlotsCalendar = () => {
                     }}
                 />
             </StyledPaper>
+            <Box mt={2}>
+                <TextField
+                    label="Search by Address"
+                    variant="outlined"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                    fullWidth
+                    sx={{ mb: 2 }}
+                />
+                <Button variant="contained" color="primary" onClick={handleAddressChange} sx={{ mr: 2 }}>
+                    Search by Address
+                </Button>
+                <Button variant="contained" color="secondary" onClick={handleShowGpSlots}>
+                    Show My GP's Slots
+                </Button>
+            </Box>
         </Box>
     );
 };

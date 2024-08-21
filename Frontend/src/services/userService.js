@@ -20,19 +20,3 @@ export const updateUserData = async (userId, updatedData) => {
     throw error;
   }
 };
-
-export const getUserGP = async (userId) => {
-  if (!userId) {
-    console.error('User ID is undefined');
-    throw new Error('User ID is required');
-  }
-  
-  try {
-    console.log('Fetching GP details for user ID:', userId);
-    const response = await axiosApiInstance.get(API_PATH.auth.getGP.replace(':id', userId));
-    return response.data;
-  } catch (error) {
-    console.error('Error fetching GP details:', error.message);
-    throw error;
-  }
-};
