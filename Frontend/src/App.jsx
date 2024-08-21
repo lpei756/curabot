@@ -9,8 +9,6 @@ import ChatBot from './components/chatbot/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import AppointmentForm from './components/appointment/createAppointment';
-import ReadAppointment from './components/appointment/readAppointment';
 import AppointmentList from './components/appointment/AppointmentList';
 import UpdateAppointment from './components/appointment/updateAppointment';
 import ReadUser from './components/user/ReadUser';
@@ -60,11 +58,9 @@ function App() {
                         <Route path="/admin/register" element={<AdminRegister />} />
                         <Route path="/admin/panel" element={<AdminPanel />} />
                         <Route path="/user" element={<UserWrapper />} />
-                        <Route path="/appointment/new" element={<AppointmentForm />} />
                         <Route path="/appointment" element={<AppointmentList />} />
                         <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
-                        <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
-                        <Route path="/appointment/slot" element={<AvailableSlotsCalendar />} />
+                        <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                         <Route path="/map" element ={<ClinicMap />} />
                     </Routes>
                 </div>

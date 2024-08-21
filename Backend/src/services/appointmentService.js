@@ -1,13 +1,10 @@
 import Appointment from '../models/Appointment.js';
-import Doctor from '../models/Doctor.js';
 import Clinic from '../models/Clinic.js';
 import User from '../models/User.js';
 import { getDoctorByIdService } from './doctorService.js';
 
 export const createAppointment = async ({
   dateTime,
-  typeOfVisit,
-  purposeOfVisit,
   clinic,
   assignedGP,
   status = 'scheduled',
@@ -19,8 +16,6 @@ export const createAppointment = async ({
   try {
     console.log('Appointment Data to be sent:', {
       dateTime,
-      typeOfVisit,
-      purposeOfVisit,
       clinic,
       assignedGP,
       status,
@@ -47,16 +42,8 @@ export const createAppointment = async ({
       return { error: true, status: 404, message: 'Clinic not found' };
     }
 
-    //const doctor = await Doctor.findOne({ doctorID: assignedGP, clinic });
-    //if (!doctor) {
-    //  console.log('Querying for doctor with:', { doctorID: assignedGP, clinic });
-    //  return { error: true, status: 404, message: 'Doctor not found for the selected clinic' };
-    //}
-
     const newAppointment = new Appointment({
       dateTime,
-      typeOfVisit,
-      purposeOfVisit,
       clinic: clinicData._id,
       assignedGP,
       status,

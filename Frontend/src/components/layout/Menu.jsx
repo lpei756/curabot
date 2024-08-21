@@ -2,7 +2,7 @@ import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
 import ReadUser from '../user/ReadUser.jsx';
-import Appointment from '../appointment/createAppointment';
+import AppointmentList from '../appointment/AppointmentList.jsx';
 
 const UserOptionsList = ({ options, userId }) => {
     const [selectedOption, setSelectedOption] = useState(null);
@@ -28,7 +28,7 @@ const UserOptionsList = ({ options, userId }) => {
             </List>
 
             {selectedOption === 'Profile' && <ReadUser userId={userId} />}
-            {selectedOption === 'Appointment' && <Appointment userId={userId} />}
+            {selectedOption === 'Appointment' && <AppointmentList userId={userId} />}
         </>
     );
 };

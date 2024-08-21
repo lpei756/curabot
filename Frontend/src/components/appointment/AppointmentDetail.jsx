@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Typography, Modal, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import axios from 'axios';
+import { createAppointment } from '../../services/appointmentService'; // Adjust the import path as needed
 
 const StyledModal = styled(Modal)(({ theme }) => ({
     display: 'flex',
@@ -51,6 +52,25 @@ const AppointmentDetail = ({ open, onClose, event }) => {
         }
     }, [event?.doctorID]);
 
+    const handleBooking = async () => {
+        if (!event || !doctor || !clinic) return;
+
+        const appointmentData = {
+            dateTime: event.start, // Assuming event.start is in ISO format
+            clinic: clinic._id,    // Clinic ID from the fetched data
+            assignedGP: doctor._id // Doctor ID from the fetched data
+        };
+
+        try {
+            const result = await createAppointment(appointmentData);
+            console.log('Appointment Created:', result);
+            // Optionally show a success message or redirect
+            onClose(); // Close the modal after booking
+        } catch (error) {
+            console.error('Error saving appointment:', error.response ? error.response.data : error.message);
+        }
+    };
+
     if (!event || loading) return null;
 
     return (
@@ -93,8 +113,11 @@ const AppointmentDetail = ({ open, onClose, event }) => {
                         <strong>Languages Spoken:</strong> {doctor.languagesSpoken.join(', ')}
                     </Typography>
                 )}
-                <Box mt={2} display="flex" justifyContent="flex-end">
-                    <Button variant="contained" color="primary" onClick={onClose}>
+                <Box mt={2} display="flex" justifyContent="flex-end" gap={2}>
+                    <Button variant="contained" color="primary" onClick={handleBooking}>
+                        Book Appointment
+                    </Button>
+                    <Button variant="contained" color="secondary" onClick={onClose}>
                         Close
                     </Button>
                 </Box>

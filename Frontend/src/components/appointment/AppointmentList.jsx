@@ -103,7 +103,6 @@ const AppointmentList = () => {
                   <div>
                     <p>Patient Name: {appointment.patientName}</p>
                     <p>Date: {new Date(appointment.dateTime).toLocaleString()}</p>
-                    <p>Type: {appointment.typeOfVisit}</p>
                     <p>Status: {appointment.status}</p>
                     <p>Clinic: {appointment.clinicName}</p>
                     <p>Doctor: {appointment.doctorName}</p>
@@ -128,7 +127,6 @@ const AppointmentList = () => {
             <h2>Details</h2>
             <p><strong>Patient Name:</strong> {selectedAppointment.patientName}</p>
             <p><strong>Date:</strong> {new Date(selectedAppointment.dateTime).toLocaleString()}</p>
-            <p><strong>Type:</strong> {selectedAppointment.typeOfVisit}</p>
             <p><strong>Status:</strong> {selectedAppointment.status}</p>
             <p><strong>Clinic:</strong> {selectedAppointment.clinicName}</p>
             <p><strong>Doctor:</strong> {selectedAppointment.doctorName}</p>
