@@ -16,6 +16,7 @@ import UpdateAppointment from './components/appointment/updateAppointment';
 import ReadUser from './components/user/ReadUser';
 import Homepage from './components/homepage/Homepage';
 import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
+import ClinicMap from './components/map/ClinicMap';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -62,6 +63,7 @@ function App() {
                         <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                         <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
                         <Route path="/appointment/slot" element={<AvailableSlotsCalendar />} />
+                        <Route path="/map" element ={<ClinicMap />} />
                     </Routes>
                 </div>
             </Router>
