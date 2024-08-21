@@ -9,8 +9,4 @@ router.get(DOCTOR_PATHS.read, getDoctorById);
 
 router.get(DOCTOR_PATHS.clinicDoctors, getDoctorsByClinic);
 
-router.post(DOCTOR_PATHS.doctorRegister, adminRegister);
-
-router.post(DOCTOR_PATHS.doctorLogin, adminLogin);
-
 export default router;

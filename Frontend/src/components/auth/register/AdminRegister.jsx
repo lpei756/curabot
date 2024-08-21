@@ -131,6 +131,7 @@ const AdminRegister = ({ onSuccess }) => {
                 >
                     <MenuItem value="doctor">Doctor</MenuItem>
                     <MenuItem value="nurse">Nurse</MenuItem>
+                    <MenuItem value="superadmin">Super Admin</MenuItem> {/* 添加超级管理员选项 */}
                 </Select>
             </FormControl>
 

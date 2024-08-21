@@ -39,8 +39,6 @@ export const CLINIC_PATHS = {
 
 export const DOCTOR_PATHS = {
   read: '/:doctorID',
-  doctorRegister: '/doctors/register',
-  doctorLogin: '/doctors/login',
   update: '/:doctorID',
   delete: '/:doctorID',
   all: '/doctors',

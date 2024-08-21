@@ -1,18 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 import { getAllAdmins, getAllPatients, adminLogout } from '../../services/AdminService';
+import { AuthContext } from '../../context/AuthContext';
 
 const AdminPanel = () => {
     const [admins, setAdmins] = useState([]);
     const [patients, setPatients] = useState([]);
     const [error, setError] = useState(null);
+    const { role } = useContext(AuthContext);
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchAllAdmins();
+        if (role === 'superadmin') {
+            fetchAllAdmins();
+        }
         fetchAllPatients();
-    }, []);
+    }, [role]);
 
     const fetchAllAdmins = async () => {
         try {
@@ -56,33 +60,35 @@ const AdminPanel = () => {
                 </Typography>
             )}
 
-            <Box sx={{ marginBottom: 4 }}>
-                <Typography variant="h5" component="h2" gutterBottom>
-                    Admins
-                </Typography>
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>First Name</TableCell>
-                                <TableCell>Last Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Role</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {admins.map((admin) => (
-                                <TableRow key={admin._id}>
-                                    <TableCell>{admin.firstName}</TableCell>
-                                    <TableCell>{admin.lastName}</TableCell>
-                                    <TableCell>{admin.email}</TableCell>
-                                    <TableCell>{admin.role}</TableCell>
+            {role === 'superadmin' && (
+                <Box sx={{ marginBottom: 4 }}>
+                    <Typography variant="h5" component="h2" gutterBottom>
+                        Admins
+                    </Typography>
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>First Name</TableCell>
+                                    <TableCell>Last Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Role</TableCell>
                                 </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                            </TableHead>
+                            <TableBody>
+                                {admins.map((admin) => (
+                                    <TableRow key={admin._id}>
+                                        <TableCell>{admin.firstName}</TableCell>
+                                        <TableCell>{admin.lastName}</TableCell>
+                                        <TableCell>{admin.email}</TableCell>
+                                        <TableCell>{admin.role}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Box>
+            )}
 
             <Box sx={{ marginBottom: 4 }}>
                 <Typography variant="h5" component="h2" gutterBottom>
