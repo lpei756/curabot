@@ -37,6 +37,7 @@ export const API_PATH = {
   availability: {
     getByDate: buildApiPath('/api/doctor-availability/date/:date'),
     getAll: buildApiPath('/api/doctor-availability/all/slots'),
-    getByDoctor: buildApiPath('/api/doctor-availability/:doctorID')
+    getByDoctor: buildApiPath('/api/doctor-availability/:doctorID'),
+    getByAddress: buildApiPath('/api/doctor-availability/address/:address')
   }
 };

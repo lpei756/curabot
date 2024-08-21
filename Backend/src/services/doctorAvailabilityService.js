@@ -21,7 +21,7 @@ export const setAvailability = async (doctorID, date, startTime, endTime, isBook
 };
 
 export const getAvailabilityByDoctorID = async (doctorID) => {
-    return await DoctorAvailability.findOne({ doctorID });
+    return await DoctorAvailability.find({ doctorID });
 };
 
 export const getAllAvailabilityByDate = async (date) => {
