@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Paper, Button, TextField } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, Box, Button, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addWeeks } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
+import '../../App.css';
 import { fetchUserData } from '../../services/userService';
 import { fetchAvailableSlotsByDate, fetchAllAvailableSlots, fetchGpSlotsByDoctorId, fetchSlotsByAddress } from '../../services/availabilityService';
 import { AuthContext } from '../../context/AuthContext';
+import Diversity1Icon from '@mui/icons-material/Diversity1';
 
 const localizer = dateFnsLocalizer({
     format,
@@ -22,6 +24,145 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
     borderRadius: theme.shape.borderRadius,
 }));
 
+const StyledButton = styled(Button)(({ theme, rounded }) => ({
+    backgroundColor: '#f8f6f6',
+    color: '#03035d',
+    borderColor: '#03035d',
+    borderRadius: rounded ? '50px' : '0px',
+    border: '1px solid #03035d',
+    margin: '0',
+    fontWeight: 'bold',
+    '&:hover': {
+        backgroundColor: '#03035d',
+        color: '#f8f6f6',
+        borderColor: '#03035d',
+    },
+}));
+
+const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, selectedLocation, onSearchAddress }) => {
+    return (
+        <Box
+            sx={{
+                display: 'flex',
+                alignItems: 'center',
+                backgroundColor: '#f8f6f6',
+                padding: '0 16px',
+                justifyContent: 'space-between',
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    alignItems: 'center',
+                }}
+            >
+                <StyledButton
+                    onClick={() => onNavigate('PREV')}
+                    variant="outlined"
+                    sx={{
+                        borderTopRightRadius: '0',
+                        borderBottomRightRadius: '0',
+                        borderTopLeftRadius: '50px',
+                        borderBottomLeftRadius: '50px',
+                        marginRight: '-1px',
+                        marginBottom: '10px'
+                    }}
+                >
+                    Back
+                </StyledButton>
+                <StyledButton
+                    onClick={() => onNavigate('TODAY')}
+                    variant="outlined"
+                    sx={{ marginBottom: '10px' }}
+                >
+                    Today
+                </StyledButton>
+                <StyledButton
+                    onClick={() => onNavigate('NEXT')}
+                    variant="outlined"
+                    sx={{
+                        borderTopLeftRadius: '0',
+                        borderBottomLeftRadius: '0',
+                        borderTopRightRadius: '50px',
+                        borderBottomRightRadius: '50px',
+                        marginLeft: '-1px',
+                        marginBottom: '10px'
+                    }}
+                >
+                    Next
+                </StyledButton>
+                <StyledButton
+                    onClick={onShowGpSlots}
+                    variant="outlined"
+                    sx={{ marginBottom: '10px', marginLeft: '20px', borderRadius: '50px' }}
+                    startIcon={<Diversity1Icon />}
+                >
+                    My GP
+                </StyledButton>
+                <FormControl
+                    sx={{
+                        mb: 2,
+                        ml: 2,
+                        minWidth: 100,
+                        backgroundColor: '#f8f6f6',
+                        borderRadius: '50px',
+                    }}
+                >
+                    <InputLabel
+                        id="location-select-label"
+                        sx={{
+                            color: '#03035d',
+                            fontSize: '16px',
+                        }}
+                    >
+                        Location
+                    </InputLabel>
+                    <Select
+                        labelId="location-select-label"
+                        value={selectedLocation}
+                        onChange={(e) => onSelectLocation(e.target.value)}
+                        label="Location"
+                        sx={{
+                            backgroundColor: '#fff',
+                            borderRadius: '50px',
+                            borderColor: '#03035d',
+                            '& .MuiSelect-select': {
+                                padding: '10px',
+                                fontSize: '16px',
+                            },
+                            '& .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#03035d',
+                            },
+                            '&:hover .MuiOutlinedInput-notchedOutline': {
+                                borderColor: '#03035d',
+                            },
+                        }}
+                    >
+                        <MenuItem value="Auckland">Auckland</MenuItem>
+                        <MenuItem value="Wellington">Wellington</MenuItem>
+                        <MenuItem value="Tauranga">Tauranga</MenuItem>
+                        <MenuItem value="Dunedin">Dunedin</MenuItem>
+                        <MenuItem value="Christchurch">Christchurch</MenuItem>
+                        <MenuItem value="Invercargill">Invercargill</MenuItem>
+                        <MenuItem value="Hamilton">Hamilton</MenuItem>
+                    </Select>
+                </FormControl>
+                <StyledButton
+                    onClick={onSearchAddress}
+                    variant="contained"
+                    color="primary"
+                    sx={{ marginBottom: '10px', marginLeft: '10px', borderRadius: '50px' }}
+                >
+                    Search
+                </StyledButton>
+            </Box>
+            <Box sx={{ fontSize: '20px', color: '#03035d' }}>
+                {label}
+            </Box>
+        </Box>
+    );
+};
+
 const AvailableSlotsCalendar = () => {
     const [events, setEvents] = useState([]);
     const [date, setDate] = useState(new Date());
@@ -30,6 +171,7 @@ const AvailableSlotsCalendar = () => {
     const [gpSlots, setGpSlots] = useState([]);
     const [address, setAddress] = useState('');
     const { userId } = useContext(AuthContext);
+    const [selectedLocation, setSelectedLocation] = useState('');
 
     useEffect(() => {
         const fetchSlots = async () => {
@@ -142,15 +284,25 @@ const AvailableSlotsCalendar = () => {
             }
         } catch (error) {
             console.error('Error fetching slots by address:', error);
+            setEvents([]);
         }
+    };
+
+    const handleLocationChange = (location) => {
+        setSelectedLocation(location);
+        setAddress(location);
     };
 
     return (
         <Box p={2} display="flex" flexDirection="column" alignItems="center">
-            <Typography variant="h5" gutterBottom>
-                Available Slots for {format(date, 'MMMM dd, yyyy')}
+            <Typography variant="h4" align="center" gutterBottom>
+                Make an Appointment
             </Typography>
-            <StyledPaper>
+            <Typography variant="h5" align="center" gutterBottom>
+                It&apos;s Quick an Easy.
+            </Typography>
+
+            <StyledPaper style={{ backgroundColor: '#f9f9f9' }}>
                 <BigCalendar
                     localizer={localizer}
                     events={events}
@@ -159,9 +311,20 @@ const AvailableSlotsCalendar = () => {
                     endAccessor="end"
                     min={new Date(0, 0, 0, 8, 0, 0)}
                     max={new Date(0, 0, 0, 16, 0, 0)}
-                    style={{ height: '100%', width: 700 }}
+                    style={{ height: '100%', width: 1000 }}
                     views={['week']}
                     defaultView="week"
+                    components={{
+                        toolbar: (props) => (
+                            <CustomToolbar
+                                {...props}
+                                onShowGpSlots={handleShowGpSlots}
+                                onSelectLocation={handleLocationChange}
+                                selectedLocation={selectedLocation}
+                                onSearchAddress={handleAddressChange}
+                            />
+                        )
+                    }}
                     onNavigate={(newDate) => {
                         setDate(newDate);
 
@@ -180,22 +343,6 @@ const AvailableSlotsCalendar = () => {
                     }}
                 />
             </StyledPaper>
-            <Box mt={2}>
-                <TextField
-                    label="Search by Address"
-                    variant="outlined"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                />
-                <Button variant="contained" color="primary" onClick={handleAddressChange} sx={{ mr: 2 }}>
-                    Search by Address
-                </Button>
-                <Button variant="contained" color="secondary" onClick={handleShowGpSlots}>
-                    Show My GP's Slots
-                </Button>
-            </Box>
         </Box>
     );
 };
