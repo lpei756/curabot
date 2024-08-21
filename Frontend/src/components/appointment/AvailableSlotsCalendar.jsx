@@ -343,22 +343,6 @@ const AvailableSlotsCalendar = () => {
                     }}
                 />
             </StyledPaper>
-            <Box mt={2}>
-                <TextField
-                    label="Search by Address"
-                    variant="outlined"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    fullWidth
-                    sx={{ mb: 2 }}
-                />
-                <Button variant="contained" color="primary" onClick={handleAddressChange} sx={{ mr: 2 }}>
-                    Search by Address
-                </Button>
-                <Button variant="contained" color="secondary" onClick={handleShowGpSlots}>
-                    Show My GP's Slots
-                </Button>
-            </Box>
         </Box>
     );
 };
