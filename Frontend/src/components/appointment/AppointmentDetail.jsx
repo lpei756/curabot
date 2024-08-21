@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Modal, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import axios from 'axios';
-import { createAppointment } from '../../services/appointmentService'; // Adjust the import path as needed
+import { createAppointment } from '../../services/appointmentService';
+import { getDoctorById } from '../../services/doctorService';
+import { getClinicById } from '../../services/clinicService';
 
 const StyledModal = styled(Modal)(({ theme }) => ({
     display: 'flex',
@@ -31,22 +32,21 @@ const AppointmentDetail = ({ open, onClose, event }) => {
 
     useEffect(() => {
         if (event?.doctorID) {
-            axios.get(`http://localhost:3001/api/doctors/${event.doctorID}`)
-                .then(response => {
-                    setDoctor(response.data);
+            const fetchData = async () => {
+                try {
+                    const doctorData = await getDoctorById(event.doctorID);
+                    setDoctor(doctorData);
 
-                    const clinicID = response.data.clinic;
-                    return axios.get(`http://localhost:3001/api/clinics/${clinicID}`);
-                })
-                .then(response => {
-                    setClinic(response.data);
-                })
-                .catch(error => {
+                    const clinicData = await getClinicById(doctorData.clinic);
+                    setClinic(clinicData);
+                } catch (error) {
                     console.error('Error fetching data:', error);
-                })
-                .finally(() => {
+                } finally {
                     setLoading(false);
-                });
+                }
+            };
+
+            fetchData();
         } else {
             setLoading(false);
         }
@@ -56,16 +56,15 @@ const AppointmentDetail = ({ open, onClose, event }) => {
         if (!event || !doctor || !clinic) return;
 
         const appointmentData = {
-            dateTime: event.start, // Assuming event.start is in ISO format
-            clinic: clinic._id,    // Clinic ID from the fetched data
-            assignedGP: doctor._id // Doctor ID from the fetched data
+            dateTime: event.start,
+            clinic: clinic._id,
+            assignedGP: doctor.doctorID
         };
 
         try {
             const result = await createAppointment(appointmentData);
             console.log('Appointment Created:', result);
-            // Optionally show a success message or redirect
-            onClose(); // Close the modal after booking
+            onClose();
         } catch (error) {
             console.error('Error saving appointment:', error.response ? error.response.data : error.message);
         }

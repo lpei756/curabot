@@ -20,10 +20,12 @@ export const API_PATH = {
     send: buildApiPath('/api/chat')
   },
   clinic: {
-    all: buildApiPath('/api/clinics')
+    all: buildApiPath('/api/clinics'),
+    read: buildApiPath('/api/clinics/:clinicId')
   },
   doctor:{
-    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`)
+    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`),
+    read: buildApiPath('/api/doctors/:doctorID')
   },
   admin: {
     login: buildApiPath('/api/admin/login'),
