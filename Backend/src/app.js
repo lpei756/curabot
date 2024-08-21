@@ -15,6 +15,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const __dirname = path.resolve();
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -27,7 +28,9 @@ app.use('/api/clinics', clinicRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/images', imageRoutes);
-app.use('/api/admin', adminRoutes);
+console.log('Registering admin routes...');
+app.use('/api', adminRoutes);
+console.log('Admin routes registered.');
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 
 export default app;

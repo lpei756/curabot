@@ -55,7 +55,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={<Homepage />} />
                         <Route path="/register" element={<Register />} />
-                        <Route path="/adminRegister" element={<AdminRegister />} />
+                        <Route path="/admin/register" element={<AdminRegister />} />
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<AppointmentForm />} />
                         <Route path="/appointment" element={<AppointmentList />} />

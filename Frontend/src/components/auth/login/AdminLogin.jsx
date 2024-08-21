@@ -30,7 +30,7 @@ function AdminLogin({ onClose, onSuccess }) {
 
     const handleRegisterRedirect = () => {
         onClose();
-        navigate('/adminRegister');
+        navigate('/admin/register');
     };
 
     return (

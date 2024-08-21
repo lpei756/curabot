@@ -1,9 +1,8 @@
 import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin.js';
-
 const adminAuthorization = (roles) => async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
+    const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
     console.log('Token:', token);
@@ -16,7 +15,7 @@ const adminAuthorization = (roles) => async (req, res, next) => {
 
     console.log('Admin:', admin);
 
-    if (!admin || !roles.includes(decoded.user.role)) {
+    if (!admin || (roles && !roles.includes(decoded.user.role))) {
       return res.status(403).json({ message: 'Forbidden' });
     }
 
