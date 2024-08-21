@@ -186,6 +186,7 @@ const AvailableSlotsCalendar = () => {
                         start: new Date(slot.startTime),
                         end: new Date(slot.endTime),
                         allDay: false,
+                        doctorID: slot.doctorID
                     }));
                     setAllSlots(formattedEvents);
                 } else {
@@ -224,6 +225,7 @@ const AvailableSlotsCalendar = () => {
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setEvents(formattedEvents);
             } else {
@@ -254,6 +256,7 @@ const AvailableSlotsCalendar = () => {
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setGpSlots(formattedGpSlots);
                 setEvents(formattedGpSlots);
@@ -267,7 +270,6 @@ const AvailableSlotsCalendar = () => {
     };
 
     const handleShowGpSlots = () => {
-        console.log('Clicked Show My GP\'s Slots button.');
         fetchGpSlots();
     };
 
@@ -280,6 +282,7 @@ const AvailableSlotsCalendar = () => {
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setEvents(formattedEvents);
             } else {
