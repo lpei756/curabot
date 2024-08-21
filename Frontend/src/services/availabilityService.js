@@ -1,7 +1,11 @@
 import { API_PATH } from '../utils/urlRoutes';
 
+const getAuthToken = () => {
+    return localStorage.getItem('authToken');
+};
+
 export const fetchAvailableSlotsByDate = async (date) => {
-    const token = localStorage.getItem('authToken');
+    const token = getAuthToken();
 
     try {
         const response = await fetch(API_PATH.availability.getByDate.replace(':date', date), {
@@ -15,8 +19,7 @@ export const fetchAvailableSlotsByDate = async (date) => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching slots:', error);
         throw error;
@@ -24,7 +27,7 @@ export const fetchAvailableSlotsByDate = async (date) => {
 };
 
 export const fetchAllAvailableSlots = async () => {
-    const token = localStorage.getItem('authToken');
+    const token = getAuthToken();
 
     try {
         const response = await fetch(API_PATH.availability.getAll, {
@@ -38,19 +41,18 @@ export const fetchAllAvailableSlots = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
         console.error('Error fetching all slots:', error);
         throw error;
     }
 };
 
-export const fetchAvailableSlotsByDoctor = async (doctorID) => {
-    const token = localStorage.getItem('authToken');
+export const fetchGpSlotsByDoctorId = async (doctorId) => {
+    const token = getAuthToken();
 
     try {
-        const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorID), {
+        const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorId), {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -61,10 +63,9 @@ export const fetchAvailableSlotsByDoctor = async (doctorID) => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     } catch (error) {
-        console.error('Error fetching slots by doctor:', error);
+        console.error('Error fetching GP slots:', error);
         throw error;
     }
 };
