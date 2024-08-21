@@ -1,11 +1,7 @@
 import { API_PATH } from '../utils/urlRoutes';
 
-const getAuthToken = () => {
-    return localStorage.getItem('authToken');
-};
-
 export const fetchAvailableSlotsByDate = async (date) => {
-    const token = getAuthToken();
+    const token = localStorage.getItem('authToken');
 
     try {
         const response = await fetch(API_PATH.availability.getByDate.replace(':date', date), {
@@ -27,7 +23,7 @@ export const fetchAvailableSlotsByDate = async (date) => {
 };
 
 export const fetchAllAvailableSlots = async () => {
-    const token = getAuthToken();
+    const token = localStorage.getItem('authToken');
 
     try {
         const response = await fetch(API_PATH.availability.getAll, {
@@ -49,7 +45,7 @@ export const fetchAllAvailableSlots = async () => {
 };
 
 export const fetchGpSlotsByDoctorId = async (doctorId) => {
-    const token = getAuthToken();
+    const token = localStorage.getItem('authToken');
 
     try {
         const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorId), {
@@ -66,6 +62,28 @@ export const fetchGpSlotsByDoctorId = async (doctorId) => {
         return await response.json();
     } catch (error) {
         console.error('Error fetching GP slots:', error);
+        throw error;
+    }
+};
+
+export const fetchSlotsByAddress = async (address) => {
+    const token = localStorage.getItem('authToken');
+
+    try {
+        const response = await fetch(API_PATH.availability.getByAddress.replace(':address', encodeURIComponent(address)), {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching slots by address:', error);
         throw error;
     }
 };
