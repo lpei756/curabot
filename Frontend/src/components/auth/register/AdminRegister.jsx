@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, Typography } from '@mui/material';
+import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormControl } from '@mui/material';
 import PropTypes from 'prop-types';
 import { adminRegister } from '../../../services/AdminService';
 
@@ -10,6 +10,7 @@ const AdminRegister = ({ onSuccess }) => {
         lastName: '',
         email: '',
         password: '',
+        role: '',
     });
 
     const [error, setError] = useState(null);
@@ -19,10 +20,21 @@ const AdminRegister = ({ onSuccess }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        const nameParts = name.split('.');
+        if (nameParts.length > 1) {
+            setFormData((prevData) => ({
+                ...prevData,
+                [nameParts[0]]: {
+                    ...prevData[nameParts[0]],
+                    [nameParts[1]]: value,
+                },
+            }));
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
 
         if (name === 'password') {
             if (value.length < 6) {
@@ -93,6 +105,8 @@ const AdminRegister = ({ onSuccess }) => {
                 fullWidth
                 margin="normal"
                 required
+                error={!!passwordError}
+                helperText={passwordError}
             />
             <TextField
                 label="Password"
@@ -107,6 +121,19 @@ const AdminRegister = ({ onSuccess }) => {
                 error={!!passwordError}
                 helperText={passwordError}
             />
+            <FormControl variant="standard" fullWidth margin="normal" required>
+                <InputLabel>Role</InputLabel>
+                <Select
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    label="Role"
+                >
+                    <MenuItem value="doctor">Doctor</MenuItem>
+                    <MenuItem value="nurse">Nurse</MenuItem>
+                </Select>
+            </FormControl>
+
             <Button variant="contained" color="primary" type="submit" sx={{ mt: 2 }} style={{
                 backgroundColor: '#03035d',
                 color: '#fff',

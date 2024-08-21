@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 import path from 'path';
 import { IMAGE_PATHS } from './path.js';
-import { getUserImages, removeImage, saveImage } from '../controllers/imageController.js'; // 使用相对路径导入
+import { getUserImages, removeImage, saveImage } from '../controllers/imageController.js';
 
 const router = express.Router();
 

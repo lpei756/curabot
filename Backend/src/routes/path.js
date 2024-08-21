@@ -4,6 +4,16 @@ export const buildPathWithBase = (paths) => {
   );
 };
 
+export const ADMIN_PATHS = {
+  register: '/admin/register',
+  login: '/admin/login',
+  read: '/admin/:id',
+  update: '/admin/:id',
+  logout: '/admin/logout',
+  getAllAdmins: '/admin/all',
+  getAllPatients: '/patients'
+};
+
 export const AUTH_PATHS = {
   register: '/register',
   login: '/login',
@@ -47,10 +57,6 @@ export const IMAGE_PATHS = {
   delete: '/:imageId'
 };
 
-export const ADMIN_PATHS = {
-  getAllPatients: '/patients'
-};
-
 export const DOCTOR_AVAILABILITY_PATHS = {
   set: '/:doctorID/set',
   getByDoctor: '/:doctorID',
@@ -60,3 +66,6 @@ export const DOCTOR_AVAILABILITY_PATHS = {
   update: '/:doctorID/slot/:slotId',
   delete: '/:doctorID/slot/:slotId'
 };
+
+
+

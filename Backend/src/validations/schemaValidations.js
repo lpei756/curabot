@@ -1,10 +1,12 @@
 import Joi from 'joi';
-import { AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, DOCTOR_PATHS, buildPathWithBase } from '../routes/path.js';
+import { ADMIN_PATHS, AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, DOCTOR_PATHS, buildPathWithBase } from '../routes/path.js';
 
+const adminPathBase = buildPathWithBase(ADMIN_PATHS);
 const authPathBase = buildPathWithBase(AUTH_PATHS);
 const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
-const doctorPathBase = buildPathWithBase(DOCTOR_PATHS); // 新增
+const doctorPathBase = buildPathWithBase(DOCTOR_PATHS);
+
 
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
@@ -146,6 +148,34 @@ const doctorLoginSchema = Joi.object({
     password: Joi.string().min(6).required(),
 });
 
+const adminRegisterSchema = Joi.object({
+    firstName: Joi.string().required(),
+    lastName: Joi.string().required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required(),
+    role: Joi.string().valid('doctor', 'nurse').required(),
+});
+
+const adminLoginSchema = Joi.object({
+    email: Joi.string().email().required(),
+    password: Joi.string().min(6).required()
+});
+
+const adminReadSchema = Joi.object({
+    id: Joi.string().required()
+});
+
+const adminUpdateSchema = Joi.object({
+    firstName: Joi.string().optional(),
+    lastName: Joi.string().optional(),
+    email: Joi.string().email().optional(),
+    password: Joi.string().min(6).optional(),
+    role: Joi.string().valid('doctor', 'nurse').optional(),
+});
+
+const getAllAdminsSchema = Joi.object({});
+const getAllPatientsSchema = Joi.object({});
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -161,4 +191,11 @@ export default {
     [doctorAvailabilityPathBase.getByAddress]: getDoctorAvailabilityByAddressSchema,
     [doctorPathBase.doctorRegister]: doctorRegisterSchema,
     [doctorPathBase.doctorLogin]: doctorLoginSchema,
+    [adminPathBase.register]: adminRegisterSchema,
+    [adminPathBase.login]: adminLoginSchema,
+    [adminPathBase.read]: adminReadSchema,
+    [adminPathBase.update]: adminUpdateSchema,
+    [adminPathBase.logout]: adminUpdateSchema,
+    [adminPathBase.getAllAdmins]: getAllAdminsSchema,
+    [adminPathBase.getAllPatients]: getAllPatientsSchema,
 };
