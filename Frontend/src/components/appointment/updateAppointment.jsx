@@ -12,8 +12,6 @@ const UpdateAppointment = () => {
     const { appointmentID } = useParams();
     const [formValues, setFormValues] = useState({
         dateTime: '',
-        typeOfVisit: '',
-        purposeOfVisit: '',
         clinic: '',
         assignedGP: '',
     });
@@ -29,8 +27,6 @@ const UpdateAppointment = () => {
                 const appointment = await readAppointment(appointmentID);
                 setFormValues({
                     dateTime: appointment.dateTime,
-                    typeOfVisit: appointment.typeOfVisit,
-                    purposeOfVisit: appointment.purposeOfVisit,
                     clinic: appointment.clinic,
                     assignedGP: appointment.assignedGP,
                 });
@@ -84,9 +80,9 @@ const UpdateAppointment = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const { dateTime, typeOfVisit, purposeOfVisit, clinic, assignedGP } = formValues;
+        const { dateTime, clinic, assignedGP } = formValues;
 
-        if (!dateTime || !typeOfVisit || !purposeOfVisit || !clinic || !assignedGP) {
+        if (!dateTime || !clinic || !assignedGP) {
             setError('All fields are required');
             return;
         }
@@ -103,8 +99,6 @@ const UpdateAppointment = () => {
 
         const appointmentData = {
             dateTime,
-            typeOfVisit,
-            purposeOfVisit,
             clinic,
             assignedGP,
         };
@@ -134,25 +128,6 @@ const UpdateAppointment = () => {
                 InputLabelProps={{
                     shrink: true,
                 }}
-            />
-            <TextField
-                select
-                label="Type of Visit"
-                name="typeOfVisit"
-                value={formValues.typeOfVisit}
-                onChange={handleInputChange}
-            >
-                <MenuItem value="">Select Type of Visit</MenuItem>
-                <MenuItem value="Consultation">Consultation</MenuItem>
-                <MenuItem value="Follow-up">Follow-up</MenuItem>
-                <MenuItem value="Urgent">Urgent</MenuItem>
-            </TextField>
-            <TextField
-                label="Purpose of Visit"
-                type="text"
-                name="purposeOfVisit"
-                value={formValues.purposeOfVisit}
-                onChange={handleInputChange}
             />
             <TextField
                 select

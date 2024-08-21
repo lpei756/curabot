@@ -81,8 +81,6 @@ const updateUserSchema = Joi.object({
 
 const createAppointmentSchema = Joi.object({
     dateTime: Joi.date().required(),
-    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Urgent').required(),
-    purposeOfVisit: Joi.string().required(),
     clinic: Joi.string().required(),
     assignedGP: Joi.string().required(),
     status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
@@ -96,8 +94,6 @@ const readAppointmentSchema = Joi.object({
 
 const updateAppointmentSchema = Joi.object({
     dateTime: Joi.date().optional(),
-    typeOfVisit: Joi.string().valid('Consultation', 'Follow-up', 'Emergency').optional(),
-    purposeOfVisit: Joi.string().optional(),
     clinic: Joi.string().optional(),
     assignedGP: Joi.string().optional(),
     status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
