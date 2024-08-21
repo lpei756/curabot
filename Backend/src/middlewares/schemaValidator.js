@@ -15,7 +15,6 @@ const schemaValidator = (path, useJoiError = true) => {
   console.log(`Path: ${path}`);
   console.log(`Schema for ${path}:`);
 
-
   if (!schema) {
     console.error(`Schema not found for path: ${path}`);
     throw new Error(`Schema not found for path: ${path}`);

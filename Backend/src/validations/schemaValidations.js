@@ -153,7 +153,7 @@ const adminRegisterSchema = Joi.object({
     lastName: Joi.string().required(),
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
-    role: Joi.string().valid('doctor', 'nurse').required(),
+    role: Joi.string().valid('superadmin', 'doctor', 'nurse').required(),
 });
 
 const adminLoginSchema = Joi.object({
@@ -170,7 +170,7 @@ const adminUpdateSchema = Joi.object({
     lastName: Joi.string().optional(),
     email: Joi.string().email().optional(),
     password: Joi.string().min(6).optional(),
-    role: Joi.string().valid('doctor', 'nurse').optional(),
+    role: Joi.string().valid('superadmin', 'doctor', 'nurse').optional(),
 });
 
 const getAllAdminsSchema = Joi.object({});
@@ -185,7 +185,7 @@ export default {
     [authPathBase.user]: userSchema,
     [authPathBase.updateUser]: updateUserSchema,
     [doctorAvailabilityPathBase.set]: setDoctorAvailabilitySchema,
-    [doctorAvailabilityPathBase.get]: getDoctorAvailabilitySchema,
+    [doctorAvailabilityPathBase.getByDoctor]: getDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.getByDate]: getDoctorAvailabilityByDateSchema,
     [doctorAvailabilityPathBase.update]: updateDoctorAvailabilitySchema,
     [doctorAvailabilityPathBase.getByAddress]: getDoctorAvailabilityByAddressSchema,
