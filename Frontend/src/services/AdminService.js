@@ -9,6 +9,7 @@ export const adminLogin = async (email, password) => {
         const url = API_PATH.admin.login;
         console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
         const response = await axiosApiInstance.post(url, { email, password });
+
         tokenStorage.save(response.data.token);
         return response.data;
     } catch (error) {
