@@ -17,6 +17,7 @@ import ReadUser from './components/user/ReadUser';
 import Homepage from './components/homepage/Homepage';
 import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
 import ClinicMap from './components/map/ClinicMap';
+import AdminPanel from './components/admin/AdminPanel';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -57,6 +58,7 @@ function App() {
                         <Route path="/" element={<Homepage />} />
                         <Route path="/register" element={<Register />} />
                         <Route path="/admin/register" element={<AdminRegister />} />
+                        <Route path="/admin/panel" element={<AdminPanel />} />
                         <Route path="/user" element={<UserWrapper />} />
                         <Route path="/appointment/new" element={<AppointmentForm />} />
                         <Route path="/appointment" element={<AppointmentList />} />

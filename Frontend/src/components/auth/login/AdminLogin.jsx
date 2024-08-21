@@ -23,6 +23,7 @@ function AdminLogin({ onClose, onSuccess }) {
             localStorage.setItem('adminToken', data.token);
             onSuccess();
             onClose();
+            navigate('/admin/panel'); // Redirect to AdminPanel after successful login
         } catch (error) {
             setError('Admin login failed: ' + error.message);
         }

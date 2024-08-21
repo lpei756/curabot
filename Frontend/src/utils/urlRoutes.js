@@ -32,6 +32,7 @@ export const API_PATH = {
     update: buildApiPath('/api/admin/:id'),
     logout: buildApiPath('/api/admin/logout'),
     getAllAdmins: buildApiPath('/api/admin/all'),
+    getAllPatients: buildApiPath('/api/patients'),
   },
   images: {
     userImages: buildApiPath('/api/images/user/:id'),
