@@ -111,3 +111,26 @@ export const deleteAvailability = async (doctorID, slotId) => {
         throw error;
     }
 };
+
+export const findNearestSlot = (slots) => {
+    const now = new Date();
+    let nearestSlot = null;
+    let minDiff = Infinity;
+  
+    slots.forEach(slot => {
+        const slotDateTime = new Date(slot.date);
+        const startTime = new Date(slot.startTime);
+
+        // Combine the date and start time into a single Date object
+        slotDateTime.setHours(startTime.getUTCHours(), startTime.getUTCMinutes());
+
+        const diff = slotDateTime - now;
+
+        if (diff >= 0 && diff < minDiff) {
+            minDiff = diff;
+            nearestSlot = slot;
+        }
+    });
+  
+    return nearestSlot;
+};
