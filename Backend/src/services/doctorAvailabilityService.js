@@ -116,12 +116,11 @@ export const findNearestSlot = (slots) => {
     const now = new Date();
     let nearestSlot = null;
     let minDiff = Infinity;
-  
+
     slots.forEach(slot => {
         const slotDateTime = new Date(slot.date);
         const startTime = new Date(slot.startTime);
 
-        // Combine the date and start time into a single Date object
         slotDateTime.setHours(startTime.getUTCHours(), startTime.getUTCMinutes());
 
         const diff = slotDateTime - now;
@@ -131,6 +130,6 @@ export const findNearestSlot = (slots) => {
             nearestSlot = slot;
         }
     });
-  
+
     return nearestSlot;
 };

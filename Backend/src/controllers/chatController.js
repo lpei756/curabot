@@ -1,6 +1,7 @@
 import { getAppointmentsForUser, processChatWithOpenAI } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
-import { getAllAvailableSlots,  findNearestSlot } from '../services/doctorAvailabilityService.js';
+import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
+import { getDoctorByIdService } from '../services/doctorService.js';
 
 export const handleChat = async (req, res) => {
   try {
@@ -12,10 +13,6 @@ export const handleChat = async (req, res) => {
       'list my appointments',
       'my appointments',
       'appointments',
-    ];
-
-    const bookingRequestKeywords = [
-      'create',
     ];
 
     const autoAppointmentKeywords = [
@@ -40,35 +37,61 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    
+
     if (autoAppointmentKeywords.some(keyword => userMessage.toLowerCase().includes(keyword))) {
       if (!authToken) {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
       }
-    
+
       try {
         const availableSlots = await getAllAvailableSlots();
-
-        if (!availableSlots || availableSlots.length === 0) {
-          console.log('No slots returned from getAllAvailableSlots');
-          return res.json({
-            reply: 'Sorry, there are no available slots at the moment. Please try again later.'
-          });
-        }
-
         const nearestSlot = findNearestSlot(availableSlots);
-    
+
         if (!nearestSlot) {
           return res.json({
             reply: 'Sorry, there are no available slots at the moment. Please try again later.'
           });
         }
-    
+
+        const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
+
+        if (doctorResult.error) {
+          return res.status(doctorResult.status).json({ message: doctorResult.message });
+        }
+
+        const clinicId = doctorResult.doctor.clinic;
+
         return res.json({
           reply: `
             I found an available slot for you. Would you like to book it?
-            <p><strong>Date:</strong> ${nearestSlot.date}</p>
-            <a href="http://localhost:5173/appointment/book/${nearestSlot._id}" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#03035D; text-decoration:none; border-radius:5px;">Book Now</a>
+            <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
+            <button onclick="
+              (async function() {
+                try {
+                  const response = await fetch('http://localhost:3001/api/appointments/create', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json',
+                      'Authorization': '${authToken}' // Ensure authToken is properly injected
+                    },
+                    body: JSON.stringify({
+                      dateTime: '${nearestSlot.startTime.toISOString()}', // Convert to ISO string
+                      clinic: '${clinicId}', // Ensure clinicId is defined and available
+                      assignedGP: '${nearestSlot.doctorID}'
+                    })
+                  });
+                  const data = await response.json();
+                  if (response.ok) {
+                    alert('Your appointment has been successfully booked.');
+                  } else {
+                    alert('Error: ' + data.message);
+                  }
+                } catch (error) {
+                  alert('Sorry, something went wrong. Please try again.');
+                }
+              })()
+            ">Book Now</button>
           `
         });
       } catch (error) {
