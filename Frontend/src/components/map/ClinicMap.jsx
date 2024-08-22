@@ -6,7 +6,7 @@ import {
     Pin,
     InfoWindow,
 } from "@vis.gl/react-google-maps";
-import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
+import { Box, List, ListItem, ListItemText } from "@mui/material";
 import axios from "axios";
 import { getClinics } from '../../services/clinicService';
 
@@ -134,12 +134,12 @@ const ClinicMap = () => {
                                                 primaryTypographyProps={{ style: { color: '#03035d' } }}
                                                 secondary={
                                                     <>
-                                                        <div>{clinic.address}</div>
-                                                        <div>{clinic.service}</div>
-                                                        <div>{clinic.hours}</div>
-                                                        <div>{clinic.email}</div>
-                                                        <div>Fax: {clinic.fax}</div>
-                                                        <div>Phone: {clinic.phone}</div>
+                                                        {clinic.address}<br/>
+                                                        {clinic.service}<br/>
+                                                        {clinic.hours}<br/>
+                                                        {clinic.email}<br/>
+                                                        Fax: {clinic.fax}<br/>
+                                                        Phone: {clinic.phone}<br/>
                                                     </>
                                                 }
                                             />
