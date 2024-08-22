@@ -71,3 +71,19 @@ export const processChatWithOpenAI = async (userMessage) => {
         throw new Error('Error processing chat with OpenAI');
     }
 };
+
+export const sendFeedbackToServer = async (messageId, feedback) => {
+    console.log('Sending feedback:', { messageId, feedback });
+
+    try {
+        const response = await axios.post('http://localhost:3001/api/feedback', {
+            messageId,
+            feedback
+        });
+        console.log('Server response:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error sending feedback:', error);
+        throw new Error('Error sending feedback');
+    }
+};

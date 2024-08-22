@@ -33,4 +33,11 @@ app.use('/api', adminRoutes);
 console.log('Admin routes registered.');
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 
+app.post('/api/feedback', (req, res) => {
+    const { messageId, feedback } = req.body;
+    console.log(`Received feedback for message ${messageId}: ${feedback}`);
+
+    res.status(200).send({ status: 'success', message: 'Feedback received' });
+});
+
 export default app;
