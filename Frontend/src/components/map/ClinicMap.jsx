@@ -36,7 +36,6 @@ const ClinicMap = () => {
         const fetchClinics = async () => {
             try {
                 const clinics = await getClinics();  // Fetch all clinics
-                console.log("Fetched clinics:", clinics);  // Log the fetched clinics
                 geocodeAddresses(clinics)
             } catch (error) {
                 console.error("Error fetching clinics:", error);
@@ -55,7 +54,7 @@ const ClinicMap = () => {
                     if (response.data.status === "OK") {
                         const location = response.data.results[0].geometry.location;
                         return {
-                            id: clinic._id, // Use the clinic's ID as a unique identifier
+                            id: clinic._id, 
                             name: clinic.name,
                             address: clinic.address,
                             email: clinic.email,
