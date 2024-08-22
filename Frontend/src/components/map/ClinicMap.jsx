@@ -6,21 +6,15 @@ import {
     Pin,
     InfoWindow,
 } from "@vis.gl/react-google-maps";
-import { Box } from "@mui/material";
+import { Box, List, ListItem, ListItemIcon, ListItemText } from "@mui/material";
 import axios from "axios";
+import { getClinics } from '../../services/clinicService';
 
 const ClinicMap = () => {
     const [userPosition, setUserPosition] = useState(null);
     const [clinicPositions, setClinicPositions] = useState([]);
     const [isUserInfoWindowOpen, setIsUserInfoWindowOpen] = useState(false);
     const [openInfoWindowId, setOpenInfoWindowId] = useState(null);
-
-    const addresses = [
-        "10 Queen St, Auckland, 1010",
-        "15 Mount Eden Rd, Auckland, 1024",
-        "34 Symonds St, Auckland, 1010",
-        "123 Albert St, Auckland, 1010",
-    ];
 
     useEffect(() => {
         // Get user's current location
@@ -38,25 +32,42 @@ const ClinicMap = () => {
             }
         );
 
+        // Fetch clinics from the backend
+        const fetchClinics = async () => {
+            try {
+                const clinics = await getClinics();  // Fetch all clinics
+                console.log("Fetched clinics:", clinics);  // Log the fetched clinics
+                geocodeAddresses(clinics)
+            } catch (error) {
+                console.error("Error fetching clinics:", error);
+            }
+        };
+
         // Geocode the clinic addresses
-        const geocodeAddresses = async () => {
+        const geocodeAddresses = async (clinics) => {
             try {
                 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-                const geocodePromises = addresses.map(async (address) => {
-                    const encodedAddress = encodeURIComponent(address);
+                const geocodePromises = clinics.map(async (clinic) => {
+                    const encodedAddress = encodeURIComponent(clinic.address);
                     const response = await axios.get(
                         `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`
                     );
                     if (response.data.status === "OK") {
                         const location = response.data.results[0].geometry.location;
                         return {
-                            id: address, // Use the address as a unique ID
-                            address,
+                            id: clinic._id, // Use the clinic's ID as a unique identifier
+                            name: clinic.name,
+                            address: clinic.address,
+                            email: clinic.email,
+                            fax: clinic.fax,
+                            phone: clinic.phone,
+                            hours: clinic.hours,
+                            service: clinic.service,
                             lat: location.lat,
                             lng: location.lng,
                         };
                     } else {
-                        console.error("Geocoding error for", address, ":", response.data.status);
+                        console.error("Geocoding error for", clinic.address, ":", response.data.status);
                         return null;
                     }
                 });
@@ -68,7 +79,8 @@ const ClinicMap = () => {
             }
         };
 
-        geocodeAddresses();
+        // Fetch clinics and then geocode addresses
+        fetchClinics();
     }, []);
 
     const handleUserMarkerClick = () => {
@@ -91,13 +103,13 @@ const ClinicMap = () => {
                 <Map defaultZoom={13} defaultCenter={userPosition} mapId={import.meta.env.VITE_MAP_ID}>
                     <AdvancedMarker position={userPosition} onClick={handleUserMarkerClick}>
                         <Pin
-                            background={"#03035d"}
-                            borderColor={"#03035d"}
+                            background={"#000000"}
+                            borderColor={"#000000"}
                             glyphColor={"#f8f6f6"}
                         />
                         {isUserInfoWindowOpen && (
                             <InfoWindow position={userPosition} onCloseClick={() => setIsUserInfoWindowOpen(false)}>
-                                <div style={{color: '#03035d' }}>
+                                <div style={{ color: '#03035d' }}>
                                     You are here
                                 </div>
                             </InfoWindow>
@@ -116,7 +128,24 @@ const ClinicMap = () => {
                             />
                             {openInfoWindowId === clinic.id && (
                                 <InfoWindow position={{ lat: clinic.lat, lng: clinic.lng }} onCloseClick={() => setOpenInfoWindowId(null)}>
-                                    <div style={{color: '#03035d' }}>{clinic.address}</div>
+                                    <List>
+                                        <ListItem>
+                                            <ListItemText
+                                                primary={clinic.name}
+                                                primaryTypographyProps={{ style: { color: '#03035d' } }}
+                                                secondary={
+                                                    <>
+                                                        <div>{clinic.address}</div>
+                                                        <div>{clinic.service}</div>
+                                                        <div>{clinic.hours}</div>
+                                                        <div>{clinic.email}</div>
+                                                        <div>Fax: {clinic.fax}</div>
+                                                        <div>Phone: {clinic.phone}</div>
+                                                    </>
+                                                }
+                                            />
+                                        </ListItem>
+                                    </List>
                                 </InfoWindow>
                             )}
                         </AdvancedMarker>
