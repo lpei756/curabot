@@ -22,7 +22,6 @@ function App() {
 
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
-        console.log('Chatbot toggled:', !isChatbotOpen);
     }
 
     return (
