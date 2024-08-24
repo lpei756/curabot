@@ -5,7 +5,8 @@ import {
     deleteAvailability,
     getAllAvailabilityByDate,
     getAvailabilityByAddress,
-    getAllAvailableSlots
+    getAllAvailableSlots,
+    updateSlotToBooked
 } from '../services/doctorAvailabilityService.js';
 
 export const setDoctorAvailability = async (req, res) => {
@@ -128,5 +129,22 @@ export const deleteDoctorAvailability = async (req, res) => {
         res.status(200).json(result);
     } catch (error) {
         res.status(500).json({ message: 'Server error', error: error.message });
+    }
+};
+
+export const bookSlot = async (req, res) => {
+    try {
+        const { slotId, userId } = req.params;
+
+        if (!slotId || !userId) {
+            return res.status(400).json({ message: 'slotId and userId are required' });
+        }
+
+        const updatedSlot = await updateSlotToBooked(slotId, userId);
+
+        res.status(200).json(updatedSlot);
+    } catch (error) {
+        console.error('Error updating slot:', error);
+        res.status(500).json({ message: 'Error updating slot', error: error.message });
     }
 };
