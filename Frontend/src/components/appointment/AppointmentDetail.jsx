@@ -1,10 +1,12 @@
 import axios from 'axios';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Modal, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
+import { AuthContext } from '../../context/AuthContext';
 import { createAppointment } from '../../services/appointmentService';
 import { getDoctorById } from '../../services/doctorService';
 import { getClinicById } from '../../services/clinicService';
+import { updateSlotIsBooked } from '../../services/availabilityService';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 
 const StyledModal = styled(Modal)(({ theme }) => ({
@@ -60,6 +62,7 @@ const AppointmentDetail = ({ open, onClose, event }) => {
     const [clinic, setClinic] = useState(null);
     const [loading, setLoading] = useState(true);
     const [location, setLocation] = useState(null);
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
         if (event?.doctorID) {
@@ -99,19 +102,23 @@ const AppointmentDetail = ({ open, onClose, event }) => {
 
     const handleBooking = async () => {
         if (!event || !doctor || !clinic) return;
-
+    
         const appointmentData = {
             dateTime: event.start,
             clinic: clinic._id,
             assignedGP: doctor.doctorID
         };
-
+    
         try {
             const result = await createAppointment(appointmentData);
             console.log('Appointment Created:', result);
+    
+            const updateResponse = await updateSlotIsBooked(event.slotId, userId);
+            console.log('Slot Updated:', updateResponse);
+    
             onClose();
         } catch (error) {
-            console.error('Error saving appointment:', error.response ? error.response.data : error.message);
+            console.error('Error saving appointment or updating slot:', error.response ? error.response.data : error.message);
         }
     };
 
