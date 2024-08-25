@@ -23,7 +23,13 @@ function AdminLogin({ onClose, onSuccess }) {
             localStorage.setItem('adminToken', data.token);
             onSuccess();
             onClose();
-            navigate('/admin/panel'); // Redirect to AdminPanel after successful login
+
+            // 根据用户角色跳转到相应的面板
+            if (data.admin.role === 'superadmin') {
+                navigate('/superadmin/panel');
+            } else {
+                navigate('/admin/panel');
+            }
         } catch (error) {
             setError('Admin login failed: ' + error.message);
         }

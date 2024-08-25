@@ -7,7 +7,7 @@ console.log('Stored Admin Token:', tokenStorage.get());
 export const adminLogin = async (email, password) => {
     try {
         const url = API_PATH.admin.login;
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.post(url, { email, password });
 
         tokenStorage.save(response.data.token);
@@ -21,7 +21,7 @@ export const adminLogin = async (email, password) => {
 export const adminRegister = async (adminData) => {
     try {
         const url = API_PATH.admin.register;
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.post(url, adminData);
         return response.data;
     } catch (error) {
@@ -30,22 +30,22 @@ export const adminRegister = async (adminData) => {
     }
 };
 
-export const adminRead = async (id) => {
+export const adminRead = async (adminId) => {
     try {
-        const url = API_PATH.admin.read.replace(':id', id);
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        const url = API_PATH.admin.read.replace(':id', adminId);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.get(url);
-        return response.data;
+        return response.data.admin;
     } catch (error) {
         console.error('Admin read error:', error);
         throw error;
     }
 };
 
-export const adminUpdate = async (id, updateData) => {
+export const adminUpdate = async (adminId, updateData) => {
     try {
-        const url = API_PATH.admin.update.replace(':id', id);
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        const url = API_PATH.admin.update.replace(':id', adminId);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.put(url, updateData);
         return response.data;
     } catch (error) {
@@ -57,9 +57,9 @@ export const adminUpdate = async (id, updateData) => {
 export const adminLogout = async () => {
     try {
         const url = API_PATH.admin.logout;
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.post(url);
-        tokenStorage.remove('adminToken'); // Remove the admin token after logout
+        tokenStorage.remove('adminToken');
         return response.data;
     } catch (error) {
         console.error('Admin logout error:', error);
@@ -67,26 +67,29 @@ export const adminLogout = async () => {
     }
 };
 
-export const getAllAdmins = async () => {
+// 获取管理员数据
+export const fetchAllAdminIDs = async () => {
     try {
         const url = API_PATH.admin.getAllAdmins;
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        console.log('Fetching all admin IDs from URL:', url);
         const response = await axiosApiInstance.get(url);
-        return response.data;
+        return response.data.admins;
     } catch (error) {
-        console.error('Get all admins error:', error);
+        console.error('Error fetching all admin IDs:', error.message);
         throw error;
     }
 };
 
-export const getAllPatients = async () => {
+
+// 获取所有患者数据
+export const fetchAllPatients = async () => {
     try {
         const url = API_PATH.admin.getAllPatients;
-        console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+        console.log('Request URL:', url);
         const response = await axiosApiInstance.get(url);
-        return response.data;
+        return response.data.patients;
     } catch (error) {
-        console.error('Get all patients error:', error);
+        console.error('Error fetching all patients:', error.message);
         throw error;
     }
 };

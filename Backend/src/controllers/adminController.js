@@ -1,5 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { register as registerAdminService, login as loginAdminService, readAdmin as readAdminService, updateAdmin as updateAdminService, logout as logoutAdminService } from '../services/adminService.js';
+import {
+    register as registerAdminService,
+    login as loginAdminService,
+    readAdmin as readAdminService,
+    updateAdmin as updateAdminService,
+    logout as logoutAdminService,
+    getAllAdmins as getAllAdminsService,
+    getAllPatients as getAllPatientsService
+} from '../services/adminService.js';
+import UserModel from "../models/User.js";
 
 export const adminRegister = async (req, res) => {
     try {
@@ -7,7 +16,7 @@ export const adminRegister = async (req, res) => {
         const admin = await registerAdminService(req.body);
 
         console.log('Admin registered successfully:', admin);
-        const token = generateToken(admin._id, 'admin');
+        const token = generateToken(admin._id, admin.role);
 
         console.log('JWT token generated for admin:', token);
         res.status(201).json({ admin, token });
@@ -28,7 +37,7 @@ export const adminLogin = async (req, res) => {
             throw new Error('Admin not found');
         }
 
-        const token = generateToken(admin._id, 'admin');
+        const token = generateToken(admin._id, admin.role);
         console.log('JWT token generated:', token);
 
         res.status(200).json({ admin, token });
@@ -85,29 +94,24 @@ export const logout = (req, res) => {
     }
 };
 
-// 获取所有管理员
+// 查找管理员
 export const getAllAdmins = async (req, res) => {
     try {
-        console.log('Received request to fetch all admins');
         const admins = await getAllAdminsService();
-        console.log('All admins retrieved successfully:', admins);
-        res.status(200).json(admins);
+        res.status(200).json({ admins });
     } catch (error) {
         console.error('Error fetching all admins:', error.message);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
-// 获取所有患者
 export const getAllPatients = async (req, res) => {
     try {
-        console.log('Received request to fetch all patients');
         const patients = await getAllPatientsService();
-        console.log('All patients retrieved successfully:', patients);
-        res.status(200).json(patients);
+        res.status(200).json({ patients });
     } catch (error) {
         console.error('Error fetching all patients:', error.message);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: 'Server error' });
     }
 };
 
@@ -119,7 +123,7 @@ const generateToken = (adminId, role) => {
     }
 
     const token = jwt.sign({ user: { _id: adminId, role } }, process.env.JWT_SECRET, {
-        expiresIn: '1h',
+        expiresIn: '12h',
     });
 
     console.log('JWT token generated:', token);
