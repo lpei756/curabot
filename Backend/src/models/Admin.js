@@ -13,7 +13,6 @@ const AdminSchema = new mongoose.Schema({
     enum: ['superadmin', 'doctor', 'nurse'],
     required: true
   },
-  phone: { type: String, required: true },
   createdAt: { type: Date, default: Date.now }
 });
 
