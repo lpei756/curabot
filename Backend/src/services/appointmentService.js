@@ -1,5 +1,6 @@
 import Appointment from '../models/Appointment.js';
 import Clinic from '../models/Clinic.js';
+import DoctorAvailability from '../models/DoctorAvailability.js';
 import User from '../models/User.js';
 import { getDoctorByIdService } from './doctorService.js';
 
@@ -7,7 +8,8 @@ export const createAppointment = async ({
   dateTime,
   clinic,
   assignedGP,
-  status = 'scheduled',
+  slotId,
+  status = 'Scheduled',
   notes,
   prescriptionsIssued,
   patientID,
@@ -18,6 +20,7 @@ export const createAppointment = async ({
       dateTime,
       clinic,
       assignedGP,
+      slotId,
       status,
       notes,
       prescriptionsIssued,
@@ -46,6 +49,7 @@ export const createAppointment = async ({
       dateTime,
       clinic: clinicData._id,
       assignedGP,
+      slotId,
       status,
       notes,
       prescriptionsIssued,
@@ -134,13 +138,18 @@ export const deleteAppointment = async (appointmentId) => {
   try {
     const appointment = await Appointment.findOneAndUpdate(
       { appointmentID: appointmentId },
-      { status: 'cancelled' },
+      { status: 'Cancelled' },
       { new: true }
     );
 
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };
     }
+
+    await DoctorAvailability.findByIdAndUpdate(
+      appointment.slotId,
+      { isBooked: false }
+    );
 
     const user = await User.findOne({ 'appointments.appointmentID': appointmentId });
 
@@ -149,7 +158,7 @@ export const deleteAppointment = async (appointmentId) => {
         { 'appointments.appointmentID': appointmentId },
         {
           $set: {
-            'appointments.$.status': 'cancelled'
+            'appointments.$.status': 'Cancelled'
           }
         }
       );

@@ -83,7 +83,8 @@ const createAppointmentSchema = Joi.object({
     dateTime: Joi.date().required(),
     clinic: Joi.string().required(),
     assignedGP: Joi.string().required(),
-    status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
+    slotId: Joi.string().required(),
+    status: Joi.string().valid('Scheduled', 'Cancelled').optional(),
     notes: Joi.string().optional(),
     prescriptionsIssued: Joi.string().optional()
 });
@@ -96,7 +97,7 @@ const updateAppointmentSchema = Joi.object({
     dateTime: Joi.date().optional(),
     clinic: Joi.string().optional(),
     assignedGP: Joi.string().optional(),
-    status: Joi.string().valid('Confirmed', 'Scheduled', 'Cancelled').optional(),
+    status: Joi.string().valid('Scheduled', 'Cancelled').optional(),
     notes: Joi.string().optional(),
     prescriptionsIssued: Joi.string().optional()
 });

@@ -8,7 +8,8 @@ const AppointmentSchema = new mongoose.Schema({
   dateTime: { type: Date, required: true },
   assignedGP: { type:String, required: true },
   clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
-  status: { type: String, default: 'scheduled', enum: ['scheduled', 'cancelled'] },
+  slotId: { type: mongoose.Schema.Types.ObjectId, ref: 'DoctorAvailability', required: true },
+  status: { type: String, default: 'Scheduled', enum: ['Scheduled', 'Cancelled'] },
   notes: { type: String },
   prescriptionsIssued: { type: String },
 });
