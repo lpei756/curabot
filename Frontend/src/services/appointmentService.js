@@ -24,12 +24,14 @@ function parseToken(token) {
 export const createAppointment = async (appointmentData) => {
   try {
     const token = localStorage.getItem('authToken');
+
     const response = await axiosApiInstance.post(API_PATH.appointment.create, appointmentData, {
       headers: {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
       },
     });
+
     return response.data;
   } catch (error) {
     handleError(error);

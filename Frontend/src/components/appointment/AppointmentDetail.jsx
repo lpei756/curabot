@@ -106,6 +106,7 @@ const AppointmentDetail = ({ open, onClose, event }) => {
         const appointmentData = {
             dateTime: event.start,
             clinic: clinic._id,
+            slotId: event.slotId,
             assignedGP: doctor.doctorID
         };
     
