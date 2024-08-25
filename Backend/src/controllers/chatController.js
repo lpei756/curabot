@@ -73,12 +73,13 @@ export const handleChat = async (req, res) => {
                     method: 'POST',
                     headers: {
                       'Content-Type': 'application/json',
-                      'Authorization': '${authToken}' // Ensure authToken is properly injected
+                      'Authorization': '${authToken}'
                     },
                     body: JSON.stringify({
-                      dateTime: '${nearestSlot.startTime.toISOString()}', // Convert to ISO string
-                      clinic: '${clinicId}', // Ensure clinicId is defined and available
-                      assignedGP: '${nearestSlot.doctorID}'
+                      dateTime: '${nearestSlot.startTime.toISOString()}',
+                      clinic: '${clinicId}',
+                      assignedGP: '${nearestSlot.doctorID}',
+                      slotId: '${nearestSlot._id}'
                     })
                   });
                   const data = await response.json();

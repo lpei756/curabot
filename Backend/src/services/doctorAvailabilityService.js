@@ -132,5 +132,7 @@ export const findNearestSlot = (slots) => {
         }
     });
 
+    console.log('Nearest Slot:', nearestSlot);
+    
     return nearestSlot;
 };
