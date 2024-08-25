@@ -45,6 +45,11 @@ export const createAppointment = async ({
       return { error: true, status: 404, message: 'Clinic not found' };
     }
 
+    const slot = await DoctorAvailability.findById(slotId);
+    if (!slot || slot.isBooked) {
+      return { error: true, status: 422, message: 'Slot is either invalid or already booked' };
+    }
+
     const newAppointment = new Appointment({
       dateTime,
       clinic: clinicData._id,
@@ -58,6 +63,12 @@ export const createAppointment = async ({
     });
 
     await newAppointment.save();
+
+    await DoctorAvailability.findByIdAndUpdate(slotId, {
+      isBooked: true,
+      bookedBy: patientID,
+    });
+    
     return { error: false, appointment: newAppointment };
   } catch (error) {
     console.error('Error creating appointment:', error.message);

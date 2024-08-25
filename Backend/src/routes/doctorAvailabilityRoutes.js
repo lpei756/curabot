@@ -6,8 +6,7 @@ import {
   deleteDoctorAvailability,
   getAvailabilityByDate,
   getDoctorAvailabilityByAddress,
-  getAvailableSlots,
-  bookSlot
+  getAvailableSlots
 } from '../controllers/doctorAvailabilityController.js';
 import { authenticate } from '../middlewares/authMiddleware.js';
 import adminAuthorization from '../middlewares/adminAuthorization.js';
@@ -25,6 +24,5 @@ router.get(DOCTOR_AVAILABILITY_PATHS.getByAddress, authenticate, schemaValidator
 router.get(DOCTOR_AVAILABILITY_PATHS.getAll, authenticate, getAvailableSlots);
 router.put(DOCTOR_AVAILABILITY_PATHS.update, authenticate, adminAuthorization(['doctor', 'nurse']), schemaValidator(doctorAvailabilityPathBase.update), updateDoctorAvailability);
 router.delete(DOCTOR_AVAILABILITY_PATHS.delete, authenticate, adminAuthorization(['doctor', 'nurse']), deleteDoctorAvailability);
-router.put(DOCTOR_AVAILABILITY_PATHS.updateIsBooked, authenticate, bookSlot);
 
 export default router;

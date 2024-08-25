@@ -6,7 +6,6 @@ import { AuthContext } from '../../context/AuthContext';
 import { createAppointment } from '../../services/appointmentService';
 import { getDoctorById } from '../../services/doctorService';
 import { getClinicById } from '../../services/clinicService';
-import { updateSlotIsBooked } from '../../services/availabilityService';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 
 const StyledModal = styled(Modal)(({ theme }) => ({
@@ -83,7 +82,6 @@ const AppointmentDetail = ({ open, onClose, event }) => {
                     if (response.data.status === "OK") {
                         const location = response.data.results[0].geometry.location;
                         setLocation(location);
-                        console.log('Geocoded Location:', location);
                     } else {
                         console.error('Geocoding failed:', response.data.status);
                     }
@@ -113,9 +111,6 @@ const AppointmentDetail = ({ open, onClose, event }) => {
         try {
             const result = await createAppointment(appointmentData);
             console.log('Appointment Created:', result);
-    
-            const updateResponse = await updateSlotIsBooked(event.slotId, userId);
-            console.log('Slot Updated:', updateResponse);
     
             onClose();
         } catch (error) {

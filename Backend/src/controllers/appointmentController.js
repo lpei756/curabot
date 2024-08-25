@@ -7,10 +7,14 @@ export const createAppointment = async (req, res) => {
     const userId = req.user?.user?._id;
     const userRole = req.user?.user?.role;
 
-    if (!userId) return res.status(401).json({ message: 'User not authenticated' });
+    if (!userId) {
+      return res.status(401).json({ message: 'User not authenticated' });
+    }
 
     const user = await User.findById(userId);
-    if (!user) return res.status(404).json({ message: 'User not found' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     if (userRole !== 'doctor' && userRole !== 'nurse') {
       delete appointmentData.notes;
@@ -32,7 +36,7 @@ export const createAppointment = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $push: {
         appointments: {
-          appointmentID: appointment.appointment.appointmentID,
+          appointmentID: appointment.appointment._id,
           date: appointment.appointment.dateTime
         }
       }

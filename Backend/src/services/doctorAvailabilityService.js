@@ -134,34 +134,3 @@ export const findNearestSlot = (slots) => {
 
     return nearestSlot;
 };
-
-export const updateSlotToBooked = async (slotId, userId) => {
-    try {
-
-        const slot = await DoctorAvailability.findById(slotId);
-
-        if (!slot) {
-            throw new Error('Slot not found');
-        }
-
-        if (slot.isBooked) {
-            throw new Error('Slot is already booked');
-        }
-
-        const user = await User.findById(userId);
-
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        slot.isBooked = true;
-        slot.bookedBy = userId;
-
-        await slot.save();
-
-        return slot;
-    } catch (error) {
-        console.error('Error updating slot:', error);
-        throw error;
-    }
-};
