@@ -157,10 +157,15 @@ export const deleteAppointment = async (appointmentId) => {
       return { error: true, status: 404, message: 'Appointment not found' };
     }
 
-    await DoctorAvailability.findByIdAndUpdate(
-      appointment.slotId,
-      { isBooked: false }
+    const slot = await DoctorAvailability.findOneAndUpdate(
+      { _id: appointment.slotId },
+      { isBooked: false, bookedBy: null },
+      { new: true }
     );
+
+    if (!slot) {
+      return { error: true, status: 404, message: 'Slot not found' };
+    }
 
     const user = await User.findOne({ 'appointments.appointmentID': appointmentId });
 
