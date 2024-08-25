@@ -2,7 +2,6 @@ import './App.css';
 import { useState, useContext } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider, AuthContext } from './context/AuthContext';
-import { AdminProvider, AdminContext } from './context/AdminContext';
 import AppHeader from './components/layout/AppHeader';
 import Register from './components/auth/register/Register';
 import AdminRegister from './components/auth/register/AdminRegister';
@@ -10,8 +9,6 @@ import ChatBot from './components/chatbot/ChatBot';
 import IconButton from '@mui/material/IconButton';
 import SmartToyRoundedIcon from '@mui/icons-material/SmartToyRounded';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
-import AppointmentForm from './components/appointment/createAppointment';
-import ReadAppointment from './components/appointment/readAppointment';
 import AppointmentList from './components/appointment/AppointmentList';
 import UpdateAppointment from './components/appointment/updateAppointment';
 import ReadUser from './components/user/ReadUser';
@@ -19,14 +16,15 @@ import Homepage from './components/homepage/Homepage';
 import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
 import ClinicMap from './components/map/ClinicMap';
 import AdminPanel from './components/admin/AdminPanel';
+import { AdminProvider, AdminContext } from './context/AdminContext';
 import SuperAdminPanel from './components/admin/SuperAdminPanel';
+
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
     const toggleChatbot = () => {
         setIsChatbotOpen(!isChatbotOpen);
-        console.log('Chatbot toggled:', !isChatbotOpen);
     }
 
     return (
@@ -64,11 +62,9 @@ function App() {
                             <Route path="/admin/panel" element={<AdminPanelWrapper />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
                             <Route path="/user" element={<UserWrapper />} />
-                            <Route path="/appointment/new" element={<AppointmentForm />} />
                             <Route path="/appointment" element={<AppointmentList />} />
                             <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
-                            <Route path="/appointment/:appointmentId" element={<ReadAppointment />} />
-                            <Route path="/appointment/slot" element={<AvailableSlotsCalendar />} />
+                            <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                             <Route path="/map" element ={<ClinicMap />} />
                         </Routes>
                     </div>

@@ -29,10 +29,12 @@ export const API_PATH = {
     send: buildApiPath('/api/chat')
   },
   clinic: {
-    all: buildApiPath('/api/clinics')
+    all: buildApiPath('/api/clinics'),
+    read: buildApiPath('/api/clinics/:clinicId')
   },
   doctor:{
-    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`)
+    byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`),
+    read: buildApiPath('/api/doctors/:doctorID')
   },
   images: {
     userImages: buildApiPath('/api/images/user/:id'),
@@ -42,6 +44,7 @@ export const API_PATH = {
     getByDate: buildApiPath('/api/doctor-availability/date/:date'),
     getAll: buildApiPath('/api/doctor-availability/all/slots'),
     getByDoctor: buildApiPath('/api/doctor-availability/:doctorID'),
-    getByAddress: buildApiPath('/api/doctor-availability/address/:address')
+    getByAddress: buildApiPath('/api/doctor-availability/address/:address'),
+    updateIsBooked: buildApiPath('/api/doctor-availability/:slotId/:userId/isBooked')
   }
 };

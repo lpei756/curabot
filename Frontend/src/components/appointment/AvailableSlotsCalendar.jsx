@@ -182,10 +182,12 @@ const AvailableSlotsCalendar = () => {
                 const data = await fetchAllAvailableSlots();
                 if (data && data.length > 0) {
                     const formattedEvents = data.map(slot => ({
+                        slotId: slot._id,
                         title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
                         start: new Date(slot.startTime),
                         end: new Date(slot.endTime),
                         allDay: false,
+                        doctorID: slot.doctorID
                     }));
                     setAllSlots(formattedEvents);
                 } else {
@@ -220,10 +222,12 @@ const AvailableSlotsCalendar = () => {
             const data = await fetchAvailableSlotsByDate(selectedDate);
             if (data && data.length > 0) {
                 const formattedEvents = data.map(slot => ({
+                    slotId: slot._id,
                     title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setEvents(formattedEvents);
             } else {
@@ -250,10 +254,12 @@ const AvailableSlotsCalendar = () => {
 
             if (gpSlotsArray.length > 0) {
                 const formattedGpSlots = gpSlotsArray.map(slot => ({
+                    slotId: slot._id,
                     title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setGpSlots(formattedGpSlots);
                 setEvents(formattedGpSlots);
@@ -267,7 +273,6 @@ const AvailableSlotsCalendar = () => {
     };
 
     const handleShowGpSlots = () => {
-        console.log('Clicked Show My GP\'s Slots button.');
         fetchGpSlots();
     };
 
@@ -276,10 +281,12 @@ const AvailableSlotsCalendar = () => {
             const data = await fetchSlotsByAddress(address);
             if (data && data.length > 0) {
                 const formattedEvents = data.map(slot => ({
+                    slotId: slot._id,
                     title: `${format(new Date(slot.startTime), 'HH:mm')} - ${format(new Date(slot.endTime), 'HH:mm')}`,
                     start: new Date(slot.startTime),
                     end: new Date(slot.endTime),
                     allDay: false,
+                    doctorID: slot.doctorID
                 }));
                 setEvents(formattedEvents);
             } else {

@@ -1,11 +1,13 @@
 import { API_PATH } from '../utils/urlRoutes';
 
-export const fetchAvailableSlotsByDate = async (date) => {
+const apiRequest = async (url, options = {}) => {
     const token = localStorage.getItem('authToken');
 
     try {
-        const response = await fetch(API_PATH.availability.getByDate.replace(':date', date), {
+        const response = await fetch(url, {
+            ...options,
             headers: {
+                ...options.headers,
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
             },
@@ -17,73 +19,36 @@ export const fetchAvailableSlotsByDate = async (date) => {
 
         return await response.json();
     } catch (error) {
-        console.error('Error fetching slots:', error);
+        console.error('Error making API request:', error);
         throw error;
     }
+};
+
+export const fetchAvailableSlotsByDate = async (date) => {
+    const url = API_PATH.availability.getByDate.replace(':date', date);
+    return apiRequest(url);
 };
 
 export const fetchAllAvailableSlots = async () => {
-    const token = localStorage.getItem('authToken');
-
-    try {
-        const response = await fetch(API_PATH.availability.getAll, {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching all slots:', error);
-        throw error;
-    }
+    const url = API_PATH.availability.getAll;
+    return apiRequest(url);
 };
 
 export const fetchGpSlotsByDoctorId = async (doctorId) => {
-    const token = localStorage.getItem('authToken');
-
-    try {
-        const response = await fetch(API_PATH.availability.getByDoctor.replace(':doctorID', doctorId), {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching GP slots:', error);
-        throw error;
-    }
+    const url = API_PATH.availability.getByDoctor.replace(':doctorID', doctorId);
+    return apiRequest(url);
 };
 
 export const fetchSlotsByAddress = async (address) => {
-    const token = localStorage.getItem('authToken');
+    const encodedAddress = encodeURIComponent(address);
+    const url = API_PATH.availability.getByAddress.replace(':address', encodedAddress);
+    return apiRequest(url);
+};
 
-    try {
-        const response = await fetch(API_PATH.availability.getByAddress.replace(':address', encodeURIComponent(address)), {
-            headers: {
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json',
-            },
-        });
+export const updateSlotIsBooked = async (slotId, userId) => {
+    const url = API_PATH.availability.updateIsBooked
+        .replace(':slotId', slotId)
+        .replace(':userId', userId);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Error fetching slots by address:', error);
-        throw error;
-    }
+    return apiRequest(url, { method: 'PUT' });
 };

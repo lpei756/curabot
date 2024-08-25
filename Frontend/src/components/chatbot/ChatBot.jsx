@@ -13,7 +13,8 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
-import { sendChatMessage } from '../../services/chatService';
+import { sendChatMessage} from '../../services/chatService';
+import { sendFeedbackToServer} from '../../services/chatService';
 import "../../App.css";
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -112,13 +113,23 @@ function ChatBot({ toggleChatbot }) {
         setIsImageDialogOpen(true);
     };
 
-    const handleFeedback = (index, feedback) => {
-        setMessages(prevMessages =>
-            prevMessages.map((msg, i) =>
-                i === index ? { ...msg, liked: feedback } : msg
-            )
-        );
-    };
+    const handleFeedback = async (index, feedback) => {
+        const message = messages[index];
+        console.log('Sending feedback for message:', message.id, feedback);
+
+    setMessages(prevMessages =>
+        prevMessages.map((msg, i) =>
+            i === index ? { ...msg, liked: feedback } : msg
+        )
+    );
+
+    try {
+        const response = await sendFeedbackToServer(message.id, feedback);  // Send feedback to the server
+        console.log('Feedback response:', response);
+    } catch (error) {
+        console.error('Failed to send feedback:', error);
+    }
+};
 
     return (
         <>
