@@ -16,7 +16,7 @@ function AdminLogin({ onClose, onSuccess }) {
     const navigate = useNavigate();
 
     const handleAdminLogin = async (e) => {
-        e.preventDefault(); // Prevent default form submission behavior
+        e.preventDefault();
         try {
             const data = await adminLogin(email, password);
             console.log('Admin login successful:', data);
@@ -24,7 +24,6 @@ function AdminLogin({ onClose, onSuccess }) {
             onSuccess();
             onClose();
 
-            // 根据用户角色跳转到相应的面板
             if (data.admin.role === 'superadmin') {
                 navigate('/superadmin/panel');
             } else {
@@ -33,11 +32,6 @@ function AdminLogin({ onClose, onSuccess }) {
         } catch (error) {
             setError('Admin login failed: ' + error.message);
         }
-    };
-
-    const handleRegisterRedirect = () => {
-        onClose();
-        navigate('/admin/register');
     };
 
     return (
@@ -83,14 +77,6 @@ function AdminLogin({ onClose, onSuccess }) {
             >
                 Admin Login
             </Button>
-            <Box mt={2} textAlign="center">
-                <Typography variant="body2">
-                    Not registered?{' '}
-                    <span onClick={handleRegisterRedirect} style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}>
-                        Register here
-                    </span>
-                </Typography>
-            </Box>
         </Box>
     );
 }
