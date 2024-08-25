@@ -10,7 +10,7 @@ export const ADMIN_PATHS = {
   read: '/admin/:id',
   update: '/admin/:id',
   logout: '/admin/logout',
-  getAllAdmins: '/admin/all',
+  getAllAdmins: '/admin',
   getAllPatients: '/patients'
 };
 

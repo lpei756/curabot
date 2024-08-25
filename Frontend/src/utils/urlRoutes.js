@@ -1,6 +1,15 @@
 const buildApiPath = (path) => `${import.meta.env.VITE_API_URL}${path}`;
 
 export const API_PATH = {
+  admin: {
+    login: buildApiPath('/api/admin/login'),
+    register: buildApiPath('/api/admin/register'),
+    read: buildApiPath('/api/admin/:id'),
+    update: buildApiPath('/api/admin/:id'),
+    logout: buildApiPath('/api/admin/logout'),
+    getAllAdmins: buildApiPath('/api/admin'),
+    getAllPatients: buildApiPath('/api/patients'),
+  },
   auth: {
     login: buildApiPath('/api/auth/login'),
     register: buildApiPath('/api/auth/register'),
@@ -24,15 +33,6 @@ export const API_PATH = {
   },
   doctor:{
     byclinic: (clinicId) => buildApiPath(`/api/clinics/${clinicId}/doctors`)
-  },
-  admin: {
-    login: buildApiPath('/api/admin/login'),
-    register: buildApiPath('/api/admin/register'),
-    read: buildApiPath('/api/admin/:id'),
-    update: buildApiPath('/api/admin/:id'),
-    logout: buildApiPath('/api/admin/logout'),
-    getAllAdmins: buildApiPath('/api/admin/all'),
-    getAllPatients: buildApiPath('/api/patients'),
   },
   images: {
     userImages: buildApiPath('/api/images/user/:id'),
