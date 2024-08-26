@@ -5,7 +5,18 @@ import { updatePatientData } from '../../services/adminService';
 import { useNavigate } from 'react-router-dom';
 
 function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
-    const [updatedData, setUpdatedData] = useState({});
+    const [updatedData, setUpdatedData] = useState({
+        firstName: patientData.firstName,
+        lastName: patientData.lastName,
+        email: patientData.email,
+        phone: patientData.phone,
+        address: patientData.address,
+        emergencyContactName: patientData.emergencyContact.name,
+        emergencyContactPhone: patientData.emergencyContact.phone,
+        emergencyContactRelationship: patientData.emergencyContact.relationship,
+        insuranceProvider: patientData.insurance.provider,
+        policyNumber: patientData.insurance.policyNumber || 'N/A'
+    });
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -17,9 +28,10 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
     const handleUpdate = async () => {
         try {
             const data = await updatePatientData(patientId, updatedData);
-            setPatientData(data);
-            setEditMode(false);
-            navigate('/admin');
+            setPatientData(data);  // 更新父组件的患者数据
+            setEditMode(false);    // 退出编辑模式
+            navigate('/admin');    // 导航回管理员页面
+            window.location.reload();  // 强制页面刷新，确保数据同步
         } catch (err) {
             setError(err.message);
         }
@@ -29,10 +41,11 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
         <Box sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit Patient Information</Typography>
             {error && <Typography color="error">Error: {error}</Typography>}
+
             <TextField
                 label="First Name"
                 name="firstName"
-                defaultValue={patientData.firstName}
+                value={updatedData.firstName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -40,7 +53,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Last Name"
                 name="lastName"
-                defaultValue={patientData.lastName}
+                value={updatedData.lastName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -48,7 +61,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Email"
                 name="email"
-                defaultValue={patientData.email}
+                value={updatedData.email}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -56,7 +69,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Phone"
                 name="phone"
-                defaultValue={patientData.phone}
+                value={updatedData.phone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -64,7 +77,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Address"
                 name="address"
-                defaultValue={patientData.address}
+                value={updatedData.address}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -74,7 +87,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Name"
                 name="emergencyContactName"
-                defaultValue={patientData.emergencyContact.name}
+                value={updatedData.emergencyContactName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -82,7 +95,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Phone"
                 name="emergencyContactPhone"
-                defaultValue={patientData.emergencyContact.phone}
+                value={updatedData.emergencyContactPhone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -90,7 +103,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Relationship"
                 name="emergencyContactRelationship"
-                defaultValue={patientData.emergencyContact.relationship}
+                value={updatedData.emergencyContactRelationship}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -100,7 +113,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Insurance Provider"
                 name="insuranceProvider"
-                defaultValue={patientData.insurance.provider}
+                value={updatedData.insuranceProvider}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -108,7 +121,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Policy Number"
                 name="policyNumber"
-                defaultValue={patientData.insurance.policyNumber || 'N/A'}
+                value={updatedData.policyNumber}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
