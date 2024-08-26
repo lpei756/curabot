@@ -46,7 +46,7 @@ const SuperAdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            navigate('/admin/login');
+            navigate('/'); // 修改为返回主页
         } catch (err) {
             console.error('Error during logout:', err);
             setError('Logout failed.');
