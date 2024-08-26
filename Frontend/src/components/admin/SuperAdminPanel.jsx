@@ -15,8 +15,6 @@ const SuperAdminPanel = () => {
         const fetchData = async () => {
             try {
                 console.log('Fetching data started');
-
-                // 获取所有管理员信息
                 const adminsData = await fetchAllAdminIDs();
                 if (Array.isArray(adminsData)) {
                     setAdmins(adminsData);

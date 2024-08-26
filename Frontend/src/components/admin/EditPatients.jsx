@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, TextField, Button } from '@mui/material';
-import { updateUserData } from '../../services/userService';
+import { updatePatientData } from '../../services/adminService';
 import { useNavigate } from 'react-router-dom';
 
-function EditUser({ userData, setUserData, userId, setEditMode }) {
+function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
     const [updatedData, setUpdatedData] = useState({});
     const [error, setError] = useState(null);
     const navigate = useNavigate();
@@ -16,11 +16,10 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
 
     const handleUpdate = async () => {
         try {
-            const data = await updateUserData(userId, updatedData);
-            setUserData(data);
+            const data = await updatePatientData(patientId, updatedData);
+            setPatientData(data);
             setEditMode(false);
-            navigate(`/user`);
-            window.location.reload();
+            navigate('/admin');
         } catch (err) {
             setError(err.message);
         }
@@ -28,20 +27,12 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
 
     return (
         <Box sx={{ width: '100%' }}>
-            <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit User Information</Typography>
+            <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit Patient Information</Typography>
             {error && <Typography color="error">Error: {error}</Typography>}
             <TextField
                 label="First Name"
                 name="firstName"
-                defaultValue={userData.firstName}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-            />
-            <TextField
-                label="Middle Name"
-                name="middleName"
-                defaultValue={userData.middleName}
+                defaultValue={patientData.firstName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -49,24 +40,23 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Last Name"
                 name="lastName"
-                defaultValue={userData.lastName}
+                defaultValue={patientData.lastName}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
             />
             <TextField
-                label="Date of Birth"
-                name="dateOfBirth"
-                defaultValue={new Date(userData.dateOfBirth).toISOString().split('T')[0]}
+                label="Email"
+                name="email"
+                defaultValue={patientData.email}
                 onChange={handleInputChange}
-                type="date"
                 fullWidth
                 margin="normal"
             />
             <TextField
                 label="Phone"
                 name="phone"
-                defaultValue={userData.phone}
+                defaultValue={patientData.phone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -74,7 +64,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Address"
                 name="address"
-                defaultValue={userData.address}
+                defaultValue={patientData.address}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -84,7 +74,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Emergency Contact Name"
                 name="emergencyContactName"
-                defaultValue={userData.emergencyContact.name}
+                defaultValue={patientData.emergencyContact.name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -92,7 +82,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Emergency Contact Phone"
                 name="emergencyContactPhone"
-                defaultValue={userData.emergencyContact.phone}
+                defaultValue={patientData.emergencyContact.phone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -100,7 +90,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Emergency Contact Relationship"
                 name="emergencyContactRelationship"
-                defaultValue={userData.emergencyContact.relationship}
+                defaultValue={patientData.emergencyContact.relationship}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -110,7 +100,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Insurance Provider"
                 name="insuranceProvider"
-                defaultValue={userData.insurance.provider}
+                defaultValue={patientData.insurance.provider}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -118,7 +108,7 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
             <TextField
                 label="Policy Number"
                 name="policyNumber"
-                defaultValue={userData.insurance.policyNumber || 'N/A'}
+                defaultValue={patientData.insurance.policyNumber || 'N/A'}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -150,11 +140,11 @@ function EditUser({ userData, setUserData, userId, setEditMode }) {
     );
 }
 
-EditUser.propTypes = {
-    userData: PropTypes.object.isRequired,
-    setUserData: PropTypes.func.isRequired,
-    userId: PropTypes.string.isRequired,
+EditPatients.propTypes = {
+    patientData: PropTypes.object.isRequired,
+    setPatientData: PropTypes.func.isRequired,
+    patientId: PropTypes.string.isRequired,
     setEditMode: PropTypes.func.isRequired,
 };
 
-export default EditUser;
+export default EditPatients;

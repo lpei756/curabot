@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Button, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients, adminLogout } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 
@@ -31,7 +32,7 @@ const AdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            localStorage.removeItem('isAdminLoggedIn');  // 删除管理员登录状态
+            localStorage.removeItem('isAdminLoggedIn');
             navigate('/');
             window.location.reload();
         } catch (err) {
@@ -40,6 +41,9 @@ const AdminPanel = () => {
         }
     };
 
+    const handleEdit = (patientId) => {
+        navigate(`/patients/${patientId}`);
+    };
 
     return (
         <Box sx={{ padding: 4 }}>
@@ -65,6 +69,7 @@ const AdminPanel = () => {
                                 <TableCell>Last Name</TableCell>
                                 <TableCell>Email</TableCell>
                                 <TableCell>Phone</TableCell>
+                                <TableCell>Actions</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -75,11 +80,20 @@ const AdminPanel = () => {
                                         <TableCell>{patient.lastName}</TableCell>
                                         <TableCell>{patient.email}</TableCell>
                                         <TableCell>{patient.phone || '-'}</TableCell>
+                                        <TableCell>
+                                            <IconButton
+                                                onClick={() => handleEdit(patient._id)}
+                                                color="primary"
+                                                aria-label="edit patient"
+                                            >
+                                                <EditIcon />
+                                            </IconButton>
+                                        </TableCell>
                                     </TableRow>
                                 ))
                             ) : (
                                 <TableRow>
-                                    <TableCell colSpan={4} align="center">
+                                    <TableCell colSpan={5} align="center">
                                         No patients found.
                                     </TableCell>
                                 </TableRow>

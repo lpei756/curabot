@@ -67,7 +67,6 @@ export const adminLogout = async () => {
     }
 };
 
-// 获取管理员数据
 export const fetchAllAdminIDs = async () => {
     try {
         const url = API_PATH.admin.getAllAdmins;
@@ -80,8 +79,6 @@ export const fetchAllAdminIDs = async () => {
     }
 };
 
-
-// 获取所有患者数据
 export const fetchAllPatients = async () => {
     try {
         const url = API_PATH.admin.getAllPatients;
@@ -93,3 +90,16 @@ export const fetchAllPatients = async () => {
         throw error;
     }
 };
+
+export const updatePatientData = async (patientId, updateData) => {
+    try {
+        const url = API_PATH.admin.updatePatient.replace(':id', patientId);
+        console.log('Request URL:', url);
+        const response = await axiosApiInstance.put(url, updateData);
+        return response.data;
+    } catch (error) {
+        console.error('Error updating patient data:', error.message);
+        throw error;
+    }
+};
+
