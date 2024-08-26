@@ -87,11 +87,22 @@ const AdminPanel = () => {
                                     patients.map((patient) => (
                                         <TableRow key={patient._id}>
                                             <TableCell>
-                                                <Link to={`/patient/${patient._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                <Link
+                                                    to={`/patient/${patient._id}`}
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#03035d',  // 默认颜色
+                                                        fontWeight: 'bold',  // 字体加粗
+                                                    }}
+                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
+                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                >
                                                     {patient.firstName}
                                                 </Link>
-
                                             </TableCell>
+
+
+
                                             <TableCell>{patient.lastName}</TableCell>
                                             <TableCell>{patient.email}</TableCell>
                                             <TableCell>{patient.phone || '-'}</TableCell>
