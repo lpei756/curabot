@@ -11,7 +11,6 @@ const validationOptions = {
 const schemaValidator = (path, useJoiError = true) => {
   console.log(`Initializing schemaValidator for path: ${path}`);
   const schema = schemas[path];
-  // 在这里添加调试代码
   console.log(`Path: ${path}`);
   console.log(`Schema for ${path}:`);
 

@@ -6,9 +6,11 @@ import {
     updateAdmin as updateAdminService,
     logout as logoutAdminService,
     getAllAdmins as getAllAdminsService,
-    getAllPatients as getAllPatientsService
+    getAllPatients as getAllPatientsService,
+    updatePatient as updatePatientService
 } from '../services/adminService.js';
 import bcrypt from 'bcrypt';
+import {updateUser as updateUserService} from "../services/authService.js";
 
 export const adminRegister = async (req, res) => {
     try {
@@ -126,6 +128,17 @@ export const getAllPatients = async (req, res) => {
     } catch (error) {
         console.error('Error fetching all patients:', error.message);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+export const updatePatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Fetching patient with ID:', id);
+        const updateData = req.body;
+        const user = await updatePatientService(id, updateData);
+        res.status(200).json(user);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
     }
 };
 

@@ -11,7 +11,8 @@ export const ADMIN_PATHS = {
   update: '/admin/:id',
   logout: '/admin/logout',
   getAllAdmins: '/admin',
-  getAllPatients: '/patients'
+  getAllPatients: '/patients',
+  updatePatient: '/patients/:id',
 };
 
 export const AUTH_PATHS = {

@@ -11,31 +11,50 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
         email: patientData.email,
         phone: patientData.phone,
         address: patientData.address,
-        emergencyContactName: patientData.emergencyContact.name,
-        emergencyContactPhone: patientData.emergencyContact.phone,
-        emergencyContactRelationship: patientData.emergencyContact.relationship,
-        insuranceProvider: patientData.insurance.provider,
-        policyNumber: patientData.insurance.policyNumber || 'N/A'
+        emergencyContact: {
+            name: patientData.emergencyContact.name,
+            phone: patientData.emergencyContact.phone,
+            relationship: patientData.emergencyContact.relationship
+        },
+        medicalHistory: {
+            chronicDiseases: patientData.medicalHistory.chronicDiseases,
+            pastSurgeries: patientData.medicalHistory.pastSurgeries,
+            familyMedicalHistory: patientData.medicalHistory.familyMedicalHistory,
+            medicationList: patientData.medicalHistory.medicationList,
+            allergies: patientData.medicalHistory.allergies
+        },
+        insurance: {
+            provider: patientData.insurance.provider,
+            policyNumber: patientData.insurance.policyNumber,
+            coverageDetails: patientData.insurance.coverageDetails
+        }
     });
+
+
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
+        console.log(`Field changed: ${name}, New value: ${value}`);
         setUpdatedData({ ...updatedData, [name]: value });
     };
 
     const handleUpdate = async () => {
+        console.log('Updating patient with data:', updatedData);
         try {
             const data = await updatePatientData(patientId, updatedData);
-            setPatientData(data);  // 更新父组件的患者数据
-            setEditMode(false);    // 退出编辑模式
-            navigate('/admin');    // 导航回管理员页面
-            window.location.reload();  // 强制页面刷新，确保数据同步
+            console.log('Update successful, returned data:', data);
+            setPatientData(data);
+            setEditMode(false);
+            navigate('/admin/panel');
+            window.location.reload();
         } catch (err) {
+            console.error('Error during update:', err.message);
             setError(err.message);
         }
     };
+
 
     return (
         <Box sx={{ width: '100%' }}>
