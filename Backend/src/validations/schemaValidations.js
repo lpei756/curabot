@@ -8,6 +8,12 @@ const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
 const doctorPathBase = buildPathWithBase(DOCTOR_PATHS);
 
 
+const feedbackSchema = Joi.object({
+    messageId: Joi.string().required(),
+    userId: Joi.string().optional(),
+    feedback: Joi.boolean().required(),
+});
+
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
@@ -195,4 +201,6 @@ export default {
     [adminPathBase.logout]: adminUpdateSchema,
     [adminPathBase.getAllAdmins]: getAllAdminsSchema,
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
+
+    '/api/feedback': feedbackSchema,
 };

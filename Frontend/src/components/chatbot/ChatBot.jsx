@@ -63,6 +63,10 @@ function ChatBot({ toggleChatbot }) {
         }
     };
 
+    const generateUniqueId = () => {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    };
+
     const handleSend = async (event, quickMessage = null) => {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
@@ -70,8 +74,8 @@ function ChatBot({ toggleChatbot }) {
 
         setMessages((prevMessages) => [
             ...prevMessages,
-            { type: 'user', message: messageToSend }
-        ]);
+            { id: generateUniqueId(), type: 'user', message: messageToSend }
+    ]);
         setInputValue('');
         setIsLoading(true);
 
@@ -80,14 +84,14 @@ function ChatBot({ toggleChatbot }) {
             const response = await sendChatMessage(messageToSend, authToken);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { type: 'bot', message: response.data.reply, isHtml: true }
+                { id: generateUniqueId(), type: 'bot', message: response.data.reply, isHtml: true }
             ]);
         } catch (error) {
             console.error('Error:', error);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
-            ]);
+                { id: generateUniqueId(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+        ]);
         } finally {
             setIsLoading(false);
         }
@@ -117,19 +121,25 @@ function ChatBot({ toggleChatbot }) {
         const message = messages[index];
         console.log('Sending feedback for message:', message.id, feedback);
 
-    setMessages(prevMessages =>
-        prevMessages.map((msg, i) =>
-            i === index ? { ...msg, liked: feedback } : msg
-        )
-    );
-
-    try {
-        const response = await sendFeedbackToServer(message.id, feedback);  // Send feedback to the server
-        console.log('Feedback response:', response);
-    } catch (error) {
-        console.error('Failed to send feedback:', error);
-    }
-};
+        if (!message.id) {
+            console.error('Message ID is undefined, cannot send feedback.');
+            return;
+        }
+    
+        setMessages(prevMessages =>
+            prevMessages.map((msg, i) =>
+                i === index ? { ...msg, liked: feedback } : msg
+            )
+        );
+    
+        try {
+            const response = await sendFeedbackToServer(message.id, feedback);  // 发送反馈到服务器
+            console.log('Feedback response:', response);
+        } catch (error) {
+            console.error('Failed to send feedback:', error);
+        }
+    };
+    
 
     return (
         <>
@@ -332,10 +342,11 @@ function ChatBot({ toggleChatbot }) {
             </Dialog>
         </>
     );
-}
+
 
 ChatBot.propTypes = {
     toggleChatbot: PropTypes.func.isRequired,
-};
+};}
 
 export default ChatBot;
+
