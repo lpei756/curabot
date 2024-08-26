@@ -207,7 +207,9 @@ const updatePatientSchema = Joi.object({
         coverageDetails: Joi.string().optional()
     }).optional(),
 });
-
+const patientReadSchema = Joi.object({
+    id: Joi.string().required()
+});
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -231,5 +233,6 @@ export default {
     [adminPathBase.getAllAdmins]: getAllAdminsSchema,
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
     [adminPathBase.updatePatient]: updatePatientSchema,
+    [adminPathBase.readPatient]: patientReadSchema,
     '/api/feedback': feedbackSchema,
 };

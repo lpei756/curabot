@@ -91,6 +91,27 @@ export const fetchAllPatients = async () => {
     }
 };
 
+export const fetchPatientData = async (patientId) => {
+    try {
+        const url = API_PATH.admin.readPatient.replace(':id', patientId);
+        console.log('Request URL:', url);
+
+        const response = await axiosApiInstance.get(url);
+        console.log('API Response:', response);
+
+        // 检查返回的数据结构，假设是 { user: { ... } }
+        const patientData = response.data.user;  // 从 user 中提取数据
+        console.log('Patient Data:', patientData);
+
+        return patientData;
+    } catch (error) {
+        console.error('Patient read error:', error);
+        throw error;
+    }
+};
+
+
+
 export const updatePatientData = async (patientId, updatedData) => {
     try {
         const url = API_PATH.admin.updatePatient.replace(':id', patientId);

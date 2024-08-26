@@ -7,7 +7,8 @@ import {
     logout as logoutAdminService,
     getAllAdmins as getAllAdminsService,
     getAllPatients as getAllPatientsService,
-    updatePatient as updatePatientService
+    updatePatient as updatePatientService,
+    readPatient as readPatientService
 } from '../services/adminService.js';
 import bcrypt from 'bcrypt';
 import {updateUser as updateUserService} from "../services/authService.js";
@@ -127,6 +128,24 @@ export const updatePatient = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+export const readPatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Fetching patient with ID:', id);
+        const user = await readPatientService(id);
+        if (!user) {
+            console.error('Patient not found for ID:', id);
+            return res.status(404).json({ message: 'Patient not found' });
+        }
+
+        console.log('Patient data retrieved:');
+        res.status(200).json({ user });
+    } catch (error) {
+        console.error('Error fetching patient:', error.message);
+        res.status(404).json({ message: error.message });
+    }
+};
+
 export const updateAdmin = async (req, res) => {
     try {
         const { id } = req.params;

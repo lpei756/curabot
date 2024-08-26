@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatients from './EditPatients';
+import { Link } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [patients, setPatients] = useState([]);
@@ -31,7 +32,7 @@ const AdminPanel = () => {
     }, [role]);
 
     const handleEdit = (patient) => {
-        console.log('Selected Patient:', patient);  // 调试检查 selectedPatient 的内容
+        console.log('Selected Patient:', patient);
         if (patient && patient._id) {
             setSelectedPatient(patient);
             setEditMode(true);
@@ -85,7 +86,12 @@ const AdminPanel = () => {
                                 {patients.length > 0 ? (
                                     patients.map((patient) => (
                                         <TableRow key={patient._id}>
-                                            <TableCell>{patient.firstName}</TableCell>
+                                            <TableCell>
+                                                <Link to={`/patient/${patient._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                                                    {patient.firstName}
+                                                </Link>
+
+                                            </TableCell>
                                             <TableCell>{patient.lastName}</TableCell>
                                             <TableCell>{patient.email}</TableCell>
                                             <TableCell>{patient.phone || '-'}</TableCell>

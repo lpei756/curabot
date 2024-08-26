@@ -96,6 +96,18 @@ export const updatePatient = async (id, updateData) => {
     if (!user) throw new Error('User not found');
     return user;
 };
+
+export const readPatient = async (id) => {
+    try {
+        const user = await UserModel.findOne({ _id: id }).select('-password');
+        if (!user) throw new Error('User not found');
+        return user;
+    } catch (error) {
+        console.error('Error in readPatientService:', error.message);
+        throw error;
+    }
+};
+
 export const updateAdmin = async (id, updateData) => {
     const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!admin) throw new Error('Admin not found');

@@ -13,6 +13,7 @@ export const ADMIN_PATHS = {
   getAllAdmins: '/admin',
   getAllPatients: '/patients',
   updatePatient: '/patients/:id',
+  readPatient: '/patients/:id',
 };
 
 export const AUTH_PATHS = {
