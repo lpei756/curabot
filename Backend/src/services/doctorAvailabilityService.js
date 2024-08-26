@@ -167,10 +167,12 @@ export const findNearestSlot = async (slots, userLocation, user) => {
     let bestSlot = null;
     let bestScore = Infinity;
 
-    if (!user || !user.gp) {
-        console.error("User object or GP property is missing.");
+    if (!user) {
+        console.error("User object is missing.");
         return null;
     }
+
+    const hasGp = user.gp && user.gp.trim().length > 0;
 
     for (const slot of slots) {
         const slotDateTime = new Date(slot.date);
@@ -216,10 +218,10 @@ export const findNearestSlot = async (slots, userLocation, user) => {
             }
 
             const distance = haversineDistance(userLocation.lat, userLocation.lng, clinicLocation.lat, clinicLocation.lng);
-
             const timeScore = timeDiff / (1000 * 60 * 60);
             const distanceScore = distance;
-            const gpScore = user.gp === slot.doctorID ? -10 : 0;
+
+            const gpScore = hasGp && user.gp === slot.doctorID ? -10 : 0;
 
             const combinedScore = timeScore + distanceScore + gpScore;
             console.log(`Combined Score for slot ${slot._id}: ${combinedScore}`);
