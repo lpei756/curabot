@@ -2,6 +2,7 @@ import { getAppointmentsForUser, processChatWithOpenAI } from '../services/chatS
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
 import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
+import { readUser } from '../services/authService.js';
 
 export const handleChat = async (req, res) => {
   try {
@@ -31,6 +32,10 @@ export const handleChat = async (req, res) => {
 
       try {
         const userId = extractUserIdFromToken(authToken);
+        if (!userId) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        }
+
         const appointmentsReply = await getAppointmentsForUser(userId, authToken);
         return res.json({ reply: appointmentsReply });
       } catch (error) {
@@ -43,24 +48,39 @@ export const handleChat = async (req, res) => {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
       }
 
+      if (!userLocation) {
+        return res.status(400).json({ error: 'Bad Request: User location is required to find available slots.' });
+      }
+
       try {
         const availableSlots = await getAllAvailableSlots();
-        const nearestSlot = await findNearestSlot(availableSlots, userLocation);
-
-        if (!nearestSlot) {
+        if (!availableSlots || availableSlots.length === 0) {
           return res.json({
             reply: 'Sorry, there are no available slots at the moment. Please try again later.'
           });
         }
 
-        const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
+        const userId = extractUserIdFromToken(authToken);
+        if (!userId) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        }
 
+        const user = await readUser(userId);
+
+        const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
+        if (!nearestSlot) {
+          return res.json({
+            reply: 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.'
+          });
+        }
+
+        const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
         if (doctorResult.error) {
           return res.status(doctorResult.status).json({ message: doctorResult.message });
         }
 
         const clinicId = doctorResult.doctor.clinic;
-        const distance = nearestSlot.tempDistance;
+        const distance = nearestSlot.tempDistance || 'N/A'; // Default to 'N/A' if distance is not provided
 
         return res.json({
           reply: `
