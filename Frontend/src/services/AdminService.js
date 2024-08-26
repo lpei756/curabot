@@ -42,7 +42,7 @@ export const adminRead = async (adminId) => {
     }
 };
 
-export const adminUpdate = async (adminId, updateData) => {
+export const updateAdminData = async (adminId, updateData) => {
     try {
         const url = API_PATH.admin.update.replace(':id', adminId);
         console.log('Request URL:', url);
@@ -87,6 +87,42 @@ export const fetchAllPatients = async () => {
         return response.data.patients;
     } catch (error) {
         console.error('Error fetching all patients:', error.message);
+        throw error;
+    }
+};
+
+export const fetchPatientData = async (patientId) => {
+    try {
+        const url = API_PATH.admin.readPatient.replace(':id', patientId);
+        console.log('Request URL:', url);
+
+        const response = await axiosApiInstance.get(url);
+        console.log('API Response:', response);
+
+        const patientData = response.data.user;
+        console.log('Patient Data:', patientData);
+
+        return patientData;
+    } catch (error) {
+        console.error('Patient read error:', error);
+        throw error;
+    }
+};
+
+export const fetchAdminData = async (adminId) => {
+    try {
+        const url = API_PATH.admin.read.replace(':id', adminId);
+        console.log('Request URL:', url);
+
+        const response = await axiosApiInstance.get(url);
+        console.log('API Response:', response);
+
+        const adminData = response.data.admin;
+        console.log('Patient Data:', adminData);
+
+        return adminData;
+    } catch (error) {
+        console.error('Patient read error:', error);
         throw error;
     }
 };

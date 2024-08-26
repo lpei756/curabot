@@ -172,7 +172,6 @@ const adminUpdateSchema = Joi.object({
     firstName: Joi.string().optional(),
     lastName: Joi.string().optional(),
     email: Joi.string().email().optional(),
-    password: Joi.string().min(6).optional(),
     role: Joi.string().valid('superadmin', 'doctor', 'nurse').optional(),
 });
 
@@ -208,7 +207,9 @@ const updatePatientSchema = Joi.object({
         coverageDetails: Joi.string().optional()
     }).optional(),
 });
-
+const patientReadSchema = Joi.object({
+    id: Joi.string().required()
+});
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -232,5 +233,6 @@ export default {
     [adminPathBase.getAllAdmins]: getAllAdminsSchema,
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
     [adminPathBase.updatePatient]: updatePatientSchema,
+    [adminPathBase.readPatient]: patientReadSchema,
     '/api/feedback': feedbackSchema,
 };

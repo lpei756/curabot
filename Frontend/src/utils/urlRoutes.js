@@ -9,6 +9,7 @@ export const API_PATH = {
     logout: buildApiPath('/api/admin/logout'),
     getAllAdmins: buildApiPath('/api/admin'),
     getAllPatients: buildApiPath('/api/patients'),
+    readPatient: buildApiPath('/api/patients/:id'),
     updatePatient: buildApiPath('/api/patients/:id'),
   },
   auth: {

@@ -47,10 +47,9 @@ export const login = async ({ email, password }) => {
     return admin;
 };
 
-
 export const readAdmin = async (adminID) => {
     try {
-        const admin = await AdminModel.findOne({ adminID }).select('-password');
+        const admin = await AdminModel.findById(adminID).select('-password');
         if (!admin) {
             throw new Error('Admin not found');
         }
@@ -61,11 +60,7 @@ export const readAdmin = async (adminID) => {
     }
 };
 
-export const updateAdmin = async (id, updateData) => {
-    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
-    if (!admin) throw new Error('Admin not found');
-    return admin;
-};
+
 
 export const logout = () => {
     return { message: 'Successfully logged out' };
@@ -99,4 +94,21 @@ export const updatePatient = async (id, updateData) => {
     const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!user) throw new Error('User not found');
     return user;
+};
+
+export const readPatient = async (id) => {
+    try {
+        const user = await UserModel.findOne({ _id: id }).select('-password');
+        if (!user) throw new Error('User not found');
+        return user;
+    } catch (error) {
+        console.error('Error in readPatientService:', error.message);
+        throw error;
+    }
+};
+
+export const updateAdmin = async (id, updateData) => {
+    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+    if (!admin) throw new Error('Admin not found');
+    return admin;
 };
