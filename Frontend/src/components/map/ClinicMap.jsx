@@ -10,6 +10,20 @@ import { Box, List, ListItem, ListItemText } from "@mui/material";
 import axios from "axios";
 import { getClinics } from '../../services/clinicService';
 
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+};
+
 const ClinicMap = () => {
     const [userPosition, setUserPosition] = useState(null);
     const [clinicPositions, setClinicPositions] = useState([]);
@@ -17,7 +31,6 @@ const ClinicMap = () => {
     const [openInfoWindowId, setOpenInfoWindowId] = useState(null);
 
     useEffect(() => {
-        // Get user's current location
         navigator.geolocation.getCurrentPosition(
             (position) => {
                 setUserPosition({
@@ -27,22 +40,19 @@ const ClinicMap = () => {
             },
             (error) => {
                 console.error("Error getting user location:", error);
-                // Fallback to a default location if geolocation fails
-                setUserPosition({ lat: -36.8485, lng: 174.7633 }); // Default to Auckland, NZ
+                setUserPosition({ lat: -36.8485, lng: 174.7633 });
             }
         );
 
-        // Fetch clinics from the backend
         const fetchClinics = async () => {
             try {
-                const clinics = await getClinics();  // Fetch all clinics
-                geocodeAddresses(clinics)
+                const clinics = await getClinics();
+                geocodeAddresses(clinics);
             } catch (error) {
                 console.error("Error fetching clinics:", error);
             }
         };
 
-        // Geocode the clinic addresses
         const geocodeAddresses = async (clinics) => {
             try {
                 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -54,7 +64,7 @@ const ClinicMap = () => {
                     if (response.data.status === "OK") {
                         const location = response.data.results[0].geometry.location;
                         return {
-                            id: clinic._id, 
+                            id: clinic._id,
                             name: clinic.name,
                             address: clinic.address,
                             email: clinic.email,
@@ -78,7 +88,6 @@ const ClinicMap = () => {
             }
         };
 
-        // Fetch clinics and then geocode addresses
         fetchClinics();
     }, []);
 
@@ -87,6 +96,16 @@ const ClinicMap = () => {
     };
 
     const handleMarkerClick = (id) => {
+        const selectedClinic = clinicPositions.find(clinic => clinic.id === id);
+        if (selectedClinic && userPosition) {
+            const distance = haversineDistance(
+                userPosition.lat,
+                userPosition.lng,
+                selectedClinic.lat,
+                selectedClinic.lng
+            );
+            selectedClinic.distance = distance.toFixed(2);
+        }
         setOpenInfoWindowId((prevId) => {
             return prevId === id ? null : id;
         });
@@ -140,6 +159,11 @@ const ClinicMap = () => {
                                                         {clinic.email}<br/>
                                                         Fax: {clinic.fax}<br/>
                                                         Phone: {clinic.phone}<br/>
+                                                        {userPosition && clinic.distance && (
+                                                            <div>
+                                                                Distance from you: {clinic.distance} km
+                                                            </div>
+                                                        )}
                                                     </>
                                                 }
                                             />
@@ -153,6 +177,6 @@ const ClinicMap = () => {
             </Box>
         </APIProvider>
     );
-}
+};
 
 export default ClinicMap;
