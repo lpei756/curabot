@@ -113,11 +113,18 @@ function AppHeader() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUserId = localStorage.getItem('userId');
+        const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');  // 从 localStorage 中读取管理员登录状态
+
         if (token) {
             setIsUserLoggedIn(true);
         }
+
         if (storedUserId) {
             setUserId(storedUserId);
+        }
+
+        if (adminLoginStatus === 'true') {
+            setIsAdminLoggedIn(true);  // 如果管理员已登录，设置 isAdminLoggedIn 为 true
         }
     }, []);
 
@@ -126,10 +133,14 @@ function AppHeader() {
     const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
     const handleUserLoginSuccess = () => setIsUserLoggedIn(true);
-    const handleAdminLoginSuccess = () => setIsAdminLoggedIn(true);
+    const handleAdminLoginSuccess = () => {
+        setIsAdminLoggedIn(true);
+        localStorage.setItem('isAdminLoggedIn', 'true');  // 将管理员登录状态存储到 localStorage
+    };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('isAdminLoggedIn');  // 删除管理员登录状态
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);
     };

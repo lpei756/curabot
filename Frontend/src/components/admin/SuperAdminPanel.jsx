@@ -46,7 +46,7 @@ const SuperAdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            localStorage.removeItem('token');
+            localStorage.removeItem('isAdminLoggedIn');
             navigate('/');
             window.location.reload();
         } catch (err) {
@@ -54,7 +54,6 @@ const SuperAdminPanel = () => {
             setError('Logout failed.');
         }
     };
-
 
     return (
         <Box sx={{ padding: 4 }}>
