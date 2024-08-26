@@ -1,11 +1,12 @@
 import DoctorAvailability from '../models/DoctorAvailability.js';
 import Clinic from '../models/Clinic.js';
-import User from '../models/User.js'
 import moment from 'moment';
+import { getDoctorByIdService } from './doctorService.js';
+import { getClinicByIdService } from './clinicService.js';
+import axios from 'axios';
 
 export const setAvailability = async (doctorID, date, startTime, endTime, isBooked, bookedBy) => {
     const utcDate = moment(date, 'YYYY-MM-DD').utc().startOf('day').toDate();
-
     const utcStartTime = moment(startTime, 'YYYY-MM-DD h:mm A').utc().toDate();
     const utcEndTime = moment(endTime, 'YYYY-MM-DD h:mm A').utc().toDate();
 
@@ -113,26 +114,105 @@ export const deleteAvailability = async (doctorID, slotId) => {
     }
 };
 
-export const findNearestSlot = (slots) => {
-    const now = new Date();
-    let nearestSlot = null;
-    let minDiff = Infinity;
+const haversineDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+    const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distance = R * c;
 
-    slots.forEach(slot => {
+    return Math.round(distance * 1000) / 1000;
+};
+
+const geocodeAddress = async (address) => {
+    if (!address) {
+        throw new Error('Address is required for geocoding');
+    }
+
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    if (!apiKey) {
+        throw new Error('API key is missing');
+    }
+
+    try {
+        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+            params: {
+                address: address,
+                key: apiKey
+            }
+        });
+        const location = response.data.results[0]?.geometry?.location;
+        if (location) {
+            return {
+                lat: location.lat,
+                lng: location.lng
+            };
+        } else {
+            throw new Error('Geocoding failed for address: ' + address);
+        }
+    } catch (error) {
+        console.error('Error during geocoding request:', error);
+        throw new Error('Geocoding request failed');
+    }
+};
+
+export const findNearestSlot = async (slots, userLocation) => {
+    const now = new Date();
+    let bestSlot = null;
+    let bestScore = Infinity;
+
+    for (const slot of slots) {
         const slotDateTime = new Date(slot.date);
         const startTime = new Date(slot.startTime);
 
         slotDateTime.setHours(startTime.getUTCHours(), startTime.getUTCMinutes());
 
-        const diff = slotDateTime - now;
+        const timeDiff = slotDateTime - now;
 
-        if (diff >= 0 && diff < minDiff) {
-            minDiff = diff;
-            nearestSlot = slot;
+        const doctorResult = await getDoctorByIdService(slot.doctorID);
+        if (doctorResult.error) {
+            console.error(`Error fetching doctor data for slot ${slot._id}:`, doctorResult.error);
+            continue;
         }
-    });
 
-    console.log('Nearest Slot:', nearestSlot);
-    
-    return nearestSlot;
+        const clinic = await getClinicByIdService(doctorResult.doctor.clinic);
+        if (clinic.error) {
+            console.error(`Error fetching clinic data for doctor ${doctorResult.doctor._id}:`, clinic.error);
+            continue;
+        }
+
+        const address = clinic.clinic.address;
+        if (!address) {
+            console.error(`Clinic address is missing for doctor ${doctorResult.doctor._id}`);
+            continue;
+        }
+
+        try {
+            const clinicLocation = await geocodeAddress(address);
+            const distance = haversineDistance(userLocation.lat, userLocation.lng, clinicLocation.lat, clinicLocation.lng);
+
+            const timeScore = timeDiff / (1000 * 60 * 60);
+            const distanceScore = distance;
+
+            const combinedScore = timeScore + distanceScore;
+
+            if (combinedScore < bestScore) {
+                bestScore = combinedScore;
+                bestSlot = slot;
+                bestSlot.tempDistance = distance;
+            }
+        } catch (error) {
+            console.error(`Error geocoding address ${address}:`, error);
+        }
+    }
+
+    console.log('Best Slot with Distance:', bestSlot);
+
+    return bestSlot;
 };

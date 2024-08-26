@@ -13,23 +13,23 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
-import { sendChatMessage} from '../../services/chatService';
-import { sendFeedbackToServer} from '../../services/chatService';
+import { sendChatMessage } from '../../services/chatService';
+import { sendFeedbackToServer } from '../../services/chatService';
 import "../../App.css";
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
-      backgroundColor: 'rgba(25, 118, 210, 0.04)',
-      transform: 'scale(1.1)',
+        backgroundColor: 'rgba(25, 118, 210, 0.04)',
+        transform: 'scale(1.1)',
     },
 }));
 
 const ThumbIcon = styled('div')(({ theme, isActive }) => ({
-    color: isActive ? '#5BC0DE': theme.palette.text.secondary,
+    color: isActive ? '#5BC0DE' : theme.palette.text.secondary,
     transition: 'all 0.3s ease',
     '&:hover': {
-      color: '#5BC0DE',
+        color: '#5BC0DE',
     },
 }));
 
@@ -44,7 +44,7 @@ function ChatBot({ toggleChatbot }) {
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const scrollContainerRef = useRef(null);
-    const messagesEndRef = useRef(null); // Ref to the bottom of the messages
+    const messagesEndRef = useRef(null);
 
     const quickChats = [
         "How can I book a new appointment",
@@ -55,7 +55,6 @@ function ChatBot({ toggleChatbot }) {
         "How can I get my medical records",
     ];
 
-    // Scroll to the bottom whenever messages change
     useEffect(() => {
         if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -84,8 +83,16 @@ function ChatBot({ toggleChatbot }) {
         setIsLoading(true);
 
         try {
-            console.log('Auth Token:', authToken);
-            const response = await sendChatMessage(messageToSend, authToken);
+            const position = await new Promise((resolve, reject) => {
+                navigator.geolocation.getCurrentPosition(resolve, reject);
+            });
+
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+            };
+
+            const response = await sendChatMessage(messageToSend, authToken, userLocation);
             setMessages((prevMessages) => [
                 ...prevMessages,
                 { type: 'bot', message: response.data.reply, isHtml: true }
@@ -133,7 +140,7 @@ function ChatBot({ toggleChatbot }) {
         );
 
         try {
-            const response = await sendFeedbackToServer(message.id, feedback);  // Send feedback to the server
+            const response = await sendFeedbackToServer(message.id, feedback);
             console.log('Feedback response:', response);
         } catch (error) {
             console.error('Failed to send feedback:', error);
@@ -218,25 +225,25 @@ function ChatBot({ toggleChatbot }) {
                                     <Typography>{msg.message}</Typography>
                                 )}
 
-                                {msg.type === 'bot' && index !== 0 &&(
+                                {msg.type === 'bot' && index !== 0 && (
                                     <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
                                         <StyledIconButton
                                             onClick={() => handleFeedback(index, true)}
                                             aria-label="thumbs up"
                                         >
                                             <ThumbIcon isActive={msg.liked === true}>
-                                            <ThumbUpOutlinedIcon />
+                                                <ThumbUpOutlinedIcon />
                                             </ThumbIcon>
-                                            </StyledIconButton>
-                                            <StyledIconButton
+                                        </StyledIconButton>
+                                        <StyledIconButton
 
                                             onClick={() => handleFeedback(index, false)}
                                             aria-label="thumbs down"
                                         >
                                             <ThumbIcon isActive={msg.liked === false}>
-                                            <ThumbDownOutlinedIcon />
+                                                <ThumbDownOutlinedIcon />
                                             </ThumbIcon>
-                                            </StyledIconButton>
+                                        </StyledIconButton>
                                     </Box>
                                 )}
 

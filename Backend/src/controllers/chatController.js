@@ -7,6 +7,7 @@ export const handleChat = async (req, res) => {
   try {
     const userMessage = req.body.message;
     const authToken = req.headers.authorization;
+    const userLocation = req.body.userLocation;
 
     const appointmentRequestKeywords = [
       'show my appointments',
@@ -37,7 +38,6 @@ export const handleChat = async (req, res) => {
       }
     }
 
-
     if (autoAppointmentKeywords.some(keyword => userMessage.toLowerCase().includes(keyword))) {
       if (!authToken) {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
@@ -45,7 +45,7 @@ export const handleChat = async (req, res) => {
 
       try {
         const availableSlots = await getAllAvailableSlots();
-        const nearestSlot = findNearestSlot(availableSlots);
+        const nearestSlot = await findNearestSlot(availableSlots, userLocation);
 
         if (!nearestSlot) {
           return res.json({
@@ -60,40 +60,42 @@ export const handleChat = async (req, res) => {
         }
 
         const clinicId = doctorResult.doctor.clinic;
+        const distance = nearestSlot.tempDistance;
 
         return res.json({
           reply: `
-            I found an available slot for you. Would you like to book it?
-            <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
-            <button onclick="
-              (async function() {
-                try {
-                  const response = await fetch('http://localhost:3001/api/appointments/create', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                      'Authorization': '${authToken}'
-                    },
-                    body: JSON.stringify({
-                      dateTime: '${nearestSlot.startTime.toISOString()}',
-                      clinic: '${clinicId}',
-                      assignedGP: '${nearestSlot.doctorID}',
-                      slotId: '${nearestSlot._id}'
-                    })
-                  });
-                  const data = await response.json();
-                  if (response.ok) {
-                    alert('Your appointment has been successfully booked.');
-                  } else {
-                    alert('Error: ' + data.message);
-                  }
-                } catch (error) {
-                  alert('Sorry, something went wrong. Please try again.');
-                }
-              })()
-            ">Book Now</button>
-          `
+                  I found an available slot for you. Would you like to book it?
+                  <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
+                  <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
+                  <p><strong>Distance:</strong> ${distance} km</p>
+                  <button onclick="
+                      (async function() {
+                          try {
+                              const response = await fetch('http://localhost:3001/api/appointments/create', {
+                                  method: 'POST',
+                                  headers: {
+                                      'Content-Type': 'application/json',
+                                      'Authorization': '${authToken}'
+                                  },
+                                  body: JSON.stringify({
+                                      dateTime: '${nearestSlot.startTime.toISOString()}',
+                                      clinic: '${clinicId}',
+                                      assignedGP: '${nearestSlot.doctorID}',
+                                      slotId: '${nearestSlot._id}'
+                                  })
+                              });
+                              const data = await response.json();
+                              if (response.ok) {
+                                  alert('Your appointment has been successfully booked.');
+                              } else {
+                                  alert('Error: ' + data.message);
+                              }
+                          } catch (error) {
+                              alert('Sorry, something went wrong. Please try again.');
+                          }
+                      })()
+                  ">Book Now</button>
+              `
         });
       } catch (error) {
         console.error('Error fetching or processing available slots:', error);
