@@ -1,4 +1,4 @@
-import { useState, useContext, useRef } from 'react';
+import { useState, useContext, useRef, useEffect } from 'react';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -23,15 +23,15 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
       backgroundColor: 'rgba(25, 118, 210, 0.04)',
       transform: 'scale(1.1)',
     },
-  }));
+}));
 
-  const ThumbIcon = styled('div')(({ theme, isActive }) => ({
+const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     color: isActive ? '#5BC0DE': theme.palette.text.secondary,
     transition: 'all 0.3s ease',
     '&:hover': {
       color: '#5BC0DE',
     },
-  }));
+}));
 
 function ChatBot({ toggleChatbot }) {
     const { authToken } = useContext(AuthContext);
@@ -44,6 +44,7 @@ function ChatBot({ toggleChatbot }) {
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const scrollContainerRef = useRef(null);
+    const messagesEndRef = useRef(null); // Ref to the bottom of the messages
 
     const quickChats = [
         "How can I book a new appointment",
@@ -54,6 +55,13 @@ function ChatBot({ toggleChatbot }) {
         "How can I get my medical records",
     ];
 
+    // Scroll to the bottom whenever messages change
+    useEffect(() => {
+        if (messagesEndRef.current) {
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages]);
+
     const scroll = (scrollOffset) => {
         if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollBy({
@@ -63,10 +71,6 @@ function ChatBot({ toggleChatbot }) {
         }
     };
 
-    const generateUniqueId = () => {
-        return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
-    };
-
     const handleSend = async (event, quickMessage = null) => {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
@@ -74,8 +78,8 @@ function ChatBot({ toggleChatbot }) {
 
         setMessages((prevMessages) => [
             ...prevMessages,
-            { id: generateUniqueId(), type: 'user', message: messageToSend }
-    ]);
+            { type: 'user', message: messageToSend }
+        ]);
         setInputValue('');
         setIsLoading(true);
 
@@ -84,14 +88,14 @@ function ChatBot({ toggleChatbot }) {
             const response = await sendChatMessage(messageToSend, authToken);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { id: generateUniqueId(), type: 'bot', message: response.data.reply, isHtml: true }
+                { type: 'bot', message: response.data.reply, isHtml: true }
             ]);
         } catch (error) {
             console.error('Error:', error);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { id: generateUniqueId(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
-        ]);
+                { type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+            ]);
         } finally {
             setIsLoading(false);
         }
@@ -112,6 +116,7 @@ function ChatBot({ toggleChatbot }) {
             }
         ]);
     };
+
     const handleImageClick = (imageUrl) => {
         setSelectedImage(imageUrl);
         setIsImageDialogOpen(true);
@@ -121,25 +126,19 @@ function ChatBot({ toggleChatbot }) {
         const message = messages[index];
         console.log('Sending feedback for message:', message.id, feedback);
 
-        if (!message.id) {
-            console.error('Message ID is undefined, cannot send feedback.');
-            return;
-        }
-    
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback } : msg
             )
         );
-    
+
         try {
-            const response = await sendFeedbackToServer(message.id, feedback);  // 发送反馈到服务器
+            const response = await sendFeedbackToServer(message.id, feedback);  // Send feedback to the server
             console.log('Feedback response:', response);
         } catch (error) {
             console.error('Failed to send feedback:', error);
         }
     };
-    
 
     return (
         <>
@@ -252,6 +251,7 @@ function ChatBot({ toggleChatbot }) {
                             <Typography>Loading...</Typography>
                         </Box>
                     )}
+                    <div ref={messagesEndRef} />
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>
@@ -342,11 +342,10 @@ function ChatBot({ toggleChatbot }) {
             </Dialog>
         </>
     );
-
+}
 
 ChatBot.propTypes = {
     toggleChatbot: PropTypes.func.isRequired,
-};}
+};
 
 export default ChatBot;
-
