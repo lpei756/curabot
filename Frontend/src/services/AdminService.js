@@ -140,4 +140,3 @@ export const updatePatientData = async (patientId, updatedData) => {
         throw error;
     }
 };
-
