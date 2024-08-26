@@ -46,12 +46,15 @@ const SuperAdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            navigate('/'); // 修改为返回主页
+            localStorage.removeItem('token');
+            navigate('/');
+            window.location.reload();
         } catch (err) {
             console.error('Error during logout:', err);
             setError('Logout failed.');
         }
     };
+
 
     return (
         <Box sx={{ padding: 4 }}>

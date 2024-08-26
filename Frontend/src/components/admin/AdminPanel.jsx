@@ -31,12 +31,15 @@ const AdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
+            localStorage.removeItem('token');
             navigate('/');
+            window.location.reload();
         } catch (err) {
             console.error('Error during logout:', err);
             setError('Logout failed.');
         }
     };
+
 
     return (
         <Box sx={{ padding: 4 }}>
