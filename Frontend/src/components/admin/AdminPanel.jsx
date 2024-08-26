@@ -86,9 +86,14 @@ const AdminPanel = () => {
                 </TableContainer>
             </Box>
 
-            <Button variant="contained" color="secondary" onClick={handleLogout}>
+            <Button
+                variant="contained"
+                style={{ backgroundColor: '#03035d', color: '#fff' }}
+                onClick={handleLogout}
+            >
                 Logout
             </Button>
+
         </Box>
     );
 };
