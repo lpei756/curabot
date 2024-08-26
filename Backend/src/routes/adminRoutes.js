@@ -6,10 +6,12 @@ import {
     updateAdmin,
     logout,
     getAllAdmins,
-    getAllPatients
+    getAllPatients,
+    updatePatient
 } from '../controllers/adminController.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
-import { ADMIN_PATHS, buildPathWithBase } from './path.js';
+import {ADMIN_PATHS, buildPathWithBase} from './path.js';
+
 
 const router = express.Router();
 
@@ -31,6 +33,8 @@ router.get(ADMIN_PATHS.getAllAdmins, schemaValidator(adminPathBase.getAllAdmins)
 console.log('Admin getAllAdmins path:', ADMIN_PATHS.getAllAdmins)
 router.get(ADMIN_PATHS.getAllPatients, schemaValidator(adminPathBase.getAllPatients), getAllPatients);
 console.log('Admin getAllPatients path:', ADMIN_PATHS.getAllPatients);
+router.put(ADMIN_PATHS.updatePatient, schemaValidator(adminPathBase.updatePatient), updatePatient);
+console.log('Patient update path:', ADMIN_PATHS.updatePatient);
 export default router;
 
 

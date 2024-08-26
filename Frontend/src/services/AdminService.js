@@ -91,12 +91,14 @@ export const fetchAllPatients = async () => {
     }
 };
 
-export const updatePatientData = async (patientId, updateData) => {
+export const updatePatientData = async (patientId, updatedData) => {
     try {
         const url = API_PATH.admin.updatePatient.replace(':id', patientId);
         console.log('Request URL:', url);
-        const response = await axiosApiInstance.put(url, updateData);
-        return response.data;
+        console.log('Updated data being sent:', updatedData);
+        const response = await axiosApiInstance.put(url, updatedData);
+        console.log('Response from server:', response.data);
+        return response.data.patient;
     } catch (error) {
         console.error('Error updating patient data:', error.message);
         throw error;

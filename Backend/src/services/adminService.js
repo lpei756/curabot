@@ -1,6 +1,7 @@
 import bcrypt from 'bcrypt';
 import AdminModel from '../models/Admin.js';
 import UserModel from '../models/User.js';
+import User from "../models/User.js";
 
 export const register = async (adminData) => {
     const { email, password, firstName, lastName, role } = adminData;
@@ -86,10 +87,16 @@ export const getAllPatients = async () => {
     try {
         console.log('Starting to fetch all patients from the database...');
         const patients = await UserModel.find();
-        console.log('Patients fetched successfully:', patients);
+        console.log('Patients fetched successfully！');
         return patients;
     } catch (error) {
         console.error('Error in getAllPatientsService:', error.message);
         throw new Error('Error fetching all patients');
     }
+};
+
+export const updatePatient = async (id, updateData) => {
+    const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+    if (!user) throw new Error('User not found');
+    return user;
 };

@@ -23,16 +23,13 @@ const __dirname = path.resolve();
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use('/api/auth', authRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/clinics', clinicRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/images', imageRoutes);
-console.log('Registering admin routes...');
 app.use('/api', adminRoutes);
-console.log('Admin routes registered.');
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 app.use('/api/feedback', feedbackRoutes);
 
