@@ -31,7 +31,7 @@ const AdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            navigate('/admin/login');
+            navigate('/');
         } catch (err) {
             console.error('Error during logout:', err);
             setError('Logout failed.');
