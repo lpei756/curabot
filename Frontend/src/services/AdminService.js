@@ -99,8 +99,7 @@ export const fetchPatientData = async (patientId) => {
         const response = await axiosApiInstance.get(url);
         console.log('API Response:', response);
 
-        // 检查返回的数据结构，假设是 { user: { ... } }
-        const patientData = response.data.user;  // 从 user 中提取数据
+        const patientData = response.data.user;
         console.log('Patient Data:', patientData);
 
         return patientData;
@@ -110,7 +109,23 @@ export const fetchPatientData = async (patientId) => {
     }
 };
 
+export const fetchAdminData = async (adminId) => {
+    try {
+        const url = API_PATH.admin.read.replace(':id', adminId);
+        console.log('Request URL:', url);
 
+        const response = await axiosApiInstance.get(url);
+        console.log('API Response:', response);
+
+        const adminData = response.data.admin;
+        console.log('Patient Data:', adminData);
+
+        return adminData;
+    } catch (error) {
+        console.error('Patient read error:', error);
+        throw error;
+    }
+};
 
 export const updatePatientData = async (patientId, updatedData) => {
     try {

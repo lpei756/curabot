@@ -11,7 +11,6 @@ import {
     readPatient as readPatientService
 } from '../services/adminService.js';
 import bcrypt from 'bcrypt';
-import {updateUser as updateUserService} from "../services/authService.js";
 
 export const adminRegister = async (req, res) => {
     try {
@@ -65,26 +64,6 @@ export const adminLogin = async (req, res) => {
     }
 };
 
-export const readAdmin = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log('Fetching admin with ID:', id);
-        const admin = await readAdminService(id);
-        if (!admin) {
-            console.error('Admin not found for ID:', id);
-            return res.status(404).json({ message: 'Admin not found' });
-        }
-
-        console.log('Admin data retrieved:', admin);
-        res.status(200).json({ admin });
-    } catch (error) {
-        console.error('Error fetching admin:', error.message);
-        res.status(404).json({ message: error.message });
-    }
-};
-
-
-
 export const logout = (req, res) => {
     try {
         console.log('Admin logout request received.');
@@ -97,7 +76,6 @@ export const logout = (req, res) => {
     }
 };
 
-// 查找管理员
 export const getAllAdmins = async (req, res) => {
     try {
         const admins = await getAllAdminsService();
@@ -146,6 +124,23 @@ export const readPatient = async (req, res) => {
     }
 };
 
+export const readAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Fetching admin with ID:', id);
+        const admin = await readAdminService(id);
+        if (!admin) {
+            console.error('Admin not found for ID:', id);
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        console.log('Admin data retrieved:');
+        res.status(200).json({ admin });
+    } catch (error) {
+        console.error('Error fetching admin:', error.message);
+        res.status(404).json({ message: error.message });
+    }
+};
 export const updateAdmin = async (req, res) => {
     try {
         const { id } = req.params;
@@ -160,7 +155,6 @@ export const updateAdmin = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 const generateToken = (adminId, role) => {
     console.log('Generating JWT token for admin with ID:', adminId, 'and role:', role);
     if (!process.env.JWT_SECRET) {

@@ -47,10 +47,9 @@ export const login = async ({ email, password }) => {
     return admin;
 };
 
-
 export const readAdmin = async (adminID) => {
     try {
-        const admin = await AdminModel.findOne({ adminID }).select('-password');
+        const admin = await AdminModel.findById(adminID).select('-password');
         if (!admin) {
             throw new Error('Admin not found');
         }
