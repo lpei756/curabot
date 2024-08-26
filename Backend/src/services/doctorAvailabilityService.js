@@ -162,16 +162,24 @@ const geocodeAddress = async (address) => {
     }
 };
 
-export const findNearestSlot = async (slots, userLocation) => {
+export const findNearestSlot = async (slots, userLocation, user) => {
     const now = new Date();
     let bestSlot = null;
     let bestScore = Infinity;
 
+    if (!user || !user.gp) {
+        console.error("User object or GP property is missing.");
+        return null;
+    }
+
     for (const slot of slots) {
         const slotDateTime = new Date(slot.date);
         const startTime = new Date(slot.startTime);
-
         slotDateTime.setHours(startTime.getUTCHours(), startTime.getUTCMinutes());
+
+        if (slotDateTime < now) {
+            continue;
+        }
 
         const timeDiff = slotDateTime - now;
 
@@ -181,26 +189,40 @@ export const findNearestSlot = async (slots, userLocation) => {
             continue;
         }
 
-        const clinic = await getClinicByIdService(doctorResult.doctor.clinic);
-        if (clinic.error) {
-            console.error(`Error fetching clinic data for doctor ${doctorResult.doctor._id}:`, clinic.error);
+        const doctor = doctorResult.doctor;
+        if (!doctor || !doctor.clinic) {
+            console.error(`Doctor or clinic information is missing for slot ${slot._id}`);
             continue;
         }
 
-        const address = clinic.clinic.address;
+        const clinicResult = await getClinicByIdService(doctor.clinic);
+        if (clinicResult.error) {
+            console.error(`Error fetching clinic data for doctor ${doctor._id}:`, clinicResult.error);
+            continue;
+        }
+
+        const clinic = clinicResult.clinic;
+        const address = clinic.address;
         if (!address) {
-            console.error(`Clinic address is missing for doctor ${doctorResult.doctor._id}`);
+            console.error(`Clinic address is missing for doctor ${doctor._id}`);
             continue;
         }
 
         try {
             const clinicLocation = await geocodeAddress(address);
+            if (!clinicLocation) {
+                console.error(`Unable to geocode address ${address}`);
+                continue;
+            }
+
             const distance = haversineDistance(userLocation.lat, userLocation.lng, clinicLocation.lat, clinicLocation.lng);
 
             const timeScore = timeDiff / (1000 * 60 * 60);
             const distanceScore = distance;
+            const gpScore = user.gp === slot.doctorID ? -10 : 0;
 
-            const combinedScore = timeScore + distanceScore;
+            const combinedScore = timeScore + distanceScore + gpScore;
+            console.log(`Combined Score for slot ${slot._id}: ${combinedScore}`);
 
             if (combinedScore < bestScore) {
                 bestScore = combinedScore;
@@ -208,11 +230,10 @@ export const findNearestSlot = async (slots, userLocation) => {
                 bestSlot.tempDistance = distance;
             }
         } catch (error) {
-            console.error(`Error geocoding address ${address}:`, error);
+            console.error(`Error processing slot ${slot._id}:`, error);
         }
     }
 
-    console.log('Best Slot with Distance:', bestSlot);
-
+    console.log('Best Slot with Distance and GP Preference:', bestSlot);
     return bestSlot;
 };
