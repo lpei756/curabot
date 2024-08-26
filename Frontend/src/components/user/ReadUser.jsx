@@ -98,17 +98,6 @@ function ReadUser({ userId }) {
 
                     <Divider sx={{ my: 2 }} />
 
-                    <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>Appointments</Typography>
-                    {userData.appointments.length > 0 ? (
-                        userData.appointments.map((appointment, index) => (
-                            <Typography key={index}><strong>Appointment {index + 1}:</strong> {new Date(appointment.date).toLocaleDateString()} - ID: {appointment.appointmentID}</Typography>
-                        ))
-                    ) : (
-                        <Typography>No appointments available.</Typography>
-                    )}
-
-                    <Divider sx={{ my: 2 }} />
-
                     <ImageDisplay userId={userId} />
 
                     <Divider sx={{ my: 2 }} />

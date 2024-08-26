@@ -18,7 +18,7 @@ import ClinicMap from './components/map/ClinicMap';
 import AdminPanel from './components/admin/AdminPanel';
 import { AdminProvider, AdminContext } from './context/AdminContext';
 import SuperAdminPanel from './components/admin/SuperAdminPanel';
-
+import EditPatients from './components/admin/EditPatients';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -61,6 +61,7 @@ function App() {
                             <Route path="/admin/register" element={<AdminRegister />} />
                             <Route path="/admin/panel" element={<AdminPanelWrapper />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
+                            <Route path="/patients/:id" element={<EditPatients />} />
                             <Route path="/user" element={<UserWrapper />} />
                             <Route path="/appointment" element={<AppointmentList />} />
                             <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />

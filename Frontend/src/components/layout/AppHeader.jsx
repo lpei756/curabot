@@ -15,7 +15,6 @@ import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import PropTypes from 'prop-types';
 
 const MenuIconButton = styled('button')(({ theme }) => ({
