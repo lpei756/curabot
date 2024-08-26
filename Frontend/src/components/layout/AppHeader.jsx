@@ -106,7 +106,7 @@ function AppHeader() {
     const [isUserLoginOpen, setIsUserLoginOpen] = useState(false);
     const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false); // 新增状态
+    const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [userId, setUserId] = useState(null);
 
@@ -126,13 +126,18 @@ function AppHeader() {
     const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
     const handleUserLoginSuccess = () => setIsUserLoggedIn(true);
-    const handleAdminLoginSuccess = () => setIsAdminLoggedIn(true); // 更新状态
+    const handleAdminLoginSuccess = () => setIsAdminLoggedIn(true);
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         setIsUserLoggedIn(false);
-        setIsAdminLoggedIn(false); // 更新状态
+        setIsAdminLoggedIn(false);
     };
+
+    // 如果admin已登录，不显示header内容
+    if (isAdminLoggedIn) {
+        return null;
+    }
 
     return (
         <>
@@ -170,7 +175,7 @@ function AppHeader() {
                             </Link>
                         </Box>
 
-                        {isUserLoggedIn || isAdminLoggedIn ? (
+                        {isUserLoggedIn ? (
                             <AnimatedButton variant="login" onClick={handleLogout}>
                                 <span>Logout</span>
                             </AnimatedButton>
