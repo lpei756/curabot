@@ -98,14 +98,18 @@ export const getAllPatients = async (req, res) => {
 export const updatePatient = async (req, res) => {
     try {
         const { id } = req.params;
-        console.log('Fetching patient with ID:', id);
+        console.log('Received request to update patient with ID:', id);
         const updateData = req.body;
+        console.log('Update data:', updateData);
         const user = await updatePatientService(id, updateData);
+        console.log('Patient updated successfully:', user);
         res.status(200).json(user);
     } catch (error) {
+        console.error('Error updating patient:', error.message);
         res.status(400).json({ message: error.message });
     }
 };
+
 export const readPatient = async (req, res) => {
     try {
         const { id } = req.params;
@@ -123,6 +127,7 @@ export const readPatient = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
 
 export const readAdmin = async (req, res) => {
     try {

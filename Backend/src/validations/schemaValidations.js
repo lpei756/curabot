@@ -178,7 +178,7 @@ const adminUpdateSchema = Joi.object({
 const getAllAdminsSchema = Joi.object({});
 const getAllPatientsSchema = Joi.object({});
 const updatePatientSchema = Joi.object({
-    email: Joi.string().email().optional(),
+    email: Joi.string().email().required(),
     password: Joi.string().min(6).optional(),
     firstName: Joi.string().optional(),
     middleName: Joi.string().optional(),
@@ -205,11 +205,13 @@ const updatePatientSchema = Joi.object({
         provider: Joi.string().optional(),
         policyNumber: Joi.string().optional(),
         coverageDetails: Joi.string().optional()
-    }).optional(),
+    }).optional()
 });
-const patientReadSchema = Joi.object({
-    id: Joi.string().required()
+
+const readPatientSchema = Joi.object({
+
 });
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -232,7 +234,7 @@ export default {
     [adminPathBase.logout]: adminUpdateSchema,
     [adminPathBase.getAllAdmins]: getAllAdminsSchema,
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
+    [adminPathBase.readPatient]: readPatientSchema,
     [adminPathBase.updatePatient]: updatePatientSchema,
-    [adminPathBase.readPatient]: patientReadSchema,
     '/api/feedback': feedbackSchema,
 };

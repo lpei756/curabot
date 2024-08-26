@@ -11,9 +11,9 @@ export const ADMIN_PATHS = {
   update: '/admin/:id',
   logout: '/admin/logout',
   getAllAdmins: '/admin',
-  getAllPatients: '/patients',
-  updatePatient: '/patients/:id',
-  readPatient: '/patients/:id',
+  getAllPatients: '/patient',
+  readPatient: '/patient/:id',
+  updatePatient: '/patient/:id',
 };
 
 export const AUTH_PATHS = {
@@ -67,6 +67,3 @@ export const DOCTOR_AVAILABILITY_PATHS = {
   delete: '/:doctorID/slot/:slotId',
   updateIsBooked: '/:slotId/:userId/isBooked'
 };
-
-
-
