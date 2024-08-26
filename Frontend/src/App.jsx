@@ -61,7 +61,7 @@ function App() {
                             <Route path="/admin/register" element={<AdminRegister />} />
                             <Route path="/admin/panel" element={<AdminPanelWrapper />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
-                            <Route path="/patients/:id" element={<EditPatients />} />
+                            {/*<Route path="/patients/:id" element={<EditPatients />} />*/}
                             <Route path="/user" element={<UserWrapper />} />
                             <Route path="/appointment" element={<AppointmentList />} />
                             <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />

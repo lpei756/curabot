@@ -146,10 +146,6 @@ function AppHeader() {
         navigate('/'); // 在用户退出登录后跳转到主页
     };
 
-    if (isAdminLoggedIn) {
-        return null;
-    }
-
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
@@ -186,7 +182,7 @@ function AppHeader() {
                             </Link>
                         </Box>
 
-                        {isUserLoggedIn ? (
+                        {isUserLoggedIn || isAdminLoggedIn ? (
                             <AnimatedButton variant="login" onClick={handleLogout}>
                                 <span>Logout</span>
                             </AnimatedButton>
@@ -232,7 +228,6 @@ function AppHeader() {
                                 gap: 1,
                                 cursor: 'pointer',
                             }}
-                            onClick={toggleAdminLoginModal}
                         >
                             <AnimatedButton variant="login" onClick={toggleAdminLoginModal}>
                                 <span>Admin Login</span>

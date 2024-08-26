@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchAllPatients, adminLogout } from '../../services/AdminService';
+import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 
 const AdminPanel = () => {
@@ -28,18 +28,6 @@ const AdminPanel = () => {
 
         fetchData();
     }, [role]);
-
-    const handleLogout = async () => {
-        try {
-            await adminLogout();
-            localStorage.removeItem('isAdminLoggedIn');
-            navigate('/');
-            window.location.reload();
-        } catch (err) {
-            console.error('Error during logout:', err);
-            setError('Logout failed.');
-        }
-    };
 
     const handleEdit = (patientId) => {
         navigate(`/patients/${patientId}`);
@@ -102,15 +90,6 @@ const AdminPanel = () => {
                     </Table>
                 </TableContainer>
             </Box>
-
-            <Button
-                variant="contained"
-                style={{ backgroundColor: '#03035d', color: '#fff' }}
-                onClick={handleLogout}
-            >
-                Logout
-            </Button>
-
         </Box>
     );
 };
