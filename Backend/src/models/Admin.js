@@ -7,7 +7,7 @@ const AdminSchema = new mongoose.Schema({
   firstName: { type: String, required: true },
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true, select: false },
+  password: { type: String, required: true },
   role: {
     type: String,
     enum: ['superadmin', 'doctor', 'nurse'],
@@ -16,7 +16,6 @@ const AdminSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
-// 在保存之前生成唯一的 adminID 并加密密码
 AdminSchema.pre('save', async function (next) {
   if (this.isNew) {
     // 生成唯一的 adminID

@@ -49,43 +49,76 @@ const AnimatedButton = styled('button')(({ variant }) => ({
   },
 }));
 
+const LoginModal = ({ open, onClose, onSuccess }) => (
+    <Modal open={open} onClose={onClose}>
+      <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+      >
+        <Login onClose={onClose} onSuccess={onSuccess} />
+      </Box>
+    </Modal>
+);
+
+const AdminLoginModal = ({ open, onClose, onSuccess }) => (
+    <Modal open={open} onClose={onClose}>
+      <Box
+          sx={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+            p: 4,
+            borderRadius: 2,
+          }}
+      >
+        <AdminLogin onClose={onClose} onSuccess={onSuccess} />
+      </Box>
+    </Modal>
+);
+
 function AppHeader() {
-  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isUserLoginOpen, setIsUserLoginOpen] = useState(false);
   const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [userId, setUserId] = useState(null);
-
-  const toggleLogin = () => {
-    setIsLoginOpen(!isLoginOpen);
-  };
-
-  const toggleAdminLogin = () => {
-    setIsAdminLoginOpen(!isAdminLoginOpen);
-  };
-
-  const handleLoginSuccess = () => {
-    setIsLoggedIn(true);
-  };
-
-  const toggleDrawer = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     const storedUserId = localStorage.getItem('userId');
     if (token) {
-      setIsLoggedIn(true);
+      setIsUserLoggedIn(true);
     }
     if (storedUserId) {
       setUserId(storedUserId);
     }
   }, []);
 
+  const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
+  const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
+  const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+
+  const handleUserLoginSuccess = () => setIsUserLoggedIn(true);
+  const handleAdminLoginSuccess = () => setIsAdminLoggedIn(true);
+
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsLoggedIn(false);
+    setIsUserLoggedIn(false);
+    setIsAdminLoggedIn(false);
   };
 
   return (
@@ -94,9 +127,7 @@ function AppHeader() {
           <Container maxWidth="xl">
             <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <MenuIconButton
-                    onClick={toggleDrawer}
-                >
+                <MenuIconButton onClick={toggleDrawer}>
                   <MenuRoundedIcon sx={{ color: 'black' }} />
                 </MenuIconButton>
                 <Link to="/map">
@@ -126,7 +157,7 @@ function AppHeader() {
                 </Link>
               </Box>
 
-              {isLoggedIn ? (
+              {isUserLoggedIn || isAdminLoggedIn ? (
                   <AnimatedButton variant="login" onClick={handleLogout}>
                     <span>Logout</span>
                   </AnimatedButton>
@@ -137,7 +168,7 @@ function AppHeader() {
                         <span>Register</span>
                       </AnimatedButton>
                     </Link>
-                    <AnimatedButton variant="login" onClick={toggleLogin}>
+                    <AnimatedButton variant="login" onClick={toggleUserLoginModal}>
                       <span>Login</span>
                     </AnimatedButton>
                   </Box>
@@ -145,64 +176,18 @@ function AppHeader() {
             </Toolbar>
           </Container>
         </AppBar>
-        <Modal
-            open={isLoginOpen}
-            onClose={toggleLogin}
-            aria-labelledby="login-modal-title"
-            aria-describedby="login-modal-description"
-        >
-          <Box sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2
-          }}>
-            <Login
-                onClose={toggleLogin}
-                onSuccess={handleLoginSuccess}
-            />
-          </Box>
-        </Modal>
-        <Modal
-            open={isAdminLoginOpen}
-            onClose={toggleAdminLogin}
-            aria-labelledby="admin-login-modal-title"
-            aria-describedby="admin-login-modal-description"
-        >
-          <Box sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2
-          }}>
-            <AdminLogin
-                onClose={toggleAdminLogin}
-                onSuccess={handleLoginSuccess}
-            />
-          </Box>
-        </Modal>
-        <Drawer
-            anchor="left"
-            open={isDrawerOpen}
-            onClose={toggleDrawer}
-        >
+
+        <LoginModal open={isUserLoginOpen} onClose={toggleUserLoginModal} onSuccess={handleUserLoginSuccess} />
+        <AdminLoginModal open={isAdminLoginOpen} onClose={toggleAdminLoginModal} onSuccess={handleAdminLoginSuccess} />
+
+        <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
           <Box
               sx={{ width: 250, padding: 2, height: '100%', position: 'relative' }}
               role="presentation"
               onClick={toggleDrawer}
               onKeyDown={toggleDrawer}
           >
-            {isLoggedIn ? (
+            {isUserLoggedIn ? (
                 <UserOptionsList options={['Profile', 'Appointment']} userId={userId} />
             ) : (
                 <Typography>Please login to see user information</Typography>
@@ -215,9 +200,9 @@ function AppHeader() {
                   display: 'flex',
                   alignItems: 'center',
                   gap: 1,
-                  cursor: 'pointer'
+                  cursor: 'pointer',
                 }}
-                onClick={toggleAdminLogin}
+                onClick={toggleAdminLoginModal}
             >
               <AdminPanelSettingsIcon sx={{ color: 'blue' }} />
               <Typography variant="body2" sx={{ color: 'blue', textDecoration: 'underline' }}>
