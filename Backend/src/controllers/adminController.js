@@ -82,21 +82,7 @@ export const readAdmin = async (req, res) => {
     }
 };
 
-export const updateAdmin = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log('Received request to update admin with ID:', id);
-        const updateData = req.body;
-        console.log('Update data:', updateData);
 
-        const admin = await updateAdminService(id, updateData);
-        console.log('Admin updated successfully:', admin);
-        res.status(200).json(admin);
-    } catch (error) {
-        console.error('Error updating admin:', error.message);
-        res.status(400).json({ message: error.message });
-    }
-};
 
 export const logout = (req, res) => {
     try {
@@ -138,6 +124,20 @@ export const updatePatient = async (req, res) => {
         const user = await updatePatientService(id, updateData);
         res.status(200).json(user);
     } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+export const updateAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Received request to update admin with ID:', id);
+        const updateData = req.body;
+        console.log('Update data:', updateData);
+        const admin = await updateAdminService(id, updateData);
+        console.log('Admin updated successfully:', admin);
+        res.status(200).json(admin);
+    } catch (error) {
+        console.error('Error updating admin:', error.message);
         res.status(400).json({ message: error.message });
     }
 };

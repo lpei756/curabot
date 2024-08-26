@@ -42,7 +42,7 @@ export const adminRead = async (adminId) => {
     }
 };
 
-export const adminUpdate = async (adminId, updateData) => {
+export const updateAdminData = async (adminId, updateData) => {
     try {
         const url = API_PATH.admin.update.replace(':id', adminId);
         console.log('Request URL:', url);

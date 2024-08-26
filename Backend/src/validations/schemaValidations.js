@@ -172,7 +172,6 @@ const adminUpdateSchema = Joi.object({
     firstName: Joi.string().optional(),
     lastName: Joi.string().optional(),
     email: Joi.string().email().optional(),
-    password: Joi.string().min(6).optional(),
     role: Joi.string().valid('superadmin', 'doctor', 'nurse').optional(),
 });
 

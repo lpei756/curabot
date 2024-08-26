@@ -61,11 +61,7 @@ export const readAdmin = async (adminID) => {
     }
 };
 
-export const updateAdmin = async (id, updateData) => {
-    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
-    if (!admin) throw new Error('Admin not found');
-    return admin;
-};
+
 
 export const logout = () => {
     return { message: 'Successfully logged out' };
@@ -99,4 +95,9 @@ export const updatePatient = async (id, updateData) => {
     const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!user) throw new Error('User not found');
     return user;
+};
+export const updateAdmin = async (id, updateData) => {
+    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+    if (!admin) throw new Error('Admin not found');
+    return admin;
 };
