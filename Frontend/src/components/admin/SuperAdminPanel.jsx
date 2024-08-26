@@ -3,8 +3,6 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
-import EditPatients from './EditPatients';
-import EditAdmins from './EditAdmins';
 import { Link } from 'react-router-dom';
 
 const SuperAdminPanel = () => {
@@ -15,8 +13,8 @@ const SuperAdminPanel = () => {
     const [filteredAdmins, setFilteredAdmins] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [error, setError] = useState(null);
-    const [editMode, setEditMode] = useState(null);
-    const [selectedItem, setSelectedItem] = useState(null);
+    const [setEditMode] = useState(null);
+    const [setSelectedItem] = useState(null);
     const { role } = useContext(AdminContext);
 
     useEffect(() => {
