@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -108,11 +108,12 @@ function AppHeader() {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [userId, setUserId] = useState(null);
+    const navigate = useNavigate(); // 使用 useNavigate 钩子
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUserId = localStorage.getItem('userId');
-        const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');  // 从 localStorage 中读取管理员登录状态
+        const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');
 
         if (token) {
             setIsUserLoggedIn(true);
@@ -123,7 +124,7 @@ function AppHeader() {
         }
 
         if (adminLoginStatus === 'true') {
-            setIsAdminLoggedIn(true);  // 如果管理员已登录，设置 isAdminLoggedIn 为 true
+            setIsAdminLoggedIn(true);
         }
     }, []);
 
@@ -134,17 +135,17 @@ function AppHeader() {
     const handleUserLoginSuccess = () => setIsUserLoggedIn(true);
     const handleAdminLoginSuccess = () => {
         setIsAdminLoggedIn(true);
-        localStorage.setItem('isAdminLoggedIn', 'true');  // 将管理员登录状态存储到 localStorage
+        localStorage.setItem('isAdminLoggedIn', 'true');
     };
 
     const handleLogout = () => {
         localStorage.removeItem('token');
-        localStorage.removeItem('isAdminLoggedIn');  // 删除管理员登录状态
+        localStorage.removeItem('isAdminLoggedIn');
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);
+        navigate('/'); // 在用户退出登录后跳转到主页
     };
 
-    // 如果admin已登录，不显示header内容
     if (isAdminLoggedIn) {
         return null;
     }
@@ -220,7 +221,7 @@ function AppHeader() {
                     ) : (
                         <Typography>Please login to see user information</Typography>
                     )}
-                    {!isAdminLoggedIn && (
+                    {!isUserLoggedIn && !isAdminLoggedIn && (
                         <Box
                             sx={{
                                 position: 'absolute',
