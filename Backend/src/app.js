@@ -9,11 +9,13 @@ import chatRoutes from './routes/chatRoutes.js';
 import imageRoutes from "./routes/imageRoutes.js";
 import adminRoutes from './routes/adminRoutes.js';
 import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
+import feedbackRoutes from './routes/feedbackRoutes.js';
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+
 
 
 const __dirname = path.resolve();
@@ -32,6 +34,7 @@ console.log('Registering admin routes...');
 app.use('/api', adminRoutes);
 console.log('Admin routes registered.');
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
+app.use('/api/feedback', feedbackRoutes);
 
 app.post('/api/feedback', (req, res) => {
     const { messageId, feedback } = req.body;
