@@ -75,7 +75,7 @@ function AdminLogin({ onClose, onSuccess }) {
                     cursor: 'pointer'
                 }}
             >
-                Admin Login
+                Login
             </Button>
         </Box>
     );

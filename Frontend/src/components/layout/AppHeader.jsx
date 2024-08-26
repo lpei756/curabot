@@ -234,10 +234,9 @@ function AppHeader() {
                             }}
                             onClick={toggleAdminLoginModal}
                         >
-                            <AdminPanelSettingsIcon sx={{ color: '#03035d' }} />
-                            <Typography variant="body2" sx={{ color: '#03035d', textDecoration: 'underline' }}>
-                                Admin Login
-                            </Typography>
+                            <AnimatedButton variant="login" onClick={toggleAdminLoginModal}>
+                                <span>Admin Login</span>
+                            </AnimatedButton>
                         </Box>
                     )}
                 </Box>
