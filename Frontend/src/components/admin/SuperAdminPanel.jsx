@@ -5,6 +5,7 @@ import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService'
 import { AdminContext } from '../../context/AdminContext';
 import EditPatients from './EditPatients';
 import EditAdmins from './EditAdmins';
+import { Link } from 'react-router-dom';
 
 const SuperAdminPanel = () => {
     const [admins, setAdmins] = useState([]);
@@ -123,7 +124,20 @@ const SuperAdminPanel = () => {
                                     {admins.length > 0 ? (
                                         admins.map((admin) => (
                                             <TableRow key={admin._id}>
-                                                <TableCell>{admin.firstName || '-'}</TableCell>
+                                                <TableCell>
+                                                    <Link
+                                                        to={`/admin/${admin._id}`}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',  // 默认颜色
+                                                            fontWeight: 'bold',  // 字体加粗
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                    >
+                                                        {admin.firstName || '-'}
+                                                    </Link>
+                                                </TableCell>
                                                 <TableCell>{admin.lastName || '-'}</TableCell>
                                                 <TableCell>{admin.email}</TableCell>
                                                 <TableCell>{admin.role}</TableCell>
@@ -167,7 +181,20 @@ const SuperAdminPanel = () => {
                                     {patients.length > 0 ? (
                                         patients.map((patient) => (
                                             <TableRow key={patient._id}>
-                                                <TableCell>{patient.firstName}</TableCell>
+                                                <TableCell>
+                                                    <Link
+                                                        to={`/patient/${patient._id}`}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',  // 默认颜色
+                                                            fontWeight: 'bold',  // 字体加粗
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                    >
+                                                        {patient.firstName}
+                                                    </Link>
+                                                </TableCell>
                                                 <TableCell>{patient.lastName}</TableCell>
                                                 <TableCell>{patient.email}</TableCell>
                                                 <TableCell>{patient.phone || '-'}</TableCell>
