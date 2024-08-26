@@ -8,17 +8,18 @@ import {
     getAllAdmins as getAllAdminsService,
     getAllPatients as getAllPatientsService
 } from '../services/adminService.js';
-import UserModel from "../models/User.js";
+import bcrypt from 'bcrypt';
 
 export const adminRegister = async (req, res) => {
     try {
         console.log('Received request for admin registration:', req.body);
+
         const admin = await registerAdminService(req.body);
+        console.log('Admin object returned from registerAdminService:', admin);
 
-        console.log('Admin registered successfully:', admin);
         const token = generateToken(admin._id, admin.role);
-
         console.log('JWT token generated for admin:', token);
+
         res.status(201).json({ admin, token });
     } catch (error) {
         console.error('Error during admin registration:', error.message);
@@ -28,20 +29,33 @@ export const adminRegister = async (req, res) => {
 
 export const adminLogin = async (req, res) => {
     try {
-        console.log('Received login request with email:', req.body.email);
-        const { email, password } = req.body;
+        console.log('Received login request with body:', req.body);
 
-        const admin = await loginAdminService({ email, password });
+        const { email, password } = req.body;
+        console.log('Extracted email:', email);
+        console.log('Extracted password:', password);
+
+        if (!email || !password) {
+            console.error('Email or password is missing in the request body');
+            return res.status(400).json({ message: 'Email and password are required' });
+        }
+
+        const admin = await loginAdminService({ email, password }); // 确保这里传递了password
         if (!admin) {
             console.error('Admin not found with email:', email);
-            throw new Error('Admin not found');
+            return res.status(400).json({ message: 'Invalid credentials' });
+        }
+
+        const isMatch = await bcrypt.compare(password, admin.password);
+        if (!isMatch) {
+            console.error('Password does not match for email:', email);
+            return res.status(400).json({ message: 'Invalid credentials' });
         }
 
         const token = generateToken(admin._id, admin.role);
         console.log('JWT token generated:', token);
 
         res.status(200).json({ admin, token });
-        console.log('Response sent with admin data and token');
     } catch (error) {
         console.error('Error during admin login:', error.message);
         res.status(400).json({ message: error.message });
@@ -55,7 +69,7 @@ export const readAdmin = async (req, res) => {
         const admin = await readAdminService(id);
         if (!admin) {
             console.error('Admin not found for ID:', id);
-            throw new Error('Admin not found');
+            return res.status(404).json({ message: 'Admin not found' });
         }
 
         console.log('Admin data retrieved:', admin);

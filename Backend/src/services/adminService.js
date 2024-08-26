@@ -3,41 +3,49 @@ import AdminModel from '../models/Admin.js';
 import UserModel from '../models/User.js';
 
 export const register = async (adminData) => {
-    const {
+    const { email, password, firstName, lastName, role } = adminData;
+
+    console.log('Starting registration process with data:', { email, firstName, lastName, role });
+
+    const existingAdmin = await AdminModel.findOne({ email });
+    if (existingAdmin) {
+        console.error('Admin already exists with email:', email);
+        throw new Error('Admin already exists');
+    }
+
+    const admin = new AdminModel({
         email,
         password,
         firstName,
         lastName,
         role,
-    } = adminData;
-
-    const existingAdmin = await AdminModel.findOne({ email });
-    if (existingAdmin) throw new Error('Admin already exists');
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const admin = new AdminModel({
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        role,
     });
 
+    console.log('Saving new admin to the database:', admin);
     await admin.save();
+
+    console.log('Admin registered successfully:', admin);
     return admin;
 };
+
+
 
 export const login = async ({ email, password }) => {
     const admin = await AdminModel.findOne({ email }).select('+password');
     if (!admin) throw new Error('Admin not found');
 
+    console.log('Admin password from DB:', admin.password);
+    console.log('Password from request:', password);
+
     const isMatch = await bcrypt.compare(password, admin.password);
-    if (!isMatch) throw new Error('Invalid credentials');
+    if (!isMatch) {
+        console.error('Password does not match for email:', email);
+        throw new Error('Invalid credentials');
+    }
 
     return admin;
 };
+
 
 export const readAdmin = async (adminID) => {
     try {
