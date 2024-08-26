@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { Typography, Box, Divider, Button, Collapse } from '@mui/material';
+import { Typography, Box, Button, Collapse } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
 import { fetchUserData } from '../../services/userService';
@@ -59,9 +59,9 @@ function ReadUser({ userId }) {
                 />
             ) : (
                 <>
-                    <Block 
-                        title="Personal Information" 
-                        isOpen={expandedBlock === 'personalInfo'} 
+                    <Block
+                        title="Personal Information"
+                        isOpen={expandedBlock === 'personalInfo'}
                         onClick={() => toggleBlock('personalInfo')}
                     >
                         <Typography><strong>Patient ID:</strong> {userData.patientID}</Typography>
@@ -78,9 +78,9 @@ function ReadUser({ userId }) {
                         <Typography><strong>Email:</strong> {userData.email}</Typography>
                     </Block>
 
-                    <Block 
-                        title="Emergency Contact" 
-                        isOpen={expandedBlock === 'emergencyContact'} 
+                    <Block
+                        title="Emergency Contact"
+                        isOpen={expandedBlock === 'emergencyContact'}
                         onClick={() => toggleBlock('emergencyContact')}
                     >
                         <Typography><strong>Name:</strong> {userData.emergencyContact.name}</Typography>
@@ -88,9 +88,9 @@ function ReadUser({ userId }) {
                         <Typography><strong>Relationship:</strong> {userData.emergencyContact.relationship}</Typography>
                     </Block>
 
-                    <Block 
-                        title="Medical History" 
-                        isOpen={expandedBlock === 'medicalHistory'} 
+                    <Block
+                        title="Medical History"
+                        isOpen={expandedBlock === 'medicalHistory'}
                         onClick={() => toggleBlock('medicalHistory')}
                     >
                         <Typography><strong>Chronic Diseases:</strong> {userData.medicalHistory.chronicDiseases}</Typography>
@@ -100,17 +100,17 @@ function ReadUser({ userId }) {
                         <Typography><strong>Allergies:</strong> {userData.medicalHistory.allergies}</Typography>
                     </Block>
 
-                    <Block 
-                        title="Assigned General Practitioner" 
-                        isOpen={expandedBlock === 'gp'} 
+                    <Block
+                        title="Assigned General Practitioner"
+                        isOpen={expandedBlock === 'gp'}
                         onClick={() => toggleBlock('gp')}
                     >
                         <Typography><strong>GP:</strong> {userData.gp}</Typography>
                     </Block>
 
-                    <Block 
-                        title="Insurance" 
-                        isOpen={expandedBlock === 'insurance'} 
+                    <Block
+                        title="Insurance"
+                        isOpen={expandedBlock === 'insurance'}
                         onClick={() => toggleBlock('insurance')}
                     >
                         <Typography><strong>Provider:</strong> {userData.insurance.provider}</Typography>
