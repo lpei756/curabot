@@ -31,7 +31,7 @@ const AdminPanel = () => {
     const handleLogout = async () => {
         try {
             await adminLogout();
-            localStorage.removeItem('token');
+            localStorage.removeItem('isAdminLoggedIn');  // 删除管理员登录状态
             navigate('/');
             window.location.reload();
         } catch (err) {
