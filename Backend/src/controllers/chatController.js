@@ -45,45 +45,45 @@ export const handleChat = async (req, res) => {
 
     if (autoAppointmentKeywords.some(keyword => userMessage.toLowerCase().includes(keyword))) {
       if (!authToken) {
-        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
+          return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
       }
-
+  
       if (!userLocation) {
-        return res.status(400).json({ error: 'Bad Request: User location is required to find available slots.' });
+          return res.status(400).json({ error: 'Bad Request: User location is required to find available slots.' });
       }
-
+  
       try {
-        const availableSlots = await getAllAvailableSlots();
-        if (!availableSlots || availableSlots.length === 0) {
+          const availableSlots = await getAllAvailableSlots();
+          if (!availableSlots || availableSlots.length === 0) {
+              return res.json({
+                  reply: 'Sorry, there are no available slots at the moment. Please try again later.'
+              });
+          }
+  
+          const userId = extractUserIdFromToken(authToken);
+          if (!userId) {
+              return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+          }
+  
+          const user = await readUser(userId);
+  
+          const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
+          if (!nearestSlot) {
+              return res.json({
+                  reply: 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.'
+              });
+          }
+  
+          const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
+          if (doctorResult.error) {
+              return res.status(doctorResult.status).json({ message: doctorResult.message });
+          }
+  
+          const clinicId = doctorResult.doctor.clinic;
+          const distance = nearestSlot.tempDistance || 'N/A'; // Default to 'N/A' if distance is not provided
+  
           return res.json({
-            reply: 'Sorry, there are no available slots at the moment. Please try again later.'
-          });
-        }
-
-        const userId = extractUserIdFromToken(authToken);
-        if (!userId) {
-          return res.status(401).json({ error: 'Unauthorized: Invalid token' });
-        }
-
-        const user = await readUser(userId);
-
-        const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
-        if (!nearestSlot) {
-          return res.json({
-            reply: 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.'
-          });
-        }
-
-        const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
-        if (doctorResult.error) {
-          return res.status(doctorResult.status).json({ message: doctorResult.message });
-        }
-
-        const clinicId = doctorResult.doctor.clinic;
-        const distance = nearestSlot.tempDistance || 'N/A'; // Default to 'N/A' if distance is not provided
-
-        return res.json({
-          reply: `
+              reply: `
                   I found an available slot for you. Would you like to book it?
                   <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
                   <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
@@ -115,13 +115,14 @@ export const handleChat = async (req, res) => {
                           }
                       })()
                   ">Book Now</button>
+                  <p>If you are not satisfied with this slot, you can <a href="http://localhost:5173/appointment/new">choose a different slot here</a>.</p>
               `
-        });
+          });
       } catch (error) {
-        console.error('Error fetching or processing available slots:', error);
-        return res.status(500).json({ error: 'Error fetching available slots' });
+          console.error('Error fetching or processing available slots:', error);
+          return res.status(500).json({ error: 'Error fetching available slots' });
       }
-    }
+  }
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);

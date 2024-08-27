@@ -8,6 +8,8 @@ import {
 } from "@vis.gl/react-google-maps";
 import { Box, List, ListItem, ListItemText } from "@mui/material";
 import axios from "axios";
+import Lottie from 'lottie-react';
+import animationData from '../../assets/loading.json';
 import { getClinics } from '../../services/clinicService';
 
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
@@ -112,7 +114,26 @@ const ClinicMap = () => {
     };
 
     if (!userPosition || clinicPositions.length === 0) {
-        return <div>Loading...</div>;
+        return (
+            <div
+                style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh'
+                }}
+            >
+                <Lottie
+                    animationData={animationData}
+                    style={{
+                        width: '200px',
+                        height: '200px',
+                        zIndex: 1,
+                        pointerEvents: 'none'
+                    }}
+                />
+            </div>
+        );
     }
 
     return (
@@ -153,12 +174,12 @@ const ClinicMap = () => {
                                                 primaryTypographyProps={{ style: { color: '#03035d' } }}
                                                 secondary={
                                                     <>
-                                                        {clinic.address}<br/>
-                                                        {clinic.service}<br/>
-                                                        {clinic.hours}<br/>
-                                                        {clinic.email}<br/>
-                                                        Fax: {clinic.fax}<br/>
-                                                        Phone: {clinic.phone}<br/>
+                                                        {clinic.address}<br />
+                                                        {clinic.service}<br />
+                                                        {clinic.hours}<br />
+                                                        {clinic.email}<br />
+                                                        Fax: {clinic.fax}<br />
+                                                        Phone: {clinic.phone}<br />
                                                         {userPosition && clinic.distance && (
                                                             <div>
                                                                 Distance from you: {clinic.distance} km

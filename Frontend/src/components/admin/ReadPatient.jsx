@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Typography, Box, Collapse, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
+import Lottie from 'lottie-react';
+import animationData from '../../assets/loading.json';
 import { fetchPatientData } from '../../services/adminService';
 
 function ReadPatient() {
@@ -52,7 +54,17 @@ function ReadPatient() {
         navigate('/admin/panel');
     };
 
-    if (loading) return <Typography>Loading...</Typography>;
+    if (loading) return <Typography>
+        <Lottie
+            animationData={animationData}
+            style={{
+                width: '200px',
+                height: '200px',
+                zIndex: 1,
+                pointerEvents: 'none'
+            }}
+        />
+    </Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!patientData) {
