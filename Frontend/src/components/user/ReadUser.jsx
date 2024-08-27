@@ -4,6 +4,8 @@ import { Typography, Box, Button, Collapse } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
 import { fetchUserData } from '../../services/userService';
+import Lottie from 'lottie-react';
+import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
 
 function ReadUser({ userId }) {
@@ -33,7 +35,17 @@ function ReadUser({ userId }) {
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
-    if (loading) return <Typography>Loading...</Typography>;
+    if (loading) return <Typography>
+        <Lottie
+            animationData={animationData}
+            style={{
+                width: '200px',
+                height: '200px',
+                zIndex: 1,
+                pointerEvents: 'none'
+            }}
+        />
+    </Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
     return (

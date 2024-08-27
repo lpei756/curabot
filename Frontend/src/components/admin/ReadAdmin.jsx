@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { Typography, Box, Collapse, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchAdminData } from '../../services/adminService';
+import Lottie from 'lottie-react';
+import animationData from '../../assets/loading.json';
 
 function ReadAdmin() {
     const { adminId } = useParams();
@@ -51,7 +53,17 @@ function ReadAdmin() {
         navigate('/superadmin/panel');
     };
 
-    if (loading) return <Typography>Loading...</Typography>;
+    if (loading) return <Typography>
+        <Lottie
+            animationData={animationData}
+            style={{
+                width: '100px',
+                height: '100px',
+                zIndex: 1,
+                pointerEvents: 'none'
+            }}
+        />
+    </Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!adminData) {

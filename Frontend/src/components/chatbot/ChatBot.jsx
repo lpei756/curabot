@@ -2,6 +2,7 @@ import { useState, useContext, useRef, useEffect } from 'react';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
+import Lottie from 'lottie-react';
 import PropTypes from 'prop-types';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
@@ -15,6 +16,7 @@ import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
 import { sendChatMessage } from '../../services/chatService';
 import { sendFeedbackToServer } from '../../services/chatService';
+import animationData from '../../assets/loading.json';
 import "../../App.css";
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -255,7 +257,16 @@ function ChatBot({ toggleChatbot }) {
                     ))}
                     {isLoading && (
                         <Box display="flex" justifyContent="center" p={2}>
-                            <Typography>Loading...</Typography>
+                                <Lottie
+                                    animationData={animationData}
+                                    style={{
+                                        width: '100px',
+                                        height: '100px',
+                                        zIndex: 1,
+                                        justifyContent: 'center',
+                                        pointerEvents: 'auto'
+                                    }}
+                                />
                         </Box>
                     )}
                     <div ref={messagesEndRef} />
