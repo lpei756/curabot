@@ -230,8 +230,7 @@ const SuperAdminPanel = () => {
                                         filteredPatients.map((patient) => (
                                             <TableRow key={patient._id}>
                                                 <TableCell>
-                                                    <Link
-                                                        to={`/patient/${patient._id}`}
+                                                    <Link to={`/superadmin/panel/patient/${patient._id}`}
                                                         style={{
                                                             textDecoration: 'none',
                                                             color: '#03035d',
