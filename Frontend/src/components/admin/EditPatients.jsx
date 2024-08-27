@@ -4,7 +4,7 @@ import { Typography, Box, TextField, Button } from '@mui/material';
 import { updatePatientData } from '../../services/adminService';
 import { useNavigate } from 'react-router-dom';
 
-function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
+function EditPatients({ patientData, setPatientData, patientId, setEditMode, returnPath }) {
     const [updatedData, setUpdatedData] = useState({
         firstName: patientData.firstName,
         lastName: patientData.lastName,
@@ -30,7 +30,6 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
         }
     });
 
-
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -47,14 +46,13 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             console.log('Update successful, returned data:', data);
             setPatientData(data);
             setEditMode(false);
-            navigate('/admin/panel');
+            navigate(returnPath);
             window.location.reload();
         } catch (err) {
             console.error('Error during update:', err.message);
             setError(err.message);
         }
     };
-
 
     return (
         <Box sx={{ width: '100%' }}>
@@ -106,7 +104,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Name"
                 name="emergencyContactName"
-                value={updatedData.emergencyContactName}
+                value={updatedData.emergencyContact.name}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -114,7 +112,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Phone"
                 name="emergencyContactPhone"
-                value={updatedData.emergencyContactPhone}
+                value={updatedData.emergencyContact.phone}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -122,7 +120,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Emergency Contact Relationship"
                 name="emergencyContactRelationship"
-                value={updatedData.emergencyContactRelationship}
+                value={updatedData.emergencyContact.relationship}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -132,7 +130,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Insurance Provider"
                 name="insuranceProvider"
-                value={updatedData.insuranceProvider}
+                value={updatedData.insurance.provider}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -140,7 +138,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
             <TextField
                 label="Policy Number"
                 name="policyNumber"
-                value={updatedData.policyNumber}
+                value={updatedData.insurance.policyNumber}
                 onChange={handleInputChange}
                 fullWidth
                 margin="normal"
@@ -173,6 +171,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode }) {
 }
 
 EditPatients.propTypes = {
+    returnPath: PropTypes.string.isRequired,
     patientData: PropTypes.object.isRequired,
     setPatientData: PropTypes.func.isRequired,
     patientId: PropTypes.string.isRequired,
