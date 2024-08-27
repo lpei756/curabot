@@ -16,7 +16,7 @@ import Homepage from './components/homepage/Homepage';
 import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
 import ClinicMap from './components/map/ClinicMap';
 import AdminPanel from './components/admin/AdminPanel';
-import { AdminProvider, AdminContext } from './context/AdminContext';
+import { AdminProvider } from './context/AdminContext';
 import SuperAdminPanel from './components/admin/SuperAdminPanel';
 import ReadPatient from './components/admin/ReadPatient';
 import ReadAdmin from './components/admin/ReadAdmin';
@@ -62,7 +62,7 @@ function App() {
                             <Route path="/" element={<Homepage />} />
                             <Route path="/register" element={<Register />} />
                             <Route path="/admin/register" element={<AdminRegister />} />
-                            <Route path="/admin/panel" element={<AdminPanelWrapper />} />
+                            <Route path="/admin/panel" element={<AdminPanel />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
                             <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
                             <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
@@ -79,16 +79,6 @@ function App() {
             </AdminProvider>
         </AuthProvider>
     );
-}
-
-function AdminPanelWrapper() {
-    const { role } = useContext(AdminContext);
-
-    if (role === 'superadmin') {
-        return <SuperAdminPanel />;
-    } else {
-        return <AdminPanel />;
-    }
 }
 
 function UserWrapper() {
