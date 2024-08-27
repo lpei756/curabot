@@ -12,6 +12,7 @@ import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import AppointmentList from './components/appointment/AppointmentList';
 import UpdateAppointment from './components/appointment/updateAppointment';
 import ReadUser from './components/user/ReadUser';
+import Notification from './components/user/Notification';
 import Homepage from './components/homepage/Homepage';
 import AvailableSlotsCalendar from './components/appointment/AvailableSlotsCalendar';
 import ClinicMap from './components/map/ClinicMap';
@@ -27,8 +28,8 @@ function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
 
     const toggleChatbot = () => {
-        setIsChatbotOpen(!isChatbotOpen);
-    }
+        setIsChatbotOpen(prevState => !prevState);
+    };
 
     return (
         <AuthProvider>
@@ -69,11 +70,11 @@ function App() {
                             <Route path="/admin/:adminId" element={<ReadAdmin />} />
                             <Route path="/user" element={<UserWrapper />} />
                             <Route path="/appointment" element={<AppointmentList />} />
+                            <Route path="/notification" element={<NotificationWrapper />} />
                             <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                             <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                             <Route path="/map" element={<ClinicMap />} />
                         </Routes>
-
                     </div>
                 </Router>
             </AdminProvider>
@@ -108,6 +109,16 @@ function UserWrapper() {
     }
 
     return <ReadUser userId={userId} />;
+}
+
+function NotificationWrapper() {
+    const { userId } = useContext(AuthContext);
+
+    if (!userId) {
+        return <p>Loading user information...</p>;
+    }
+
+    return <Notification userId={userId} />;
 }
 
 export default App;

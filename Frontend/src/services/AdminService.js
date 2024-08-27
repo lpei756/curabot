@@ -30,18 +30,6 @@ export const adminRegister = async (adminData) => {
     }
 };
 
-export const adminRead = async (adminId) => {
-    try {
-        const url = API_PATH.admin.read.replace(':id', adminId);
-        console.log('Request URL:', url);
-        const response = await axiosApiInstance.get(url);
-        return response.data.admin;
-    } catch (error) {
-        console.error('Admin read error:', error);
-        throw error;
-    }
-};
-
 export const updateAdminData = async (adminId, updateData) => {
     try {
         const url = API_PATH.admin.update.replace(':id', adminId);
@@ -54,18 +42,6 @@ export const updateAdminData = async (adminId, updateData) => {
     }
 };
 
-export const adminLogout = async () => {
-    try {
-        const url = API_PATH.admin.logout;
-        console.log('Request URL:', url);
-        const response = await axiosApiInstance.post(url);
-        tokenStorage.remove('adminToken');
-        return response.data;
-    } catch (error) {
-        console.error('Admin logout error:', error);
-        throw error;
-    }
-};
 
 export const fetchAllAdminIDs = async () => {
     try {

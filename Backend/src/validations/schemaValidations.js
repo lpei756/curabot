@@ -1,12 +1,20 @@
 import Joi from 'joi';
-import { ADMIN_PATHS, AUTH_PATHS, APPOINTMENT_PATHS, DOCTOR_AVAILABILITY_PATHS, DOCTOR_PATHS, buildPathWithBase } from '../routes/path.js';
+import {
+    ADMIN_PATHS,
+    AUTH_PATHS,
+    APPOINTMENT_PATHS,
+    DOCTOR_AVAILABILITY_PATHS,
+    DOCTOR_PATHS,
+    NOTIFICATION_PATHS,
+    buildPathWithBase,
+} from '../routes/path.js';
 
 const adminPathBase = buildPathWithBase(ADMIN_PATHS);
 const authPathBase = buildPathWithBase(AUTH_PATHS);
 const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
 const doctorPathBase = buildPathWithBase(DOCTOR_PATHS);
-
+const notificationPathBase = buildPathWithBase(NOTIFICATION_PATHS);
 
 const feedbackSchema = Joi.object({
     messageId: Joi.string().required(),
@@ -209,8 +217,37 @@ const updatePatientSchema = Joi.object({
 });
 
 const readPatientSchema = Joi.object({
-
 });
+
+const sendMessageSchema = Joi.object({
+    senderId: Joi.string().required(),
+    senderModel: Joi.string().valid('User', 'Admin').required(),
+    receiverId: Joi.string().required(),
+    receiverModel: Joi.string().valid('User', 'Admin').required(),
+    message: Joi.string().required(),
+    notificationType: Joi.string().valid('info', 'warning', 'alert').default('info'),
+});
+
+const markAsReadSchema = Joi.object({
+    notificationId: Joi.string().required(),
+});
+const markAsReadParamsSchema = Joi.object({
+    notificationId: Joi.string().required(),
+});
+
+
+const getUserNotificationsSchema = Joi.object({
+    receiverId: Joi.string().required(),  // 验证 receiverId 路径参数
+});
+
+const deleteNotificationSchema = Joi.object({
+    notificationId: Joi.string().required(),
+});
+
+const deleteNotificationParamsSchema = Joi.object({
+    notificationId: Joi.string().required(),
+});
+
 
 export default {
     [authPathBase.register]: registerSchema,
@@ -236,5 +273,11 @@ export default {
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
     [adminPathBase.readPatient]: readPatientSchema,
     [adminPathBase.updatePatient]: updatePatientSchema,
+    [notificationPathBase.sendMessage]: sendMessageSchema,
+    [notificationPathBase.getUserNotifications]: getUserNotificationsSchema,
+    [notificationPathBase.markAsRead]: markAsReadSchema,
+    [notificationPathBase.markAsRead + '_params']: markAsReadParamsSchema,
+    [notificationPathBase.deleteNotification]: deleteNotificationSchema,
+    [notificationPathBase.deleteNotification + '_params']: deleteNotificationParamsSchema,
     '/api/feedback': feedbackSchema,
 };

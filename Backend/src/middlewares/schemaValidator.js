@@ -11,10 +11,9 @@ const validationOptions = {
 const schemaValidator = (path, useJoiError = true) => {
   console.log(`Initializing schemaValidator for path: ${path}`);
   const schema = schemas[path];
-  console.log(`Path: ${path}`);
-  console.log(`Schema for ${path}:`);
+  const paramsSchema = schemas[path + '_params'];
 
-  if (!schema) {
+  if (!schema && !paramsSchema) {
     console.error(`Schema not found for path: ${path}`);
     throw new Error(`Schema not found for path: ${path}`);
   }
@@ -28,30 +27,46 @@ const schemaValidator = (path, useJoiError = true) => {
       return next();
     }
 
-    console.log(`Validating request body:`, req.body);
-    const { error, value } = schema.validate(req.body, validationOptions);
+    // 仅验证路径参数，如果 paramsSchema 存在
+    if (paramsSchema) {
+      console.log('Validating request params:', req.params);
+      const { error, value } = paramsSchema.validate(req.params, validationOptions);
 
-    if (error) {
-      console.error('Validation error:', error.details);
-      const unifiedError = {
-        status: 'failed',
-        error: 'Invalid request. Please review request and try again.',
-        fields: {}
-      };
-
-      if (useJoiError && error.details) {
-        error.details.forEach(({ message, path }) => {
-          const fieldName = path.join('.');
-          unifiedError.fields[fieldName] = message.replace(/['"]/g, '');
-          console.log(`Validation error in field ${fieldName}: ${unifiedError.fields[fieldName]}`);
+      if (error) {
+        console.error('Validation error in params:', error.details);
+        return res.status(422).json({
+          status: 'failed',
+          error: 'Invalid request. Please review request and try again.',
+          fields: error.details.reduce((acc, curr) => {
+            acc[curr.path.join('.')] = curr.message.replace(/['"]/g, '');
+            return acc;
+          }, {})
         });
       }
 
-      return res.status(422).json(unifiedError);
+      req.params = value; // 更新验证后的路径参数
     }
 
-    console.log('Validation successful. Processed request body:', value);
-    req.body = value;
+    // 如果路径参数验证成功，且不需要验证请求体，直接跳过请求体的验证
+    if (!paramsSchema && schema) {
+      console.log('Validating request body:', req.body);
+      const { error, value } = schema.validate(req.body, validationOptions);
+
+      if (error) {
+        console.error('Validation error in body:', error.details);
+        return res.status(422).json({
+          status: 'failed',
+          error: 'Invalid request. Please review request and try again.',
+          fields: error.details.reduce((acc, curr) => {
+            acc[curr.path.join('.')] = curr.message.replace(/['"]/g, '');
+            return acc;
+          }, {})
+        });
+      }
+
+      req.body = value;
+    }
+
     return next();
   };
 };

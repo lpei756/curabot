@@ -68,3 +68,10 @@ export const DOCTOR_AVAILABILITY_PATHS = {
   delete: '/:doctorID/slot/:slotId',
   updateIsBooked: '/:slotId/:userId/isBooked'
 };
+
+export const NOTIFICATION_PATHS = {
+  sendMessage: '/notification/send',
+  getUserNotifications: '/notification/user/:receiverId',
+  markAsRead: '/notification/:notificationId/read',
+  delete: '/notification/:notificationId/delete',
+};
