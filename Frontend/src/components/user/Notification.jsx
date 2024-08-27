@@ -11,7 +11,7 @@ function Notification({ userId }) {
     const [newMessage, setNewMessage] = useState('');
 
     useEffect(() => {
-        console.log('Current userId:', userId); // 添加调试信息
+        console.log('Current userId:', userId);
         const loadNotifications = async () => {
             try {
                 const data = await fetchUserNotifications(userId);
@@ -90,7 +90,7 @@ function Notification({ userId }) {
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
                         <Box key={notification._id} sx={{ marginBottom: '10px' }}>
-                            <Typography><strong>From:</strong> {notification.sender}</Typography>
+                            <Typography><strong>From:</strong> {notification.senderName}</Typography> {/* 使用 senderName */}
                             <Typography><strong>Message:</strong> {notification.message}</Typography>
                             <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
                             <Button
