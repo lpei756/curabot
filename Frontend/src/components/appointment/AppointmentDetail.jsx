@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Modal, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { AuthContext } from '../../context/AuthContext';
@@ -100,18 +100,18 @@ const AppointmentDetail = ({ open, onClose, event }) => {
 
     const handleBooking = async () => {
         if (!event || !doctor || !clinic) return;
-    
+
         const appointmentData = {
             dateTime: event.start,
             clinic: clinic._id,
             slotId: event.slotId,
             assignedGP: doctor.doctorID
         };
-    
+
         try {
             const result = await createAppointment(appointmentData);
             console.log('Appointment Created:', result);
-    
+
             onClose();
         } catch (error) {
             console.error('Error saving appointment or updating slot:', error.response ? error.response.data : error.message);

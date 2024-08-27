@@ -3,15 +3,17 @@ import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
 import ReadUser from '../user/ReadUser.jsx';
 import AppointmentList from '../appointment/AppointmentList.jsx';
+import { useNavigate } from 'react-router-dom';
 
 const UserOptionsList = ({ options, userId }) => {
     const [selectedOption, setSelectedOption] = useState(null);
+    const navigate = useNavigate();
 
     const handleOptionClick = (option) => {
         if (option === 'Profile') {
-            window.location.href = 'http://localhost:5173/user';
+            navigate('/user');
         } else if (option === 'Appointment') {
-            window.location.href = 'http://localhost:5173/appointment';
+            navigate('/appointment');
         } else {
             setSelectedOption(option);
         }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, Box, Button, Typography, Paper } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
@@ -322,7 +322,7 @@ const AvailableSlotsCalendar = () => {
                 <Typography variant="h5" align="center" gutterBottom>
                     It&apos;s Quick and Easy.
                 </Typography>
-    
+
                 <StyledPaper style={{ backgroundColor: '#f9f9f9' }}>
                     <BigCalendar
                         localizer={localizer}
@@ -348,11 +348,11 @@ const AvailableSlotsCalendar = () => {
                         }}
                         onNavigate={(newDate) => {
                             setDate(newDate);
-    
+
                             const newViewStart = startOfWeek(newDate, { weekStartsOn: 0 });
                             const newViewEnd = addWeeks(newViewStart, 1);
                             const isNavigatingWeek = newViewStart.getTime() !== currentViewRange.start.getTime();
-    
+
                             if (isNavigatingWeek) {
                                 setEvents(allSlots.filter(slot =>
                                     slot.start >= newViewStart && slot.end < newViewEnd
