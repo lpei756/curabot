@@ -7,7 +7,7 @@ import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import { fetchPatientData } from '../../services/adminService';
 
-function ReadPatient() {
+function ReadPatient({ returnPath }) {
     const { patientId } = useParams();
     const [patientData, setPatientData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -51,7 +51,7 @@ function ReadPatient() {
     };
 
     const handleBackToAdminPanel = () => {
-        navigate('/admin/panel');
+        navigate(returnPath);
     };
 
     if (loading) return <Typography>
@@ -193,7 +193,7 @@ function Block({ title, isOpen, onClick, children }) {
 }
 
 ReadPatient.propTypes = {
-    patientId: PropTypes.string,
+    returnPath: PropTypes.string.isRequired,
 };
 
 Block.propTypes = {

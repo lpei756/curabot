@@ -64,7 +64,8 @@ function App() {
                             <Route path="/admin/register" element={<AdminRegister />} />
                             <Route path="/admin/panel" element={<AdminPanelWrapper />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
-                            <Route path="/patient/:patientId" element={<ReadPatient />} />
+                            <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
+                            <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                             <Route path="/admin/:adminId" element={<ReadAdmin />} />
                             <Route path="/user" element={<UserWrapper />} />
                             <Route path="/appointment" element={<AppointmentList />} />
@@ -72,6 +73,7 @@ function App() {
                             <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                             <Route path="/map" element={<ClinicMap />} />
                         </Routes>
+
                     </div>
                 </Router>
             </AdminProvider>
