@@ -3,6 +3,8 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
+import EditPatients from './EditPatients';
+import EditAdmins from './EditAdmins';
 import { Link } from 'react-router-dom';
 
 const SuperAdminPanel = () => {
@@ -13,8 +15,8 @@ const SuperAdminPanel = () => {
     const [filteredAdmins, setFilteredAdmins] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [error, setError] = useState(null);
-    const [setEditMode] = useState(null);
-    const [setSelectedItem] = useState(null);
+    const [editMode, setEditMode] = useState(null); // null, 'admin', or 'patient'
+    const [selectedItem, setSelectedItem] = useState(null);
     const { role } = useContext(AdminContext);
 
     useEffect(() => {
@@ -103,135 +105,169 @@ const SuperAdminPanel = () => {
                 </Typography>
             )}
 
-            <Box sx={{ marginBottom: 4 }}>
-                <Typography variant="h5" component="h2" gutterBottom>
-                    Admins
-                </Typography>
-                <TextField
-                    label="Search Admins"
-                    variant="outlined"
-                    fullWidth
-                    value={adminSearchQuery}
-                    onChange={(e) => setAdminSearchQuery(e.target.value)}
-                    sx={{ marginBottom: 3 }}
+            {editMode === 'patient' && selectedItem ? (
+                <EditPatients
+                    patientData={selectedItem}
+                    setPatientData={(updatedPatient) => {
+                        setPatients((prevPatients) =>
+                            prevPatients.map((patient) =>
+                                patient._id === updatedPatient._id ? updatedPatient : patient
+                            )
+                        );
+                        setEditMode(null);
+                        setSelectedItem(null);
+                    }}
+                    patientId={selectedItem._id}
+                    setEditMode={setEditMode}
                 />
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>First Name</TableCell>
-                                <TableCell>Last Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Role</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredAdmins.length > 0 ? (
-                                filteredAdmins.map((admin) => (
-                                    <TableRow key={admin._id}>
-                                        <TableCell>
-                                            <Link
-                                                to={`/admin/${admin._id}`}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    color: '#03035d',
-                                                    fontWeight: 'bold',
-                                                }}
-                                                onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                onMouseLeave={(e) => e.target.style.color = '#03035d'}
-                                            >
-                                                {admin.firstName || '-'}
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell>{admin.lastName || '-'}</TableCell>
-                                        <TableCell>{admin.email}</TableCell>
-                                        <TableCell>{admin.role}</TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                onClick={() => handleEditAdmin(admin)}
-                                                color="primary"
-                                                aria-label="edit admin"
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                        </TableCell>
+            ) : editMode === 'admin' && selectedItem ? (
+                <EditAdmins
+                    adminData={selectedItem}
+                    setAdminData={(updatedAdmin) => {
+                        setAdmins((prevAdmins) =>
+                            prevAdmins.map((admin) =>
+                                admin._id === updatedAdmin._id ? updatedAdmin : admin
+                            )
+                        );
+                        setEditMode(null);
+                        setSelectedItem(null);
+                    }}
+                    adminId={selectedItem._id}
+                    setEditMode={setEditMode}
+                />
+            ) : (
+                <>
+                    <Box sx={{ marginBottom: 4 }}>
+                        <Typography variant="h5" component="h2" gutterBottom>
+                            Admins
+                        </Typography>
+                        <TextField
+                            label="Search Admins"
+                            variant="outlined"
+                            fullWidth
+                            value={adminSearchQuery}
+                            onChange={(e) => setAdminSearchQuery(e.target.value)}
+                            sx={{ marginBottom: 3 }}
+                        />
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>First Name</TableCell>
+                                        <TableCell>Last Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Role</TableCell>
+                                        <TableCell>Actions</TableCell>
                                     </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} align="center">No admins found</TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredAdmins.length > 0 ? (
+                                        filteredAdmins.map((admin) => (
+                                            <TableRow key={admin._id}>
+                                                <TableCell>
+                                                    <Link
+                                                        to={`/admin/${admin._id}`}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                    >
+                                                        {admin.firstName || '-'}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell>{admin.lastName || '-'}</TableCell>
+                                                <TableCell>{admin.email}</TableCell>
+                                                <TableCell>{admin.role}</TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        onClick={() => handleEditAdmin(admin)}
+                                                        color="primary"
+                                                        aria-label="edit admin"
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No admins found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
 
-            <Box sx={{ marginBottom: 4 }}>
-                <Typography variant="h5" component="h2" gutterBottom>
-                    Patients
-                </Typography>
-                <TextField
-                    label="Search Patients"
-                    variant="outlined"
-                    fullWidth
-                    value={patientSearchQuery}
-                    onChange={(e) => setPatientSearchQuery(e.target.value)}
-                    sx={{ marginBottom: 3 }}
-                />
-                <TableContainer component={Paper}>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>First Name</TableCell>
-                                <TableCell>Last Name</TableCell>
-                                <TableCell>Email</TableCell>
-                                <TableCell>Phone</TableCell>
-                                <TableCell>Actions</TableCell>
-                            </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {filteredPatients.length > 0 ? (
-                                filteredPatients.map((patient) => (
-                                    <TableRow key={patient._id}>
-                                        <TableCell>
-                                            <Link
-                                                to={`/patient/${patient._id}`}
-                                                style={{
-                                                    textDecoration: 'none',
-                                                    color: '#03035d',
-                                                    fontWeight: 'bold',
-                                                }}
-                                                onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                onMouseLeave={(e) => e.target.style.color = '#03035d'}
-                                            >
-                                                {patient.firstName}
-                                            </Link>
-                                        </TableCell>
-                                        <TableCell>{patient.lastName}</TableCell>
-                                        <TableCell>{patient.email}</TableCell>
-                                        <TableCell>{patient.phone || '-'}</TableCell>
-                                        <TableCell>
-                                            <IconButton
-                                                onClick={() => handleEditPatient(patient)}
-                                                color="primary"
-                                                aria-label="edit patient"
-                                            >
-                                                <EditIcon />
-                                            </IconButton>
-                                        </TableCell>
+                    <Box sx={{ marginBottom: 4 }}>
+                        <Typography variant="h5" component="h2" gutterBottom>
+                            Patients
+                        </Typography>
+                        <TextField
+                            label="Search Patients"
+                            variant="outlined"
+                            fullWidth
+                            value={patientSearchQuery}
+                            onChange={(e) => setPatientSearchQuery(e.target.value)}
+                            sx={{ marginBottom: 3 }}
+                        />
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>First Name</TableCell>
+                                        <TableCell>Last Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Phone</TableCell>
+                                        <TableCell>Actions</TableCell>
                                     </TableRow>
-                                ))
-                            ) : (
-                                <TableRow>
-                                    <TableCell colSpan={5} align="center">No patients found</TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredPatients.length > 0 ? (
+                                        filteredPatients.map((patient) => (
+                                            <TableRow key={patient._id}>
+                                                <TableCell>
+                                                    <Link
+                                                        to={`/patient/${patient._id}`}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                    >
+                                                        {patient.firstName}
+                                                    </Link>
+                                                </TableCell>
+                                                <TableCell>{patient.lastName}</TableCell>
+                                                <TableCell>{patient.email}</TableCell>
+                                                <TableCell>{patient.phone || '-'}</TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        onClick={() => handleEditPatient(patient)}
+                                                        color="primary"
+                                                        aria-label="edit patient"
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No patients found</TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    </Box>
+                </>
+            )}
         </Box>
     );
 };
