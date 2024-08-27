@@ -41,5 +41,3 @@ console.log('Patient update path:', ADMIN_PATHS.updatePatient);
 
 
 export default router;
-
-

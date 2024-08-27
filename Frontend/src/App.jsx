@@ -63,7 +63,6 @@ function App() {
                             <Route path="/admin/panel" element={<AdminPanelWrapper />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
                             <Route path="/patient/:patientId" element={<ReadPatient />} />
-                            <Route path="/patient/:id" element={<ReadPatient />} />
                             <Route path="/admin/:adminId" element={<ReadAdmin />} />
                             <Route path="/user" element={<UserWrapper />} />
                             <Route path="/appointment" element={<AppointmentList />} />

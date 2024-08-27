@@ -42,7 +42,7 @@ export const adminLogin = async (req, res) => {
             return res.status(400).json({ message: 'Email and password are required' });
         }
 
-        const admin = await loginAdminService({ email, password }); // 确保这里传递了password
+        const admin = await loginAdminService({ email, password });
         if (!admin) {
             console.error('Admin not found with email:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
@@ -63,6 +63,7 @@ export const adminLogin = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
 export const readAdmin = async (req, res) => {
     try {
         const { id } = req.params;
@@ -80,6 +81,7 @@ export const readAdmin = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
+
 export const updateAdmin = async (req, res) => {
     try {
         const { id } = req.params;
@@ -126,6 +128,22 @@ export const getAllPatients = async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 };
+
+export const updatePatient = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log('Received request to update patient with ID:', id);
+        const updateData = req.body;
+        console.log('Update data:', updateData);
+        const user = await updatePatientService(id, updateData);
+        console.log('Patient updated successfully:', user);
+        res.status(200).json(user);
+    } catch (error) {
+        console.error('Error updating patient:', error.message);
+        res.status(400).json({ message: error.message });
+    }
+};
+
 export const readPatient = async (req, res) => {
     try {
         const { id } = req.params;
@@ -143,19 +161,6 @@ export const readPatient = async (req, res) => {
         res.status(404).json({ message: error.message });
     }
 };
-
-export const updatePatient = async (req, res) => {
-    try {
-        const { id } = req.params;
-        console.log('Fetching patient with ID:', id);
-        const updateData = req.body;
-        const user = await updatePatientService(id, updateData);
-        res.status(200).json(user);
-    } catch (error) {
-        res.status(400).json({ message: error.message });
-    }
-};
-
 
 const generateToken = (adminId, role) => {
     console.log('Generating JWT token for admin with ID:', adminId, 'and role:', role);

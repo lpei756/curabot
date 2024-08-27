@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
@@ -8,6 +8,8 @@ import { Link } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [patients, setPatients] = useState([]);
+    const [filteredPatients, setFilteredPatients] = useState([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -31,6 +33,18 @@ const AdminPanel = () => {
         fetchData();
     }, [role]);
 
+    useEffect(() => {
+        const filtered = patients.filter((patient) => {
+            return (
+                patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                patient.phone.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        });
+        setFilteredPatients(filtered);
+    }, [searchQuery, patients]);
+
     const handleEdit = (patient) => {
         console.log('Selected Patient:', patient);
         if (patient && patient._id) {
@@ -52,6 +66,15 @@ const AdminPanel = () => {
                     {error}
                 </Typography>
             )}
+
+            <TextField
+                label="Search"
+                variant="outlined"
+                fullWidth
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                sx={{ marginBottom: 3 }}
+            />
 
             {editMode && selectedPatient ? (
                 <EditPatients
@@ -83,26 +106,23 @@ const AdminPanel = () => {
                                 </TableRow>
                             </TableHead>
                             <TableBody>
-                                {patients.length > 0 ? (
-                                    patients.map((patient) => (
+                                {filteredPatients.length > 0 ? (
+                                    filteredPatients.map((patient) => (
                                         <TableRow key={patient._id}>
                                             <TableCell>
                                                 <Link
                                                     to={`/patient/${patient._id}`}
                                                     style={{
                                                         textDecoration: 'none',
-                                                        color: '#03035d',  // 默认颜色
-                                                        fontWeight: 'bold',  // 字体加粗
+                                                        color: '#03035d',
+                                                        fontWeight: 'bold',
                                                     }}
-                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
-                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                 >
                                                     {patient.firstName}
                                                 </Link>
                                             </TableCell>
-
-
-
                                             <TableCell>{patient.lastName}</TableCell>
                                             <TableCell>{patient.email}</TableCell>
                                             <TableCell>{patient.phone || '-'}</TableCell>
