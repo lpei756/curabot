@@ -1,5 +1,17 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
+import {
+    Box,
+    Typography,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
+    IconButton,
+    TextField
+} from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
@@ -8,8 +20,8 @@ import { Link } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [patients, setPatients] = useState([]);
+    const [patientSearchQuery, setPatientSearchQuery] = useState('');
     const [filteredPatients, setFilteredPatients] = useState([]);
-    const [searchQuery, setSearchQuery] = useState('');
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
@@ -36,14 +48,14 @@ const AdminPanel = () => {
     useEffect(() => {
         const filtered = patients.filter((patient) => {
             return (
-                patient.firstName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                patient.lastName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                patient.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                patient.phone.toLowerCase().includes(searchQuery.toLowerCase())
+                patient.firstName.toLowerCase().includes(patientSearchQuery.toLowerCase()) ||
+                patient.lastName.toLowerCase().includes(patientSearchQuery.toLowerCase()) ||
+                patient.email.toLowerCase().includes(patientSearchQuery.toLowerCase()) ||
+                patient.phone.toLowerCase().includes(patientSearchQuery.toLowerCase())
             );
         });
         setFilteredPatients(filtered);
-    }, [searchQuery, patients]);
+    }, [patientSearchQuery, patients]);
 
     const handleEdit = (patient) => {
         console.log('Selected Patient:', patient);
@@ -67,15 +79,6 @@ const AdminPanel = () => {
                 </Typography>
             )}
 
-            <TextField
-                label="Search"
-                variant="outlined"
-                fullWidth
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{ marginBottom: 3 }}
-            />
-
             {editMode && selectedPatient ? (
                 <EditPatients
                     patientData={selectedPatient}
@@ -94,6 +97,14 @@ const AdminPanel = () => {
                     <Typography variant="h5" component="h2" gutterBottom>
                         Patients
                     </Typography>
+                    <TextField
+                        label="Search Patients"
+                        variant="outlined"
+                        fullWidth
+                        value={patientSearchQuery}
+                        onChange={(e) => setPatientSearchQuery(e.target.value)}
+                        sx={{ marginBottom: 3 }}
+                    />
                     <TableContainer component={Paper}>
                         <Table>
                             <TableHead>
@@ -114,11 +125,11 @@ const AdminPanel = () => {
                                                     to={`/patient/${patient._id}`}
                                                     style={{
                                                         textDecoration: 'none',
-                                                        color: '#03035d',
-                                                        fontWeight: 'bold',
+                                                        color: '#03035d',  // 默认颜色
+                                                        fontWeight: 'bold',  // 字体加粗
                                                     }}
-                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
+                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
                                                 >
                                                     {patient.firstName}
                                                 </Link>
