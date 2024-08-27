@@ -129,11 +129,11 @@ const SuperAdminPanel = () => {
                                                         to={`/admin/${admin._id}`}
                                                         style={{
                                                             textDecoration: 'none',
-                                                            color: '#03035d',  // 默认颜色
-                                                            fontWeight: 'bold',  // 字体加粗
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
                                                         }}
-                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
-                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                     >
                                                         {admin.firstName || '-'}
                                                     </Link>
@@ -186,11 +186,11 @@ const SuperAdminPanel = () => {
                                                         to={`/patient/${patient._id}`}
                                                         style={{
                                                             textDecoration: 'none',
-                                                            color: '#03035d',  // 默认颜色
-                                                            fontWeight: 'bold',  // 字体加粗
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
                                                         }}
-                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}  // 悬停时颜色
-                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}  // 离开时恢复颜色
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                     >
                                                         {patient.firstName}
                                                     </Link>

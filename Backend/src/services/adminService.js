@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 import AdminModel from '../models/Admin.js';
 import UserModel from '../models/User.js';
-import User from "../models/User.js";
 
 export const register = async (adminData) => {
     const { email, password, firstName, lastName, role } = adminData;
@@ -59,7 +58,11 @@ export const readAdmin = async (adminID) => {
         throw error;
     }
 };
-
+export const updateAdmin = async (id, updateData) => {
+    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+    if (!admin) throw new Error('Admin not found');
+    return admin;
+};
 
 
 export const logout = () => {
@@ -89,16 +92,9 @@ export const getAllPatients = async () => {
         throw new Error('Error fetching all patients');
     }
 };
-
-export const updatePatient = async (id, updateData) => {
-    const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
-    if (!user) throw new Error('User not found');
-    return user;
-};
-
-export const readPatient = async (id) => {
+export const readPatient = async (patientID) => {
     try {
-        const user = await UserModel.findOne({ _id: id }).select('-password');
+        const user = await UserModel.findById(patientID).select('-password');
         if (!user) throw new Error('User not found');
         return user;
     } catch (error) {
@@ -106,9 +102,12 @@ export const readPatient = async (id) => {
         throw error;
     }
 };
-
-export const updateAdmin = async (id, updateData) => {
-    const admin = await AdminModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
-    if (!admin) throw new Error('Admin not found');
-    return admin;
+export const updatePatient = async (id, updateData) => {
+    const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
+    if (!user) throw new Error('User not found');
+    return user;
 };
+
+
+
+

@@ -18,16 +18,12 @@ const AdminSchema = new mongoose.Schema({
 
 AdminSchema.pre('save', async function (next) {
   if (this.isNew) {
-    // 生成唯一的 adminID
     this.adminID = crypto.randomInt(100000, 1000000).toString();
-
-    // 加密密码
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
   }
   next();
 });
 
-// 创建模型
 const AdminModel = mongoose.model('Admin', AdminSchema);
 export default AdminModel;

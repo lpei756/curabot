@@ -8,9 +8,9 @@ export const API_PATH = {
     update: buildApiPath('/api/admin/:id'),
     logout: buildApiPath('/api/admin/logout'),
     getAllAdmins: buildApiPath('/api/admin'),
-    getAllPatients: buildApiPath('/api/patients'),
-    readPatient: buildApiPath('/api/patients/:id'),
-    updatePatient: buildApiPath('/api/patients/:id'),
+    getAllPatients: buildApiPath('/api/patient'),
+    readPatient: buildApiPath('/api/patient/:id'),
+    updatePatient: buildApiPath('/api/patient/:id'),
   },
   auth: {
     login: buildApiPath('/api/auth/login'),

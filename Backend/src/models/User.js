@@ -43,7 +43,6 @@ const UserSchema = new mongoose.Schema({
 UserSchema.pre('save', async function (next) {
   if (this.isNew) {
     this.patientID = crypto.randomInt(100000, 1000000).toString();
-
     const letters = crypto.randomBytes(3).toString('hex').toUpperCase().slice(0, 3);
     const numbers = Math.floor(1000 + Math.random() * 9000);
     this.nhi = `${letters}${numbers}`;
