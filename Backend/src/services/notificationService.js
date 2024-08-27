@@ -20,12 +20,18 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
             throw new Error(`${receiverModel} not found`);
         }
 
+        // 获取发送者的姓名
+        const senderName = `${sender.firstName} ${sender.lastName}`;
+        const receiverName = `${receiver.firstName} ${receiver.lastName}`;
+
         // 创建新的通知
         const notification = new Notification({
             sender: senderId,
             senderModel,
+            senderName,
             receiver: receiverId,
             receiverModel,
+            receiverName,
             message,
             isRead: false,
             date: new Date(),
@@ -42,6 +48,7 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
         throw error;
     }
 };
+
 
 export const getUserNotifications = async (receiverId) => {
     try {

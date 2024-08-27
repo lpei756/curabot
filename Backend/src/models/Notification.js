@@ -5,6 +5,8 @@ const NotificationSchema = new mongoose.Schema({
     receiver: { type: mongoose.Schema.Types.ObjectId, refPath: 'receiverModel', required: true },
     senderModel: { type: String, required: true, enum: ['User', 'Doctor', 'Admin'] },
     receiverModel: { type: String, required: true, enum: ['User', 'Doctor', 'Admin'] },
+    senderName: { type: String, required: true },
+    receiverName: { type: String, required: true },
     message: { type: String, required: true },
     isRead: { type: Boolean, default: false },
     date: { type: Date, default: Date.now },
