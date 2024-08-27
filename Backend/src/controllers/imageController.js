@@ -41,18 +41,3 @@ export const removeImage = async (req, res) => {
     }
 };
 
-export const getImageByFilename = async (req, res) => {
-    try {
-        const { filename } = req.params;
-        const imageStream = await getImageStream(filename);
-
-        imageStream.on('error', (err) => {
-            return res.status(404).json({ message: 'Image not found' });
-        });
-
-        res.set('Content-Type', 'image/jpeg');
-        imageStream.pipe(res);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
