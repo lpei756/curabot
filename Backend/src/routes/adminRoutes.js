@@ -7,8 +7,8 @@ import {
     logout,
     getAllAdmins,
     getAllPatients,
-    updatePatient,
-    readPatient
+    readPatient,
+    updatePatient
 } from '../controllers/adminController.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
 import {ADMIN_PATHS, buildPathWithBase} from './path.js';
