@@ -8,6 +8,7 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import chatRoutes from './routes/chatRoutes.js';
 import imageRoutes from "./routes/imageRoutes.js";
 import adminRoutes from './routes/adminRoutes.js';
+import notificationRoutes from './routes/notificationRoutes.js';
 import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
 
@@ -30,6 +31,7 @@ app.use('/api/doctors', doctorRoutes);
 app.use('/api', chatRoutes);
 app.use('/api/images', imageRoutes);
 app.use('/api', adminRoutes);
+app.use('/api', notificationRoutes);
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 app.use('/api/feedback', feedbackRoutes);
 

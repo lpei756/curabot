@@ -13,6 +13,10 @@ const AdminSchema = new mongoose.Schema({
     enum: ['superadmin', 'doctor', 'nurse'],
     required: true
   },
+  notifications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Notification',
+  }],
   createdAt: { type: Date, default: Date.now }
 });
 

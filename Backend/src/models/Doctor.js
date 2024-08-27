@@ -9,6 +9,10 @@ const DoctorSchema = new mongoose.Schema({
   clinic: { type: mongoose.Schema.Types.ObjectId, ref: 'Clinic', required: true },
   languagesSpoken: [{ type: String }],
   specialty: { type: String },
+  notifications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Notification',
+  }],
 });
 
 const DoctorModel = mongoose.model('Doctor', DoctorSchema);

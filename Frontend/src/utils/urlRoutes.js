@@ -30,6 +30,12 @@ export const API_PATH = {
   chat: {
     send: buildApiPath('/api/chat')
   },
+  notification: {
+    sendMessage: buildApiPath('/api/notification/send'),
+    getUserNotifications: buildApiPath('/api/notification/user/:receiverId'),
+    markAsRead: buildApiPath('/api/notification/:notificationId/read'),
+    delete: buildApiPath('/api/notification/:notificationId/delete'),
+  },
   clinic: {
     all: buildApiPath('/api/clinics'),
     read: buildApiPath('/api/clinics/:clinicId')

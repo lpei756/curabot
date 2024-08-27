@@ -38,6 +38,10 @@ const UserSchema = new mongoose.Schema({
     status: { type: String, default: 'scheduled', enum: ['scheduled', 'cancelled'] }
   }],
   images: [{ type: String }],
+  notifications: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Notification',
+  }],
 });
 
 UserSchema.pre('save', async function (next) {
