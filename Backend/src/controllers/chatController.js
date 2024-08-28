@@ -6,6 +6,8 @@ import { getDoctorByIdService } from '../services/doctorService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
+import { saveChatMessage } from '../services/chatHistoryService.js';
+import ChatSession from '../models/ChatSession.js';
 
 const sessionStore = {};
 
@@ -25,6 +27,18 @@ export const handleChat = async (req, res) => {
     const authToken = req.headers.authorization;
     const userLocation = req.body.userLocation;
     let sessionId = req.body.sessionId; // Use sessionId from request body if provided
+    let chatSession = await ChatSession.findOne({ sessionId });
+    let userId = null;
+    let isAnonymous = true;
+
+    if (authToken) {
+      try {
+        userId = extractUserIdFromToken(authToken);
+        isAnonymous = false;
+      } catch (error) {
+        return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
+      }
+    }
 
     // Check if sessionId is provided and exists in sessionStore
     if (sessionId && sessionStore[sessionId]) {
@@ -48,6 +62,8 @@ export const handleChat = async (req, res) => {
       console.log(`SessionId not found in store. Created new session: ${sessionId}`);
       updateSession(sessionId);
     }
+
+    await saveChatMessage({ sessionId, userId, message: userMessage, sender: 'user', isAnonymous });
 
     const appointmentRequestKeywords = [
       'show my appointments',
@@ -258,6 +274,7 @@ export const handleChat = async (req, res) => {
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
+      await saveChatMessage({ sessionId, userId, message: aiResponse, sender: 'bot', isAnonymous });
       return res.json({ reply: aiResponse, sessionId });
     } catch (error) {
       return res.status(500).json({ error: 'Error processing chat', sessionId });
