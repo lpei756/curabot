@@ -7,7 +7,7 @@ console.log('Stored Token:', tokenStorage.get());
 export const login = async (email, password) => {
   try {
     const url = API_PATH.auth.login;
-    console.log('Request URL:', axiosApiInstance.defaults.baseURL + url);
+    console.log('Request URL:', url);
     const response = await axiosApiInstance.post(url, { email, password });
     tokenStorage.save(response.data.token);
     return response.data;

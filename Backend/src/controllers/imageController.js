@@ -6,13 +6,10 @@ export const saveImage = async (req, res) => {
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded.' });
         }
-
         const userId = req.body.userId;
-
         if (!userId) {
             return res.status(400).json({ message: 'User ID is required.' });
         }
-
         const savedImage = await saveImageService(userId, req.file.filename);
         res.status(201).json(savedImage);
     } catch (error) {
