@@ -16,14 +16,15 @@ function ReadUser({ userId }) {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [expandedBlock, setExpandedBlock] = useState(null);
-    useNavigate();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadUserData = async () => {
             try {
                 const data = await fetchUserData(userId);
                 setUserData(data);
-                if (data.gp) {
+
+                if (data.gp && data.gp !== 'Not assigned') {
                     const doctor = await getDoctorById(data.gp);
                     setDoctorName(`${doctor.firstName} ${doctor.lastName}`);
                 }
@@ -41,27 +42,32 @@ function ReadUser({ userId }) {
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
-    if (loading) return (
-        <Box
-            sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                height: '100vh',
-            }}
-        >
-            <Lottie
-                animationData={animationData}
-                style={{
-                    width: '200px',
-                    height: '200px',
-                    zIndex: 1,
-                    pointerEvents: 'none'
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
                 }}
-            />
-        </Box>
-    );
-    if (error) return <Typography>Error: {error}</Typography>;
+            >
+                <Lottie
+                    animationData={animationData}
+                    style={{
+                        width: '200px',
+                        height: '200px',
+                        zIndex: 1,
+                        pointerEvents: 'none',
+                    }}
+                />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return <Typography>Error: {error}</Typography>;
+    }
 
     return (
         <Box
@@ -74,7 +80,7 @@ function ReadUser({ userId }) {
                 margin: 'auto',
                 padding: '20px',
                 backgroundColor: '#f8f6f6',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
             }}
         >
             {editMode ? (
@@ -132,7 +138,7 @@ function ReadUser({ userId }) {
                         isOpen={expandedBlock === 'gp'}
                         onClick={() => toggleBlock('gp')}
                     >
-                        <Typography><strong>GP:</strong> {doctorName || 'N/A'}</Typography>
+                        <Typography><strong>GP:</strong> {doctorName || 'Not Assigned'}</Typography>
                     </Block>
 
                     <Block
@@ -175,7 +181,7 @@ function Block({ title, isOpen, onClick, children }) {
                 borderRadius: '10px',
                 cursor: 'pointer',
                 backgroundColor: '#f8f6f6',
-                boxShadow: isOpen ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
+                boxShadow: isOpen ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none',
             }}
         >
             <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>{title}</Typography>
