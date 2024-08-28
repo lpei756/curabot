@@ -5,12 +5,49 @@ import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailab
 import { getDoctorByIdService } from '../services/doctorService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
+import { v4 as uuidv4 } from 'uuid';
+
+const sessionStore = {};
+
+const isSessionExpired = (lastActivityTime) => {
+  const currentTime = new Date();
+  return (currentTime - new Date(lastActivityTime)) > 15 * 60 * 1000;  // 15 minutes in milliseconds
+};
+
+const updateSession = (sessionId) => {
+  const currentTime = new Date();
+  sessionStore[sessionId] = currentTime;
+};
 
 export const handleChat = async (req, res) => {
   try {
     const userMessage = req.body.message.toLowerCase();
     const authToken = req.headers.authorization;
     const userLocation = req.body.userLocation;
+    let sessionId = req.body.sessionId; // Use sessionId from request body if provided
+
+    // Check if sessionId is provided and exists in sessionStore
+    if (sessionId && sessionStore[sessionId]) {
+      // Check if the session has expired
+      if (isSessionExpired(sessionStore[sessionId])) {
+        console.log(`Session ${sessionId} expired.`);
+        sessionId = uuidv4();  // Generate new session ID if expired
+        console.log(`Created new session due to expiry: ${sessionId}`);
+      } else {
+        console.log(`Session ${sessionId} is still active.`);
+        updateSession(sessionId);  // Update activity timestamp for active session
+      }
+    } else if (!sessionId) {
+      // No sessionId provided, generate a new session ID
+      sessionId = uuidv4();
+      console.log(`No sessionId provided. Created new session: ${sessionId}`);
+      updateSession(sessionId);
+    } else {
+      // SessionId provided but not found in store, generate a new session ID
+      sessionId = uuidv4();
+      console.log(`SessionId not found in store. Created new session: ${sessionId}`);
+      updateSession(sessionId);
+    }
 
     const appointmentRequestKeywords = [
       'show my appointments',
@@ -53,42 +90,42 @@ export const handleChat = async (req, res) => {
 
     if (matchesKeyword(userMessage, appointmentRequestKeywords)) {
       if (!authToken) {
-        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.' });
+        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.', sessionId });
       }
 
       try {
         const userId = extractUserIdFromToken(authToken);
         if (!userId) {
-          return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+          return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
         }
 
         const appointmentsReply = await getAppointmentsForUser(userId, authToken);
-        return res.json({ reply: appointmentsReply });
+        return res.json({ reply: appointmentsReply, sessionId });
       } catch (error) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
       }
     }
 
     if (matchesKeyword(userMessage, autoAppointmentKeywords)) {
       if (!authToken) {
-        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.' });
+        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to schedule an appointment.', sessionId });
       }
 
       if (!userLocation) {
-        return res.status(400).json({ error: 'Bad Request: User location is required to find available slots.' });
+        return res.status(400).json({ error: 'Bad Request: User location is required to find available slots.', sessionId });
       }
 
       try {
         const availableSlots = await getAllAvailableSlots();
         if (!availableSlots || availableSlots.length === 0) {
           return res.json({
-            reply: 'Sorry, there are no available slots at the moment. Please try again later.'
+            reply: 'Sorry, there are no available slots at the moment. Please try again later.', sessionId
           });
         }
 
         const userId = extractUserIdFromToken(authToken);
         if (!userId) {
-          return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+          return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
         }
 
         const user = await readUser(userId);
@@ -96,13 +133,14 @@ export const handleChat = async (req, res) => {
         const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
         if (!nearestSlot) {
           return res.json({
-            reply: 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.'
+            reply: 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.',
+            sessionId
           });
         }
 
         const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
         if (doctorResult.error) {
-          return res.status(doctorResult.status).json({ message: doctorResult.message });
+          return res.status(doctorResult.status).json({ message: doctorResult.message, sessionId });
         }
 
         const clinicId = doctorResult.doctor.clinic;
@@ -142,22 +180,22 @@ export const handleChat = async (req, res) => {
                       })()
                   ">Book Now</button>
                   <p>If you are not satisfied with this slot, you can <a href="http://localhost:5173/appointment/new">choose a different slot here</a>.</p>
-              `
+              `, sessionId
         });
       } catch (error) {
         console.error('Error fetching or processing available slots:', error);
-        return res.status(500).json({ error: 'Error fetching available slots' });
+        return res.status(500).json({ error: 'Error fetching available slots', sessionId });
       }
     }
 
     if (matchesKeyword(userMessage, cancelAppointmentKeywords)) {
       if (!authToken) {
-        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view or cancel your appointments.' });
+        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view or cancel your appointments.', sessionId });
       }
 
       const userId = extractUserIdFromToken(authToken);
       if (!userId) {
-        return res.status(401).json({ error: 'Unauthorized: Invalid token' });
+        return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
       }
 
       try {
@@ -179,7 +217,7 @@ export const handleChat = async (req, res) => {
         });
 
         if (!appointments || appointments.length === 0) {
-          return res.json({ reply: 'You have no scheduled appointments to cancel.' });
+          return res.json({ reply: 'You have no scheduled appointments to cancel.', sessionId });
         }
 
         let reply = 'Here are your scheduled appointments. Click "Cancel" to cancel any appointment:\n';
@@ -211,21 +249,21 @@ export const handleChat = async (req, res) => {
               `;
         });
 
-        return res.json({ reply });
+        return res.json({ reply, sessionId });
       } catch (error) {
         console.error('Error fetching or processing appointments:', error);
-        return res.status(500).json({ error: 'Error fetching appointments' });
+        return res.status(500).json({ error: 'Error fetching appointments', sessionId });
       }
     }
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
-      return res.json({ reply: aiResponse });
+      return res.json({ reply: aiResponse, sessionId });
     } catch (error) {
-      return res.status(500).json({ error: 'Error processing chat' });
+      return res.status(500).json({ error: 'Error processing chat', sessionId });
     }
   } catch (error) {
     console.error('Error processing chat:', error);
-    return res.status(500).json({ error: 'Internal Server Error' });
+    return res.status(500).json({ error: 'Internal Server Error', sessionId });
   }
 };
