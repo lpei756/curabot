@@ -36,7 +36,7 @@ export const createAppointment = async (req, res) => {
     await User.findByIdAndUpdate(userId, {
       $push: {
         appointments: {
-          appointmentID: appointment.appointment._id,
+          appointmentID: appointment.appointment.appointmentID,
           date: appointment.appointment.dateTime
         }
       }
