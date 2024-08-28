@@ -15,7 +15,7 @@ import {
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
-import EditPatients from './EditPatients';
+import EditPatient from './EditPatient.jsx';
 import { Link } from 'react-router-dom';
 
 const AdminPanel = () => {
@@ -80,7 +80,7 @@ const AdminPanel = () => {
             )}
 
             {editMode && selectedPatient ? (
-                <EditPatients
+                <EditPatient
                     patientData={selectedPatient}
                     setPatientData={(updatedPatient) => {
                         setPatients((prevPatients) =>

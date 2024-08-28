@@ -23,7 +23,7 @@ function Notification({ userId }) {
             }
         };
 
-        if (userId) { // 确保 userId 存在
+        if (userId) {
             loadNotifications();
         }
     }, [userId]);
@@ -90,7 +90,7 @@ function Notification({ userId }) {
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
                         <Box key={notification._id} sx={{ marginBottom: '10px' }}>
-                            <Typography><strong>From:</strong> {notification.senderName}</Typography> {/* 使用 senderName */}
+                            <Typography><strong>From:</strong> {notification.senderName}</Typography>
                             <Typography><strong>Message:</strong> {notification.message}</Typography>
                             <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
                             <Button
@@ -175,7 +175,6 @@ function Block({ title, isOpen, onClick, children }) {
     );
 }
 
-// 添加 PropTypes 验证
 Block.propTypes = {
     title: PropTypes.string.isRequired,
     isOpen: PropTypes.bool.isRequired,

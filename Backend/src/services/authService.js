@@ -19,6 +19,10 @@ export const register = async (userData) => {
         emergencyContact,
         medicalHistory,
         insurance,
+        gp,
+        appointments,
+        images,
+        notifications,
     } = userData;
 
     const existingUser = await User.findOne({ email });
@@ -42,6 +46,10 @@ export const register = async (userData) => {
         emergencyContact,
         medicalHistory,
         insurance,
+        gp,
+        appointments,
+        images,
+        notifications,
     });
 
     await user.save();
@@ -84,23 +92,22 @@ export const getUserGP = async (id) => {
         throw new Error('Invalid userId');
       }
       const user = await User.findById(id);
-  
+
       if (!user) {
         throw new Error('User not found');
       }
-  
+
       console.log("User found:", user);
-  
+
       const gp = await Doctor.findOne({ doctorID: user.gp });
-  
+
       if (!gp) {
         throw new Error('GP not found');
       }
-  
+
       return gp;
     } catch (error) {
       console.error('Error fetching GP from service:', error);
       throw error;
     }
   };
-  
