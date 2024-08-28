@@ -17,6 +17,7 @@ export const handleChat = async (req, res) => {
       'list my appointments',
       'my appointments',
       'appointments',
+      'appointment'
     ];
 
     const autoAppointmentKeywords = [
@@ -24,7 +25,9 @@ export const handleChat = async (req, res) => {
       'book appointment',
       'find available slot',
       'auto appointment',
-      'booking'
+      'booking',
+      'book',
+      'schedule'
     ];
 
     const cancelAppointmentKeywords = [
@@ -32,7 +35,9 @@ export const handleChat = async (req, res) => {
       'remove appointment',
       'delete appointment',
       'cancel my appointment',
-      'cancel'
+      'cancel',
+      'remove',
+      'delete'
     ];
 
     const threshold = 5;
@@ -40,6 +45,11 @@ export const handleChat = async (req, res) => {
     const matchesKeyword = (message, keywords) => {
       return keywords.some(keyword => leven(message, keyword) <= threshold);
     };
+
+    if (userMessage === 'crazy thursday') {
+      const moneyEmojis = '💰'.repeat(50);
+      return res.json({ reply: moneyEmojis });
+    }
 
     if (matchesKeyword(userMessage, appointmentRequestKeywords)) {
       if (!authToken) {
