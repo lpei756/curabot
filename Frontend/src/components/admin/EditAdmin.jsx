@@ -4,7 +4,7 @@ import { Typography, Box, TextField, Button } from '@mui/material';
 import { updateAdminData } from '../../services/adminService';
 import { useNavigate } from 'react-router-dom';
 
-function EditAdmins({ adminData, setAdminData, adminId, setEditMode }) {
+function EditAdmin({ adminData, setAdminData, adminId, setEditMode }) {
     const [updatedData, setUpdatedData] = useState({
         firstName: adminData.firstName,
         lastName: adminData.lastName,
@@ -119,11 +119,11 @@ function EditAdmins({ adminData, setAdminData, adminId, setEditMode }) {
     );
 }
 
-EditAdmins.propTypes = {
+EditAdmin.propTypes = {
     adminData: PropTypes.object.isRequired,
     setAdminData: PropTypes.func.isRequired,
     adminId: PropTypes.string.isRequired,
     setEditMode: PropTypes.func.isRequired,
 };
 
-export default EditAdmins;
+export default EditAdmin;
