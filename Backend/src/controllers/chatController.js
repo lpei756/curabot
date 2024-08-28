@@ -12,7 +12,7 @@ const sessionStore = {};
 
 const isSessionExpired = (lastActivityTime) => {
   const currentTime = new Date();
-  return (currentTime - new Date(lastActivityTime)) > 15 * 60 * 1000;  // 15 minutes in milliseconds
+  return (currentTime - new Date(lastActivityTime)) > 15 * 60 * 1000;
 };
 
 const updateSession = (sessionId) => {
@@ -25,7 +25,7 @@ export const handleChat = async (req, res) => {
     const userMessage = req.body.message.toLowerCase();
     const authToken = req.headers.authorization;
     const userLocation = req.body.userLocation;
-    let sessionId = req.body.sessionId || uuidv4();  // Generate a new session ID if not provided
+    let sessionId = req.body.sessionId || uuidv4();
     let userId = null;
     let isAnonymous = true;
 
@@ -40,24 +40,20 @@ export const handleChat = async (req, res) => {
 
     if (sessionStore[sessionId] && !isSessionExpired(sessionStore[sessionId])) {
       console.log(`Session ${sessionId} is still active.`);
-      updateSession(sessionId);  // Update activity timestamp for active session
+      updateSession(sessionId);
     } else {
-      // Session expired or not found in store, create a new session
       sessionId = uuidv4();
       console.log(`Created new session: ${sessionId}`);
       updateSession(sessionId);
 
-      // Create new chat session in the database
       await ChatSession.create({ _id: sessionId, userId, messages: [] });
     }
 
-    // Save the user's message to the database
     await ChatSession.findByIdAndUpdate(
       sessionId,
       { $push: { messages: { sender: 'user', message: userMessage, isAnonymous } } }
     );
 
-    // Continue with the existing chatbot logic...
     const appointmentRequestKeywords = [
       'show my appointments',
       'list my appointments',
@@ -268,7 +264,6 @@ export const handleChat = async (req, res) => {
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
 
-      // Save the bot's response to the database
       await ChatSession.findByIdAndUpdate(
         sessionId,
         { $push: { messages: { sender: 'bot', message: aiResponse, isAnonymous } } }

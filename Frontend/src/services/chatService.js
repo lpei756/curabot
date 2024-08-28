@@ -10,6 +10,9 @@ export const sendChatMessage = async (message, authToken, userLocation) => {
     );
     return response;
   } catch (error) {
+    if (error.response && error.response.status === 401) {
+      throw new Error('Unauthorized');
+    }
     console.error('Error sending chat message:', error);
     throw error;
   }
