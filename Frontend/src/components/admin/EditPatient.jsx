@@ -4,7 +4,7 @@ import { Typography, Box, TextField, Button } from '@mui/material';
 import { updatePatientData } from '../../services/adminService';
 import { useNavigate } from 'react-router-dom';
 
-function EditPatients({ patientData, setPatientData, patientId, setEditMode, returnPath }) {
+function EditPatient({ patientData, setPatientData, patientId, setEditMode, returnPath }) {
     const [updatedData, setUpdatedData] = useState({
         firstName: patientData.firstName,
         lastName: patientData.lastName,
@@ -170,7 +170,7 @@ function EditPatients({ patientData, setPatientData, patientId, setEditMode, ret
     );
 }
 
-EditPatients.propTypes = {
+EditPatient.propTypes = {
     returnPath: PropTypes.string.isRequired,
     patientData: PropTypes.object.isRequired,
     setPatientData: PropTypes.func.isRequired,
@@ -178,4 +178,4 @@ EditPatients.propTypes = {
     setEditMode: PropTypes.func.isRequired,
 };
 
-export default EditPatients;
+export default EditPatient;

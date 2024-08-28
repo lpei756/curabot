@@ -3,7 +3,7 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
-import EditPatients from './EditPatients';
+import EditPatient from './EditPatient.jsx';
 import EditAdmins from './EditAdmins';
 import { Link } from 'react-router-dom';
 
@@ -61,6 +61,7 @@ const SuperAdminPanel = () => {
         setFilteredAdmins(filtered);
     }, [adminSearchQuery, admins]);
 
+
     useEffect(() => {
         const filtered = patients.filter((patient) => {
             return (
@@ -73,15 +74,6 @@ const SuperAdminPanel = () => {
         setFilteredPatients(filtered);
     }, [patientSearchQuery, patients]);
 
-    const handleEditPatient = (patient) => {
-        console.log('Selected Patient:', patient);
-        if (patient && patient._id) {
-            setSelectedItem(patient);
-            setEditMode('patient');
-        } else {
-            console.error('Invalid patient selected:', patient);
-        }
-    };
 
     const handleEditAdmin = (admin) => {
         console.log('Selected Admin:', admin);
@@ -90,6 +82,15 @@ const SuperAdminPanel = () => {
             setEditMode('admin');
         } else {
             console.error('Invalid admin selected:', admin);
+        }
+    };
+    const handleEdit = (patient) => {
+        console.log('Selected Patient:', patient);
+        if (patient && patient._id) {
+            setSelectedItem(patient);
+            setEditMode('patient');
+        } else {
+            console.error('Invalid patient selected:', patient);
         }
     };
 
@@ -106,7 +107,7 @@ const SuperAdminPanel = () => {
             )}
 
             {editMode === 'patient' && selectedItem ? (
-                <EditPatients
+                <EditPatient
                     patientData={selectedItem}
                     setPatientData={(updatedPatient) => {
                         setPatients((prevPatients) =>
@@ -247,7 +248,7 @@ const SuperAdminPanel = () => {
                                                 <TableCell>{patient.phone || '-'}</TableCell>
                                                 <TableCell>
                                                     <IconButton
-                                                        onClick={() => handleEditPatient(patient)}
+                                                        onClick={() => handleEdit(patient)}
                                                         color="primary"
                                                         aria-label="edit patient"
                                                     >
