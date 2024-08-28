@@ -7,9 +7,11 @@ import { fetchUserData } from '../../services/userService';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
+import { getDoctorById } from '../../services/doctorService';
 
 function ReadUser({ userId }) {
     const [userData, setUserData] = useState(null);
+    const [doctorName, setDoctorName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
@@ -21,6 +23,10 @@ function ReadUser({ userId }) {
             try {
                 const data = await fetchUserData(userId);
                 setUserData(data);
+                if (data.gp) {
+                    const doctor = await getDoctorById(data.gp);
+                    setDoctorName(`${doctor.firstName} ${doctor.lastName}`);
+                }
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -35,17 +41,26 @@ function ReadUser({ userId }) {
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
-    if (loading) return <Typography>
-        <Lottie
-            animationData={animationData}
-            style={{
-                width: '200px',
-                height: '200px',
-                zIndex: 1,
-                pointerEvents: 'none'
+    if (loading) return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
             }}
-        />
-    </Typography>;
+        >
+            <Lottie
+                animationData={animationData}
+                style={{
+                    width: '200px',
+                    height: '200px',
+                    zIndex: 1,
+                    pointerEvents: 'none'
+                }}
+            />
+        </Box>
+    );
     if (error) return <Typography>Error: {error}</Typography>;
 
     return (
@@ -117,7 +132,7 @@ function ReadUser({ userId }) {
                         isOpen={expandedBlock === 'gp'}
                         onClick={() => toggleBlock('gp')}
                     >
-                        <Typography><strong>GP:</strong> {userData.gp}</Typography>
+                        <Typography><strong>GP:</strong> {doctorName || 'N/A'}</Typography>
                     </Block>
 
                     <Block
