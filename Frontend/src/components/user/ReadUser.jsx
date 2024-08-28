@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, Collapse } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay';
 import { fetchUserData } from '../../services/userService';
 import Lottie from 'lottie-react';
@@ -16,7 +15,6 @@ function ReadUser({ userId }) {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [expandedBlock, setExpandedBlock] = useState(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const loadUserData = async () => {

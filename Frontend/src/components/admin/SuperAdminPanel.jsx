@@ -4,7 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
-import EditAdmins from './EditAdmins';
+import EditAdmin from './EditAdmin.jsx';
 import { Link } from 'react-router-dom';
 
 const SuperAdminPanel = () => {
@@ -15,7 +15,7 @@ const SuperAdminPanel = () => {
     const [filteredAdmins, setFilteredAdmins] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [error, setError] = useState(null);
-    const [editMode, setEditMode] = useState(null); // null, 'admin', or 'patient'
+    const [editMode, setEditMode] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const { role } = useContext(AdminContext);
 
@@ -74,7 +74,6 @@ const SuperAdminPanel = () => {
         setFilteredPatients(filtered);
     }, [patientSearchQuery, patients]);
 
-
     const handleEditAdmin = (admin) => {
         console.log('Selected Admin:', admin);
         if (admin && admin._id) {
@@ -122,7 +121,7 @@ const SuperAdminPanel = () => {
                     setEditMode={setEditMode}
                 />
             ) : editMode === 'admin' && selectedItem ? (
-                <EditAdmins
+                <EditAdmin
                     adminData={selectedItem}
                     setAdminData={(updatedAdmin) => {
                         setAdmins((prevAdmins) =>
