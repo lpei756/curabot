@@ -16,6 +16,7 @@ import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
+import { tokenStorage, userDataStorage } from '../../utils/localStorage';
 
 const MenuIconButton = styled('button')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -139,11 +140,14 @@ function AppHeader() {
     };
 
     const handleLogout = () => {
+        tokenStorage.remove();
+        userDataStorage.remove();
+
         localStorage.removeItem('token');
         localStorage.removeItem('isAdminLoggedIn');
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);
-        navigate('/'); // 在用户退出登录后跳转到主页
+        navigate('/');
     };
 
     return (
