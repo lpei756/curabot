@@ -8,7 +8,7 @@ const validationOptions = {
   stripUnknown: false
 };
 
-const schemaValidator = (path, useJoiError = true) => {
+const schemaValidator = (path = true) => {
   console.log(`Initializing schemaValidator for path: ${path}`);
   const schema = schemas[path];
   const paramsSchema = schemas[path + '_params'];
@@ -27,7 +27,6 @@ const schemaValidator = (path, useJoiError = true) => {
       return next();
     }
 
-    // 仅验证路径参数，如果 paramsSchema 存在
     if (paramsSchema) {
       console.log('Validating request params:', req.params);
       const { error, value } = paramsSchema.validate(req.params, validationOptions);
@@ -44,10 +43,9 @@ const schemaValidator = (path, useJoiError = true) => {
         });
       }
 
-      req.params = value; // 更新验证后的路径参数
+      req.params = value;
     }
 
-    // 如果路径参数验证成功，且不需要验证请求体，直接跳过请求体的验证
     if (!paramsSchema && schema) {
       console.log('Validating request body:', req.body);
       const { error, value } = schema.validate(req.body, validationOptions);

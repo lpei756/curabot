@@ -18,7 +18,6 @@ const NotificationSchema = new mongoose.Schema({
 });
 
 NotificationSchema.pre('save', function (next) {
-    // 在保存前可以添加更多的处理逻辑
     next();
 });
 
