@@ -2,10 +2,10 @@ import axiosApiInstance from '../utils/axiosInstance.js';
 import { API_PATH } from '../utils/urlRoutes.js';
 import axios from 'axios';
 
-export const sendChatMessage = async (message, authToken, userLocation) => {
+export const sendChatMessage = async (message, authToken, userLocation, sessionId) => {
   try {
     const response = await axiosApiInstance.post(API_PATH.chat.send, 
-      { message, userLocation }, 
+      { message, userLocation, sessionId }, 
       { headers: { Authorization: `Bearer ${authToken}` } }
     );
     return response;

@@ -45,6 +45,7 @@ function ChatBot({ toggleChatbot }) {
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [sessionId, setSessionId] = useState(null);
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
 
@@ -76,26 +77,29 @@ function ChatBot({ toggleChatbot }) {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
         if (messageToSend.trim() === '') return;
-    
+
         setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'user', message: messageToSend }
         ]);
         setInputValue('');
         setIsLoading(true);
-    
+
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-    
+
             const userLocation = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
-    
+
             try {
-                const response = await sendChatMessage(messageToSend, authToken, userLocation);
+                const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
+                if (!sessionId && response.data.sessionId) {
+                    setSessionId(response.data.sessionId);
+                }
                 setMessages((prevMessages) => [
                     ...prevMessages,
                     { type: 'bot', message: response.data.reply, isHtml: true }
@@ -271,16 +275,16 @@ function ChatBot({ toggleChatbot }) {
                     ))}
                     {isLoading && (
                         <Box display="flex" justifyContent="center" p={2}>
-                                <Lottie
-                                    animationData={animationData}
-                                    style={{
-                                        width: '100px',
-                                        height: '100px',
-                                        zIndex: 1,
-                                        justifyContent: 'center',
-                                        pointerEvents: 'auto'
-                                    }}
-                                />
+                            <Lottie
+                                animationData={animationData}
+                                style={{
+                                    width: '100px',
+                                    height: '100px',
+                                    zIndex: 1,
+                                    justifyContent: 'center',
+                                    pointerEvents: 'auto'
+                                }}
+                            />
                         </Box>
                     )}
                     <div ref={messagesEndRef} />
