@@ -6,7 +6,6 @@ import { getDoctorByIdService } from '../services/doctorService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
-import { saveChatMessage } from '../services/chatHistoryService.js';
 import ChatSession from '../models/ChatSession.js';
 
 const sessionStore = {};
@@ -26,8 +25,7 @@ export const handleChat = async (req, res) => {
     const userMessage = req.body.message.toLowerCase();
     const authToken = req.headers.authorization;
     const userLocation = req.body.userLocation;
-    let sessionId = req.body.sessionId; // Use sessionId from request body if provided
-    let chatSession = await ChatSession.findOne({ sessionId });
+    let sessionId = req.body.sessionId || uuidv4();  // Generate a new session ID if not provided
     let userId = null;
     let isAnonymous = true;
 
@@ -40,31 +38,26 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    // Check if sessionId is provided and exists in sessionStore
-    if (sessionId && sessionStore[sessionId]) {
-      // Check if the session has expired
-      if (isSessionExpired(sessionStore[sessionId])) {
-        console.log(`Session ${sessionId} expired.`);
-        sessionId = uuidv4();  // Generate new session ID if expired
-        console.log(`Created new session due to expiry: ${sessionId}`);
-      } else {
-        console.log(`Session ${sessionId} is still active.`);
-        updateSession(sessionId);  // Update activity timestamp for active session
-      }
-    } else if (!sessionId) {
-      // No sessionId provided, generate a new session ID
-      sessionId = uuidv4();
-      console.log(`No sessionId provided. Created new session: ${sessionId}`);
-      updateSession(sessionId);
+    if (sessionStore[sessionId] && !isSessionExpired(sessionStore[sessionId])) {
+      console.log(`Session ${sessionId} is still active.`);
+      updateSession(sessionId);  // Update activity timestamp for active session
     } else {
-      // SessionId provided but not found in store, generate a new session ID
+      // Session expired or not found in store, create a new session
       sessionId = uuidv4();
-      console.log(`SessionId not found in store. Created new session: ${sessionId}`);
+      console.log(`Created new session: ${sessionId}`);
       updateSession(sessionId);
+
+      // Create new chat session in the database
+      await ChatSession.create({ _id: sessionId, userId, messages: [] });
     }
 
-    await saveChatMessage({ sessionId, userId, message: userMessage, sender: 'user', isAnonymous });
+    // Save the user's message to the database
+    await ChatSession.findByIdAndUpdate(
+      sessionId,
+      { $push: { messages: { sender: 'user', message: userMessage, isAnonymous } } }
+    );
 
+    // Continue with the existing chatbot logic...
     const appointmentRequestKeywords = [
       'show my appointments',
       'list my appointments',
@@ -101,7 +94,7 @@ export const handleChat = async (req, res) => {
 
     if (userMessage === 'crazy thursday') {
       const moneyEmojis = '💰'.repeat(50);
-      return res.json({ reply: moneyEmojis });
+      return res.json({ reply: moneyEmojis, sessionId });
     }
 
     if (matchesKeyword(userMessage, appointmentRequestKeywords)) {
@@ -274,7 +267,13 @@ export const handleChat = async (req, res) => {
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
-      await saveChatMessage({ sessionId, userId, message: aiResponse, sender: 'bot', isAnonymous });
+
+      // Save the bot's response to the database
+      await ChatSession.findByIdAndUpdate(
+        sessionId,
+        { $push: { messages: { sender: 'bot', message: aiResponse, isAnonymous } } }
+      );
+
       return res.json({ reply: aiResponse, sessionId });
     } catch (error) {
       return res.status(500).json({ error: 'Error processing chat', sessionId });
@@ -282,5 +281,22 @@ export const handleChat = async (req, res) => {
   } catch (error) {
     console.error('Error processing chat:', error);
     return res.status(500).json({ error: 'Internal Server Error', sessionId });
+  }
+};
+
+export const fetchUserChatHistories = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const chatSessions = await ChatSession.find({ userId });
+
+    if (!chatSessions || chatSessions.length === 0) {
+      return res.status(404).json({ error: 'No chat history found for this user.' });
+    }
+
+    return res.json({ chatSessions });
+  } catch (error) {
+    console.error('Error fetching user chat histories:', error);
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
