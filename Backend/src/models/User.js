@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
   appointments: [{
     appointmentID: String,
     date: Date,
-    status: { type: String, default: 'scheduled', enum: ['scheduled', 'cancelled'] }
+    status: { type: String, default: 'Scheduled', enum: ['Scheduled', 'Cancelled'] }
   }],
   images: [{ type: String }],
   notifications: [{
