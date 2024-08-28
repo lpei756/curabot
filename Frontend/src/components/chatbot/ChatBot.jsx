@@ -76,29 +76,43 @@ function ChatBot({ toggleChatbot }) {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
         if (messageToSend.trim() === '') return;
-
+    
         setMessages((prevMessages) => [
             ...prevMessages,
             { type: 'user', message: messageToSend }
         ]);
         setInputValue('');
         setIsLoading(true);
-
+    
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-
+    
             const userLocation = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
-
-            const response = await sendChatMessage(messageToSend, authToken, userLocation);
-            setMessages((prevMessages) => [
-                ...prevMessages,
-                { type: 'bot', message: response.data.reply, isHtml: true }
-            ]);
+    
+            try {
+                const response = await sendChatMessage(messageToSend, authToken, userLocation);
+                setMessages((prevMessages) => [
+                    ...prevMessages,
+                    { type: 'bot', message: response.data.reply, isHtml: true }
+                ]);
+            } catch (error) {
+                if (error.message === 'Unauthorized') {
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        { type: 'bot', message: 'Please log in to continue your request.' }
+                    ]);
+                } else {
+                    setMessages((prevMessages) => [
+                        ...prevMessages,
+                        { type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+                    ]);
+                }
+            }
         } catch (error) {
             console.error('Error:', error);
             setMessages((prevMessages) => [
