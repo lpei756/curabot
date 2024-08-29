@@ -1,5 +1,5 @@
 import leven from 'leven';
-import { getAppointmentsForUser, processChatWithOpenAI } from '../services/chatService.js';
+import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
 import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
@@ -291,5 +291,21 @@ export const fetchUserChatHistories = async (req, res) => {
   } catch (error) {
     console.error('Error fetching user chat histories:', error);
     return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
+export const fetchChatHistoryBySessionId = async (req, res) => {
+  try {
+    const { sessionId } = req.params;
+    const chatSession = await getHistoryBySessionId(sessionId);
+
+    if (!chatSession) {
+      return res.status(404).json({ error: 'Chat session not found' });
+    }
+
+    res.json(chatSession);
+  } catch (error) {
+    console.error('Error fetching chat history:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 };
