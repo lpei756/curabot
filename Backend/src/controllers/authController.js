@@ -85,6 +85,6 @@ const generateToken = (userId, role) => {
     throw new Error('JWT secret is not defined');
   }
   return jwt.sign({ user: { _id: userId, role } }, process.env.JWT_SECRET, {
-    expiresIn: '1h',
+    expiresIn: '12h',
   });
 };

@@ -1,17 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse } from '@mui/material';
 import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
+import { AuthContext } from "../../context/AuthContext";
 
-function Notification({ userId }) {
+function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [expandedBlock, setExpandedBlock] = useState(null);
     const [newMessage, setNewMessage] = useState('');
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
-        console.log('Current userId:', userId);
+        if (!userId) {
+            setLoading(true);
+            return;
+        }
         const loadNotifications = async () => {
             try {
                 const data = await fetchUserNotifications(userId);
@@ -23,9 +28,7 @@ function Notification({ userId }) {
             }
         };
 
-        if (userId) {
-            loadNotifications();
-        }
+        loadNotifications();
     }, [userId]);
 
     const handleSendMessage = async () => {
@@ -180,10 +183,6 @@ Block.propTypes = {
     isOpen: PropTypes.bool.isRequired,
     onClick: PropTypes.func.isRequired,
     children: PropTypes.node.isRequired,
-};
-
-Notification.propTypes = {
-    userId: PropTypes.string.isRequired,
 };
 
 export default Notification;
