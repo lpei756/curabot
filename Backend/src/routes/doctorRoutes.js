@@ -1,6 +1,5 @@
 import express from 'express';
 import { getDoctorById, getDoctorsByClinic } from '../controllers/doctorController.js';
-import { adminRegister, adminLogin } from '../controllers/adminController.js';
 import { DOCTOR_PATHS } from './path.js';
 
 const router = express.Router();

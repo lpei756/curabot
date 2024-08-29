@@ -9,7 +9,6 @@ const validationOptions = {
 };
 
 const schemaValidator = (path = true) => {
-  console.log(`Initializing schemaValidator for path: ${path}`);
   const schema = schemas[path];
   const paramsSchema = schemas[path + '_params'];
 
