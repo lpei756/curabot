@@ -79,6 +79,7 @@ const AdminPanel = () => {
                     }}
                     patientId={selectedPatient._id}
                     setEditMode={setEditMode}
+                    returnPath="/admin/panel"
                 />
             ) : (
                 <Box sx={{ marginBottom: 4 }}>

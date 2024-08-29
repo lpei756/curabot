@@ -54,17 +54,27 @@ function ReadPatient({ returnPath }) {
         navigate(returnPath);
     };
 
-    if (loading) return <Typography>
-        <Lottie
-            animationData={animationData}
-            style={{
-                width: '200px',
-                height: '200px',
-                zIndex: 1,
-                pointerEvents: 'none'
+    if (loading) return (
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
             }}
-        />
-    </Typography>;
+        >
+            <Lottie
+                animationData={animationData}
+                style={{
+                    width: '200px',
+                    height: '200px',
+                    zIndex: 1,
+                    pointerEvents: 'none',
+                }}
+            />
+        </Box>
+    );
+
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!patientData) {
@@ -83,7 +93,7 @@ function ReadPatient({ returnPath }) {
                 margin: 'auto',
                 padding: '20px',
                 backgroundColor: '#f8f6f6',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
             }}
         >
             <>
@@ -161,7 +171,6 @@ function ReadPatient({ returnPath }) {
                 >
                     Back to Admin Panel
                 </Button>
-
             </>
         </Box>
     );
@@ -179,7 +188,7 @@ function Block({ title, isOpen, onClick, children }) {
                 borderRadius: '10px',
                 cursor: 'pointer',
                 backgroundColor: '#f8f6f6',
-                boxShadow: isOpen ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none'
+                boxShadow: isOpen ? '0 0 10px rgba(0, 0, 0, 0.1)' : 'none',
             }}
         >
             <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '10px' }}>{title}</Typography>
