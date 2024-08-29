@@ -24,7 +24,7 @@ function Login({ onClose, onSuccess }) {
             authLogin(data.token);
             onSuccess();
             onClose();
-            navigate('/user');
+            navigate('/');
         } catch (error) {
             setError('Login failed: ' + error.message);
         }
