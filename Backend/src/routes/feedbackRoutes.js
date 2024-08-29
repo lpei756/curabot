@@ -1,7 +1,6 @@
-// feedbackRoutes.js
 import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
-import Feedback from '../models/feedback.js'; 
+import Feedback from '../models/feedback.js';
 
 
 const router = express.Router();
@@ -15,7 +14,6 @@ router.post('/', async (req, res) => {
     const { messageId, feedback } = req.body;
 
     try {
-        // 将反馈存储到数据库
         const newFeedback = new Feedback({
             messageId,
             feedback,
