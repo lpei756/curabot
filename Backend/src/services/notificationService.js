@@ -6,7 +6,6 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
     try {
         console.log(`Sending message from ${senderModel} with ID: ${senderId} to ${receiverModel} with ID: ${receiverId}`);
 
-        // 验证发送者和接收者是否存在
         const sender = senderModel === 'User' ? await User.findById(senderId) : await Admin.findById(senderId);
         const receiver = receiverModel === 'User' ? await User.findById(receiverId) : await Admin.findById(receiverId);
 
@@ -20,11 +19,9 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
             throw new Error(`${receiverModel} not found`);
         }
 
-        // 获取发送者的姓名
         const senderName = `${sender.firstName} ${sender.lastName}`;
         const receiverName = `${receiver.firstName} ${receiver.lastName}`;
 
-        // 创建新的通知
         const notification = new Notification({
             sender: senderId,
             senderModel,
@@ -49,7 +46,6 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
     }
 };
 
-
 export const getUserNotifications = async (receiverId) => {
     try {
         console.log('Fetching notifications for receiver with ID:', receiverId);
@@ -60,7 +56,7 @@ export const getUserNotifications = async (receiverId) => {
             return [];
         }
 
-        console.log('Notifications fetched successfully:', notifications);
+        console.log('Notifications fetched successfully!');
         return notifications;
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
