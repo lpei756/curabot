@@ -53,17 +53,29 @@ function ReadAdmin() {
         navigate('/superadmin/panel');
     };
 
-    if (loading) return <Typography>
-        <Lottie
-            animationData={animationData}
-            style={{
-                width: '100px',
-                height: '100px',
-                zIndex: 1,
-                pointerEvents: 'none'
-            }}
-        />
-    </Typography>;
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <Lottie
+                    animationData={animationData}
+                    style={{
+                        width: '100px',
+                        height: '100px',
+                        zIndex: 1,
+                        pointerEvents: 'none'
+                    }}
+                />
+            </Box>
+        );
+    }
+
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!adminData) {

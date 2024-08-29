@@ -119,6 +119,7 @@ const SuperAdminPanel = () => {
                     }}
                     patientId={selectedItem._id}
                     setEditMode={setEditMode}
+                    returnPath="/superadmin/panel"
                 />
             ) : editMode === 'admin' && selectedItem ? (
                 <EditAdmin
