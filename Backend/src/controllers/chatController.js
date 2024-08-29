@@ -82,7 +82,7 @@ export const handleChat = async (req, res) => {
       'delete'
     ];
 
-    const threshold = 5;
+    const threshold = 2;
 
     const matchesKeyword = (message, keywords) => {
       return keywords.some(keyword => leven(message, keyword) <= threshold);

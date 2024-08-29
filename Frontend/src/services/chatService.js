@@ -4,9 +4,11 @@ import axios from 'axios';
 
 export const sendChatMessage = async (message, authToken, userLocation, sessionId) => {
   try {
+    const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
+
     const response = await axiosApiInstance.post(API_PATH.chat.send, 
       { message, userLocation, sessionId }, 
-      { headers: { Authorization: `Bearer ${authToken}` } }
+      { headers }
     );
     return response;
   } catch (error) {
