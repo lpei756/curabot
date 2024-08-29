@@ -18,6 +18,7 @@ import { sendChatMessage } from '../../services/chatService';
 import { sendFeedbackToServer } from '../../services/chatService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
+import { v4 as uuidv4 } from 'uuid';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
     transition: 'all 0.3s ease',
@@ -77,24 +78,26 @@ function ChatBot({ toggleChatbot }) {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
         if (messageToSend.trim() === '') return;
-
+    
+        const messageId = uuidv4();
+    
         setMessages((prevMessages) => [
             ...prevMessages,
-            { type: 'user', message: messageToSend }
+            { id: messageId, type: 'user', message: messageToSend }
         ]);
         setInputValue('');
         setIsLoading(true);
-
+    
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-
+    
             const userLocation = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
-
+    
             try {
                 const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
                 if (!sessionId && response.data.sessionId) {
@@ -102,18 +105,18 @@ function ChatBot({ toggleChatbot }) {
                 }
                 setMessages((prevMessages) => [
                     ...prevMessages,
-                    { type: 'bot', message: response.data.reply, isHtml: true }
+                    { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true }
                 ]);
             } catch (error) {
                 if (error.message === 'Unauthorized') {
                     setMessages((prevMessages) => [
                         ...prevMessages,
-                        { type: 'bot', message: 'Please log in to continue your request.' }
+                        { id: uuidv4(), type: 'bot', message: 'Please log in to continue your request.' }
                     ]);
                 } else {
                     setMessages((prevMessages) => [
                         ...prevMessages,
-                        { type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+                        { id: uuidv4(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
                     ]);
                 }
             }
@@ -121,7 +124,7 @@ function ChatBot({ toggleChatbot }) {
             console.error('Error:', error);
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+                { id: uuidv4(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
             ]);
         } finally {
             setIsLoading(false);
@@ -151,14 +154,19 @@ function ChatBot({ toggleChatbot }) {
 
     const handleFeedback = async (index, feedback) => {
         const message = messages[index];
+        if (!message.id) {
+            console.error('Message ID is missing, cannot send feedback');
+            return;
+        }
+    
         console.log('Sending feedback for message:', message.id, feedback);
-
+    
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback } : msg
             )
         );
-
+    
         try {
             const response = await sendFeedbackToServer(message.id, feedback);
             console.log('Feedback response:', response);
