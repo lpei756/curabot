@@ -1,5 +1,6 @@
 import axios from 'axios';
 import OpenAI from 'openai';
+import ChatSession from '../models/ChatSession.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -87,3 +88,13 @@ export const sendFeedbackToServer = async (messageId, feedback) => {
         throw new Error('Error sending feedback');
     }
 };
+
+export const getHistoryBySessionId = async (sessionId) => {
+    try {
+      const chatSession = await ChatSession.findById(sessionId).exec();
+      return chatSession;
+    } catch (error) {
+      console.error('Error fetching chat session from the database:', error);
+      throw new Error('Error fetching chat session');
+    }
+  };
