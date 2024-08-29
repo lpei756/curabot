@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, Collapse } from '@mui/material';
 import ImageDisplay from '../image/ImageDisplay';
@@ -7,21 +7,27 @@ import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
 import { getDoctorById } from '../../services/doctorService';
+import { AuthContext } from "../../context/AuthContext";
 
-function ReadUser({ userId }) {
+function ReadUser() {
     const [userData, setUserData] = useState(null);
     const [doctorName, setDoctorName] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [expandedBlock, setExpandedBlock] = useState(null);
+    const { userId } = useContext(AuthContext);
 
     useEffect(() => {
+        if (!userId) {
+            setLoading(true);
+            return;
+        }
+
         const loadUserData = async () => {
             try {
                 const data = await fetchUserData(userId);
                 setUserData(data);
-
                 if (data.gp && data.gp !== 'Not assigned') {
                     const doctor = await getDoctorById(data.gp);
                     setDoctorName(`${doctor.firstName} ${doctor.lastName}`);
@@ -191,10 +197,6 @@ function Block({ title, isOpen, onClick, children }) {
         </Box>
     );
 }
-
-ReadUser.propTypes = {
-    userId: PropTypes.string.isRequired,
-};
 
 Block.propTypes = {
     title: PropTypes.string.isRequired,

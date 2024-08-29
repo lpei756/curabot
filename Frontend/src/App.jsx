@@ -1,7 +1,7 @@
 import './App.css';
-import { useState, useContext } from 'react';
+import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import { AuthProvider, AuthContext } from './context/AuthContext';
+import { AuthProvider } from './context/AuthContext';
 import AppHeader from './components/layout/AppHeader';
 import Register from './components/auth/register/Register';
 import AdminRegister from './components/auth/register/AdminRegister';
@@ -21,8 +21,6 @@ import { AdminProvider } from './context/AdminContext';
 import SuperAdminPanel from './components/admin/SuperAdminPanel';
 import ReadPatient from './components/admin/ReadPatient';
 import ReadAdmin from './components/admin/ReadAdmin';
-import Lottie from 'lottie-react';
-import animationData from './assets/loading.json';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -68,9 +66,9 @@ function App() {
                             <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
                             <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                             <Route path="/admin/:adminId" element={<ReadAdmin />} />
-                            <Route path="/user" element={<UserWrapper />} />
+                            <Route path="/user" element={<ReadUser />} />
                             <Route path="/appointment" element={<AppointmentList />} />
-                            <Route path="/notification" element={<NotificationWrapper />} />
+                            <Route path="/notification" element={<Notification />} />
                             <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                             <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                             <Route path="/map" element={<ClinicMap />} />
@@ -80,45 +78,6 @@ function App() {
             </AdminProvider>
         </AuthProvider>
     );
-}
-
-function UserWrapper() {
-    const { userId } = useContext(AuthContext);
-
-    if (!userId) {
-        return (
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '100vh'
-                }}
-            >
-                <Lottie
-                    animationData={animationData}
-                    style={{
-                        width: '200px',
-                        height: '200px',
-                        zIndex: 1,
-                        pointerEvents: 'none'
-                    }}
-                />
-            </div>
-        );
-    }
-
-    return <ReadUser userId={userId} />;
-}
-
-function NotificationWrapper() {
-    const { userId } = useContext(AuthContext);
-
-    if (!userId) {
-        return <p>Loading user information...</p>;
-    }
-
-    return <Notification userId={userId} />;
 }
 
 export default App;

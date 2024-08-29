@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import { login } from '../../../services/authService';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -7,20 +8,23 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import { AuthContext } from "../../../context/AuthContext";
 
 function Login({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
-
+    const navigate = useNavigate();
+    const { login: authLogin } = useContext(AuthContext);
     const handleLogin = async (e) => {
-        e.preventDefault(); // Prevent default form submission behavior
+        e.preventDefault();
         try {
             const data = await login(email, password);
             console.log('Login successful:', data);
-            localStorage.setItem('token', data.token);
+            authLogin(data.token);
             onSuccess();
             onClose();
+            navigate('/user');
         } catch (error) {
             setError('Login failed: ' + error.message);
         }

@@ -9,7 +9,6 @@ export const adminLogin = async (email, password) => {
         const url = API_PATH.admin.login;
         console.log('Request URL:', url);
         const response = await axiosApiInstance.post(url, { email, password });
-
         tokenStorage.save(response.data.token);
         return response.data;
     } catch (error) {
@@ -71,13 +70,10 @@ export const fetchPatientData = async (patientId) => {
     try {
         const url = API_PATH.admin.readPatient.replace(':id', patientId);
         console.log('Request URL:', url);
-
         const response = await axiosApiInstance.get(url);
         console.log('API Response:', response);
-
         const patientData = response.data.user;
         console.log('Patient Data:', patientData);
-
         return patientData;
     } catch (error) {
         console.error('Patient read error:', error);
@@ -89,13 +85,10 @@ export const fetchAdminData = async (adminId) => {
     try {
         const url = API_PATH.admin.read.replace(':id', adminId);
         console.log('Request URL:', url);
-
         const response = await axiosApiInstance.get(url);
         console.log('API Response:', response);
-
         const adminData = response.data.admin;
         console.log('Patient Data:', adminData);
-
         return adminData;
     } catch (error) {
         console.error('Patient read error:', error);

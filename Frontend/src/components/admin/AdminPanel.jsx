@@ -1,17 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import {
-    Box,
-    Typography,
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    IconButton,
-    TextField
-} from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';

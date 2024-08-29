@@ -109,11 +109,12 @@ function AppHeader() {
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [userId, setUserId] = useState(null);
-    const navigate = useNavigate(); // 使用 useNavigate 钩子
+    const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const storedUserId = localStorage.getItem('userId');
+        const userLoginStatus = localStorage.getItem('isUserLoggedIn');
         const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');
 
         if (token) {
@@ -123,7 +124,9 @@ function AppHeader() {
         if (storedUserId) {
             setUserId(storedUserId);
         }
-
+        if (userLoginStatus === 'true') {
+            setIsUserLoggedIn(true);
+        }
         if (adminLoginStatus === 'true') {
             setIsAdminLoggedIn(true);
         }
@@ -133,7 +136,10 @@ function AppHeader() {
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
     const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
-    const handleUserLoginSuccess = () => setIsUserLoggedIn(true);
+    const handleUserLoginSuccess = () => {
+        setIsUserLoggedIn(true);
+        localStorage.setItem('isUserLoggedIn', 'true');
+    };
     const handleAdminLoginSuccess = () => {
         setIsAdminLoggedIn(true);
         localStorage.setItem('isAdminLoggedIn', 'true');
@@ -144,6 +150,7 @@ function AppHeader() {
         userDataStorage.remove();
 
         localStorage.removeItem('token');
+        localStorage.removeItem('isUserLoggedIn');
         localStorage.removeItem('isAdminLoggedIn');
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);

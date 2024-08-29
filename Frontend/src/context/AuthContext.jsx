@@ -13,6 +13,7 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       setAuthToken(token);
       const fetchedUserId = parseUserIdFromToken(token);
+      console.log("Parsed User ID on mount:", fetchedUserId);
       setUserId(fetchedUserId);
     }
   }, []);
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }) => {
     tokenStorage.save(token);
     setAuthToken(token);
     const fetchedUserId = parseUserIdFromToken(token);
+    console.log("Parsed User ID on login:", fetchedUserId);
     setUserId(fetchedUserId);
   };
 
@@ -44,8 +46,14 @@ AuthProvider.propTypes = {
 function parseUserIdFromToken(token) {
   try {
     const payload = JSON.parse(atob(token.split('.')[1]));
-    console.log("Parsed User ID:", payload.user._id);
-    return payload.user._id;
+    const userId = payload?.user?._id;
+    if (userId) {
+      console.log("Parsed User ID:", userId);
+      return userId;
+    } else {
+      console.error('User ID not found in token payload');
+      return null;
+    }
   } catch (e) {
     console.error('Failed to parse userId from token:', e);
     return null;
