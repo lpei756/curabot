@@ -1,4 +1,5 @@
 import { useState, useContext, useRef, useEffect } from 'react';
+import { useChatbot } from '../../context/ChatbotContext';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
@@ -36,7 +37,8 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     },
 }));
 
-function ChatBot({ toggleChatbot }) {
+function ChatBot({}) {
+    const { toggleChatbot } = useChatbot();
     const { authToken } = useContext(AuthContext);
     const [messages, setMessages] = useState([
         { type: 'bot', message: 'Kia Ora! My name is Cura. How can I assist you today?' }

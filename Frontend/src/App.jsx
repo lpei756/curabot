@@ -2,6 +2,7 @@ import './App.css';
 import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { ChatbotProvider, useChatbot } from './context/ChatbotContext';
 import AppHeader from './components/layout/AppHeader';
 import Register from './components/auth/register/Register';
 import AdminRegister from './components/auth/register/AdminRegister';
@@ -32,31 +33,11 @@ function App() {
     return (
         <AuthProvider>
             <AdminProvider>
+                <ChatbotProvider>
                 <Router>
                     <div className="app-container">
                         <AppHeader />
-                        {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
-                        <IconButton
-                            className="chatbot-button"
-                            color="primary"
-                            onClick={toggleChatbot}
-                            sx={{
-                                position: 'fixed',
-                                bottom: 16,
-                                right: 16,
-                                backgroundColor: '#03035d',
-                                color: 'white',
-                                zIndex: 9999,
-                                '&:hover': {
-                                    backgroundColor: '#68cde6'
-                                },
-                                padding: '16px',
-                                borderRadius: '50%',
-                                boxShadow: 3,
-                            }}
-                        >
-                            {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
-                        </IconButton>
+                        <ChatbotButtonAndComponent />
                         <Routes>
                             <Route path="/" element={<Homepage />} />
                             <Route path="/register" element={<Register />} />
@@ -75,9 +56,41 @@ function App() {
                         </Routes>
                     </div>
                 </Router>
+                </ChatbotProvider>
             </AdminProvider>
         </AuthProvider>
     );
 }
+
+const ChatbotButtonAndComponent = () => {
+    const { isChatbotOpen, toggleChatbot } = useChatbot();
+
+    return (
+        <>
+            {isChatbotOpen && <ChatBot isOpen={isChatbotOpen} toggleChatbot={toggleChatbot} />}
+            <IconButton
+                className="chatbot-button"
+                color="primary"
+                onClick={toggleChatbot}
+                sx={{
+                    position: 'fixed',
+                    bottom: 16,
+                    right: 16,
+                    backgroundColor: '#03035d',
+                    color: 'white',
+                    zIndex: 9999,
+                    '&:hover': {
+                        backgroundColor: '#68cde6'
+                    },
+                    padding: '16px',
+                    borderRadius: '50%',
+                    boxShadow: 3,
+                }}
+            >
+                {isChatbotOpen ? <ExpandMoreRoundedIcon /> : <SmartToyRoundedIcon />}
+            </IconButton>
+        </>
+    );
+};
 
 export default App;
