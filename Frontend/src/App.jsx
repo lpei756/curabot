@@ -22,6 +22,7 @@ import { AdminProvider } from './context/AdminContext';
 import SuperAdminPanel from './components/admin/SuperAdminPanel';
 import ReadPatient from './components/admin/ReadPatient';
 import ReadAdmin from './components/admin/ReadAdmin';
+import AdminNotification from './components/admin/AdminNotification';
 
 function App() {
     const [isChatbotOpen, setIsChatbotOpen] = useState(false);
@@ -44,6 +45,7 @@ function App() {
                             <Route path="/admin/register" element={<AdminRegister />} />
                             <Route path="/admin/panel" element={<AdminPanel />} />
                             <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
+                            <Route path="/admin/panel/AdminNotification" element={<AdminNotification />} />
                             <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
                             <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                             <Route path="/admin/:adminId" element={<ReadAdmin />} />

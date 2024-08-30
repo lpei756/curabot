@@ -5,12 +5,12 @@ import ReadUser from '../user/ReadUser.jsx';
 import Notification from '../user/Notification.jsx';
 import AppointmentList from '../appointment/AppointmentList.jsx';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';  // 导入 AuthContext
+import { AuthContext } from '../../context/AuthContext';
 
 const UserOptionsList = ({ options }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const navigate = useNavigate();
-    const { userId } = useContext(AuthContext);  // 使用 useContext 获取 userId
+    const { userId } = useContext(AuthContext);
 
     const handleOptionClick = (option) => {
         if (option === 'Profile') {

@@ -28,6 +28,20 @@ export const sendUserMessage = async ({senderId, receiverId, message, senderMode
     }
 };
 
+export const sendDoctorMessage = async ({ senderId, receiverId, message, senderModel, receiverModel }) => {
+    try {
+        const url = API_PATH.notification.sendMessage;
+        const payload = { senderId, receiverId, message, senderModel, receiverModel };
+        console.log('Sending user message to URL:', url);
+        console.log('Request payload:', payload);
+        const response = await axiosApiInstance.post(url, payload);
+        return response.data;
+    } catch (error) {
+        console.error('Error sending user message:', error.message);
+        throw new Error(`Unable to send message: ${error.message}`);
+    }
+};
+
 export const markNotificationAsRead = async (notificationId) => {
     try {
         const url = API_PATH.notification.markAsRead.replace(':notificationId', notificationId);
