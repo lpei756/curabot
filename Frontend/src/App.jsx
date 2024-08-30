@@ -1,5 +1,4 @@
 import './App.css';
-import { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { ChatbotProvider, useChatbot } from './context/ChatbotContext';
@@ -25,39 +24,33 @@ import ReadAdmin from './components/admin/ReadAdmin';
 import AdminNotification from './components/admin/AdminNotification';
 
 function App() {
-    const [isChatbotOpen, setIsChatbotOpen] = useState(false);
-
-    const toggleChatbot = () => {
-        setIsChatbotOpen(prevState => !prevState);
-    };
-
     return (
         <AuthProvider>
             <AdminProvider>
                 <ChatbotProvider>
-                <Router>
-                    <div className="app-container">
-                        <AppHeader />
-                        <ChatbotButtonAndComponent />
-                        <Routes>
-                            <Route path="/" element={<Homepage />} />
-                            <Route path="/register" element={<Register />} />
-                            <Route path="/admin/register" element={<AdminRegister />} />
-                            <Route path="/admin/panel" element={<AdminPanel />} />
-                            <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
-                            <Route path="/admin/panel/AdminNotification" element={<AdminNotification />} />
-                            <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
-                            <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
-                            <Route path="/admin/:adminId" element={<ReadAdmin />} />
-                            <Route path="/user" element={<ReadUser />} />
-                            <Route path="/appointment" element={<AppointmentList />} />
-                            <Route path="/notification" element={<Notification />} />
-                            <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
-                            <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
-                            <Route path="/map" element={<ClinicMap />} />
-                        </Routes>
-                    </div>
-                </Router>
+                    <Router>
+                        <div className="app-container">
+                            <AppHeader />
+                            <ChatbotButtonAndComponent />
+                            <Routes>
+                                <Route path="/" element={<Homepage />} />
+                                <Route path="/register" element={<Register />} />
+                                <Route path="/admin/register" element={<AdminRegister />} />
+                                <Route path="/admin/panel" element={<AdminPanel />} />
+                                <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
+                                <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
+                                <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
+                                <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
+                                <Route path="/admin/:adminId" element={<ReadAdmin />} />
+                                <Route path="/user" element={<ReadUser />} />
+                                <Route path="/appointment" element={<AppointmentList />} />
+                                <Route path="/notification" element={<Notification />} />
+                                <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
+                                <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
+                                <Route path="/map" element={<ClinicMap />} />
+                            </Routes>
+                        </div>
+                    </Router>
                 </ChatbotProvider>
             </AdminProvider>
         </AuthProvider>

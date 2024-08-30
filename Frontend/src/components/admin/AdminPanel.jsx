@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';  // 导入 Button
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
-import { Link, useNavigate } from 'react-router-dom';  // 导入 useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
     const [patients, setPatients] = useState([]);
@@ -62,13 +62,31 @@ const AdminPanel = () => {
 
     return (
         <Box sx={{ padding: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-                Admin Panel
-            </Typography>
-
-            <Button onClick={handleNavigateToNotifications}>
-                Notifications
-            </Button>
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    mb: 4,
+                }}
+            >
+                <Typography variant="h4" component="h1">
+                    Admin Panel
+                </Typography>
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#03035d',
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: '#03035d',
+                        }
+                    }}
+                    onClick={handleNavigateToNotifications}
+                >
+                    Notifications
+                </Button>
+            </Box>
 
             {error && (
                 <Typography variant="body2" color="error" gutterBottom>

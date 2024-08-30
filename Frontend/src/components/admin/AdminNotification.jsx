@@ -4,6 +4,7 @@ import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormCon
 import { fetchUserNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function AdminNotification() {
     const [notifications, setNotifications] = useState([]);
@@ -13,6 +14,7 @@ function AdminNotification() {
     const [newMessage, setNewMessage] = useState('');
     const [selectedPatient, setSelectedPatient] = useState('');
     const [Patients, setPatients] = useState([]);
+    const navigate = useNavigate();
     const { userId } = useContext(AuthContext);
 
     useEffect(() => {
@@ -88,6 +90,9 @@ function AdminNotification() {
         }
     };
 
+    const handleBackToAdminPanel = () => {
+        navigate('/admin/panel');
+    };
     const handleMarkAsRead = async (notificationId) => {
         try {
             console.log("Marking notification as read, ID:", notificationId);
@@ -224,7 +229,22 @@ function AdminNotification() {
                     <Typography sx={{ marginTop: '10px', color: 'green' }}>Message sent successfully!</Typography>
                 )}
             </Box>
+            <Button
+                variant="contained"
+                sx={{
+                    mt: 4,
+                    backgroundColor: '#03035d',
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: '#03035d',
+                    }
+                }}
+                onClick={handleBackToAdminPanel}
+            >
+                Back to Admin Panel
+            </Button>
         </Box>
+
     );
 }
 
