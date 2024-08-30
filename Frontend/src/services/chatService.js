@@ -35,3 +35,17 @@ export const sendFeedbackToServer = async (messageId, feedback) => {
       throw new Error('Error sending feedback');
   }
 };
+
+export const fetchChatHistoryBySessionId = async (sessionId, authToken) => {
+    try {
+        const response = await axios.get(`http://localhost:3001/api/chat/history/${sessionId}`, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        });
+        return response.data;  // Return the fetched chat history
+    } catch (error) {
+        console.error('Error fetching chat history:', error);
+        throw error;
+    }
+};
