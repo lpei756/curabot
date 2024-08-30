@@ -28,8 +28,6 @@ export const sendUserMessage = async ({senderId, receiverId, message, senderMode
     }
 };
 
-
-
 export const markNotificationAsRead = async (notificationId) => {
     try {
         const url = API_PATH.notification.markAsRead.replace(':notificationId', notificationId);
