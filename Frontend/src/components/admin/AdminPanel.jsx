@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';  // 导入 Button
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';  // 导入 useNavigate
 
 const AdminPanel = () => {
     const [patients, setPatients] = useState([]);
@@ -13,6 +13,7 @@ const AdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
+    const navigate = useNavigate();  // 使用 useNavigate 进行导航
     const { role } = useContext(AdminContext);
 
     useEffect(() => {
@@ -55,11 +56,19 @@ const AdminPanel = () => {
         }
     };
 
+    const handleNavigateToNotifications = () => {
+        navigate('/admin/panel/AdminNotification');
+    };
+
     return (
         <Box sx={{ padding: 4 }}>
             <Typography variant="h4" component="h1" gutterBottom>
                 Admin Panel
             </Typography>
+
+            <Button onClick={handleNavigateToNotifications}>
+                Notifications
+            </Button>
 
             {error && (
                 <Typography variant="body2" color="error" gutterBottom>
@@ -111,13 +120,13 @@ const AdminPanel = () => {
                                         <TableRow key={patient._id}>
                                             <TableCell>
                                                 <Link to={`/admin/panel/patient/${patient._id}`}
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#03035d',
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                      style={{
+                                                          textDecoration: 'none',
+                                                          color: '#03035d',
+                                                          fontWeight: 'bold',
+                                                      }}
+                                                      onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                      onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                 >
                                                     {patient.firstName}
                                                 </Link>
