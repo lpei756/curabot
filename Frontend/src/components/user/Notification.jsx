@@ -4,15 +4,17 @@ import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormCon
 import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
 import { fetchDoctors } from '../../services/AdminService.js';
 import { AuthContext } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expandedBlock, setExpandedBlock] = useState('receivedNotifications');
+    const [expandedBlock, setExpandedBlock] = useState(null); // 默认不展开任何 block
     const [newMessage, setNewMessage] = useState('');
     const [selectedDoctor, setSelectedDoctor] = useState('');
     const [doctors, setDoctors] = useState([]);
+    const navigate = useNavigate();
     const { userId } = useContext(AuthContext);
 
     useEffect(() => {
@@ -84,6 +86,10 @@ function Notification() {
         }
     };
 
+    const handleBackToHomepage = () => {
+        navigate('/');
+    };
+
     const handleMarkAsRead = async (notificationId) => {
         try {
             console.log("Marking notification as read, ID:", notificationId);
@@ -113,11 +119,12 @@ function Notification() {
     };
 
     const toggleBlock = (block) => {
-        console.log("Toggling block:", block);
-        setExpandedBlock(expandedBlock === block ? null : block);
+        setExpandedBlock(expandedBlock === block ? null : block); // 切换 block 的状态
     };
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
+
     return (
         <Box
             sx={{
@@ -134,8 +141,9 @@ function Notification() {
         >
             <Block
                 title="Received Notifications"
-                isOpen={expandedBlock === 'receivedNotifications'}
+                isOpen={expandedBlock === 'receivedNotifications'} // 检查是否需要展开
                 onClick={() => toggleBlock('receivedNotifications')}
+                handleBackToHomepage={handleBackToHomepage}
             >
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
@@ -183,7 +191,7 @@ function Notification() {
                         labelId="select-doctor-label"
                         value={selectedDoctor}
                         onChange={(e) => {
-                            console.log("Doctor selected:", e.target.value);  // 增加调试信息
+                            console.log("Doctor selected:", e.target.value);
                             setSelectedDoctor(e.target.value);
                         }}
                         label="Select Doctor"
@@ -220,6 +228,20 @@ function Notification() {
                     <Typography sx={{ marginTop: '10px', color: 'green' }}>Message sent successfully!</Typography>
                 )}
             </Box>
+            <Button
+                variant="contained"
+                sx={{
+                    mt: 4,
+                    backgroundColor: '#03035d',
+                    color: 'white',
+                    '&:hover': {
+                        backgroundColor: '#03035d',
+                    }
+                }}
+                onClick={handleBackToHomepage}
+            >
+                Back to Homepage
+            </Button>
         </Box>
     );
 }
@@ -239,7 +261,7 @@ function Block({ title, isOpen, onClick, children }) {
                 cursor: 'pointer',
                 transition: 'background-color 0.3s',
                 '&:hover': {
-                    backgroundColor: '#f0f0f0',
+                    backgroundColor: '#fff',
                 }
             }}
         >
@@ -247,6 +269,7 @@ function Block({ title, isOpen, onClick, children }) {
             <Collapse in={isOpen}>
                 {children}
             </Collapse>
+
         </Box>
     );
 }
