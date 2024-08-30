@@ -56,19 +56,41 @@ function Notification() {
         loadDoctors();
     }, [userId]);
 
-
     const handleSendMessage = async () => {
         try {
+            if (!selectedDoctor) {
+                throw new Error("No doctor selected.");
+            }
+
+            if (!newMessage) {
+                throw new Error("Message content is empty.");
+            }
+
+            // 假设 senderModel 和 receiverModel 是固定的值或者可以从上下文中获取
+            const senderModel = "User"; // 这可能需要根据实际情况更改
+            const receiverModel = "Admin"; // 这可能需要根据实际情况更改
+
             console.log("Sending message to doctor ID:", selectedDoctor);
-            await sendUserMessage(userId, newMessage, selectedDoctor);
-            console.log("Message sent successfully");
+            console.log("Message content:", newMessage);
+
+            // 修改请求体，增加 senderModel 和 receiverModel 字段
+            const response = await sendUserMessage({
+                senderId: userId,
+                receiverId: selectedDoctor,
+                message: newMessage,
+                senderModel: senderModel,
+                receiverModel: receiverModel
+            });
+
+            console.log("Message sent successfully:", response);
+
             setNewMessage('');
             setSelectedDoctor('');
             setError(null);
             setExpandedBlock('sentMessage');
         } catch (err) {
             console.error("Error sending message:", err.message);
-            setError(err.message);
+            setError(`Unable to send message: ${err.message}`);
         }
     };
 
@@ -172,7 +194,10 @@ function Notification() {
                     <Select
                         labelId="select-doctor-label"
                         value={selectedDoctor}
-                        onChange={(e) => setSelectedDoctor(e.target.value)}
+                        onChange={(e) => {
+                            console.log("Doctor selected:", e.target.value);  // 增加调试信息
+                            setSelectedDoctor(e.target.value);
+                        }}
                         label="Select Doctor"
                     >
                         {doctors.map((doctor) => (
