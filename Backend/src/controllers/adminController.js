@@ -9,6 +9,7 @@ import {
     getAllPatients as getAllPatientsService,
     readPatient as readPatientService,
     updatePatient as updatePatientService,
+    fetchDoctors as fetchDoctorsService
 } from '../services/adminService.js';
 import bcrypt from 'bcrypt';
 
@@ -159,6 +160,16 @@ export const readPatient = async (req, res) => {
     } catch (error) {
         console.error('Error fetching patient:', error.message);
         res.status(404).json({ message: error.message });
+    }
+};
+
+export const getDoctors = async (req, res) => {
+    try {
+        const doctors = await fetchDoctorsService();
+        res.status(200).json({ doctors });
+    } catch (error) {
+        console.error('Error fetching doctors:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 };
 

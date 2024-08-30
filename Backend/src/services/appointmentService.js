@@ -31,7 +31,6 @@ export const createAppointment = async ({
     if (!patientID) {
       return { error: true, status: 400, message: 'Patient ID is required' };
     }
-
     if (!patientName) {
       const user = await User.findOne({ patientID });
       if (!user) {
@@ -39,17 +38,14 @@ export const createAppointment = async ({
       }
       patientName = `${user.firstName} ${user.lastName}`;
     }
-
     const clinicData = await Clinic.findById(clinic);
     if (!clinicData) {
       return { error: true, status: 404, message: 'Clinic not found' };
     }
-
     const slot = await DoctorAvailability.findById(slotId);
     if (!slot || slot.isBooked) {
       return { error: true, status: 422, message: 'Slot is either invalid or already booked' };
     }
-
     const newAppointment = new Appointment({
       dateTime,
       clinic: clinicData._id,
@@ -61,14 +57,11 @@ export const createAppointment = async ({
       patientID,
       patientName
     });
-
     await newAppointment.save();
-
     await DoctorAvailability.findByIdAndUpdate(slotId, {
       isBooked: true,
       bookedBy: patientID,
     });
-    
     return { error: false, appointment: newAppointment };
   } catch (error) {
     console.error('Error creating appointment:', error.message);
@@ -81,22 +74,16 @@ export const getAppointmentsForUser = async (patientID) => {
     if (typeof patientID !== 'string') {
       throw new Error('Invalid patientID format');
     }
-
     const appointments = await Appointment.find({ patientID })
       .populate('clinic')
       .exec();
-
-    console.log('Fetched appointments:', appointments);
-
+    console.log('Fetched appointments!');
     const appointmentsWithDoctorNames = await Promise.all(appointments.map(async (appointment) => {
-
       console.log('Fetching doctor with ID:', appointment.assignedGP);
       const doctorResult = await getDoctorByIdService(appointment.assignedGP);
-
       if (doctorResult.error) {
         console.log('Error fetching doctor:', doctorResult.message);
       }
-
       return {
         ...appointment._doc,
         clinicName: appointment.clinic?.name || 'Unknown Clinic',
@@ -114,11 +101,9 @@ export const getAppointmentsForUser = async (patientID) => {
 export const readAppointment = async (appointmentId, patientID) => {
   try {
     const appointment = await Appointment.findOne({ appointmentID: appointmentId, patientID });
-
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };
     }
-
     return appointment;
   } catch (error) {
     console.error('Error reading appointment:', error);
@@ -133,11 +118,9 @@ export const updateAppointment = async (appointmentId, updateData, patientID) =>
       updateData,
       { new: true }
     );
-
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found or not authorized to update' };
     }
-
     return appointment;
   } catch (error) {
     console.error('Error updating appointment:', error);
@@ -152,23 +135,18 @@ export const deleteAppointment = async (appointmentId) => {
       { status: 'Cancelled' },
       { new: true }
     );
-
     if (!appointment) {
       return { error: true, status: 404, message: 'Appointment not found' };
     }
-
     const slot = await DoctorAvailability.findOneAndUpdate(
       { _id: appointment.slotId },
       { isBooked: false, bookedBy: null },
       { new: true }
     );
-
     if (!slot) {
       return { error: true, status: 404, message: 'Slot not found' };
     }
-
     const user = await User.findOne({ 'appointments.appointmentID': appointmentId });
-
     if (user) {
       await User.updateOne(
         { 'appointments.appointmentID': appointmentId },
@@ -179,7 +157,6 @@ export const deleteAppointment = async (appointmentId) => {
         }
       );
     }
-
     return { error: false, message: 'Appointment cancelled successfully' };
   } catch (error) {
     console.error('Error cancelling appointment in service:', error);
