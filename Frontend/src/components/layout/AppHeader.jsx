@@ -108,7 +108,7 @@ function AppHeader() {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-    const [userId, setUserId] = useState(null);
+    const [userId, setUserId] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -136,8 +136,10 @@ function AppHeader() {
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
     const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
 
-    const handleUserLoginSuccess = () => {
+    const handleUserLoginSuccess = (id) => {
         setIsUserLoggedIn(true);
+        setUserId(id);
+        localStorage.setItem('userId', id);
         localStorage.setItem('isUserLoggedIn', 'true');
     };
     const handleAdminLoginSuccess = () => {
@@ -150,10 +152,12 @@ function AppHeader() {
         userDataStorage.remove();
 
         localStorage.removeItem('token');
+        localStorage.removeItem('userId');
         localStorage.removeItem('isUserLoggedIn');
         localStorage.removeItem('isAdminLoggedIn');
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);
+        setUserId('');
         navigate('/');
     };
 

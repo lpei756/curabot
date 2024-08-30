@@ -102,11 +102,22 @@ export const readPatient = async (patientID) => {
         throw error;
     }
 };
+
 export const updatePatient = async (id, updateData) => {
     const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!user) throw new Error('User not found');
     return user;
 };
+
+export const fetchDoctors = async () => {
+    try {
+        const doctors = await AdminModel.find({ role: 'doctor' });
+        return doctors;
+    } catch (error) {
+        throw new Error('Error fetching doctors: ' + error.message);
+    }
+};
+
 
 
 

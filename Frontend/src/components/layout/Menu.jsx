@@ -6,7 +6,7 @@ import Notification from '../user/Notification.jsx';
 import AppointmentList from '../appointment/AppointmentList.jsx';
 import { useNavigate } from 'react-router-dom';
 
-const UserOptionsList = ({ options, userId }) => {
+const UserOptionsList = ({ options, userId = '' }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const UserOptionsList = ({ options, userId }) => {
         <>
             <List>
                 {options.map((option, index) => (
-                    <ListItem button key={index} onClick={() => handleOptionClick(option)}>
+                    <ListItem key={index} onClick={() => handleOptionClick(option)}>
                         <ListItemText primary={option} />
                     </ListItem>
                 ))}

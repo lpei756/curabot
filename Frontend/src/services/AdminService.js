@@ -109,3 +109,16 @@ export const updatePatientData = async (patientId, updatedData) => {
         throw error;
     }
 };
+
+export const fetchDoctors = async () => {
+    try {
+        const url = API_PATH.admin.getDoctors;
+        console.log('Fetching doctors from URL:', url);
+        const response = await axiosApiInstance.get(url);
+        console.log('API Response for doctors:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching doctors:', error.message);
+        throw error;
+    }
+};

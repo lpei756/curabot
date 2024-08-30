@@ -219,6 +219,8 @@ const updatePatientSchema = Joi.object({
 const readPatientSchema = Joi.object({
 });
 
+const getDoctorsSchema = Joi.object({});
+
 const sendMessageSchema = Joi.object({
     senderId: Joi.string().required(),
     senderModel: Joi.string().valid('User', 'Admin').required(),
@@ -235,9 +237,8 @@ const markAsReadParamsSchema = Joi.object({
     notificationId: Joi.string().required(),
 });
 
-
 const getUserNotificationsSchema = Joi.object({
-    receiverId: Joi.string().required(),  // 验证 receiverId 路径参数
+    receiverId: Joi.string().required(),
 });
 
 const deleteNotificationSchema = Joi.object({
@@ -247,7 +248,6 @@ const deleteNotificationSchema = Joi.object({
 const deleteNotificationParamsSchema = Joi.object({
     notificationId: Joi.string().required(),
 });
-
 
 export default {
     [authPathBase.register]: registerSchema,
@@ -273,6 +273,7 @@ export default {
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
     [adminPathBase.readPatient]: readPatientSchema,
     [adminPathBase.updatePatient]: updatePatientSchema,
+    [adminPathBase.getDoctors]: getDoctorsSchema,
     [notificationPathBase.sendMessage]: sendMessageSchema,
     [notificationPathBase.getUserNotifications]: getUserNotificationsSchema,
     [notificationPathBase.markAsRead]: markAsReadSchema,

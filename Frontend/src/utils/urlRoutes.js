@@ -11,6 +11,7 @@ export const API_PATH = {
     getAllPatients: buildApiPath('/api/patient'),
     readPatient: buildApiPath('/api/patient/:id'),
     updatePatient: buildApiPath('/api/patient/:id'),
+    getDoctors: buildApiPath('/api/doctors'),
   },
   auth: {
     login: buildApiPath('/api/auth/login'),
