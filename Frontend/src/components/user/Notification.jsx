@@ -50,8 +50,6 @@ function Notification() {
                 setError(err.message);
             }
         };
-
-
         loadNotifications();
         loadDoctors();
     }, [userId]);
@@ -61,19 +59,13 @@ function Notification() {
             if (!selectedDoctor) {
                 throw new Error("No doctor selected.");
             }
-
             if (!newMessage) {
                 throw new Error("Message content is empty.");
             }
-
-            // 假设 senderModel 和 receiverModel 是固定的值或者可以从上下文中获取
-            const senderModel = "User"; // 这可能需要根据实际情况更改
-            const receiverModel = "Admin"; // 这可能需要根据实际情况更改
-
+            const senderModel = "User";
+            const receiverModel = "Admin";
             console.log("Sending message to doctor ID:", selectedDoctor);
             console.log("Message content:", newMessage);
-
-            // 修改请求体，增加 senderModel 和 receiverModel 字段
             const response = await sendUserMessage({
                 senderId: userId,
                 receiverId: selectedDoctor,
@@ -81,9 +73,7 @@ function Notification() {
                 senderModel: senderModel,
                 receiverModel: receiverModel
             });
-
             console.log("Message sent successfully:", response);
-
             setNewMessage('');
             setSelectedDoctor('');
             setError(null);
@@ -126,10 +116,8 @@ function Notification() {
         console.log("Toggling block:", block);
         setExpandedBlock(expandedBlock === block ? null : block);
     };
-
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
-
     return (
         <Box
             sx={{

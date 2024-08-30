@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText } from '@mui/material';
 import ReadUser from '../user/ReadUser.jsx';
 import Notification from '../user/Notification.jsx';
 import AppointmentList from '../appointment/AppointmentList.jsx';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../context/AuthContext';  // 导入 AuthContext
 
-const UserOptionsList = ({ options, userId = '' }) => {
+const UserOptionsList = ({ options }) => {
     const [selectedOption, setSelectedOption] = useState(null);
     const navigate = useNavigate();
+    const { userId } = useContext(AuthContext);  // 使用 useContext 获取 userId
 
     const handleOptionClick = (option) => {
         if (option === 'Profile') {
@@ -41,7 +43,6 @@ const UserOptionsList = ({ options, userId = '' }) => {
 
 UserOptionsList.propTypes = {
     options: PropTypes.arrayOf(PropTypes.string).isRequired,
-    userId: PropTypes.string.isRequired,
 };
 
 export default UserOptionsList;
