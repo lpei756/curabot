@@ -15,17 +15,20 @@ export const fetchUserNotifications = async (receiverId) => {
     }
 };
 
-export const sendUserMessage = async (senderId, receiverId, message) => {
+export const sendUserMessage = async ({senderId, receiverId, message, senderModel, receiverModel}) => {
     try {
         const url = API_PATH.notification.sendMessage;
         console.log('Sending user message to URL:', url);
-        const response = await axiosApiInstance.post(url, { senderId, receiverId, message });
+        console.log('Request payload:', { senderId, receiverId, message, senderModel, receiverModel });
+        const response = await axiosApiInstance.post(url, { senderId, receiverId, message, senderModel, receiverModel });
         return response.data;
     } catch (error) {
         console.error('Error sending user message:', error.message);
         throw new Error(`Unable to send message: ${error.message}`);
     }
 };
+
+
 
 export const markNotificationAsRead = async (notificationId) => {
     try {
