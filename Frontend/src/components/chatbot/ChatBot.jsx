@@ -15,8 +15,7 @@ import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
 import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
-import { sendChatMessage } from '../../services/chatService';
-import { sendFeedbackToServer } from '../../services/chatService';
+import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer } from '../../services/chatService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
@@ -48,7 +47,7 @@ function ChatBot({}) {
     const [isImageUploadOpen, setIsImageUploadOpen] = useState(false);
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [sessionId, setSessionId] = useState(null);
+    const [sessionId, setSessionId] = useState(localStorage.getItem('chatSessionId') || null);
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
 
@@ -60,6 +59,27 @@ function ChatBot({}) {
         "How do I check my insurance details",
         "How can I get my medical records",
     ];
+
+    useEffect(() => {
+        const fetchChatHistory = async () => {
+            if (sessionId) {
+                try {
+                    const history = await fetchChatHistoryBySessionId(sessionId, authToken);
+                    // Assuming the backend returns an array of messages with { sender, message } structure
+                const formattedMessages = history.messages.map((msg) => ({
+                    ...msg,
+                    type: msg.sender === 'bot' ? 'bot' : 'user', // Set the message type correctly
+                }));
+                setMessages(formattedMessages);
+
+                } catch (error) {
+                    console.error('Failed to fetch chat history:', error);
+                }
+            }
+        };
+
+        fetchChatHistory();
+    }, [sessionId, authToken]);
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -103,7 +123,9 @@ function ChatBot({}) {
             try {
                 const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
                 if (!sessionId && response.data.sessionId) {
-                    setSessionId(response.data.sessionId);
+                    const newSessionId = response.data.sessionId;
+                    setSessionId(newSessionId);
+                    localStorage.setItem('chatSessionId', newSessionId);
                 }
                 setMessages((prevMessages) => [
                     ...prevMessages,
