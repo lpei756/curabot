@@ -6,11 +6,13 @@ export const API_PATH = {
     register: buildApiPath('/api/admin/register'),
     read: buildApiPath('/api/admin/:id'),
     update: buildApiPath('/api/admin/:id'),
+    delete: buildApiPath('/api/admin/:id'),
     logout: buildApiPath('/api/admin/logout'),
     getAllAdmins: buildApiPath('/api/admin'),
     getAllPatients: buildApiPath('/api/patient'),
     readPatient: buildApiPath('/api/patient/:id'),
     updatePatient: buildApiPath('/api/patient/:id'),
+
     getDoctors: buildApiPath('/api/doctors'),
   },
   auth: {
