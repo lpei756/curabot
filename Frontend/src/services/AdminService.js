@@ -41,7 +41,6 @@ export const updateAdminData = async (adminId, updateData) => {
     }
 };
 
-
 export const fetchAllAdminIDs = async () => {
     try {
         const url = API_PATH.admin.getAllAdmins;

@@ -176,11 +176,17 @@ const adminReadSchema = Joi.object({
     id: Joi.string().required()
 });
 
-const adminUpdateSchema = Joi.object({
+const updateAdminSchema = Joi.object({
     firstName: Joi.string().optional(),
     lastName: Joi.string().optional(),
     email: Joi.string().email().optional(),
     role: Joi.string().valid('superadmin', 'doctor', 'nurse').optional(),
+});
+
+const adminLogoutSchema = Joi.object({
+});
+
+const deleteAdminSchema = Joi.object({
 });
 
 const getAllAdminsSchema = Joi.object({});
@@ -267,8 +273,9 @@ export default {
     [adminPathBase.register]: adminRegisterSchema,
     [adminPathBase.login]: adminLoginSchema,
     [adminPathBase.read]: adminReadSchema,
-    [adminPathBase.update]: adminUpdateSchema,
-    [adminPathBase.logout]: adminUpdateSchema,
+    [adminPathBase.update]: updateAdminSchema,
+    [adminPathBase.deleteAdmin]: deleteAdminSchema,
+    [adminPathBase.logout]: adminLogoutSchema,
     [adminPathBase.getAllAdmins]: getAllAdminsSchema,
     [adminPathBase.getAllPatients]: getAllPatientsSchema,
     [adminPathBase.readPatient]: readPatientSchema,

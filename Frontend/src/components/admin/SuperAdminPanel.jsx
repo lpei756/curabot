@@ -1,11 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField } from '@mui/material';
+import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const SuperAdminPanel = () => {
     const [admins, setAdmins] = useState([]);
@@ -17,6 +17,7 @@ const SuperAdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
+    const navigate = useNavigate();
     const { role } = useContext(AdminContext);
 
     useEffect(() => {
@@ -61,7 +62,6 @@ const SuperAdminPanel = () => {
         setFilteredAdmins(filtered);
     }, [adminSearchQuery, admins]);
 
-
     useEffect(() => {
         const filtered = patients.filter((patient) => {
             return (
@@ -83,6 +83,7 @@ const SuperAdminPanel = () => {
             console.error('Invalid admin selected:', admin);
         }
     };
+
     const handleEdit = (patient) => {
         console.log('Selected Patient:', patient);
         if (patient && patient._id) {
@@ -91,6 +92,10 @@ const SuperAdminPanel = () => {
         } else {
             console.error('Invalid patient selected:', patient);
         }
+    };
+
+    const handleAddAdminClick = () => {
+        navigate('/admin/register');
     };
 
     return (
@@ -138,72 +143,87 @@ const SuperAdminPanel = () => {
                 />
             ) : (
                 <>
-                    <Box sx={{ marginBottom: 4 }}>
+                    <Box
+                        sx={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            mb: 4,
+                        }}
+                    >
                         <Typography variant="h5" component="h2" gutterBottom>
                             Admins
                         </Typography>
-                        <TextField
-                            label="Search Admins"
-                            variant="outlined"
-                            fullWidth
-                            value={adminSearchQuery}
-                            onChange={(e) => setAdminSearchQuery(e.target.value)}
-                            sx={{ marginBottom: 3 }}
-                        />
-                        <TableContainer component={Paper}>
-                            <Table>
-                                <TableHead>
-                                    <TableRow>
-                                        <TableCell>First Name</TableCell>
-                                        <TableCell>Last Name</TableCell>
-                                        <TableCell>Email</TableCell>
-                                        <TableCell>Role</TableCell>
-                                        <TableCell>Actions</TableCell>
-                                    </TableRow>
-                                </TableHead>
-                                <TableBody>
-                                    {filteredAdmins.length > 0 ? (
-                                        filteredAdmins.map((admin) => (
-                                            <TableRow key={admin._id}>
-                                                <TableCell>
-                                                    <Link
-                                                        to={`/admin/${admin._id}`}
-                                                        style={{
-                                                            textDecoration: 'none',
-                                                            color: '#03035d',
-                                                            fontWeight: 'bold',
-                                                        }}
-                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
-                                                    >
-                                                        {admin.firstName || '-'}
-                                                    </Link>
-                                                </TableCell>
-                                                <TableCell>{admin.lastName || '-'}</TableCell>
-                                                <TableCell>{admin.email}</TableCell>
-                                                <TableCell>{admin.role}</TableCell>
-                                                <TableCell>
-                                                    <IconButton
-                                                        onClick={() => handleEditAdmin(admin)}
-                                                        color="primary"
-                                                        aria-label="edit admin"
-                                                    >
-                                                        <EditIcon />
-                                                    </IconButton>
-                                                </TableCell>
-                                            </TableRow>
-                                        ))
-                                    ) : (
-                                        <TableRow>
-                                            <TableCell colSpan={5} align="center">No admins found</TableCell>
-                                        </TableRow>
-                                    )}
-                                </TableBody>
-                            </Table>
-                        </TableContainer>
+                        <Button
+                            variant="contained"
+                            sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                            onClick={handleAddAdminClick}
+                        >
+                            Add Admin
+                        </Button>
                     </Box>
 
-                    <Box sx={{ marginBottom: 4 }}>
+                    <TextField
+                        label="Search Admins"
+                        variant="outlined"
+                        fullWidth
+                        value={adminSearchQuery}
+                        onChange={(e) => setAdminSearchQuery(e.target.value)}
+                        sx={{ marginBottom: 3 }}
+                    />
+                    <TableContainer component={Paper}>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>First Name</TableCell>
+                                    <TableCell>Last Name</TableCell>
+                                    <TableCell>Email</TableCell>
+                                    <TableCell>Role</TableCell>
+                                    <TableCell>Actions</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredAdmins.length > 0 ? (
+                                    filteredAdmins.map((admin) => (
+                                        <TableRow key={admin._id}>
+                                            <TableCell>
+                                                <Link
+                                                    to={`/admin/${admin._id}`}
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#03035d',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                >
+                                                    {admin.firstName || '-'}
+                                                </Link>
+                                            </TableCell>
+                                            <TableCell>{admin.lastName || '-'}</TableCell>
+                                            <TableCell>{admin.email}</TableCell>
+                                            <TableCell>{admin.role}</TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    onClick={() => handleEditAdmin(admin)}
+                                                    color="primary"
+                                                    aria-label="edit admin"
+                                                >
+                                                    <EditIcon />
+                                                </IconButton>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))
+                                ) : (
+                                    <TableRow>
+                                        <TableCell colSpan={5} align="center">No admins found</TableCell>
+                                    </TableRow>
+                                )}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+
+                    <Box sx={{ marginTop: 4 }}>
                         <Typography variant="h5" component="h2" gutterBottom>
                             Patients
                         </Typography>
@@ -232,13 +252,13 @@ const SuperAdminPanel = () => {
                                             <TableRow key={patient._id}>
                                                 <TableCell>
                                                     <Link to={`/superadmin/panel/patient/${patient._id}`}
-                                                        style={{
-                                                            textDecoration: 'none',
-                                                            color: '#03035d',
-                                                            fontWeight: 'bold',
-                                                        }}
-                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                          style={{
+                                                              textDecoration: 'none',
+                                                              color: '#03035d',
+                                                              fontWeight: 'bold',
+                                                          }}
+                                                          onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                          onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                     >
                                                         {patient.firstName}
                                                     </Link>

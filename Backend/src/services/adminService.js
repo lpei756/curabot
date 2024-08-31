@@ -64,6 +64,20 @@ export const updateAdmin = async (id, updateData) => {
     return admin;
 };
 
+export const deleteAdmin = async (id) => {
+    try {
+        console.log(`Attempting to delete admin with ID: ${id}`);
+        const admin = await AdminModel.findByIdAndDelete(id);
+        if (!admin) {
+            throw new Error('Admin not found');
+        }
+        console.log(`Admin with ID: ${id} was deleted successfully`);
+        return admin;
+    } catch (error) {
+        console.error(`Error deleting admin with ID: ${id}`, error.message);
+        throw new Error('Error deleting admin: ' + error.message);
+    }
+};
 
 export const logout = () => {
     return { message: 'Successfully logged out' };
@@ -117,8 +131,3 @@ export const fetchDoctors = async () => {
         throw new Error('Error fetching doctors: ' + error.message);
     }
 };
-
-
-
-
-
