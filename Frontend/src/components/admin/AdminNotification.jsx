@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchUserNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
-import { AuthContext } from "../../context/AuthContext";
+import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
 
 function AdminNotification() {
@@ -15,19 +15,21 @@ function AdminNotification() {
     const [selectedPatient, setSelectedPatient] = useState('');
     const [Patients, setPatients] = useState([]);
     const navigate = useNavigate();
-    const { userId } = useContext(AuthContext);
+    const { adminId } = useContext(AdminContext);
 
     useEffect(() => {
-        if (!userId) {
+        if (!adminId) {
             setLoading(true);
             return;
         }
+
         const loadNotifications = async () => {
             try {
-                console.log("Fetching notifications for user ID:", userId);
-                const data = await fetchUserNotifications(userId);
+                console.log("Fetching notifications for admin ID:", adminId);
+                const data = await fetchAdminNotifications(adminId);
                 console.log("Notifications data received:", data);
-                setNotifications(data.notifications);
+                setNotifications(data);
+                setError(null);
             } catch (err) {
                 console.error("Error fetching notifications:", err.message);
                 setError(err.message);
@@ -41,15 +43,7 @@ function AdminNotification() {
                 console.log("Fetching Patients from the server...");
                 const response = await fetchAllPatients();
                 console.log("Patients data received:", response);
-                if (Array.isArray(response)) {
-                    setPatients(response);
-                    console.log("Patients set in state:", response);
-                } else if (response && response.patients && Array.isArray(response.patients)) {
-                    setPatients(response.patients);
-                    console.log("Patients set in state:", response.patients);
-                } else {
-                    throw new Error("Invalid patients data format");
-                }
+                setPatients(response);
             } catch (err) {
                 console.error("Error fetching patients:", err.message);
                 setError(err.message);
@@ -58,7 +52,9 @@ function AdminNotification() {
 
         loadNotifications();
         loadPatients();
-    }, [userId]);
+    }, [adminId]);
+
+
 
     const handleSendMessage = async () => {
         try {
@@ -73,7 +69,7 @@ function AdminNotification() {
             console.log("Sending message to patient ID:", selectedPatient);
             console.log("Message content:", newMessage);
             const response = await sendDoctorMessage({
-                senderId: userId,
+                senderId: adminId,
                 receiverId: selectedPatient,
                 message: newMessage,
                 senderModel: senderModel,

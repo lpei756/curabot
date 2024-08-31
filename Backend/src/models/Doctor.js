@@ -15,5 +15,13 @@ const DoctorSchema = new mongoose.Schema({
   }],
 });
 
+DoctorSchema.pre('save', async function (next) {
+  const doctor = this;
+  if (!doctor.isNew) return next();
+  const count = await mongoose.model('Doctor').countDocuments();
+  doctor.doctorID = `D${String(count + 1).padStart(3, '0')}`;
+  next();
+});
+
 const DoctorModel = mongoose.model('Doctor', DoctorSchema);
 export default DoctorModel;

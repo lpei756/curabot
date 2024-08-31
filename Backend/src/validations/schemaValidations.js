@@ -165,6 +165,21 @@ const adminRegisterSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
     role: Joi.string().valid('superadmin', 'doctor', 'nurse').required(),
+    clinic: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.string().required(),
+        otherwise: Joi.forbidden()
+    }),
+    languagesSpoken: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.array().items(Joi.string()).optional(),
+        otherwise: Joi.forbidden()
+    }),
+    specialty: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.string().allow('').optional(),
+        otherwise: Joi.forbidden()
+    }),
 });
 
 const adminLoginSchema = Joi.object({
@@ -181,7 +196,22 @@ const updateAdminSchema = Joi.object({
     lastName: Joi.string().optional(),
     email: Joi.string().email().optional(),
     role: Joi.string().valid('superadmin', 'doctor', 'nurse').optional(),
-});
+    clinic: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.string().optional(),
+        otherwise: Joi.forbidden()
+    }),
+    languagesSpoken: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.array().items(Joi.string()).optional(),
+        otherwise: Joi.forbidden()
+    }),
+    specialty: Joi.when('role', {
+        is: 'doctor',
+        then: Joi.string().allow('').optional(),
+        otherwise: Joi.forbidden()
+    }),
+}).or('firstName', 'lastName', 'email', 'role', 'clinic', 'languagesSpoken', 'specialty');
 
 const adminLogoutSchema = Joi.object({
 });
@@ -247,6 +277,10 @@ const getUserNotificationsSchema = Joi.object({
     receiverId: Joi.string().required(),
 });
 
+const getAdminNotificationsSchema = Joi.object({
+    receiverId: Joi.string().required(),
+});
+
 const deleteNotificationSchema = Joi.object({
     notificationId: Joi.string().required(),
 });
@@ -283,6 +317,7 @@ export default {
     [adminPathBase.getDoctors]: getDoctorsSchema,
     [notificationPathBase.sendMessage]: sendMessageSchema,
     [notificationPathBase.getUserNotifications]: getUserNotificationsSchema,
+    [notificationPathBase.getAdminNotifications]: getAdminNotificationsSchema,
     [notificationPathBase.markAsRead]: markAsReadSchema,
     [notificationPathBase.markAsRead + '_params']: markAsReadParamsSchema,
     [notificationPathBase.deleteNotification]: deleteNotificationSchema,

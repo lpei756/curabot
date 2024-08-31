@@ -94,6 +94,9 @@ export const deleteAdmin = async (req, res) => {
         const { id } = req.params;
         console.log(`Received request to delete admin with ID: ${id}`);
         const admin = await deleteAdminService(id);
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
         console.log(`Admin deleted successfully:`, admin);
         res.status(200).json({ message: 'Admin deleted successfully' });
     } catch (error) {
@@ -101,7 +104,6 @@ export const deleteAdmin = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 
 export const logout = (req, res) => {
     try {
