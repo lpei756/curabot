@@ -121,8 +121,10 @@ function AdminNotification() {
         console.log("Toggling block:", block);
         setExpandedBlock(expandedBlock === block ? null : block);
     };
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
+
     return (
         <Box
             sx={{

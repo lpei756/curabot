@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
-import DoctorModel from './Doctor.js'; // 确保正确导入Doctor模型
+import DoctorModel from './Doctor.js';
 
 const AdminSchema = new mongoose.Schema({
   adminID: { type: String, unique: true },

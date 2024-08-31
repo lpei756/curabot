@@ -20,10 +20,10 @@ export const sendMessage = async (req, res) => {
 };
 export const getUserNotifications = async (req, res) => {
     try {
-        const { receiverId } = req.params;
-        console.log(`Fetching notifications for user/admin with ID: ${receiverId}`);
-        const notifications = await getUserNotificationsService(receiverId);
-        console.log(`Notifications found: ${notifications.length} for user/admin with ID: ${receiverId}`);
+        const { userId } = req.params;
+        console.log(`Fetching notifications for user with ID: ${userId}`);
+        const notifications = await getUserNotificationsService(userId);
+        console.log(`Notifications found: ${notifications.length} for user with ID: ${userId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
@@ -33,10 +33,10 @@ export const getUserNotifications = async (req, res) => {
 
 export const getAdminNotifications = async (req, res) => {
     try {
-        const { receiverId } = req.params;
-        console.log(`Fetching notifications for user/admin with ID: ${receiverId}`);
-        const notifications = await getAdminNotificationsService(receiverId);
-        console.log(`Notifications found: ${notifications.length} for user/admin with ID: ${receiverId}`);
+        const { adminId } = req.params;
+        console.log(`Fetching notifications for admin with ID: ${adminId}`);
+        const notifications = await getAdminNotificationsService(adminId);
+        console.log(`Notifications found: ${notifications.length} for admin with ID: ${adminId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
