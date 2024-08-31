@@ -17,8 +17,9 @@ const UserOptionsList = ({ options }) => {
     useEffect(() => {
         const fetchUnreadNotifications = async () => {
             try {
-                const data = await fetchUserNotifications(userId);
-                const unreadNotifications = data.notifications.filter(notification => !notification.isRead);
+                const notifications = await fetchUserNotifications(userId);
+                console.log('Fetched notifications:', notifications); // 添加日志查看通知
+                const unreadNotifications = notifications.filter(notification => !notification.isRead);
                 setUnreadCount(unreadNotifications.length);
             } catch (err) {
                 console.error('Error fetching notifications:', err.message);
@@ -60,9 +61,10 @@ const UserOptionsList = ({ options }) => {
                     >
                         <ListItemText
                             primary={
-                                option === 'Notification' && unreadCount > 0 ? (
+                                option === 'Notification' ? (
                                     <Badge
                                         badgeContent={unreadCount}
+                                        color="primary"
                                         sx={{
                                             '& .MuiBadge-badge': {
                                                 backgroundColor: '#03035d',

@@ -259,9 +259,9 @@ const getDoctorsSchema = Joi.object({});
 
 const sendMessageSchema = Joi.object({
     senderId: Joi.string().required(),
-    senderModel: Joi.string().valid('User', 'Admin').required(),
+    senderModel: Joi.string().valid('User', 'Admin', 'Doctor').required(),
+    receiverModel: Joi.string().valid('User', 'Admin', 'Doctor').required(),
     receiverId: Joi.string().required(),
-    receiverModel: Joi.string().valid('User', 'Admin').required(),
     message: Joi.string().required(),
     notificationType: Joi.string().valid('info', 'warning', 'alert').default('info'),
 });

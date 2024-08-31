@@ -2,10 +2,13 @@ import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 
-export const getUserNotifications = async (receiverId) => {
+export const getUserNotifications = async (userId) => {
     try {
-        console.log('Fetching notifications for receiver with ID:', receiverId);
-        const notifications = await Notification.find({ receiver: receiverId }).sort({ date: -1 });
+        console.log('Fetching notifications for receiver with ID:', userId);
+        let notifications = await Notification.find({ receiver: userId }).sort({ date: -1 });
+        if (!Array.isArray(notifications)) {
+            notifications = [];
+        }
         console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {
@@ -14,10 +17,14 @@ export const getUserNotifications = async (receiverId) => {
     }
 };
 
-export const getAdminNotifications = async (receiverId) => {
+
+export const getAdminNotifications = async (adminId) => {
     try {
-        console.log('Fetching notifications for receiver with ID:', receiverId);
-        const notifications = await Notification.find({ receiver: receiverId }).sort({ date: -1 });
+        console.log('Fetching notifications for receiver with ID:', adminId);
+        let notifications = await Notification.find({ receiver: adminId }).sort({ date: -1 });
+        if (!Array.isArray(notifications)) {
+            notifications = [];
+        }
         console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {

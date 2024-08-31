@@ -10,7 +10,7 @@ function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expandedBlock, setExpandedBlock] = useState(null); // 默认不展开任何 block
+    const [expandedBlock, setExpandedBlock] = useState(null);
     const [newMessage, setNewMessage] = useState('');
     const [selectedDoctor, setSelectedDoctor] = useState('');
     const [doctors, setDoctors] = useState([]);
@@ -25,9 +25,17 @@ function Notification() {
         const loadNotifications = async () => {
             try {
                 console.log("Fetching notifications for user ID:", userId);
-                const data = await fetchUserNotifications(userId);
-                console.log("Notifications data received:", data);
-                setNotifications(data.notifications);
+                const notifications = await fetchUserNotifications(userId);
+                console.log("Notifications data received:", notifications);
+
+                // 检查 notifications 是否是一个数组
+                if (Array.isArray(notifications)) {
+                    setNotifications(notifications);
+                    console.log("Notifications state updated:", notifications);
+                } else {
+                    console.error("Unexpected notifications data format:", notifications);
+                    setError("Unexpected data format received for notifications.");
+                }
             } catch (err) {
                 console.error("Error fetching notifications:", err.message);
                 setError(err.message);
@@ -35,7 +43,6 @@ function Notification() {
                 setLoading(false);
             }
         };
-
         const loadDoctors = async () => {
             try {
                 console.log("Fetching doctors from the server...");
@@ -45,13 +52,15 @@ function Notification() {
                     setDoctors(response.doctors);
                     console.log("Doctors set in state:", response.doctors);
                 } else {
+                    setDoctors([]);
                     throw new Error("Invalid doctors data format");
                 }
             } catch (err) {
                 console.error("Error fetching doctors:", err.message);
-                setError(err.message);
+                setError("Error fetching doctors: " + err.message);
             }
         };
+
         loadNotifications();
         loadDoctors();
     }, [userId]);
@@ -119,7 +128,8 @@ function Notification() {
     };
 
     const toggleBlock = (block) => {
-        setExpandedBlock(expandedBlock === block ? null : block); // 切换 block 的状态
+        console.log("Toggling block:", block);
+        setExpandedBlock(expandedBlock === block ? null : block);
     };
 
     if (loading) return <Typography>Loading...</Typography>;
@@ -141,9 +151,8 @@ function Notification() {
         >
             <Block
                 title="Received Notifications"
-                isOpen={expandedBlock === 'receivedNotifications'} // 检查是否需要展开
+                isOpen={expandedBlock === 'receivedNotifications'}
                 onClick={() => toggleBlock('receivedNotifications')}
-                handleBackToHomepage={handleBackToHomepage}
             >
                 {notifications.length > 0 ? (
                     notifications.map((notification) => (
@@ -269,7 +278,6 @@ function Block({ title, isOpen, onClick, children }) {
             <Collapse in={isOpen}>
                 {children}
             </Collapse>
-
         </Box>
     );
 }
