@@ -35,7 +35,8 @@ export const API_PATH = {
   },
   notification: {
     sendMessage: buildApiPath('/api/notification/send'),
-    getUserNotifications: buildApiPath('/api/notification/user/:receiverId'),
+    getUserNotifications: buildApiPath('/api/notification/user/:userId'),
+    getAdminNotifications: buildApiPath('/api/notification/admin/:adminId'),
     markAsRead: buildApiPath('/api/notification/:notificationId/read'),
     delete: buildApiPath('/api/notification/:notificationId/delete'),
   },

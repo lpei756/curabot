@@ -72,7 +72,8 @@ export const DOCTOR_AVAILABILITY_PATHS = {
 
 export const NOTIFICATION_PATHS = {
   sendMessage: '/notification/send',
-  getUserNotifications: '/notification/user/:receiverId',
+  getUserNotifications: '/notification/user/:userId',
+  getAdminNotifications: '/notification/admin/:adminId',
   markAsRead: '/notification/:notificationId/read',
   delete: '/notification/:notificationId/delete',
 };

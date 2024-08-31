@@ -2,21 +2,46 @@ import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 
+export const getUserNotifications = async (receiverId) => {
+    try {
+        console.log('Fetching notifications for receiver with ID:', receiverId);
+        const notifications = await Notification.find({ receiver: receiverId }).sort({ date: -1 });
+        console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
+        return notifications;
+    } catch (error) {
+        console.error('Error fetching notifications:', error.message);
+        throw error;
+    }
+};
+
+export const getAdminNotifications = async (receiverId) => {
+    try {
+        console.log('Fetching notifications for receiver with ID:', receiverId);
+        const notifications = await Notification.find({ receiver: receiverId }).sort({ date: -1 });
+        console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
+        return notifications;
+    } catch (error) {
+        console.error('Error fetching notifications:', error.message);
+        throw error;
+    }
+};
+
+const getUserOrAdmin = async (id, model) => {
+    return model === 'User' ? await User.findById(id) : await Admin.findById(id);
+};
+
 export const sendMessage = async (senderId, senderModel, receiverId, receiverModel, message) => {
     try {
         console.log(`Sending message from ${senderModel} with ID: ${senderId} to ${receiverModel} with ID: ${receiverId}`);
 
-        const sender = senderModel === 'User' ? await User.findById(senderId) : await Admin.findById(senderId);
-        const receiver = receiverModel === 'User' ? await User.findById(receiverId) : await Admin.findById(receiverId);
+        const sender = await getUserOrAdmin(senderId, senderModel);
+        const receiver = await getUserOrAdmin(receiverId, receiverModel);
 
-        if (!sender) {
-            console.error(`${senderModel} not found with ID: ${senderId}`);
-            throw new Error(`${senderModel} not found`);
-        }
-
-        if (!receiver) {
-            console.error(`${receiverModel} not found with ID: ${receiverId}`);
-            throw new Error(`${receiverModel} not found`);
+        if (!sender || !receiver) {
+            const missingModel = !sender ? senderModel : receiverModel;
+            const missingId = !sender ? senderId : receiverId;
+            console.error(`${missingModel} not found with ID: ${missingId}`);
+            throw new Error(`${missingModel} not found`);
         }
 
         const senderName = `${sender.firstName} ${sender.lastName}`;
@@ -42,24 +67,6 @@ export const sendMessage = async (senderId, senderModel, receiverId, receiverMod
         return notification;
     } catch (error) {
         console.error('Error sending message:', error.message);
-        throw error;
-    }
-};
-
-export const getUserNotifications = async (receiverId) => {
-    try {
-        console.log('Fetching notifications for receiver with ID:', receiverId);
-
-        const notifications = await Notification.find({ receiver: receiverId }).sort({ date: -1 });
-        if (!notifications.length) {
-            console.log('No notifications found for receiver with ID:', receiverId);
-            return [];
-        }
-
-        console.log('Notifications fetched successfully!');
-        return notifications;
-    } catch (error) {
-        console.error('Error fetching notifications:', error.message);
         throw error;
     }
 };

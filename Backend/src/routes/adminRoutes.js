@@ -23,7 +23,7 @@ router.post(ADMIN_PATHS.register, schemaValidator(adminPathBase.register), admin
 router.post(ADMIN_PATHS.login, schemaValidator(adminPathBase.login), adminLogin);
 router.get(ADMIN_PATHS.read, schemaValidator(adminPathBase.read), readAdmin);
 router.put(ADMIN_PATHS.update, schemaValidator(adminPathBase.update), updateAdmin);
-router.delete(ADMIN_PATHS.delete, schemaValidator(adminPathBase.delete), deleteAdmin);
+router.delete(ADMIN_PATHS.delete, deleteAdmin);
 router.post(ADMIN_PATHS.logout, logout);
 router.get(ADMIN_PATHS.getAllAdmins, schemaValidator(adminPathBase.getAllAdmins), getAllAdmins);
 router.get(ADMIN_PATHS.getAllPatients, schemaValidator(adminPathBase.getAllPatients), getAllPatients);

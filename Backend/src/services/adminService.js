@@ -1,11 +1,13 @@
 import bcrypt from 'bcrypt';
 import AdminModel from '../models/Admin.js';
 import UserModel from '../models/User.js';
+import DoctorModel from '../models/Doctor.js';
+import mongoose from 'mongoose';
 
 export const register = async (adminData) => {
-    const { email, password, firstName, lastName, role } = adminData;
+    const { email, password, firstName, lastName, role, clinic, languagesSpoken, specialty } = adminData;
 
-    console.log('Starting registration process with data:', { email, firstName, lastName, role });
+    console.log('Starting registration process with data:', { email, firstName, lastName, role, clinic, languagesSpoken, specialty });
 
     const existingAdmin = await AdminModel.findOne({ email });
     if (existingAdmin) {
@@ -21,14 +23,26 @@ export const register = async (adminData) => {
         role,
     });
 
+    if (role === 'doctor') {
+        const doctor = new DoctorModel({
+            firstName,
+            lastName,
+            email,
+            password,
+            clinic,
+            languagesSpoken,
+            specialty,
+        });
+        await doctor.save();
+        admin.doctor = doctor._id;
+    }
+
     console.log('Saving new admin to the database:', admin);
     await admin.save();
 
     console.log('Admin registered successfully:', admin);
     return admin;
 };
-
-
 
 export const login = async ({ email, password }) => {
     const admin = await AdminModel.findOne({ email }).select('+password');
@@ -67,10 +81,20 @@ export const updateAdmin = async (id, updateData) => {
 export const deleteAdmin = async (id) => {
     try {
         console.log(`Attempting to delete admin with ID: ${id}`);
-        const admin = await AdminModel.findByIdAndDelete(id);
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            throw new Error('Invalid ID format');
+        }
+        const admin = await AdminModel.findById(id);
         if (!admin) {
             throw new Error('Admin not found');
         }
+        if (admin.role === 'doctor' && admin.doctor) {
+            const doctor = await DoctorModel.findByIdAndDelete(admin.doctor);
+            if (doctor) {
+                console.log(`Doctor with ID ${admin.doctor} was deleted successfully`);
+            }
+        }
+        await AdminModel.findByIdAndDelete(id);
         console.log(`Admin with ID: ${id} was deleted successfully`);
         return admin;
     } catch (error) {
@@ -78,6 +102,7 @@ export const deleteAdmin = async (id) => {
         throw new Error('Error deleting admin: ' + error.message);
     }
 };
+
 
 export const logout = () => {
     return { message: 'Successfully logged out' };

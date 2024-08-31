@@ -1,8 +1,9 @@
 import {
     sendMessage as sendMessageService,
     getUserNotifications as getUserNotificationsService,
+    getAdminNotifications as getAdminNotificationsService,
     markAsRead as markAsReadService,
-    deleteNotification as deleteNotificationService
+    deleteNotification as deleteNotificationService,
 } from '../services/notificationService.js';
 
 export const sendMessage = async (req, res) => {
@@ -17,22 +18,32 @@ export const sendMessage = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 export const getUserNotifications = async (req, res) => {
     try {
         const { receiverId } = req.params;
         console.log(`Fetching notifications for user/admin with ID: ${receiverId}`);
         const notifications = await getUserNotificationsService(receiverId);
-        if (!notifications.length) {
-            console.log(`No notifications found for user/admin with ID: ${receiverId}`);
-            return res.status(404).json({ message: 'No notifications found' });
-        }
+        console.log(`Notifications found: ${notifications.length} for user/admin with ID: ${receiverId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
         res.status(400).json({ message: error.message });
     }
 };
+
+export const getAdminNotifications = async (req, res) => {
+    try {
+        const { receiverId } = req.params;
+        console.log(`Fetching notifications for user/admin with ID: ${receiverId}`);
+        const notifications = await getAdminNotificationsService(receiverId);
+        console.log(`Notifications found: ${notifications.length} for user/admin with ID: ${receiverId}`);
+        res.status(200).json({ notifications });
+    } catch (error) {
+        console.error('Error fetching notifications:', error.message);
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 export const markAsRead = async (req, res) => {
     try {

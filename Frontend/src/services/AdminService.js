@@ -1,7 +1,6 @@
 import axiosApiInstance from '../utils/axiosInstance';
 import { tokenStorage } from '../utils/localStorage';
 import { API_PATH } from '../utils/urlRoutes';
-import axios from 'axios';
 
 console.log('Stored Admin Token:', tokenStorage.get());
 
@@ -121,11 +120,6 @@ export const updatePatientData = async (patientId, updatedData) => {
         throw error;
     }
 };
-
-
-
-
-
 
 export const fetchDoctors = async () => {
     try {

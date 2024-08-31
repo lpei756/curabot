@@ -2,9 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
-import { fetchUserNotifications } from '../../services/NotificationService'; // 导入获取通知的服务
+import { fetchAdminNotifications } from '../../services/NotificationService';
 import { AdminContext } from '../../context/AdminContext';
-import { AuthContext } from '../../context/AuthContext'; // 导入 AuthContext 以获取用户ID
 import EditPatient from './EditPatient.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -15,10 +14,9 @@ const AdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [unreadCount, setUnreadCount] = useState(0); // 新增状态保存未读通知数量
-    const navigate = useNavigate();  // 使用 useNavigate 进行导航
-    const { role } = useContext(AdminContext);
-    const { userId } = useContext(AuthContext); // 获取当前用户ID
+    const [unreadCount, setUnreadCount] = useState(0);
+    const navigate = useNavigate();
+    const { role, adminId } = useContext(AdminContext);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -37,8 +35,13 @@ const AdminPanel = () => {
 
         const fetchUnreadNotifications = async () => {
             try {
-                const data = await fetchUserNotifications(userId);
-                const unreadNotifications = data.notifications.filter(notification => !notification.isRead);
+                if (!adminId) {
+                    console.warn('Admin ID is not available');
+                    return;
+                }
+                console.log("Using Admin ID:", adminId);
+                const notifications = await fetchAdminNotifications(adminId);
+                const unreadNotifications = notifications.filter(notification => !notification.isRead);
                 setUnreadCount(unreadNotifications.length);
             } catch (err) {
                 console.error('Error fetching notifications:', err.message);
@@ -46,8 +49,9 @@ const AdminPanel = () => {
         };
 
         fetchData();
-        fetchUnreadNotifications(); // 获取未读通知数量
-    }, [role, userId]);
+        fetchUnreadNotifications();
+    }, [role, adminId]);
+
 
     useEffect(() => {
         const filtered = patients.filter((patient) => {
@@ -72,7 +76,7 @@ const AdminPanel = () => {
     };
 
     const handleNavigateToNotifications = () => {
-        navigate('/admin/panel/AdminNotification');
+        navigate('/admin/panel/adminnotification');
     };
 
     return (

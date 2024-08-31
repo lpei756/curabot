@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
 import bcrypt from 'bcryptjs';
+import DoctorModel from './Doctor.js'; // 确保正确导入Doctor模型
 
 const AdminSchema = new mongoose.Schema({
   adminID: { type: String, unique: true },
@@ -13,11 +14,30 @@ const AdminSchema = new mongoose.Schema({
     enum: ['superadmin', 'doctor', 'nurse'],
     required: true
   },
+  doctor: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Doctor',
+    required: function() {
+      return this.role === 'doctor';
+    }
+  },
   notifications: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Notification',
   }],
   createdAt: { type: Date, default: Date.now }
+});
+
+AdminSchema.pre('remove', async function (next) {
+  try {
+    if (this.role === 'doctor' && this.doctor) {
+      await DoctorModel.findByIdAndDelete(this.doctor);
+      console.log(`Doctor with ID ${this.doctor} was deleted`);
+    }
+    next();
+  } catch (err) {
+    next(err);
+  }
 });
 
 AdminSchema.pre('save', async function (next) {
