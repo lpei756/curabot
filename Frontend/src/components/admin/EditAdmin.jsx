@@ -36,7 +36,6 @@ function EditAdmin({ adminData, setAdminData, adminId, setEditMode }) {
         }
     };
 
-
     return (
         <Box sx={{ width: '100%' }}>
             <Typography variant="h6" sx={{ color: '#03035d', marginBottom: '20px' }}>Edit Admin Information</Typography>

@@ -4,6 +4,7 @@ import {
     login as loginAdminService,
     readAdmin as readAdminService,
     updateAdmin as updateAdminService,
+    deleteAdmin as deleteAdminService,
     logout as logoutAdminService,
     getAllAdmins as getAllAdminsService,
     getAllPatients as getAllPatientsService,
@@ -16,13 +17,10 @@ import bcrypt from 'bcrypt';
 export const adminRegister = async (req, res) => {
     try {
         console.log('Received request for admin registration:', req.body);
-
         const admin = await registerAdminService(req.body);
         console.log('Admin object returned from registerAdminService:', admin);
-
         const token = generateToken(admin._id, admin.role);
         console.log('JWT token generated for admin:', token);
-
         res.status(201).json({ admin, token });
     } catch (error) {
         console.error('Error during admin registration:', error.message);
@@ -33,31 +31,25 @@ export const adminRegister = async (req, res) => {
 export const adminLogin = async (req, res) => {
     try {
         console.log('Received login request with body:', req.body);
-
         const { email, password } = req.body;
         console.log('Extracted email:', email);
         console.log('Extracted password:', password);
-
         if (!email || !password) {
             console.error('Email or password is missing in the request body');
             return res.status(400).json({ message: 'Email and password are required' });
         }
-
         const admin = await loginAdminService({ email, password });
         if (!admin) {
             console.error('Admin not found with email:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-
         const isMatch = await bcrypt.compare(password, admin.password);
         if (!isMatch) {
             console.error('Password does not match for email:', email);
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-
         const token = generateToken(admin._id, admin.role);
         console.log('JWT token generated:', token);
-
         res.status(200).json({ admin, token });
     } catch (error) {
         console.error('Error during admin login:', error.message);
@@ -74,7 +66,6 @@ export const readAdmin = async (req, res) => {
             console.error('Admin not found for ID:', id);
             return res.status(404).json({ message: 'Admin not found' });
         }
-
         console.log('Admin data retrieved:');
         res.status(200).json({ admin });
     } catch (error) {
@@ -97,6 +88,20 @@ export const updateAdmin = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const deleteAdmin = async (req, res) => {
+    try {
+        const { id } = req.params;
+        console.log(`Received request to delete admin with ID: ${id}`);
+        const admin = await deleteAdminService(id);
+        console.log(`Admin deleted successfully:`, admin);
+        res.status(200).json({ message: 'Admin deleted successfully' });
+    } catch (error) {
+        console.error(`Error deleting admin with ID: ${req.params.id}`, error.message);
+        res.status(400).json({ message: error.message });
+    }
+};
+
 
 export const logout = (req, res) => {
     try {
@@ -179,11 +184,9 @@ const generateToken = (adminId, role) => {
         console.error('JWT secret is not defined');
         throw new Error('JWT secret is not defined');
     }
-
     const token = jwt.sign({ user: { _id: adminId, role } }, process.env.JWT_SECRET, {
         expiresIn: '12h',
     });
-
     console.log('JWT token generated:', token);
     return token;
 };
