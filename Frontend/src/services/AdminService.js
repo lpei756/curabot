@@ -1,6 +1,7 @@
 import axiosApiInstance from '../utils/axiosInstance';
 import { tokenStorage } from '../utils/localStorage';
 import { API_PATH } from '../utils/urlRoutes';
+import axios from 'axios';
 
 console.log('Stored Admin Token:', tokenStorage.get());
 
@@ -34,6 +35,18 @@ export const updateAdminData = async (adminId, updateData) => {
         const url = API_PATH.admin.update.replace(':id', adminId);
         console.log('Request URL:', url);
         const response = await axiosApiInstance.put(url, updateData);
+        return response.data;
+    } catch (error) {
+        console.error('Admin update error:', error);
+        throw error;
+    }
+};
+
+export const deleteAdmin = async (adminId) => {
+    try {
+        const url = API_PATH.admin.delete.replace(':id', adminId);
+        console.log('Request URL:', url);
+        const response = await axiosApiInstance.delete(url);
         return response.data;
     } catch (error) {
         console.error('Admin update error:', error);
@@ -108,6 +121,11 @@ export const updatePatientData = async (patientId, updatedData) => {
         throw error;
     }
 };
+
+
+
+
+
 
 export const fetchDoctors = async () => {
     try {

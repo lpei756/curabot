@@ -1,11 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
+import {deleteAdmin,fetchAllAdminIDs, fetchAllPatients} from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
 import { Link, useNavigate } from 'react-router-dom';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const SuperAdminPanel = () => {
     const [admins, setAdmins] = useState([]);
@@ -94,6 +95,19 @@ const SuperAdminPanel = () => {
         }
     };
 
+    const handleDelete = async (adminId) => {
+        if (window.confirm('Are you sure you want to delete this account?')) {
+            try {
+                await deleteAdmin(adminId);
+                setAdmins(admins.filter((admin) => admin._id !== adminId));
+            } catch (err) {
+                console.error('Error deleting patient:', err);
+                setError('Failed to delete admin.');
+            }
+        }
+    };
+
+
     const handleAddAdminClick = () => {
         navigate('/admin/register');
     };
@@ -179,7 +193,8 @@ const SuperAdminPanel = () => {
                                     <TableCell>Last Name</TableCell>
                                     <TableCell>Email</TableCell>
                                     <TableCell>Role</TableCell>
-                                    <TableCell>Actions</TableCell>
+                                    <TableCell>Edit</TableCell>
+                                    <TableCell>Delete</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -212,11 +227,20 @@ const SuperAdminPanel = () => {
                                                     <EditIcon />
                                                 </IconButton>
                                             </TableCell>
+                                            <TableCell>
+                                                <IconButton
+                                                    onClick={() => handleDelete(admin._id)}
+                                                    color="secondary"
+                                                    aria-label="delete admin"
+                                                >
+                                                    <DeleteIcon />
+                                                </IconButton>
+                                            </TableCell>
                                         </TableRow>
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={5} align="center">No admins found</TableCell>
+                                        <TableCell colSpan={6} align="center">No admins found</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -243,7 +267,7 @@ const SuperAdminPanel = () => {
                                         <TableCell>Last Name</TableCell>
                                         <TableCell>Email</TableCell>
                                         <TableCell>Phone</TableCell>
-                                        <TableCell>Actions</TableCell>
+                                        <TableCell>Edit</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
