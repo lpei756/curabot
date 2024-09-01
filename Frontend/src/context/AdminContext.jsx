@@ -1,39 +1,46 @@
 import { createContext, useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import {tokenStorage} from "../utils/localStorage.js";
 
 export const AdminContext = createContext();
 
 export const AdminProvider = ({ children }) => {
+    const [adminToken, setAdminToken] = useState('');
     const [role, setRole] = useState(null);
     const [adminId, setAdminId] = useState(null);
 
     useEffect(() => {
-        const fetchAdminData = async () => {
-            try {
-                const token = localStorage.getItem('adminToken');
-                if (token) {
-                    const { role, _id } = parseAdminToken(token);
-                    console.log("Fetched Admin Role:", role);
-                    console.log("Fetched Admin ID:", _id);
-                    setRole(role);
-                    setAdminId(_id);
-                } else {
-                    console.error('Admin token is missing or invalid');
-                }
-            } catch (error) {
-                console.error('Failed to fetch admin data:', error);
-            }
-        };
-
-        fetchAdminData();
+        const token = tokenStorage.get();
+        if (token) {
+            setAdminToken(token);
+            const { role, _id } = parseAdminToken(token);
+            console.log("Fetched Admin Role:", role);
+            console.log("Fetched Admin ID:", _id);
+            setRole(role);
+            setAdminId(_id);
+        }
     }, []);
 
-    if (!adminId || !role) {
-        return <div>Loading...</div>;
-    }
+    const login = (token) => {
+        tokenStorage.save(token);
+        setAdminToken(token);
+        const { role, _id } = parseAdminToken(token);
+        console.log("Parsed Admin Role on login:", role);
+        console.log("Parsed Admin ID on login:", _id);
+        setRole(role);
+        setAdminId(_id);
+    };
+
+    const logout = () => {
+        tokenStorage.remove();
+        setAdminToken('');
+        setRole(null);
+        setAdminId(null);
+        console.log("Admin logged out successfully");
+    };
 
     return (
-        <AdminContext.Provider value={{ role, adminId }}>
+        <AdminContext.Provider value={{ adminToken, role, adminId, login, logout }}>
             {children}
         </AdminContext.Provider>
     );
