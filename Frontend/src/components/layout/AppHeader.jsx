@@ -19,8 +19,7 @@ import PropTypes from 'prop-types';
 import { tokenStorage, userDataStorage } from '../../utils/localStorage';
 
 const MenuIconButton = styled('button')(({ theme }) => ({
-    backgroundColor: theme.palette.background.default,
-    border: `2px solid ${theme.palette.primary.main}`,
+    backgroundColor: 'transparent',
     borderRadius: '50%',
     height: 30,
     width: 30,
