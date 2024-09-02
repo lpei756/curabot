@@ -4,11 +4,8 @@ const adminAuthorization = (roles) => async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
-    console.log('Token:', token);
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded:', decoded);
     const admin = await Admin.findById(decoded.user._id);
-    console.log('Admin:', admin);
     if (!admin || (roles && !roles.includes(decoded.user.role))) {
       return res.status(403).json({ message: 'Forbidden' });
     }

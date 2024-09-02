@@ -1,6 +1,7 @@
 import axios from 'axios';
 import OpenAI from 'openai';
 import ChatSession from '../models/ChatSession.js';
+import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -91,10 +92,43 @@ export const sendFeedbackToServer = async (messageId, feedback) => {
 
 export const getHistoryBySessionId = async (sessionId) => {
     try {
-      const chatSession = await ChatSession.findById(sessionId).exec();
-      return chatSession;
+        const chatSession = await ChatSession.findById(sessionId).exec();
+        return chatSession;
     } catch (error) {
-      console.error('Error fetching chat session from the database:', error);
-      throw new Error('Error fetching chat session');
+        console.error('Error fetching chat session from the database:', error);
+        throw new Error('Error fetching chat session');
     }
-  };
+};
+
+export const identifySpecialisation = async (userMessage) => {
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Identify the medical specialisation based on the symptoms described by the user.'
+                },
+                {
+                    role: 'user', content: userMessage
+                }
+            ],
+        });
+
+        const specialisation = response.choices[0].message.content.trim();
+        console.log('Identified Specialisation:', specialisation);
+
+        const specialisationData = await DoctorsSpecialisations.findOne({ specialisation: specialisation }).exec();
+        console.log('Specialisation Data:', specialisationData);
+
+        if (specialisationData && Array.isArray(specialisationData.doctorIDs)) {
+            console.log('Doctor IDs:', specialisationData.doctorIDs);
+            return specialisationData.doctorIDs;
+        } else {
+            return 'No matching specialisation found.';
+        }
+    } catch (error) {
+        console.error('Error identifying specialisation:', error);
+        throw new Error('Error identifying specialisation');
+    }
+};
