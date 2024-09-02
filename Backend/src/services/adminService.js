@@ -2,13 +2,12 @@ import bcrypt from 'bcrypt';
 import AdminModel from '../models/Admin.js';
 import UserModel from '../models/User.js';
 import DoctorModel from '../models/Doctor.js';
+import ClinicModel from '../models/Clinic.js';
 import mongoose from 'mongoose';
 
 export const register = async (adminData) => {
     const { email, password, firstName, lastName, role, clinic, languagesSpoken, specialty } = adminData;
-
     console.log('Starting registration process with data:', { email, firstName, lastName, role, clinic, languagesSpoken, specialty });
-
     const existingAdmin = await AdminModel.findOne({ email });
     if (existingAdmin) {
         console.error('Admin already exists with email:', email);
@@ -33,13 +32,27 @@ export const register = async (adminData) => {
             languagesSpoken,
             specialty,
         });
-        await doctor.save();
-        admin.doctor = doctor._id;
+
+        const savedDoctor = await doctor.save();
+        admin.doctor = savedDoctor._id;
+
+        await ClinicModel.findByIdAndUpdate(
+            clinic,
+            {
+                $push: {
+                    doctors: {
+                        firstName: savedDoctor.firstName,
+                        lastName: savedDoctor.lastName,
+                        doctorID: savedDoctor.doctorID,
+                    },
+                },
+            },
+            { new: true }
+        );
     }
 
     console.log('Saving new admin to the database:', admin);
     await admin.save();
-
     console.log('Admin registered successfully:', admin);
     return admin;
 };
