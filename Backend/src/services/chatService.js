@@ -127,10 +127,10 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
 export const identifySpecialisation = async (userMessage) => {
     try {
         const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
-        
+
         if (detectedSymptoms === 'No symptoms detected.') {
             console.log('No symptoms detected, skipping specialisation identification.');
-            return [];
+            return { specialisation: 'Unknown', doctorIDs: [] };
         }
 
         const response = await openai.chat.completions.create({
@@ -138,7 +138,7 @@ export const identifySpecialisation = async (userMessage) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'Identify the medical specialisation based on the symptoms described by the user. If no specialisation can be identified, return "Unknown specialisation".'
+                    content: 'Identify the medical specialisation based on the symptoms described by the user. Return the specialisation type, and if none can be identified, return "Unknown specialisation".'
                 },
                 {
                     role: 'user', content: detectedSymptoms
@@ -150,15 +150,15 @@ export const identifySpecialisation = async (userMessage) => {
         console.log('Identified Specialisation:', specialisation);
 
         if (specialisation === 'Unknown specialisation') {
-            return [];
+            return { specialisation: 'Unknown', doctorIDs: [] };
         }
 
-        const specialisationData = await DoctorsSpecialisations.findOne({ specialisation: specialisation }).exec();
+        const specialisationData = await DoctorsSpecialisations.findOne({ specialisation }).exec();
 
         if (specialisationData && Array.isArray(specialisationData.doctorIDs)) {
-            return specialisationData.doctorIDs;
+            return { specialisation, doctorIDs: specialisationData.doctorIDs };
         } else {
-            return [];
+            return { specialisation: 'Unknown', doctorIDs: [] };
         }
     } catch (error) {
         console.error('Error identifying specialisation:', error);
