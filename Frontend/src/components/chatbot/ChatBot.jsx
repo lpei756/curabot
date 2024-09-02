@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, useEffect } from 'react';
+import { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
@@ -65,15 +65,19 @@ function ChatBot({}) {
             if (sessionId) {
                 try {
                     const history = await fetchChatHistoryBySessionId(sessionId, authToken);
-                    // Assuming the backend returns an array of messages with { sender, message } structure
-                const formattedMessages = history.messages.map((msg) => ({
-                    ...msg,
-                    type: msg.sender === 'bot' ? 'bot' : 'user', // Set the message type correctly
-                }));
-                setMessages(formattedMessages);
-
+                    const formattedMessages = history.messages.map((msg) => ({
+                        ...msg,
+                        type: msg.sender === 'bot' ? 'bot' : 'user',
+                    }));
+                    setMessages(formattedMessages);
                 } catch (error) {
                     console.error('Failed to fetch chat history:', error);
+                    // Handle session expiration or error cases
+                    if (error.response && error.response.status === 404) {
+                        // Session not found or expired
+                        setSessionId(null);
+                        localStorage.removeItem('chatSessionId');
+                    }
                 }
             }
         };
@@ -87,80 +91,62 @@ function ChatBot({}) {
         }
     }, [messages]);
 
-    const scroll = (scrollOffset) => {
-        if (scrollContainerRef.current) {
-            scrollContainerRef.current.scrollBy({
-                left: scrollOffset,
-                behavior: 'smooth'
-            });
-        }
-    };
-
-    const handleSend = async (event, quickMessage = null) => {
+    const handleSend = useCallback(async (event, quickMessage = null) => {
         if (event) event.preventDefault();
         const messageToSend = quickMessage || inputValue;
         if (messageToSend.trim() === '') return;
-    
+
         const messageId = uuidv4();
-    
+
         setMessages((prevMessages) => [
             ...prevMessages,
             { id: messageId, type: 'user', message: messageToSend }
         ]);
         setInputValue('');
         setIsLoading(true);
-    
+
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
             });
-    
+
             const userLocation = {
                 lat: position.coords.latitude,
                 lng: position.coords.longitude,
             };
-    
-            try {
-                const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
-                if (!sessionId && response.data.sessionId) {
-                    const newSessionId = response.data.sessionId;
-                    setSessionId(newSessionId);
-                    localStorage.setItem('chatSessionId', newSessionId);
-                }
-                setMessages((prevMessages) => [
-                    ...prevMessages,
-                    { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true }
-                ]);
-            } catch (error) {
-                if (error.message === 'Unauthorized') {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { id: uuidv4(), type: 'bot', message: 'Please log in to continue your request.' }
-                    ]);
-                } else {
-                    setMessages((prevMessages) => [
-                        ...prevMessages,
-                        { id: uuidv4(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
-                    ]);
-                }
+
+            const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
+
+            // Check for new session ID in response and update local storage
+            if (response.data.sessionId && response.data.sessionId !== sessionId) {
+                setSessionId(response.data.sessionId);
+                localStorage.setItem('chatSessionId', response.data.sessionId);
             }
-        } catch (error) {
-            console.error('Error:', error);
+
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { id: uuidv4(), type: 'bot', message: 'Sorry, something went wrong. Please try again.' }
+                { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true }
+            ]);
+
+        } catch (error) {
+            let errorMessage = 'Sorry, something went wrong. Please try again.';
+            if (error.message === 'Unauthorized') {
+                errorMessage = 'Please log in to continue your request.';
+            }
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { id: uuidv4(), type: 'bot', message: errorMessage }
             ]);
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [inputValue, authToken, sessionId]);
 
-    const handleQuickChat = (message) => {
+    const handleQuickChat = useCallback((message) => {
         handleSend(null, message);
-    };
+    }, [handleSend]);
 
     const handleImageUpload = (uploadedImage) => {
-        console.log('Uploaded image:', uploadedImage);
         setMessages((prevMessages) => [
             ...prevMessages,
             {
@@ -182,15 +168,13 @@ function ChatBot({}) {
             console.error('Message ID is missing, cannot send feedback');
             return;
         }
-    
-        console.log('Sending feedback for message:', message.id, feedback);
-    
+
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback } : msg
             )
         );
-    
+
         try {
             const response = await sendFeedbackToServer(message.id, feedback);
             console.log('Feedback response:', response);
@@ -288,7 +272,6 @@ function ChatBot({}) {
                                             </ThumbIcon>
                                         </StyledIconButton>
                                         <StyledIconButton
-
                                             onClick={() => handleFeedback(index, false)}
                                             aria-label="thumbs down"
                                         >
