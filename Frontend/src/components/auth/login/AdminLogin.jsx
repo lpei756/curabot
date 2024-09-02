@@ -31,7 +31,7 @@ function AdminLogin({ onClose, onSuccess }) {
             } else {
                 navigate('/admin/panel');
             }
-            // window.location.reload();
+            window.location.reload();
         } catch (error) {
             setError('Admin login failed: ' + error.message);
         }

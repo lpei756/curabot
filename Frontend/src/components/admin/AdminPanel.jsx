@@ -19,35 +19,36 @@ const AdminPanel = () => {
     const { adminId } = useContext(AdminContext);
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const patientsData = await fetchAllPatients();
-                if (Array.isArray(patientsData)) {
-                    setPatients(patientsData);
-                } else {
-                    setError('Invalid data format');
+        if (adminId) {
+            const fetchData = async () => {
+                try {
+                    const patientsData = await fetchAllPatients();
+                    if (Array.isArray(patientsData)) {
+                        setPatients(patientsData);
+                    } else {
+                        setError('Invalid data format');
+                    }
+                } catch (err) {
+                    console.error('Error fetching data:', err);
+                    setError('Failed to fetch data.');
                 }
-            } catch (err) {
-                console.error('Error fetching data:', err);
-                setError('Failed to fetch data.');
-            }
-        };
+            };
 
-        const fetchUnreadNotifications = async () => {
-            try {
-                console.log("Using Admin ID:", adminId);
-                const notifications = await fetchAdminNotifications(adminId);
-                const unreadNotifications = notifications.filter(notification => !notification.isRead);
-                setUnreadCount(unreadNotifications.length);
-            } catch (err) {
-                console.error('Error fetching notifications:', err.message);
-            }
-        };
+            const fetchUnreadNotifications = async () => {
+                try {
+                    console.log("Using Admin ID:", adminId);
+                    const notifications = await fetchAdminNotifications(adminId);
+                    const unreadNotifications = notifications.filter(notification => !notification.isRead);
+                    setUnreadCount(unreadNotifications.length);
+                } catch (err) {
+                    console.error('Error fetching notifications:', err.message);
+                }
+            };
 
-        fetchData();
-        fetchUnreadNotifications();
+            fetchData();
+            fetchUnreadNotifications();
+        }
     }, [adminId]);
-
 
     useEffect(() => {
         const filtered = patients.filter((patient) => {
