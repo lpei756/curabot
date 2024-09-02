@@ -114,7 +114,7 @@ export const deleteAvailability = async (doctorID, slotId) => {
     }
 };
 
-const haversineDistance = (lat1, lon1, lat2, lon2) => {
+export const haversineDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;
     const dLat = (lat2 - lat1) * (Math.PI / 180);
     const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -130,7 +130,7 @@ const haversineDistance = (lat1, lon1, lat2, lon2) => {
     return Math.round(distance * 1000) / 1000;
 };
 
-const geocodeAddress = async (address) => {
+export const geocodeAddress = async (address) => {
     if (!address) {
         throw new Error('Address is required for geocoding');
     }

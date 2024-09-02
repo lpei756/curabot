@@ -117,7 +117,6 @@ function ChatBot({}) {
 
             const response = await sendChatMessage(messageToSend, authToken, userLocation, sessionId);
 
-            // Check for new session ID in response and update local storage
             if (response.data.sessionId && response.data.sessionId !== sessionId) {
                 setSessionId(response.data.sessionId);
                 localStorage.setItem('chatSessionId', response.data.sessionId);
