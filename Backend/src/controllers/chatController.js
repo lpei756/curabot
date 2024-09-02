@@ -289,14 +289,12 @@ export const handleChat = async (req, res) => {
 
     if (symptoms.length > 0 && symptoms[0] !== 'No symptoms detected.') {
       try {
-        const { specialisation, doctorIDs } = await identifySpecialisation(symptoms.join(', '));
+        const { specialisation, doctors } = await identifySpecialisation(symptoms.join(', '), userLocation);
         console.log('Specialisation:', specialisation);
 
-        if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
-          const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
-
-          const doctorDetails = doctorInfo.map(info =>
-            `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName} ${info.doctor.lastName}</p>`
+        if (Array.isArray(doctors) && doctors.length > 0) {
+          const doctorDetails = doctors.map(doctor =>
+            `<p><strong>Name:</strong> ${doctor.doctorName}, <strong>Clinic:</strong> ${doctor.clinicName}, <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>`
           ).join('');
 
           const responseMessage = `

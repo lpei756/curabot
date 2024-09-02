@@ -2,6 +2,9 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import ChatSession from '../models/ChatSession.js';
 import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
+import { geocodeAddress, haversineDistance } from '../services/doctorAvailabilityService.js';
+import { getDoctorByIdService } from '../services/doctorService.js';
+import { getClinicByIdService } from '../services/clinicService.js';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
@@ -124,14 +127,9 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
     }
 };
 
-export const identifySpecialisation = async (userMessage) => {
+export const identifySpecialisation = async (symptoms, userLocation) => {
     try {
-        const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
-
-        if (detectedSymptoms === 'No symptoms detected.') {
-            console.log('No symptoms detected, skipping specialisation identification.');
-            return { specialisation: 'Unknown', doctorIDs: [] };
-        }
+        const detectedSymptoms = symptoms;
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
@@ -150,15 +148,64 @@ export const identifySpecialisation = async (userMessage) => {
         console.log('Identified Specialisation:', specialisation);
 
         if (specialisation === 'Unknown specialisation') {
-            return { specialisation: 'Unknown', doctorIDs: [] };
+            return { specialisation: 'Unknown', doctors: [] };
         }
 
         const specialisationData = await DoctorsSpecialisations.findOne({ specialisation }).exec();
 
         if (specialisationData && Array.isArray(specialisationData.doctorIDs)) {
-            return { specialisation, doctorIDs: specialisationData.doctorIDs };
+            const doctorIDs = specialisationData.doctorIDs;
+            const doctors = [];
+
+            for (const doctorID of doctorIDs) {
+                const doctorResult = await getDoctorByIdService(doctorID);
+                if (doctorResult.error) {
+                    console.error(`Error fetching doctor data for ID ${doctorID}:`, doctorResult.error);
+                    continue;
+                }
+
+                const doctorData = doctorResult.doctor;
+                if (!doctorData || !doctorData.clinic) {
+                    console.error(`Doctor or clinic information is missing for doctor ID ${doctorID}`);
+                    continue;
+                }
+
+                const clinicResult = await getClinicByIdService(doctorData.clinic);
+                if (clinicResult.error) {
+                    console.error(`Error fetching clinic data for doctor ID ${doctorID}:`, clinicResult.error);
+                    continue;
+                }
+
+                const clinicData = clinicResult.clinic;
+                if (!clinicData || !clinicData.address) {
+                    console.error(`Clinic address is missing for doctor ID ${doctorID}`);
+                    continue;
+                }
+
+                const clinicLocation = await geocodeAddress(clinicData.address);
+                if (!clinicLocation || !clinicLocation.lat || !clinicLocation.lng) {
+                    console.error(`Unable to geocode address ${clinicData.address} or missing location data`);
+                    continue;
+                }
+
+                if (!userLocation || !userLocation.lat || !userLocation.lng) {
+                    throw new Error('User location data is missing');
+                }
+
+                const distance = haversineDistance(userLocation.lat, userLocation.lng, clinicLocation.lat, clinicLocation.lng);
+                console.log(`Distance for Doctor ${doctorID}: ${distance} km`);
+
+                doctors.push({
+                    doctorName: `${doctorData.firstName} ${doctorData.lastName}`,
+                    clinicName: clinicData.name,
+                    distance: distance,
+                    doctorID: doctorData.doctorID
+                });
+            }
+
+            return { specialisation, doctors };
         } else {
-            return { specialisation: 'Unknown', doctorIDs: [] };
+            return { specialisation: 'Unknown', doctors: [] };
         }
     } catch (error) {
         console.error('Error identifying specialisation:', error);
