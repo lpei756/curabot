@@ -156,7 +156,7 @@ function AdminNotification() {
                             <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
                             <Button
                                 variant="contained"
-                                sx={{ backgroundColor: notification.isRead ? '#d3d3d3' : '#03035d', color: '#fff', marginRight: '10px' }}
+                                sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
                                 disabled={notification.isRead}
                                 onClick={() => handleMarkAsRead(notification._id)}
                             >
@@ -265,7 +265,7 @@ function Block({ title, isOpen, onClick, children }) {
                 cursor: 'pointer',
                 transition: 'background-color 0.3s',
                 '&:hover': {
-                    backgroundColor: '#f0f0f0',
+                    backgroundColor: '#fff',
                 }
             }}
         >
