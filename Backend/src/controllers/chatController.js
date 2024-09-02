@@ -7,6 +7,7 @@ import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
 import ChatSession from '../models/ChatSession.js';
+import { identifySpecialisation } from '../services/chatService.js';
 
 const sessionStore = {};
 
@@ -286,6 +287,44 @@ export const handleChat = async (req, res) => {
         return res.status(500).json({ error: 'Error fetching appointments', sessionId });
       }
     }
+
+    if (userMessage.includes('symptom') || userMessage.includes('feel')) {
+      try {
+          const doctorIDs = await identifySpecialisation(userMessage);
+          console.log('Doctor IDs:', doctorIDs);
+  
+          if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
+              const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
+              console.log('Doctor Info:', doctorInfo);
+  
+              const doctorDetails = doctorInfo.map(info => 
+                  `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
+              ).join('<br>');
+              
+              const responseMessage = `
+                  Based on your symptoms, here are some doctors you might consider:
+                  ${doctorDetails}
+              `;
+  
+              await ChatSession.findByIdAndUpdate(
+                  sessionId,
+                  { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
+              );
+              return res.json({ reply: responseMessage, sessionId });
+          } else {
+              const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
+              console.log('No doctors found for specialization');
+              await ChatSession.findByIdAndUpdate(
+                  sessionId,
+                  { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
+              );
+              return res.json({ reply: noSpecializationReply, sessionId });
+          }
+      } catch (error) {
+          console.error('Error identifying specialization:', error);
+          return res.status(500).json({ error: 'Error identifying specialization', sessionId });
+      }
+  }
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
