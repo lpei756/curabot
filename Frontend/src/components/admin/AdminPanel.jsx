@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
-// import { fetchAdminNotifications } from '../../services/NotificationService';
+import { fetchAdminNotifications } from '../../services/NotificationService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,7 +14,7 @@ const AdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-    // const [unreadCount, setUnreadCount] = useState(0);
+    const [unreadCount, setUnreadCount] = useState(0);
     const navigate = useNavigate();
     const { adminId } = useContext(AdminContext);
 
@@ -33,19 +33,19 @@ const AdminPanel = () => {
             }
         };
 
-        // const fetchUnreadNotifications = async () => {
-        //     try {
-        //         console.log("Using Admin ID:", adminId);
-        //         const notifications = await fetchAdminNotifications(adminId);
-        //         const unreadNotifications = notifications.filter(notification => !notification.isRead);
-        //         setUnreadCount(unreadNotifications.length);
-        //     } catch (err) {
-        //         console.error('Error fetching notifications:', err.message);
-        //     }
-        // };
+        const fetchUnreadNotifications = async () => {
+            try {
+                console.log("Using Admin ID:", adminId);
+                const notifications = await fetchAdminNotifications(adminId);
+                const unreadNotifications = notifications.filter(notification => !notification.isRead);
+                setUnreadCount(unreadNotifications.length);
+            } catch (err) {
+                console.error('Error fetching notifications:', err.message);
+            }
+        };
 
         fetchData();
-        // fetchUnreadNotifications();
+        fetchUnreadNotifications();
     }, [adminId]);
 
 
@@ -99,7 +99,7 @@ const AdminPanel = () => {
                     }}
                     onClick={handleNavigateToNotifications}
                 >
-                    Notifications
+                    Notifications {unreadCount > 0 ? `(${unreadCount})` : ''}
                 </Button>
             </Box>
 
