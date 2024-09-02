@@ -27,8 +27,6 @@ function Notification() {
                 console.log("Fetching notifications for user ID:", userId);
                 const notifications = await fetchUserNotifications(userId);
                 console.log("Notifications data received:", notifications);
-
-                // 检查 notifications 是否是一个数组
                 if (Array.isArray(notifications)) {
                     setNotifications(notifications);
                     console.log("Notifications state updated:", notifications);
@@ -53,7 +51,8 @@ function Notification() {
                     console.log("Doctors set in state:", response.doctors);
                 } else {
                     setDoctors([]);
-                    throw new Error("Invalid doctors data format");
+                    setError("Invalid doctors data format");
+                    console.error("Invalid doctors data format");
                 }
             } catch (err) {
                 console.error("Error fetching doctors:", err.message);
@@ -68,10 +67,14 @@ function Notification() {
     const handleSendMessage = async () => {
         try {
             if (!selectedDoctor) {
-                throw new Error("No doctor selected.");
+                console.error("No doctor selected.");
+                setError("Please select a doctor before sending a message.");
+                return;
             }
             if (!newMessage) {
-                throw new Error("Message content is empty.");
+                console.error("Message content is empty.");
+                setError("Message content cannot be empty.");
+                return;
             }
             const senderModel = "User";
             const receiverModel = "Admin";

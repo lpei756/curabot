@@ -33,7 +33,7 @@ function ReadPatient({ returnPath }) {
                     console.log("User data found:", response);
                     setPatientData(response);
                 } else {
-                    throw new Error("User data is undefined or not returned from the API.");
+                    setError("User data is undefined or not returned from the API.");
                 }
             } catch (err) {
                 console.error("Error fetching patient data:", err);

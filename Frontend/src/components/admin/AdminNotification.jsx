@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification} from '../../services/NotificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
@@ -25,11 +25,16 @@ function AdminNotification() {
 
         const loadNotifications = async () => {
             try {
-                console.log("Fetching notifications for admin ID:", adminId);
-                const data = await fetchAdminNotifications(adminId);
-                console.log("Notifications data received:", data);
-                setNotifications(data);
-                setError(null);
+                console.log("Fetching notifications for user ID:", adminId);
+                const notifications = await fetchAdminNotifications(adminId);
+                console.log("Notifications data received:", notifications);
+                if (Array.isArray(notifications)) {
+                    setNotifications(notifications);
+                    console.log("Notifications state updated:", notifications);
+                } else {
+                    console.error("Unexpected notifications data format:", notifications);
+                    setError("Unexpected data format received for notifications.");
+                }
             } catch (err) {
                 console.error("Error fetching notifications:", err.message);
                 setError(err.message);
@@ -54,15 +59,13 @@ function AdminNotification() {
         loadPatients();
     }, [adminId]);
 
-
-
     const handleSendMessage = async () => {
         try {
             if (!selectedPatient) {
-                throw new Error("No patient selected.");
+                setError("No patient selected.");
             }
             if (!newMessage) {
-                throw new Error("Message content is empty.");
+                setError("Message content is empty.");
             }
             const senderModel = "Admin";
             const receiverModel = "User";
@@ -75,6 +78,7 @@ function AdminNotification() {
                 senderModel: senderModel,
                 receiverModel: receiverModel
             });
+
             console.log("Message sent successfully:", response);
             setNewMessage('');
             setSelectedPatient('');
