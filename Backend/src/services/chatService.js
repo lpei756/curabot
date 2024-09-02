@@ -56,7 +56,7 @@ export const getAppointmentsForUser = async (userId, authToken) => {
 export const processChatWithOpenAI = async (userMessage) => {
     try {
         const response = await openai.chat.completions.create({
-            model: 'gpt-4o-mini',
+            model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
@@ -107,7 +107,7 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'Extract symptoms from the following message and return them as a comma-separated list.'
+                    content: 'Extract symptoms from the following message and return them as a comma-separated list. If no symptoms are found, return "No symptoms detected."'
                 },
                 {
                     role: 'user', content: userMessage
@@ -117,7 +117,7 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
 
         const symptoms = response.choices[0].message.content.trim();
         console.log('Detected Symptoms:', symptoms);
-        return symptoms;
+        return symptoms !== '' ? symptoms : 'No symptoms detected.';
     } catch (error) {
         console.error('Error detecting symptoms:', error);
         throw new Error('Error detecting symptoms');
@@ -127,13 +127,18 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
 export const identifySpecialisation = async (userMessage) => {
     try {
         const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
+        
+        if (detectedSymptoms === 'No symptoms detected.') {
+            console.log('No symptoms detected, skipping specialisation identification.');
+            return [];
+        }
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
-                    content: 'Identify the medical specialisation based on the symptoms described by the user.'
+                    content: 'Identify the medical specialisation based on the symptoms described by the user. If no specialisation can be identified, return "Unknown specialisation".'
                 },
                 {
                     role: 'user', content: detectedSymptoms
@@ -143,6 +148,10 @@ export const identifySpecialisation = async (userMessage) => {
 
         const specialisation = response.choices[0].message.content.trim();
         console.log('Identified Specialisation:', specialisation);
+
+        if (specialisation === 'Unknown specialisation') {
+            return [];
+        }
 
         const specialisationData = await DoctorsSpecialisations.findOne({ specialisation: specialisation }).exec();
 
