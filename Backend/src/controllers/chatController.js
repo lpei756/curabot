@@ -285,47 +285,56 @@ export const handleChat = async (req, res) => {
     }
 
     const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
-
     const symptoms = Array.isArray(detectedSymptoms) ? detectedSymptoms : [detectedSymptoms];
 
     if (symptoms.length > 0 && symptoms[0] !== 'No symptoms detected.') {
-      const doctorIDs = await identifySpecialisation(symptoms.join(', '));
+      try {
+        const { specialisation, doctorIDs } = await identifySpecialisation(symptoms.join(', '));
+        console.log('Specialisation:', specialisation);
 
-      if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
-        const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
+        if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
+          const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
 
-        const doctorDetails = doctorInfo.map(info =>
-          `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
-        ).join('');
+          const doctorDetails = doctorInfo.map(info =>
+            `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName} ${info.doctor.lastName}</p>`
+          ).join('');
 
-        const responseMessage = `
-          Based on your symptoms, here are some doctors you might consider:
-          ${doctorDetails}
-        `;
+          const responseMessage = `
+            Based on the symptoms you’ve described, it seems like you might need to consult with a doctor in the field of <strong>${specialisation}</strong>. Here are some doctors who could assist you:
+            ${doctorDetails}
+          `;
 
-        await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
-        );
-        return res.json({ reply: responseMessage, sessionId });
-      } else {
-        const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
-        console.log('No doctors found for specialization');
-        await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
-        );
-        return res.json({ reply: noSpecializationReply, sessionId });
+          await ChatSession.findByIdAndUpdate(
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
+          );
+          return res.json({ reply: responseMessage, sessionId });
+        } else {
+          const noSpecialisationReply = 'I’m sorry, but I couldn’t find any relevant specialisations based on the symptoms you mentioned. It might be helpful to provide more details or consult a healthcare professional directly. If you need any further assistance, feel free to let me know.';
+          console.log('No specialisation found');
+          await ChatSession.findByIdAndUpdate(
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: noSpecialisationReply, isAnonymous } } }
+          );
+          return res.json({ reply: noSpecialisationReply, sessionId });
+        }
+      } catch (error) {
+        console.error('Error handling specialisation:', error);
+        return res.status(500).json({ error: 'Internal server error', sessionId });
       }
     } else {
-      const generalResponse = await processChatWithOpenAI(userMessage);
-      await ChatSession.findByIdAndUpdate(
-        sessionId,
-        { $push: { messages: { sender: 'bot', message: generalResponse, isAnonymous } } }
-      );
-      return res.json({ reply: generalResponse, sessionId });
+      try {
+        const generalResponse = await processChatWithOpenAI(userMessage);
+        await ChatSession.findByIdAndUpdate(
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: generalResponse, isAnonymous } } }
+        );
+        return res.json({ reply: generalResponse, sessionId });
+      } catch (error) {
+        console.error('Error processing chat with OpenAI:', error);
+        return res.status(500).json({ error: 'Internal server error', sessionId });
+      }
     }
-
   } catch (error) {
     console.error('Error handling chat:', error);
     return res.status(500).json({ error: 'Internal server error', sessionId });
