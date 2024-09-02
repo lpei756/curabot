@@ -9,7 +9,6 @@ const validationOptions = {
 };
 
 const schemaValidator = (path = true) => {
-  console.log(`Initializing schemaValidator for path: ${path}`);
   const schema = schemas[path];
   const paramsSchema = schemas[path + '_params'];
 
@@ -20,10 +19,8 @@ const schemaValidator = (path = true) => {
 
   return (req, res, next) => {
     const method = req.method.toLowerCase();
-    console.log(`Handling request for path: ${path}, method: ${method}`);
 
     if (!supportedMethods.includes(method)) {
-      console.log(`Method ${method} is not supported for validation. Skipping validation.`);
       return next();
     }
 

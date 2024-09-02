@@ -284,68 +284,51 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    if (userMessage) {
-      try {
-        const symptoms = await detectSymptomsUsingNLP(userMessage);
+    const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
 
-        if (symptoms.length > 0) {
-          const doctorIDs = await identifySpecialisation(symptoms);
-    
-          if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
-            const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
-    
-            const doctorDetails = doctorInfo.map(info =>
-              `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
-            ).join('');
-    
-            const responseMessage = `
-              Based on your symptoms, here are some doctors you might consider:
-              ${doctorDetails}
-            `;
-    
-            await ChatSession.findByIdAndUpdate(
-              sessionId,
-              { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
-            );
-            return res.json({ reply: responseMessage, sessionId });
-          } else {
-            const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
-            console.log('No doctors found for specialization');
-            await ChatSession.findByIdAndUpdate(
-              sessionId,
-              { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
-            );
-            return res.json({ reply: noSpecializationReply, sessionId });
-          }
-        } else {
-          const noSymptomsReply = 'I couldn\'t identify any symptoms in your message. Please describe your symptoms in more detail.';
-          await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: noSymptomsReply, isAnonymous } } }
-          );
-          return res.json({ reply: noSymptomsReply, sessionId });
-        }
-      } catch (error) {
-        console.error('Error identifying specialization:', error);
-        return res.status(500).json({ error: 'Error identifying specialization', sessionId });
+    const symptoms = Array.isArray(detectedSymptoms) ? detectedSymptoms : [detectedSymptoms];
+
+    if (symptoms.length > 0 && symptoms[0] !== 'No symptoms detected.') {
+      const doctorIDs = await identifySpecialisation(symptoms.join(', '));
+
+      if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
+        const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
+
+        const doctorDetails = doctorInfo.map(info =>
+          `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
+        ).join('');
+
+        const responseMessage = `
+          Based on your symptoms, here are some doctors you might consider:
+          ${doctorDetails}
+        `;
+
+        await ChatSession.findByIdAndUpdate(
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
+        );
+        return res.json({ reply: responseMessage, sessionId });
+      } else {
+        const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
+        console.log('No doctors found for specialization');
+        await ChatSession.findByIdAndUpdate(
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
+        );
+        return res.json({ reply: noSpecializationReply, sessionId });
       }
-    }
-
-    try {
-      const aiResponse = await processChatWithOpenAI(userMessage);
-
+    } else {
+      const generalResponse = await processChatWithOpenAI(userMessage);
       await ChatSession.findByIdAndUpdate(
         sessionId,
-        { $push: { messages: { sender: 'bot', message: aiResponse, isAnonymous } } }
+        { $push: { messages: { sender: 'bot', message: generalResponse, isAnonymous } } }
       );
-
-      return res.json({ reply: aiResponse, sessionId });
-    } catch (error) {
-      return res.status(500).json({ error: 'Error processing chat', sessionId });
+      return res.json({ reply: generalResponse, sessionId });
     }
+
   } catch (error) {
-    console.error('Error processing chat:', error);
-    return res.status(500).json({ error: 'Internal Server Error', sessionId });
+    console.error('Error handling chat:', error);
+    return res.status(500).json({ error: 'Internal server error', sessionId });
   }
 };
 
