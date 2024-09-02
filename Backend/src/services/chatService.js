@@ -100,8 +100,34 @@ export const getHistoryBySessionId = async (sessionId) => {
     }
 };
 
+export const detectSymptomsUsingNLP = async (userMessage) => {
+    try {
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Extract symptoms from the following message and return them as a comma-separated list.'
+                },
+                {
+                    role: 'user', content: userMessage
+                }
+            ],
+        });
+
+        const symptoms = response.choices[0].message.content.trim();
+        console.log('Detected Symptoms:', symptoms);
+        return symptoms;
+    } catch (error) {
+        console.error('Error detecting symptoms:', error);
+        throw new Error('Error detecting symptoms');
+    }
+};
+
 export const identifySpecialisation = async (userMessage) => {
     try {
+        const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
+
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
@@ -110,7 +136,7 @@ export const identifySpecialisation = async (userMessage) => {
                     content: 'Identify the medical specialisation based on the symptoms described by the user.'
                 },
                 {
-                    role: 'user', content: userMessage
+                    role: 'user', content: detectedSymptoms
                 }
             ],
         });
@@ -119,13 +145,11 @@ export const identifySpecialisation = async (userMessage) => {
         console.log('Identified Specialisation:', specialisation);
 
         const specialisationData = await DoctorsSpecialisations.findOne({ specialisation: specialisation }).exec();
-        console.log('Specialisation Data:', specialisationData);
 
         if (specialisationData && Array.isArray(specialisationData.doctorIDs)) {
-            console.log('Doctor IDs:', specialisationData.doctorIDs);
             return specialisationData.doctorIDs;
         } else {
-            return 'No matching specialisation found.';
+            return [];
         }
     } catch (error) {
         console.error('Error identifying specialisation:', error);

@@ -1,6 +1,6 @@
 import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
-import Feedback from '../models/feedback.js';
+import Feedback from '../models/Feedback.js';
 
 
 const router = express.Router();
