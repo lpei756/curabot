@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { adminLogin } from '../../../services/AdminService';
@@ -8,19 +8,21 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import {AdminContext} from "../../../context/AdminContext";
 
 function AdminLogin({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const { login: authLogin } = useContext(AdminContext);
 
     const handleAdminLogin = async (e) => {
         e.preventDefault();
         try {
             const data = await adminLogin(email, password);
             console.log('Admin login successful:', data);
-            localStorage.setItem('adminToken', data.token);
+            authLogin(data.token);
             onSuccess();
             onClose();
 
@@ -29,6 +31,7 @@ function AdminLogin({ onClose, onSuccess }) {
             } else {
                 navigate('/admin/panel');
             }
+            // window.location.reload();
         } catch (error) {
             setError('Admin login failed: ' + error.message);
         }
