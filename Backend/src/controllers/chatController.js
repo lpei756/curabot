@@ -12,7 +12,7 @@ const sessionStore = {};
 
 const isSessionExpired = (lastActivityTime) => {
   const currentTime = new Date();
-  return (currentTime - new Date(lastActivityTime)) > 1 * 60 * 1000;
+  return (currentTime - new Date(lastActivityTime)) > 15 * 60 * 1000;
 };
 
 const updateSession = (sessionId) => {
