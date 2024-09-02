@@ -1,5 +1,5 @@
 import leven from 'leven';
-import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId } from '../services/chatService.js';
+import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
 import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
@@ -7,7 +7,6 @@ import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
 import ChatSession from '../models/ChatSession.js';
-import { identifySpecialisation } from '../services/chatService.js';
 
 const sessionStore = {};
 
@@ -43,11 +42,9 @@ export const handleChat = async (req, res) => {
       console.log(`Session ${sessionId} is still active.`);
       updateSession(sessionId);
     } else {
-      // Generate a new session ID only if no valid session exists
       sessionId = uuidv4();
       console.log(`Created new session: ${sessionId}`);
       updateSession(sessionId);
-
       await ChatSession.create({ _id: sessionId, userId, messages: [] });
     }
 
@@ -147,7 +144,6 @@ export const handleChat = async (req, res) => {
         }
 
         const user = await readUser(userId);
-
         const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
         if (!nearestSlot) {
           const noMatchReply = 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.';
@@ -288,43 +284,52 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    if (userMessage.includes('symptom') || userMessage.includes('feel')) {
+    if (userMessage) {
       try {
-          const doctorIDs = await identifySpecialisation(userMessage);
-          console.log('Doctor IDs:', doctorIDs);
-  
+        const symptoms = await detectSymptomsUsingNLP(userMessage);
+
+        if (symptoms.length > 0) {
+          const doctorIDs = await identifySpecialisation(symptoms);
+    
           if (Array.isArray(doctorIDs) && doctorIDs.length > 0) {
-              const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
-              console.log('Doctor Info:', doctorInfo);
-  
-              const doctorDetails = doctorInfo.map(info => 
-                  `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
-              ).join('<br>');
-              
-              const responseMessage = `
-                  Based on your symptoms, here are some doctors you might consider:
-                  ${doctorDetails}
-              `;
-  
-              await ChatSession.findByIdAndUpdate(
-                  sessionId,
-                  { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
-              );
-              return res.json({ reply: responseMessage, sessionId });
+            const doctorInfo = await Promise.all(doctorIDs.map(id => getDoctorByIdService(id)));
+    
+            const doctorDetails = doctorInfo.map(info =>
+              `<p><strong>Doctor ID:</strong> ${info.doctor.doctorID}, <strong>Name:</strong> ${info.doctor.firstName}</p>`
+            ).join('');
+    
+            const responseMessage = `
+              Based on your symptoms, here are some doctors you might consider:
+              ${doctorDetails}
+            `;
+    
+            await ChatSession.findByIdAndUpdate(
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
+            );
+            return res.json({ reply: responseMessage, sessionId });
           } else {
-              const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
-              console.log('No doctors found for specialization');
-              await ChatSession.findByIdAndUpdate(
-                  sessionId,
-                  { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
-              );
-              return res.json({ reply: noSpecializationReply, sessionId });
+            const noSpecializationReply = 'Sorry, I couldn\'t find any doctors based on your symptoms. Please provide more details or contact a healthcare professional.';
+            console.log('No doctors found for specialization');
+            await ChatSession.findByIdAndUpdate(
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noSpecializationReply, isAnonymous } } }
+            );
+            return res.json({ reply: noSpecializationReply, sessionId });
           }
+        } else {
+          const noSymptomsReply = 'I couldn\'t identify any symptoms in your message. Please describe your symptoms in more detail.';
+          await ChatSession.findByIdAndUpdate(
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: noSymptomsReply, isAnonymous } } }
+          );
+          return res.json({ reply: noSymptomsReply, sessionId });
+        }
       } catch (error) {
-          console.error('Error identifying specialization:', error);
-          return res.status(500).json({ error: 'Error identifying specialization', sessionId });
+        console.error('Error identifying specialization:', error);
+        return res.status(500).json({ error: 'Error identifying specialization', sessionId });
       }
-  }
+    }
 
     try {
       const aiResponse = await processChatWithOpenAI(userMessage);
