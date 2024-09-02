@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
-import { fetchAdminNotifications } from '../../services/NotificationService';
+// import { fetchAdminNotifications } from '../../services/NotificationService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import { Link, useNavigate } from 'react-router-dom';
@@ -14,9 +14,9 @@ const AdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [unreadCount, setUnreadCount] = useState(0);
+    // const [unreadCount, setUnreadCount] = useState(0);
     const navigate = useNavigate();
-    const { role, adminId } = useContext(AdminContext);
+    const { adminId } = useContext(AdminContext);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -25,7 +25,7 @@ const AdminPanel = () => {
                 if (Array.isArray(patientsData)) {
                     setPatients(patientsData);
                 } else {
-                    throw new Error('Invalid data format');
+                    setError('Invalid data format');
                 }
             } catch (err) {
                 console.error('Error fetching data:', err);
@@ -33,24 +33,20 @@ const AdminPanel = () => {
             }
         };
 
-        const fetchUnreadNotifications = async () => {
-            try {
-                if (!adminId) {
-                    console.warn('Admin ID is not available');
-                    return;
-                }
-                console.log("Using Admin ID:", adminId);
-                const notifications = await fetchAdminNotifications(adminId);
-                const unreadNotifications = notifications.filter(notification => !notification.isRead);
-                setUnreadCount(unreadNotifications.length);
-            } catch (err) {
-                console.error('Error fetching notifications:', err.message);
-            }
-        };
+        // const fetchUnreadNotifications = async () => {
+        //     try {
+        //         console.log("Using Admin ID:", adminId);
+        //         const notifications = await fetchAdminNotifications(adminId);
+        //         const unreadNotifications = notifications.filter(notification => !notification.isRead);
+        //         setUnreadCount(unreadNotifications.length);
+        //     } catch (err) {
+        //         console.error('Error fetching notifications:', err.message);
+        //     }
+        // };
 
         fetchData();
-        fetchUnreadNotifications();
-    }, [role, adminId]);
+        // fetchUnreadNotifications();
+    }, [adminId]);
 
 
     useEffect(() => {
@@ -103,7 +99,7 @@ const AdminPanel = () => {
                     }}
                     onClick={handleNavigateToNotifications}
                 >
-                    Notifications {unreadCount > 0 ? `(${unreadCount})` : ''}
+                    Notifications
                 </Button>
             </Box>
 

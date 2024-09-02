@@ -29,16 +29,15 @@ const SuperAdminPanel = () => {
                 if (Array.isArray(adminsData)) {
                     setAdmins(adminsData);
                 } else {
-                    throw new Error('Failed to fetch admins data.');
+                    setError('Failed to fetch admins data.');
                 }
-
                 console.log('Fetching all patients data');
                 const patientsData = await fetchAllPatients();
                 console.log('Fetched patients data:', patientsData);
                 if (Array.isArray(patientsData)) {
                     setPatients(patientsData);
                 } else {
-                    throw new Error('Failed to fetch patients data.');
+                    setError('Failed to fetch patients data.');
                 }
 
                 console.log('Data fetching completed successfully');

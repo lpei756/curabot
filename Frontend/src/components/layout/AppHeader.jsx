@@ -16,7 +16,7 @@ import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
-import { tokenStorage, userDataStorage } from '../../utils/localStorage';
+import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
 
 const MenuIconButton = styled('button')(({ theme }) => ({
     backgroundColor: theme.palette.background.default,
@@ -108,21 +108,29 @@ function AppHeader() {
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+    const [adminId, setAdminId] = useState('');
     const [userId, setUserId] = useState('');
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const adminToken = localStorage.getItem('adminToken');
         const storedUserId = localStorage.getItem('userId');
+        const storedAdminId = localStorage.getItem('adminId');
         const userLoginStatus = localStorage.getItem('isUserLoggedIn');
         const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');
 
         if (token) {
             setIsUserLoggedIn(true);
         }
-
+        if (adminToken) {
+            setIsAdminLoggedIn(true);
+        }
         if (storedUserId) {
             setUserId(storedUserId);
+        }
+        if (storedAdminId) {
+            setAdminId(storedAdminId);
         }
         if (userLoginStatus === 'true') {
             setIsUserLoggedIn(true);
@@ -130,6 +138,7 @@ function AppHeader() {
         if (adminLoginStatus === 'true') {
             setIsAdminLoggedIn(true);
         }
+
     }, []);
 
     const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
@@ -142,22 +151,29 @@ function AppHeader() {
         localStorage.setItem('userId', id);
         localStorage.setItem('isUserLoggedIn', 'true');
     };
-    const handleAdminLoginSuccess = () => {
+    const handleAdminLoginSuccess = (id) => {
         setIsAdminLoggedIn(true);
+        setAdminId(id);
+        localStorage.setItem('adminId', id);
+        console.log('Admin ID:', adminId);
         localStorage.setItem('isAdminLoggedIn', 'true');
     };
 
     const handleLogout = () => {
         tokenStorage.remove();
         userDataStorage.remove();
-
+        adminTokenStorage.remove();
+        adminDataStorage.remove();
         localStorage.removeItem('token');
+        localStorage.removeItem('adminToken');
         localStorage.removeItem('userId');
+        localStorage.removeItem('adminId');
         localStorage.removeItem('isUserLoggedIn');
         localStorage.removeItem('isAdminLoggedIn');
         setIsUserLoggedIn(false);
         setIsAdminLoggedIn(false);
         setUserId('');
+        setAdminId('');
         navigate('/');
     };
 

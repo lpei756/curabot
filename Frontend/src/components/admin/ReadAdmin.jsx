@@ -32,7 +32,7 @@ function ReadAdmin() {
                     console.log("Admin data found:", response);
                     setAdminData(response);
                 } else {
-                    throw new Error("Admin data is undefined or not returned from the API.");
+                    setError("Admin data is undefined or not returned from the API.");
                 }
             } catch (err) {
                 console.error("Error fetching admin data:", err);

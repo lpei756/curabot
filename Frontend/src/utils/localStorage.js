@@ -4,6 +4,8 @@ const removeFromLocalStorage = (itemName) => localStorage.removeItem(itemName);
 
 const TOKEN = 'authToken';
 const USER_DATA = 'userData';
+const ADMINTOKEN = 'adminToken';
+const ADMIN_DATA = 'adminData';
 
 const getJSONFromLocalStorage = (itemName) => {
   const item = getFromLocalStorage(itemName);
@@ -18,8 +20,20 @@ export const tokenStorage = {
   remove: () => removeFromLocalStorage(TOKEN)
 };
 
+export const adminTokenStorage = {
+  get: () => getFromLocalStorage(ADMINTOKEN),
+  save: (value) => saveInLocalStorage(ADMINTOKEN, value),
+  remove: () => removeFromLocalStorage(ADMINTOKEN)
+};
+
 export const userDataStorage = {
   get: () => getJSONFromLocalStorage(USER_DATA),
   save: (value) => saveJSONInLocalStorage(USER_DATA, value),
   remove: () => removeFromLocalStorage(USER_DATA)
+};
+
+export const adminDataStorage = {
+  get: () => getJSONFromLocalStorage(ADMIN_DATA),
+  save: (value) => saveJSONInLocalStorage(ADMIN_DATA, value),
+  remove: () => removeFromLocalStorage(ADMIN_DATA)
 };
