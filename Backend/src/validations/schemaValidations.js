@@ -295,6 +295,7 @@ const testResultSchema = Joi.object({
     patientID: Joi.string().optional(),
     doctorID: Joi.string().optional(),
     analysis: Joi.string().optional(),
+    summary: Joi.string().optional(),
     pdfText: Joi.string().optional(),
     reviewed: Joi.boolean().default(false)
 });

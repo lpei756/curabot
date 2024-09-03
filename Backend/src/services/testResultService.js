@@ -1,5 +1,5 @@
 import TestResult from '../models/TestResult.js';
-import { generateAnalysis } from '../utils/aiUtils.js';
+import { generateAnalysis, generateSummary } from '../utils/aiUtils.js';
 import pdfExtract from 'pdf-text-extract';
 
 export const uploadTestResultService = async (testResultData) => {
@@ -13,8 +13,12 @@ export const uploadTestResultService = async (testResultData) => {
         const analysis = await generateAnalysis(pdfText, testResultData.patientID);
         console.log('Generated analysis:', analysis);
 
+        const summary = await generateSummary(analysis);
+        console.log('Generated summary:', summary);
+
         testResult.pdfText = pdfText;
         testResult.analysis = analysis;
+        testResult.summary = summary;
         await testResult.save();
 
         return { error: false, testResult };
