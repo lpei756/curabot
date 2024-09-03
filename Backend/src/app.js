@@ -11,6 +11,7 @@ import adminRoutes from './routes/adminRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
+import testresultRoutes from './routes/testResultRoutes.js'
 
 const app = express();
 
@@ -32,6 +33,7 @@ app.use('/api', adminRoutes);
 app.use('/api', notificationRoutes);
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 app.use('/api/feedback', feedbackRoutes);
+app.use('/api/test-result', testresultRoutes)
 
 app.post('/api/feedback', (req, res) => {
     const { messageId, feedback } = req.body;

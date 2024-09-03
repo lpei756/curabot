@@ -1,6 +1,6 @@
 export const buildPathWithBase = (paths) => {
   return Object.fromEntries(
-      Object.entries(paths).map(([key, value]) => [key, `/api${value}`])
+    Object.entries(paths).map(([key, value]) => [key, `/api${value}`])
   );
 };
 
@@ -76,4 +76,13 @@ export const NOTIFICATION_PATHS = {
   getAdminNotifications: '/notification/admin/:adminId',
   markAsRead: '/notification/:notificationId/read',
   delete: '/notification/:notificationId/delete',
+};
+
+export const TEST_RESULT_PATHS = {
+  upload: '/upload',
+  read: '/:testResultId',
+  update: '/:testResultId/update',
+  delete: '/:testResultId',
+  approve: '/:testResultId/approve',
+  edit: '/:testResultId/edit'
 };

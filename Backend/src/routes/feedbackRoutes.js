@@ -2,7 +2,6 @@ import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
 import Feedback from '../models/Feedback.js';
 
-
 const router = express.Router();
 
 router.post('/', async (req, res) => {
@@ -29,7 +28,5 @@ router.post('/', async (req, res) => {
         res.status(500).send({ status: 'error', message: 'Failed to save feedback' });
     }
 });
-
-
 
 export default router;
