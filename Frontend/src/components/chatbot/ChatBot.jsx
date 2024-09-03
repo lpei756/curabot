@@ -50,7 +50,9 @@ function ChatBot({ }) {
     const [selectedImage, setSelectedImage] = useState(null);
     const [sessionId, setSessionId] = useState(localStorage.getItem('chatSessionId') || null);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [selectedSessionId, setSelectedSessionId] = useState(null);
     const [recentChatTimes, setRecentChatTimes] = useState([]);
+    const [recentChatSessions, setRecentChatSessions] = useState([]);
     const [chatHistoriesFetched, setChatHistoriesFetched] = useState(false);
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
@@ -95,23 +97,29 @@ function ChatBot({ }) {
     }, [sessionId, authToken]);
 
     useEffect(() => {
-        // Fetch user chat histories only once when component mounts
         const fetchUserHistories = async () => {
             try {
                 const histories = await fetchUserChatHistories(userId, authToken);
-                const times = histories.map(history => new Date(history.messages[0].timestamp).toLocaleString());
-                setRecentChatTimes(times);
-                setChatHistoriesFetched(true); // Mark chat histories as fetched
+
+                const userChatHistories = histories.map(history => ({
+                    time: new Date(history.messages[0].timestamp).toLocaleString(),
+                    id: history._id,
+                }));
+
+                setRecentChatTimes(userChatHistories.map(session => session.time));
+                setRecentChatSessions(userChatHistories);
+
+                setChatHistoriesFetched(true);
             } catch (error) {
                 console.error('Failed to fetch chat histories:', error);
             }
         };
 
-        // Fetch chat histories only if they haven't been fetched yet
         if (!chatHistoriesFetched && userId) {
             fetchUserHistories();
         }
     }, [userId, authToken, chatHistoriesFetched]);
+
 
 
     useEffect(() => {
@@ -219,6 +227,22 @@ function ChatBot({ }) {
         setAnchorEl(null);
     };
 
+    const showChatHistory = async (sessionId) => {
+        try {
+            // Fetch chat history by the selected sessionId
+            const history = await fetchChatHistoryBySessionId(sessionId, authToken);
+            const formattedMessages = history.messages.map((msg) => ({
+                ...msg,
+                type: msg.sender === 'bot' ? 'bot' : 'user',
+                isHtml: /<\/?[a-z][\s\S]*>/i.test(msg.message),
+            }));
+            setMessages(formattedMessages);
+            setSelectedSessionId(sessionId);
+            handleCloseMenu();
+        } catch (error) {
+            console.error('Failed to fetch chat history:', error);
+        }
+    };
 
     return (
         <>
@@ -234,8 +258,8 @@ function ChatBot({ }) {
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
                     backgroundColor: '#f5f5f5',
-                    zIndex: 9999,
-                    flexDirection: 'column'
+                    flexDirection: 'column',
+                    zIndex: 6666
                 }}
             >
                 <AppBar position="static" sx={{
@@ -243,7 +267,8 @@ function ChatBot({ }) {
                     boxShadow: 'none',
                     borderTopLeftRadius: '20px',
                     borderTopRightRadius: '20px',
-                    height: '60px'
+                    height: '60px',
+                    zIndex: 9997,
                 }}>
                     <Toolbar sx={{ justifyContent: 'space-between' }}>
                         <Typography variant="h6" sx={{
@@ -252,9 +277,11 @@ function ChatBot({ }) {
                         }}>
                             Cura
                         </Typography>
-                        <IconButton color="inherit" onClick={handleHistoryClick}>
-                            <HistoryRoundedIcon />
-                        </IconButton>
+                        {authToken && (
+                            <IconButton color="inherit" onClick={handleHistoryClick}>
+                                <HistoryRoundedIcon />
+                            </IconButton>
+                        )}
                         <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
                             <ClearRoundedIcon />
                         </IconButton>
@@ -262,17 +289,36 @@ function ChatBot({ }) {
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
                             onClose={handleCloseMenu}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'center',
+                            }}
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'center',
+                            }}
+                            sx={{
+                                zIndex: 9998,
+                                height: '50%', // Set the height to 50% of the parent (chatbot container)
+                                maxHeight: '300px', // Optionally set a maximum height
+                            }}
                         >
+                            <Box
+                                sx={{
+                                    maxHeight: '100%', // Ensure the Box takes up the full height of the Menu
+                                    overflowY: 'auto', // Enable vertical scrolling if content overflows
+                                }}
+                            ></Box>
                             {recentChatTimes.map((time, index) => (
-                                <MenuItem key={index} onClick={handleCloseMenu}>
+                                <MenuItem key={index} onClick={() => showChatHistory(recentChatSessions[index].id)}>
                                     {time}
                                 </MenuItem>
                             ))}
-                        </Menu> 
+                        </Menu>
                     </Toolbar>
                 </AppBar>
 
-                <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5' }}>
+                <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
                     {messages.map((msg, index) => (
                         <Box
                             key={index}
