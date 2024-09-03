@@ -305,7 +305,12 @@ export const handleChat = async (req, res) => {
 
         if (Array.isArray(doctors) && doctors.length > 0) {
           const doctorDetails = doctors.map(doctor =>
-            `<p><strong>Name:</strong> ${doctor.doctorName}, <strong>Clinic:</strong> ${doctor.clinicName}, <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>`
+            `<p>
+            <strong>Name:</strong> ${doctor.doctorName},
+            <strong>Clinic:</strong> ${doctor.clinicName},
+            <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km
+            <button onclick="selectDoctor('${doctor.doctorID}')">Select ${doctor.doctorName}</button>
+            </p>`
           ).join('');
 
           const responseMessage = `
@@ -353,7 +358,7 @@ export const handleChat = async (req, res) => {
 export const fetchUserChatHistories = async (req, res) => {
   const { userId } = req.params;
   try {
-    const chatSessions = await ChatSession.find({ userId }).sort({ 'messages.timestamp': -1 });
+    const chatSessions = await ChatSession.find({ userId });
 
     if (!chatSessions || chatSessions.length === 0) {
       return res.status(404).json({ error: 'No chat history found for this user.' });

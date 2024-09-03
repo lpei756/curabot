@@ -7,6 +7,7 @@ import {
     DOCTOR_PATHS,
     NOTIFICATION_PATHS,
     buildPathWithBase,
+    TEST_RESULT_PATHS
 } from '../routes/path.js';
 
 const adminPathBase = buildPathWithBase(ADMIN_PATHS);
@@ -15,6 +16,7 @@ const appointmentPathBase = buildPathWithBase(APPOINTMENT_PATHS);
 const doctorAvailabilityPathBase = buildPathWithBase(DOCTOR_AVAILABILITY_PATHS);
 const doctorPathBase = buildPathWithBase(DOCTOR_PATHS);
 const notificationPathBase = buildPathWithBase(NOTIFICATION_PATHS);
+const testresultPathBase = buildPathWithBase(TEST_RESULT_PATHS);
 
 const feedbackSchema = Joi.object({
     messageId: Joi.string().required(),
@@ -289,6 +291,14 @@ const deleteNotificationParamsSchema = Joi.object({
     notificationId: Joi.string().required(),
 });
 
+const testResultSchema = Joi.object({
+    patientID: Joi.string().optional(),
+    doctorID: Joi.string().optional(),
+    analysis: Joi.string().optional(),
+    pdfText: Joi.string().optional(),
+    reviewed: Joi.boolean().default(false)
+});
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -322,5 +332,6 @@ export default {
     [notificationPathBase.markAsRead + '_params']: markAsReadParamsSchema,
     [notificationPathBase.deleteNotification]: deleteNotificationSchema,
     [notificationPathBase.deleteNotification + '_params']: deleteNotificationParamsSchema,
+    [testresultPathBase.upload]: testResultSchema,
     '/api/feedback': feedbackSchema,
 };
