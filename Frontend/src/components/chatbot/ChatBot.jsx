@@ -1,6 +1,6 @@
 import { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
@@ -12,10 +12,11 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import ThumbUpOutlinedIcon from '@mui/icons-material/ThumbUpOutlined';
 import ThumbDownOutlinedIcon from '@mui/icons-material/ThumbDownOutlined';
+import HistoryRoundedIcon from '@mui/icons-material/HistoryRounded';
 import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
-import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer } from '../../services/chatService';
+import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer, fetchUserChatHistories } from '../../services/chatService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
@@ -36,7 +37,7 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     },
 }));
 
-function ChatBot({}) {
+function ChatBot({ }) {
     const { toggleChatbot } = useChatbot();
     const { authToken } = useContext(AuthContext);
     const [messages, setMessages] = useState([
@@ -48,8 +49,12 @@ function ChatBot({}) {
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [sessionId, setSessionId] = useState(localStorage.getItem('chatSessionId') || null);
+    const [anchorEl, setAnchorEl] = useState(null);
+    const [recentChatTimes, setRecentChatTimes] = useState([]);
+    const [chatHistoriesFetched, setChatHistoriesFetched] = useState(false);
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
+    const { userId } = useContext(AuthContext);
 
     const quickChats = [
         "How can I book a new appointment",
@@ -84,6 +89,26 @@ function ChatBot({}) {
 
         fetchChatHistory();
     }, [sessionId, authToken]);
+
+    useEffect(() => {
+        // Fetch user chat histories only once when component mounts
+        const fetchUserHistories = async () => {
+            try {
+                const histories = await fetchUserChatHistories(userId, authToken);
+                const times = histories.map(history => new Date(history.messages[0].timestamp).toLocaleString());
+                setRecentChatTimes(times);
+                setChatHistoriesFetched(true); // Mark chat histories as fetched
+            } catch (error) {
+                console.error('Failed to fetch chat histories:', error);
+            }
+        };
+
+        // Fetch chat histories only if they haven't been fetched yet
+        if (!chatHistoriesFetched && userId) {
+            fetchUserHistories();
+        }
+    }, [userId, authToken, chatHistoriesFetched]);
+
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -182,6 +207,15 @@ function ChatBot({}) {
         }
     };
 
+    const handleHistoryClick = (event) => {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+    };
+
+    const handleCloseMenu = () => {
+        setAnchorEl(null);
+    };
+
+
     return (
         <>
             <Box
@@ -214,9 +248,23 @@ function ChatBot({}) {
                         }}>
                             Cura
                         </Typography>
+                        <IconButton color="inherit" onClick={handleHistoryClick}>
+                            <HistoryRoundedIcon />
+                        </IconButton>
                         <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
                             <ClearRoundedIcon />
                         </IconButton>
+                        <Menu
+                            anchorEl={anchorEl}
+                            open={Boolean(anchorEl)}
+                            onClose={handleCloseMenu}
+                        >
+                            {recentChatTimes.map((time, index) => (
+                                <MenuItem key={index} onClick={handleCloseMenu}>
+                                    {time}
+                                </MenuItem>
+                            ))}
+                        </Menu> 
                     </Toolbar>
                 </AppBar>
 

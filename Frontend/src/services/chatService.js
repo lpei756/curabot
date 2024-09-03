@@ -43,9 +43,23 @@ export const fetchChatHistoryBySessionId = async (sessionId, authToken) => {
                 Authorization: `Bearer ${authToken}`,
             },
         });
-        return response.data;  // Return the fetched chat history
+        return response.data;
     } catch (error) {
         console.error('Error fetching chat history:', error);
         throw error;
     }
+};
+
+export const fetchUserChatHistories = async (userId, authToken) => {
+  try {
+    const response = await axios.get(`http://localhost:3001/api/chat/user/${userId}/history`, {
+      headers: {
+        Authorization: `Bearer ${authToken}`,
+      },
+    });
+    return response.data.chatSessions;
+  } catch (error) {
+    console.error('Error fetching chat histories:', error);
+    throw error;
+  }
 };
