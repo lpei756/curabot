@@ -70,10 +70,14 @@ function ChatBot({ }) {
             if (sessionId) {
                 try {
                     const history = await fetchChatHistoryBySessionId(sessionId, authToken);
-                    const formattedMessages = history.messages.map((msg) => ({
-                        ...msg,
-                        type: msg.sender === 'bot' ? 'bot' : 'user',
-                    }));
+                    const formattedMessages = history.messages.map((msg) => {
+                        const isHtml = /<\/?[a-z][\s\S]*>/i.test(msg.message); // Detect if message contains HTML tags
+                        return {
+                            ...msg,
+                            type: msg.sender === 'bot' ? 'bot' : 'user',
+                            isHtml: isHtml, // Mark if the message is HTML
+                        };
+                    });
                     setMessages(formattedMessages);
                 } catch (error) {
                     console.error('Failed to fetch chat history:', error);
