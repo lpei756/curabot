@@ -2,20 +2,19 @@ import multer from 'multer';
 import path from 'path';
 import { uploadTestResultService } from '../services/testResultService.js';
 
-// Configure multer storage
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
   filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // e.g., 1662339203945.pdf
+    cb(null, Date.now() + path.extname(file.originalname));
   }
 });
 
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB file size limit
-}).single('file'); // Use single if only one file is expected
+  limits: { fileSize: 5 * 1024 * 1024 },
+}).single('file');
 
 export const uploadTestResult = async (req, res) => {
   console.log('Validating request body:', req.body);
@@ -48,7 +47,7 @@ export const uploadTestResult = async (req, res) => {
     const testResultData = {
       patientID,
       doctorID,
-      fileName: file.filename, // Store the file path in the database
+      fileName: file.filename,
     };
 
     try {

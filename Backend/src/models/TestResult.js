@@ -6,6 +6,7 @@ const testResultSchema = new mongoose.Schema({
     fileName: { type: String, required: true },
     pdfText: { type: String, required: false },
     analysis: { type: String, required: false },
+    summary: { type: String, required: false },
     reviewed: { type: Boolean, default: false }
 });
 

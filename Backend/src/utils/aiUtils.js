@@ -33,7 +33,7 @@ export const generateAnalysis = async (pdfText, patientId) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'Generate a detailed analysis of the test result based on the patient’s medical history and the text extracted from the PDF. Please note that only analysis is required, no recommendations need to be made.'
+                    content: 'Generate a detailed analysis of the test result based on the patient’s medical history and the text extracted from the PDF. Please note that only analysis is required, no recommendations need to be made. ONLY analyse the test result, do not make any opinion on it.'
                 },
                 {
                     role: 'user',
@@ -46,5 +46,32 @@ export const generateAnalysis = async (pdfText, patientId) => {
     } catch (error) {
         console.error('Error generating analysis:', error);
         throw new Error('Failed to generate analysis');
+    }
+};
+
+export const generateSummary = async (analysis) => {
+    try {
+        const summaryPrompt = `
+        Based on the following analysis, provide a brief summary indicating whether the test result is normal or if there are any concerns:
+        ${analysis}`;
+
+        const response = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Provide a brief summary indicating whether the test result is normal or if there are any issues.'
+                },
+                {
+                    role: 'user',
+                    content: summaryPrompt
+                }
+            ]
+        });
+
+        return response.choices[0].message.content.trim();
+    } catch (error) {
+        console.error('Error generating summary:', error);
+        throw new Error('Failed to generate summary');
     }
 };
