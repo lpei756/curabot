@@ -344,7 +344,7 @@ export const handleChat = async (req, res) => {
 export const fetchUserChatHistories = async (req, res) => {
   const { userId } = req.params;
   try {
-    const chatSessions = await ChatSession.find({ userId });
+    const chatSessions = await ChatSession.find({ userId }).sort({ 'messages.timestamp': -1 });
 
     if (!chatSessions || chatSessions.length === 0) {
       return res.status(404).json({ error: 'No chat history found for this user.' });
