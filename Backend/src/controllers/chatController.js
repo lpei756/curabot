@@ -45,7 +45,18 @@ export const handleChat = async (req, res) => {
       sessionId = uuidv4();
       console.log(`Created new session: ${sessionId}`);
       updateSession(sessionId);
-      await ChatSession.create({ _id: sessionId, userId, messages: [] });
+      await ChatSession.create({
+        _id: sessionId,
+        userId,
+        messages: [
+          {
+            sender: 'bot',
+            message: 'Kia Ora! My name is Cura. How can I assist you today?',
+            timestamp: new Date(),
+            isAnonymous: isAnonymous
+          },
+        ],
+      });
     }
 
     await ChatSession.findByIdAndUpdate(
