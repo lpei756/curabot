@@ -1,6 +1,8 @@
 import TestResult from '../models/TestResult.js';
 import { generateAnalysis, generateSummary } from '../utils/aiUtils.js';
 import pdfExtract from 'pdf-text-extract';
+import UserModel from '../models/User.js';
+import Doctor from '../models/Doctor.js'
 
 export const uploadTestResultService = async (testResultData) => {
     try {
@@ -43,17 +45,34 @@ const extractTextFromPDF = async (filePath) => {
 export const getTestResult = async (testResultId, user) => {
     try {
         const testResult = await TestResult.findById(testResultId).exec();
-
         if (!testResult) {
             console.error('TestResult not found');
             return { error: true, status: 404, message: 'Test result not found' };
         }
 
-        const isDoctor = user.role === 'doctor';
-        const isPatient = user.patientID === testResult.patientID;
-        const isReviewed = testResult.reviewed;
+        let isAuthorized = false;
 
-        if (isDoctor || isPatient || isReviewed) {
+        if (user.role === 'doctor') {
+            const doctor = await Doctor.findById(user._id).exec();
+
+            if (doctor) {
+                if (doctor.doctorID === testResult.doctorID) {
+                    isAuthorized = true;
+                }
+            } else {
+                console.error('Doctor not found with given _id');
+            }
+        } else {
+            const userDetails = await UserModel.findById(user._id).exec();
+
+            if (userDetails && userDetails.patientID === testResult.patientID) {
+                if (testResult.reviewed) {
+                    isAuthorized = true;
+                }
+            }
+        }
+
+        if (isAuthorized) {
             return { error: false, testResult };
         } else {
             console.error('User is not authorized');
