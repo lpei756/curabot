@@ -300,6 +300,11 @@ const testResultSchema = Joi.object({
     reviewed: Joi.boolean().default(false)
 });
 
+const edittestResultSchema = Joi.object({
+    analysis: Joi.string().required(),
+    summary: Joi.string().required()
+});
+
 export default {
     [authPathBase.register]: registerSchema,
     [authPathBase.login]: loginSchema,
@@ -334,5 +339,6 @@ export default {
     [notificationPathBase.deleteNotification]: deleteNotificationSchema,
     [notificationPathBase.deleteNotification + '_params']: deleteNotificationParamsSchema,
     [testresultPathBase.upload]: testResultSchema,
+    [testresultPathBase.edit]: edittestResultSchema,
     '/api/feedback': feedbackSchema,
 };

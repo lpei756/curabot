@@ -83,3 +83,46 @@ export const getTestResult = async (testResultId, user) => {
         return { error: true, status: 500, message: 'Internal server error' };
     }
 };
+
+export const editTestResultService = async (testResultId, user, updatedFields) => {
+    try {
+        if (user.role !== 'doctor') {
+            return { error: true, status: 403, message: 'Only doctors can edit the test result' };
+        }
+
+        const testResult = await TestResult.findById(testResultId).exec();
+        if (!testResult) {
+            console.error('TestResult not found');
+            return { error: true, status: 404, message: 'Test result not found' };
+        }
+
+        const doctor = await Doctor.findById(user._id).exec();
+        if (!doctor) {
+            console.error('Doctor not found with given _id');
+            return { error: true, status: 404, message: 'Doctor not found' };
+        }
+
+        if (doctor.doctorID !== testResult.doctorID) {
+            return { error: true, status: 403, message: 'You are not authorized to edit this test result' };
+        }
+
+        const allowedFields = ['summary', 'analysis'];
+        const filteredFields = Object.keys(updatedFields)
+            .filter(field => allowedFields.includes(field))
+            .reduce((obj, key) => {
+                obj[key] = updatedFields[key];
+                return obj;
+            }, {});
+
+        const updatedTestResult = await TestResult.findByIdAndUpdate(
+            testResultId,
+            { $set: filteredFields },
+            { new: true, runValidators: true }
+        ).exec();
+
+        return { error: false, testResult: updatedTestResult };
+    } catch (error) {
+        console.error('Error editing test result service:', error);
+        return { error: true, status: 500, message: 'Internal server error' };
+    }
+};

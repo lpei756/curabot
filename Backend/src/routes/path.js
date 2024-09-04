@@ -81,8 +81,6 @@ export const NOTIFICATION_PATHS = {
 export const TEST_RESULT_PATHS = {
   upload: '/upload',
   read: '/:testResultId',
-  update: '/:testResultId/update',
-  delete: '/:testResultId',
   approve: '/:testResultId/approve',
   edit: '/:testResultId/edit'
 };
