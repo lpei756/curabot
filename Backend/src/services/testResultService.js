@@ -39,3 +39,34 @@ const extractTextFromPDF = async (filePath) => {
         });
     });
 };
+
+export const getTestResult = async (testResultId, user) => {
+    try {
+        console.log('User:', user);
+
+        const testResult = await TestResult.findById(testResultId).exec();
+
+        if (!testResult) {
+            console.error('TestResult not found');
+            return { error: true, status: 404, message: 'Test result not found' };
+        }
+
+        console.log('Found TestResult:', testResult);
+
+        const isDoctor = user.role === 'doctor';
+        const isReviewed = testResult.reviewed;
+
+        console.log('Is User Doctor?', isDoctor);
+        console.log('Is Test Result Reviewed?', isReviewed);
+
+        if (isDoctor || isReviewed) {
+            return { error: false, testResult };
+        } else {
+            console.error('User is not authorized');
+            return { error: true, status: 403, message: 'You are not authorized to view this test result' };
+        }
+    } catch (error) {
+        console.error('Error getting test result:', error);
+        return { error: true, status: 500, message: 'Internal server error' };
+    }
+};
