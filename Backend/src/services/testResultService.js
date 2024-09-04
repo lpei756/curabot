@@ -42,8 +42,6 @@ const extractTextFromPDF = async (filePath) => {
 
 export const getTestResult = async (testResultId, user) => {
     try {
-        console.log('User:', user);
-
         const testResult = await TestResult.findById(testResultId).exec();
 
         if (!testResult) {
@@ -51,15 +49,11 @@ export const getTestResult = async (testResultId, user) => {
             return { error: true, status: 404, message: 'Test result not found' };
         }
 
-        console.log('Found TestResult:', testResult);
-
         const isDoctor = user.role === 'doctor';
+        const isPatient = user.patientID === testResult.patientID;
         const isReviewed = testResult.reviewed;
 
-        console.log('Is User Doctor?', isDoctor);
-        console.log('Is Test Result Reviewed?', isReviewed);
-
-        if (isDoctor || isReviewed) {
+        if (isDoctor || isPatient || isReviewed) {
             return { error: false, testResult };
         } else {
             console.error('User is not authorized');
