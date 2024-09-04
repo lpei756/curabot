@@ -1,6 +1,6 @@
 import multer from 'multer';
 import path from 'path';
-import { uploadTestResultService, getTestResult } from '../services/testResultService.js';
+import { uploadTestResultService, getTestResult, editTestResultService } from '../services/testResultService.js';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -77,6 +77,24 @@ export const readTestResult = async (req, res) => {
     res.status(200).json(result.testResult);
   } catch (error) {
     console.error('Error reading test result:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const editTestResult = async (req, res) => {
+  const { testResultId } = req.params;
+  const user = req.user;
+  const updatedFields = req.body;
+
+  try {
+    const result = await editTestResultService(testResultId, user, updatedFields);
+    if (result.error) {
+      console.error(result.message);
+      return res.status(result.status || 500).json({ message: result.message });
+    }
+    res.status(200).json(result.testResult);
+  } catch (error) {
+    console.error('Error editing test result:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
