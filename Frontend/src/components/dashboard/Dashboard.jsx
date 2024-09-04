@@ -9,132 +9,208 @@ import { DayPicker } from 'react-day-picker';
 import '../../App.css';
 
 const Dashboard = () => {
-  const { userId } = useContext(AuthContext);
-  const [userData, setUserData] = useState(null);
-  const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(undefined);
+    const { userId } = useContext(AuthContext);
+    const [userData, setUserData] = useState(null);
+    const [appointments, setAppointments] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+    const [selectedDate, setSelectedDate] = useState(undefined);
 
-  useEffect(() => {
-    if (!userId) {
-        setLoading(true);
-        return;
-    }
-
-    const loadData = async () => {
-      try {
-        console.log('Fetching user data and appointments...');
-
-        const userDataResponse = await fetchUserData(userId);
-        if (!userDataResponse || userDataResponse.error) {
-          throw new Error(userDataResponse?.message || 'Failed to fetch user data');
+    useEffect(() => {
+        if (!userId) {
+            setLoading(true);
+            return;
         }
-        setUserData(userDataResponse);
 
-        const appointmentsResponse = await fetchUserAppointments(userId);
-        console.log('Appointments Response:', appointmentsResponse); // Debugging line
+        const loadData = async () => {
+            try {
+                const userDataResponse = await fetchUserData(userId);
+                if (!userDataResponse || userDataResponse.error) {
+                    throw new Error(userDataResponse?.message || 'Failed to fetch user data');
+                }
+                setUserData(userDataResponse);
 
-        if (!Array.isArray(appointmentsResponse) || appointmentsResponse.error) {
-          throw new Error(appointmentsResponse?.message || 'Failed to fetch appointments');
+                const appointmentsResponse = await fetchUserAppointments(userId);
+                if (!Array.isArray(appointmentsResponse) || appointmentsResponse.error) {
+                    throw new Error(appointmentsResponse?.message || 'Failed to fetch appointments');
+                }
+                setAppointments(appointmentsResponse);
+
+            } catch (err) {
+                setError(err.message || 'An unexpected error occurred');
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        loadData();
+    }, [userId]);
+
+    const filterAppointmentsByDate = () => {
+        if (selectedDate) {
+            return appointments.filter(
+                (appointment) =>
+                    new Date(appointment.dateTime).toLocaleDateString() ===
+                    selectedDate.toLocaleDateString()
+            );
         }
-        setAppointments(appointmentsResponse);
-
-      } catch (err) {
-        console.error('Error loading data:', err);
-        setError(err.message || 'An unexpected error occurred');
-      } finally {
-        setLoading(false);
-      }
+        const now = new Date();
+        return appointments.filter(
+            (appointment) => new Date(appointment.dateTime) >= now
+        );
     };
 
-    loadData();
-  }, [userId]);
+    const filteredAppointments = filterAppointmentsByDate();
+    const upcomingAppointment = filteredAppointments.length > 0 ? filteredAppointments[0] : null;
 
-  if (loading) {
+    if (loading) {
+        return (
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100vh',
+                }}
+            >
+                <Lottie
+                    animationData={animationData}
+                    style={{
+                        width: '200px',
+                        height: '200px',
+                        zIndex: 1,
+                        pointerEvents: 'none',
+                    }}
+                />
+            </Box>
+        );
+    }
+
+    if (error) {
+        return <Typography variant="h6" color="error">Error: {error}</Typography>;
+    }
+
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <Lottie
-          animationData={animationData}
-          style={{
-            width: '200px',
-            height: '200px',
-            zIndex: 1,
-            pointerEvents: 'none',
-          }}
-        />
-      </Box>
+        <Box
+            sx={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'flex-start',
+                width: '100%',
+                maxWidth: '1200px',
+                margin: 'auto',
+                padding: '20px',
+                backgroundColor: '#f8f6f6',
+                boxSizing: 'border-box'
+            }}
+        >
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '38%',
+                    border: '1px solid rgba(0, 0, 0, 0.3)',
+                    borderRadius: '50px',
+                    padding: '20px'
+                }}
+            >
+                <Box sx={{ marginBottom: '10px', height: '385px', overflow: 'hidden' }}>
+                    <DayPicker
+                        mode="single"
+                        classNames={{
+                            today: 'my-today',
+                        }}
+                        selected={selectedDate}
+                        onSelect={setSelectedDate}
+                        footer={null}
+                    />
+                </Box>
+
+                <Box
+                    sx={{
+                        width: '100%',
+                        height: '1px',
+                        backgroundColor: '#03035d',
+                        marginY: '10px'
+                    }}
+                />
+
+                <Box sx={{ marginTop: '10px', height: '160px', overflowY: 'auto' }}>
+                    {selectedDate && filteredAppointments.length > 0 ? (
+                        filteredAppointments.map((appointment) => (
+                            <Box key={appointment._id} sx={{ marginBottom: '10px' }}>
+                                <Typography variant="body1">Patient: {appointment.patientName}</Typography>
+                                <Typography variant="body1">Date: {new Date(appointment.dateTime).toLocaleDateString()}</Typography>
+                                <Typography variant="body1">Clinic: {appointment.clinic._id}</Typography>
+                                <Typography variant="body1">Doctor: {appointment.assignedGP}</Typography>
+                                <Typography variant="body1">Status: {appointment.status}</Typography>
+                            </Box>
+                        ))
+                    ) : (
+                        upcomingAppointment ? (
+                            <Box>
+                                <Typography variant="h5">Upcoming Appointment:</Typography>
+                                <Typography variant="body1">Patient: {upcomingAppointment.patientName}</Typography>
+                                <Typography variant="body1">Date: {new Date(upcomingAppointment.dateTime).toLocaleDateString()}</Typography>
+                                <Typography variant="body1">Clinic: {upcomingAppointment.clinic._id}</Typography>
+                                <Typography variant="body1">Doctor: {upcomingAppointment.assignedGP}</Typography>
+                                <Typography variant="body1">Status: {upcomingAppointment.status}</Typography>
+                            </Box>
+                        ) : (
+                            <Typography>No appointment for the day.</Typography>
+                        )
+                    )}
+                </Box>
+            </Box>
+
+            <Box
+                sx={{
+                    width: '600px',
+                    maxWidth: '100%',
+                    margin: 'auto',
+                    textAlign: 'left',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'stretch',
+                    padding: '20px',
+                    border: '1px solid rgba(0, 0, 0, 0.2)',
+                    borderRadius: '50px',
+                }}
+            >
+                {userData ? (
+                    <Box>
+                        {[
+                            { label: 'Patient ID:', value: userData.patientID },
+                            { label: 'Name:', value: `${userData.firstName} ${userData.lastName}` },
+                            { label: 'Date of Birth:', value: userData.dateOfBirth },
+                            { label: 'Gender:', value: userData.gender },
+                            { label: 'Ethnicity:', value: userData.ethnicity },
+                            { label: 'Email:', value: userData.email },
+                            { label: 'GP:', value: userData.gp }
+                        ].map(({ label, value }, index) => (
+                            <Box
+                                key={index}
+                                sx={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    marginBottom: '10px'
+                                }}
+                            >
+                                <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#03035d' }}>
+                                    {label}
+                                </Typography>
+                                <Typography variant="h6">
+                                    {value}
+                                </Typography>
+                            </Box>
+                        ))}
+                    </Box>
+                ) : (
+                    <Typography>No user data available</Typography>
+                )}
+            </Box>
+        </Box>
     );
-  }
-
-  if (error) {
-    return <Typography variant="h6" color="error">Error: {error}</Typography>;
-  }
-
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        width: '100%',
-        maxWidth: '1200px',
-        margin: 'auto',
-        padding: '20px',
-        backgroundColor: '#f8f6f6',
-        boxSizing: 'border-box',
-      }}
-    >
-      <Box sx={{ width: '100%', marginBottom: '40px', color: '#03035d' }}>
-        {userData ? (
-          <Box>
-            <Typography variant="h6">Patient ID: {userData.patientID}</Typography>
-            <Typography variant="h6">Name: {userData.firstName} {userData.lastName}</Typography>
-            {/* Add more user data fields as needed */}
-          </Box>
-        ) : (
-          <Typography>No user data available</Typography>
-        )}
-      </Box>
-
-      <Box sx={{ width: '100%', marginBottom: '40px' }}>
-        <DayPicker
-          mode="single"
-          classNames={{
-            today: 'my-today',
-          }}
-          selected={selectedDate}
-          onSelect={setSelectedDate}
-          footer={null}
-        />
-      </Box>
-
-      <Box sx={{ width: '100%', color: '#03035d' }}>
-        {appointments.length > 0 ? (
-          <Box>
-            {appointments.map((appointment) => (
-              <Box key={appointment._id} sx={{ marginBottom: '10px' }}>
-                <Typography variant="body1">Appointment ID: {appointment._id}</Typography>
-                <Typography variant="body1">Date: {new Date(appointment.dateTime).toLocaleDateString()}</Typography>
-                <Typography variant="body1">Clinic: {appointment.clinic._id}</Typography>
-                <Typography variant="body1">Doctor: {appointment.assignedGP}</Typography>
-                {/* Add more appointment details as needed */}
-              </Box>
-            ))}
-          </Box>
-        ) : (
-          <Typography>No appointments available</Typography>
-        )}
-      </Box>
-    </Box>
-  );
 };
 
 export default Dashboard;
