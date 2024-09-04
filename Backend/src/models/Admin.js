@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import crypto from 'crypto';
-import bcrypt from 'bcryptjs';
+import bcrypt from 'bcrypt';
 import DoctorModel from './Doctor.js';
 
 const AdminSchema = new mongoose.Schema({

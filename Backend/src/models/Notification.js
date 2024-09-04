@@ -15,6 +15,7 @@ const NotificationSchema = new mongoose.Schema({
         enum: ['info', 'warning', 'alert'],
         default: 'info',
     },
+    pdfFile: { type: String, required: false },
 });
 
 NotificationSchema.pre('save', function (next) {

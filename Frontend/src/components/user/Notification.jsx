@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
@@ -14,9 +14,11 @@ function Notification() {
     const [newMessage, setNewMessage] = useState('');
     const [selectedDoctor, setSelectedDoctor] = useState('');
     const [doctors, setDoctors] = useState([]);
+    const [pdfFile, setPdfFile] = useState(null);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const { userId } = useContext(AuthContext);
-
+    const { userId, authToken } = useContext(AuthContext);
+    console.log("User ID from context:", userId);
     useEffect(() => {
         if (!userId) {
             setLoading(true);
@@ -67,29 +69,34 @@ function Notification() {
     const handleSendMessage = async () => {
         try {
             if (!selectedDoctor) {
-                console.error("No doctor selected.");
                 setError("Please select a doctor before sending a message.");
                 return;
             }
             if (!newMessage) {
-                console.error("Message content is empty.");
                 setError("Message content cannot be empty.");
                 return;
             }
-            const senderModel = "User";
-            const receiverModel = "Admin";
-            console.log("Sending message to doctor ID:", selectedDoctor);
-            console.log("Message content:", newMessage);
-            const response = await sendUserMessage({
-                senderId: userId,
-                receiverId: selectedDoctor,
-                message: newMessage,
-                senderModel: senderModel,
-                receiverModel: receiverModel
-            });
+            if (!userId) {
+                setError("User is not logged in.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('senderId', userId);
+            formData.append('receiverId', selectedDoctor);
+            formData.append('message', newMessage);
+            formData.append('senderModel', "User");
+            formData.append('receiverModel', "Admin");
+            if (pdfFile) {
+                console.log("Attaching PDF file:", pdfFile.name);
+                formData.append('pdfFile', pdfFile);
+            } else {
+                console.warn("No PDF file selected.");
+            }
+            const response = await sendUserMessage(formData, authToken);
             console.log("Message sent successfully:", response);
             setNewMessage('');
             setSelectedDoctor('');
+            setPdfFile(null);
             setError(null);
             setExpandedBlock('sentMessage');
         } catch (err) {
@@ -135,6 +142,20 @@ function Notification() {
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            console.log('Selected PDF file:', file.name);
+            setPdfFile(file);
+        } else {
+            console.error('No file selected.');
+        }
+    };
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
@@ -163,6 +184,15 @@ function Notification() {
                             <Typography><strong>From:</strong> {notification.senderName}</Typography>
                             <Typography><strong>Message:</strong> {notification.message}</Typography>
                             <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
+                            {notification.pdfFile && (
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
+                                    onClick={() => window.open(notification.pdfFile, '_blank')}
+                                >
+                                    View PDF
+                                </Button>
+                            )}
                             <Button
                                 variant="contained"
                                 sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
@@ -215,7 +245,6 @@ function Notification() {
                         ))}
                     </Select>
                 </FormControl>
-
                 <TextField
                     label="New Message"
                     value={newMessage}
@@ -226,6 +255,20 @@ function Notification() {
                     variant="outlined"
                     sx={{ marginBottom: '10px' }}
                 />
+                <Button
+                    variant="contained"
+                    sx={{ backgroundColor: '#fff', color: '#03035d' }}
+                    onClick={handleUploadClick}
+                >
+                    Upload PDF
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        hidden
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                    />
+                </Button>
                 <Button
                     variant="contained"
                     sx={{

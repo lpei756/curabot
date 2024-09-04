@@ -1,14 +1,44 @@
+import mongoose from 'mongoose';
+import Grid from 'gridfs-stream';
+import multer from 'multer';
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 
+const conn = mongoose.connection;
+let gfs;
+
+conn.once('open', () => {
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
+    console.log('GridFS initialized for PDF storage');
+});
+
+export const upload = multer({
+    storage: multer.diskStorage({
+        destination: (req, file, cb) => {
+            console.log('Setting upload destination');
+            cb(null, 'uploads/');
+        },
+        filename: (req, file, cb) => {
+            console.log('Generating file name:', Date.now() + '-' + file.originalname);
+            cb(null, Date.now() + '-' + file.originalname);
+        }
+    }),
+    fileFilter: (req, file, cb) => {
+        console.log('File filter:', file.mimetype);
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Not a PDF file!'), false);
+        }
+    }
+}).single('pdfFile');
+
 export const getUserNotifications = async (userId) => {
     try {
         console.log('Fetching notifications for receiver with ID:', userId);
-        let notifications = await Notification.find({ receiver: userId }).sort({ date: -1 });
-        if (!Array.isArray(notifications)) {
-            notifications = [];
-        }
+        const notifications = await Notification.find({ receiver: userId }).sort({ date: -1 });
         console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {
@@ -17,14 +47,10 @@ export const getUserNotifications = async (userId) => {
     }
 };
 
-
 export const getAdminNotifications = async (adminId) => {
     try {
         console.log('Fetching notifications for receiver with ID:', adminId);
-        let notifications = await Notification.find({ receiver: adminId }).sort({ date: -1 });
-        if (!Array.isArray(notifications)) {
-            notifications = [];
-        }
+        const notifications = await Notification.find({ receiver: adminId }).sort({ date: -1 });
         console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {
@@ -37,45 +63,33 @@ const getUserOrAdmin = async (id, model) => {
     return model === 'User' ? await User.findById(id) : await Admin.findById(id);
 };
 
-export const sendMessage = async (senderId, senderModel, receiverId, receiverModel, message) => {
-    try {
-        console.log(`Sending message from ${senderModel} with ID: ${senderId} to ${receiverModel} with ID: ${receiverId}`);
-
-        const sender = await getUserOrAdmin(senderId, senderModel);
-        const receiver = await getUserOrAdmin(receiverId, receiverModel);
-
-        if (!sender || !receiver) {
-            const missingModel = !sender ? senderModel : receiverModel;
-            const missingId = !sender ? senderId : receiverId;
-            console.error(`${missingModel} not found with ID: ${missingId}`);
-            throw new Error(`${missingModel} not found`);
-        }
-
-        const senderName = `${sender.firstName} ${sender.lastName}`;
-        const receiverName = `${receiver.firstName} ${receiver.lastName}`;
-
-        const notification = new Notification({
-            sender: senderId,
-            senderModel,
-            senderName,
-            receiver: receiverId,
-            receiverModel,
-            receiverName,
-            message,
-            isRead: false,
-            date: new Date(),
-            notificationType: 'info',
-        });
-
-        console.log('Saving notification:', notification);
-        await notification.save();
-
-        console.log('Notification saved successfully:', notification);
-        return notification;
-    } catch (error) {
-        console.error('Error sending message:', error.message);
-        throw error;
+export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
+    let sender, receiver;
+    sender = await getUserOrAdmin(senderId, senderModel);
+    if (!sender) {
+        throw new Error('Sender not found');
     }
+    const senderName = `${sender.firstName} ${sender.lastName}`;
+    receiver = await getUserOrAdmin(receiverId, receiverModel);
+    if (!receiver) {
+        throw new Error('Receiver not found');
+    }
+    const receiverName = `${receiver.firstName} ${receiver.lastName}`;
+    const notification = new Notification({
+        sender: senderId,
+        senderModel,
+        senderName,
+        receiver: receiverId,
+        receiverModel,
+        receiverName,
+        message,
+        isRead: false,
+        date: new Date(),
+        notificationType,
+        pdfFile: pdfFilePath
+    });
+    await notification.save();
+    return notification;
 };
 
 export const markAsRead = async (notificationId) => {
@@ -99,13 +113,21 @@ export const markAsRead = async (notificationId) => {
 export const deleteNotification = async (notificationId) => {
     try {
         console.log('Deleting notification with ID:', notificationId);
-
         const notification = await Notification.findByIdAndDelete(notificationId);
         if (!notification) {
             console.error('Notification not found with ID:', notificationId);
             throw new Error('Notification not found');
         }
-
+        if (notification.pdfFile) {
+            const filename = notification.pdfFile.split('/').pop();
+            gfs.remove({ filename, root: 'uploads' }, (err) => {
+                if (err) {
+                    console.error(`Error deleting PDF file from GridFS: ${err.message}`);
+                    throw new Error(`Error deleting PDF file from GridFS: ${err.message}`);
+                }
+                console.log('PDF file deleted successfully from GridFS');
+            });
+        }
         console.log('Notification deleted successfully:', notification);
         return notification;
     } catch (error) {
