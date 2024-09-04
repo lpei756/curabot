@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from 'react';
+import {useState, useEffect, useContext, useRef} from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification} from '../../services/NotificationService.js';
@@ -14,8 +14,10 @@ function AdminNotification() {
     const [newMessage, setNewMessage] = useState('');
     const [selectedPatient, setSelectedPatient] = useState('');
     const [Patients, setPatients] = useState([]);
+    const [pdfFile, setPdfFile] = useState(null);
+    const fileInputRef = useRef(null);
     const navigate = useNavigate();
-    const { adminId } = useContext(AdminContext);
+    const { adminId, adminToken} = useContext(AdminContext);
 
     useEffect(() => {
         if (!adminId) {
@@ -67,21 +69,27 @@ function AdminNotification() {
             if (!newMessage) {
                 setError("Message content is empty.");
             }
-            const senderModel = "Admin";
-            const receiverModel = "User";
-            console.log("Sending message to patient ID:", selectedPatient);
-            console.log("Message content:", newMessage);
-            const response = await sendDoctorMessage({
-                senderId: adminId,
-                receiverId: selectedPatient,
-                message: newMessage,
-                senderModel: senderModel,
-                receiverModel: receiverModel
-            });
-
+            if (!adminId) {
+                setError("Admin is not logged in.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('senderId', adminId);
+            formData.append('receiverId', selectedPatient);
+            formData.append('message', newMessage);
+            formData.append('senderModel', "Admin");
+            formData.append('receiverModel', "User");
+            if (pdfFile) {
+                console.log("Attaching PDF file:", pdfFile.name);
+                formData.append('pdfFile', pdfFile);
+            } else {
+                console.warn("No PDF file selected.");
+            }
+            const response = await sendDoctorMessage(formData, adminToken);
             console.log("Message sent successfully:", response);
             setNewMessage('');
             setSelectedPatient('');
+            setPdfFile(null);
             setError(null);
             setExpandedBlock('sentMessage');
         } catch (err) {
@@ -126,6 +134,20 @@ function AdminNotification() {
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
+    const handleUploadClick = () => {
+        fileInputRef.current.click();
+    };
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            console.log('Selected PDF file:', file.name);
+            setPdfFile(file);
+        } else {
+            console.error('No file selected.');
+        }
+    };
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
@@ -154,6 +176,15 @@ function AdminNotification() {
                             <Typography><strong>From:</strong> {notification.senderName}</Typography>
                             <Typography><strong>Message:</strong> {notification.message}</Typography>
                             <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
+                            {notification.pdfFile && (
+                                <Button
+                                    variant="outlined"
+                                    sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
+                                    onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
+                                >
+                                    View PDF
+                                </Button>
+                            )}
                             <Button
                                 variant="contained"
                                 sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
@@ -206,7 +237,6 @@ function AdminNotification() {
                         ))}
                     </Select>
                 </FormControl>
-
                 <TextField
                     label="New Message"
                     value={newMessage}
@@ -219,10 +249,21 @@ function AdminNotification() {
                 />
                 <Button
                     variant="contained"
-                    sx={{
-                        backgroundColor: '#03035d',
-                        color: '#fff',
-                    }}
+                    sx={{ backgroundColor: '#fff', color: '#03035d' }}
+                    onClick={handleUploadClick}
+                >
+                    Upload PDF
+                    <input
+                        type="file"
+                        accept="application/pdf"
+                        hidden
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                    />
+                </Button>
+                <Button
+                    variant="contained"
+                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
                     onClick={handleSendMessage}
                 >
                     Send Message
