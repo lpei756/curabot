@@ -1,12 +1,15 @@
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import {deleteAdmin,fetchAllAdminIDs, fetchAllPatients} from '../../services/AdminService';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { deleteAdmin, fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
+import { fetchFeedbackData } from '../../services/ChartService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import DeleteIcon from '@mui/icons-material/Delete';
+import FeedbackCharts from '../charts/FeedbackCharts';
 
 const SuperAdminPanel = () => {
     const [admins, setAdmins] = useState([]);
@@ -16,8 +19,9 @@ const SuperAdminPanel = () => {
     const [filteredAdmins, setFilteredAdmins] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [error, setError] = useState(null);
-    const [editMode, setEditMode] = useState(null);
+    const [editMode, setEditMode] = useState(null); 
     const [selectedItem, setSelectedItem] = useState(null);
+    const [feedbackData, setFeedbackData] = useState(null);
     const navigate = useNavigate();
     const { role } = useContext(AdminContext);
 
@@ -29,15 +33,26 @@ const SuperAdminPanel = () => {
                 if (Array.isArray(adminsData)) {
                     setAdmins(adminsData);
                 } else {
-                    setError('Failed to fetch admins data.');
+                    throw new Error('Failed to fetch admins data.');
                 }
+
                 console.log('Fetching all patients data');
                 const patientsData = await fetchAllPatients();
                 console.log('Fetched patients data:', patientsData);
                 if (Array.isArray(patientsData)) {
                     setPatients(patientsData);
                 } else {
-                    setError('Failed to fetch patients data.');
+                    throw new Error('Failed to fetch patients data.');
+                }
+
+                console.log('Fetching feedback data');
+                const feedbackData = await fetchFeedbackData(); 
+
+                // 确保反馈数据结构正确
+                if (feedbackData && typeof feedbackData === 'object') {
+                    setFeedbackData(feedbackData);
+                } else {
+                    console.error('Invalid feedback data:', feedbackData);
                 }
 
                 console.log('Data fetching completed successfully');
@@ -74,6 +89,16 @@ const SuperAdminPanel = () => {
         setFilteredPatients(filtered);
     }, [patientSearchQuery, patients]);
 
+    const handleEditPatient = (patient) => {
+        console.log('Selected Patient:', patient);
+        if (patient && patient._id) {
+            setSelectedItem(patient);
+            setEditMode('patient');
+        } else {
+            console.error('Invalid patient selected:', patient);
+        }
+    };
+
     const handleEditAdmin = (admin) => {
         console.log('Selected Admin:', admin);
         if (admin && admin._id) {
@@ -95,20 +120,101 @@ const SuperAdminPanel = () => {
     };
 
     const handleDelete = async (adminId) => {
+
         if (window.confirm('Are you sure you want to delete this account?')) {
+
             try {
+
                 await deleteAdmin(adminId);
+
                 setAdmins(admins.filter((admin) => admin._id !== adminId));
+
             } catch (err) {
+
                 console.error('Error deleting patient:', err);
+
                 setError('Failed to delete admin.');
+
             }
+        }}
+    const getChartOptions = (title, data, color) => {
+        if (!Array.isArray(data)) {
+            console.error(`Expected array but got ${typeof data} for ${title}`);
+            return {};
         }
+
+        return {
+            title: {
+                text: title,
+                left: 'center',
+            },
+            tooltip: {
+                trigger: 'axis',
+            },
+            xAxis: {
+                type: 'category',
+                data: data.map(item => item.name),
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    data: data.map(item => item.count),
+                    type: 'bar',
+                    itemStyle: {
+                        color: color,
+                    },
+                },
+            ],
+        };
     };
 
-
     const handleAddAdminClick = () => {
+
         navigate('/admin/register');
+        
+    }
+    const getTrendOptions = (title, data) => {
+        if (!Array.isArray(data)) {
+            console.error(`Expected array but got ${typeof data} for ${title}`);
+            return {};  // 返回一个空的配置对象以避免错误
+        }
+    
+        return {
+            title: {
+                text: title,
+                left: 'center',
+            },
+            tooltip: {
+                trigger: 'axis',
+            },
+            xAxis: {
+                type: 'category',
+                data: data.map(item => item._id),
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [
+                {
+                    name: 'Positive',
+                    data: data.map(item => item.positive),
+                    type: 'line',
+                    itemStyle: {
+                        color: '#82ca9d',
+                    },
+                },
+                {
+                    name: 'Negative',
+                    data: data.map(item => item.negative),
+                    type: 'line',
+                    itemStyle: {
+                        color: '#ff5733',
+                    },
+                },
+            ],
+        };
     };
 
     return (
@@ -122,6 +228,8 @@ const SuperAdminPanel = () => {
                     {error}
                 </Typography>
             )}
+
+            {feedbackData && <FeedbackCharts data={feedbackData} />}
 
             {editMode === 'patient' && selectedItem ? (
                 <EditPatient
@@ -156,14 +264,14 @@ const SuperAdminPanel = () => {
                 />
             ) : (
                 <>
-                    <Box
+                     <Box
                         sx={{
                             display: 'flex',
                             justifyContent: 'space-between',
                             alignItems: 'center',
                             mb: 4,
                         }}
-                    >
+                        >
                         <Typography variant="h5" component="h2" gutterBottom>
                             Admins
                         </Typography>
@@ -176,57 +284,55 @@ const SuperAdminPanel = () => {
                         </Button>
                     </Box>
 
-                    <TextField
-                        label="Search Admins"
-                        variant="outlined"
-                        fullWidth
-                        value={adminSearchQuery}
-                        onChange={(e) => setAdminSearchQuery(e.target.value)}
-                        sx={{ marginBottom: 3 }}
-                    />
-                    <TableContainer component={Paper}>
-                        <Table>
-                            <TableHead>
-                                <TableRow>
-                                    <TableCell>First Name</TableCell>
-                                    <TableCell>Last Name</TableCell>
-                                    <TableCell>Email</TableCell>
-                                    <TableCell>Role</TableCell>
-                                    <TableCell>Edit</TableCell>
-                                    <TableCell>Delete</TableCell>
-                                </TableRow>
-                            </TableHead>
-                            <TableBody>
-                                {filteredAdmins.length > 0 ? (
-                                    filteredAdmins.map((admin) => (
-                                        <TableRow key={admin._id}>
-                                            <TableCell>
-                                                <Link
-                                                    to={`/admin/${admin._id}`}
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#03035d',
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
-                                                >
-                                                    {admin.firstName || '-'}
-                                                </Link>
-                                            </TableCell>
-                                            <TableCell>{admin.lastName || '-'}</TableCell>
-                                            <TableCell>{admin.email}</TableCell>
-                                            <TableCell>{admin.role}</TableCell>
-                                            <TableCell>
-                                                <IconButton
-                                                    onClick={() => handleEditAdmin(admin)}
-                                                    color="primary"
-                                                    aria-label="edit admin"
-                                                >
-                                                    <EditIcon />
-                                                </IconButton>
-                                            </TableCell>
-                                            <TableCell>
+                        <TextField
+                            label="Search Admins"
+                            variant="outlined"
+                            fullWidth
+                            value={adminSearchQuery}
+                            onChange={(e) => setAdminSearchQuery(e.target.value)}
+                            sx={{ marginBottom: 3 }}
+                        />
+                        <TableContainer component={Paper}>
+                            <Table>
+                                <TableHead>
+                                    <TableRow>
+                                        <TableCell>First Name</TableCell>
+                                        <TableCell>Last Name</TableCell>
+                                        <TableCell>Email</TableCell>
+                                        <TableCell>Role</TableCell>
+                                        <TableCell>Delete</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {filteredAdmins.length > 0 ? (
+                                        filteredAdmins.map((admin) => (
+                                            <TableRow key={admin._id}>
+                                                <TableCell>
+                                                    <Link
+                                                        to={`/admin/${admin._id}`}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                    ></Link>
+                                                        {admin.firstName || '-'}
+                                                        </TableCell>
+                                                <TableCell>{admin.lastName || '-'}</TableCell>
+                                                <TableCell>{admin.email}</TableCell>
+                                                <TableCell>{admin.role}</TableCell>
+                                                <TableCell>
+                                                    <IconButton
+                                                        onClick={() => handleEditAdmin(admin)}
+                                                        color="primary"
+                                                        aria-label="edit admin"
+                                                    >
+                                                        <EditIcon />
+                                                    </IconButton>
+                                                </TableCell>
+                                                <TableCell>
                                                 <IconButton
                                                     onClick={() => handleDelete(admin._id)}
                                                     color="secondary"
@@ -235,18 +341,18 @@ const SuperAdminPanel = () => {
                                                     <DeleteIcon />
                                                 </IconButton>
                                             </TableCell>
+                                            </TableRow>
+                                        ))
+                                    ) : (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center">No admins found</TableCell>
                                         </TableRow>
-                                    ))
-                                ) : (
-                                    <TableRow>
-                                        <TableCell colSpan={6} align="center">No admins found</TableCell>
-                                    </TableRow>
-                                )}
-                            </TableBody>
-                        </Table>
-                    </TableContainer>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
 
-                    <Box sx={{ marginTop: 4 }}>
+                    <Box sx={{ marginBottom: 4 }}>
                         <Typography variant="h5" component="h2" gutterBottom>
                             Patients
                         </Typography>
@@ -275,13 +381,13 @@ const SuperAdminPanel = () => {
                                             <TableRow key={patient._id}>
                                                 <TableCell>
                                                     <Link to={`/superadmin/panel/patient/${patient._id}`}
-                                                          style={{
-                                                              textDecoration: 'none',
-                                                              color: '#03035d',
-                                                              fontWeight: 'bold',
-                                                          }}
-                                                          onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                          onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                        style={{
+                                                            textDecoration: 'none',
+                                                            color: '#03035d',
+                                                            fontWeight: 'bold',
+                                                        }}
+                                                        onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                        onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                     >
                                                         {patient.firstName}
                                                     </Link>
@@ -291,7 +397,7 @@ const SuperAdminPanel = () => {
                                                 <TableCell>{patient.phone || '-'}</TableCell>
                                                 <TableCell>
                                                     <IconButton
-                                                        onClick={() => handleEdit(patient)}
+                                                        onClick={() => handleEditPatient(patient)}
                                                         color="primary"
                                                         aria-label="edit patient"
                                                     >
