@@ -68,9 +68,6 @@ export const readTestResult = async (req, res) => {
   const { testResultId } = req.params;
   const user = req.user;
 
-  console.log('Decoded Token:', req.user);
-  console.log('Searching for TestResult with ID:', testResultId);
-
   try {
     const result = await getTestResult(testResultId, user);
     if (result.error) {
