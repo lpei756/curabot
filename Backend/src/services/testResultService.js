@@ -126,3 +126,34 @@ export const editTestResultService = async (testResultId, user, updatedFields) =
         return { error: true, status: 500, message: 'Internal server error' };
     }
 };
+
+export const approveTestResultService = async (testResultId, user) => {
+    try {
+        const testResult = await TestResult.findById(testResultId).exec();
+
+        if (!testResult) {
+            console.error('TestResult not found');
+            return { error: true, status: 404, message: 'Test result not found' };
+        }
+
+        const doctor = await Doctor.findById(user._id).exec();
+
+        if (!doctor) {
+            console.error('Doctor not found with given _id');
+            return { error: true, status: 404, message: 'Doctor not found' };
+        }
+
+        if (doctor.doctorID !== testResult.doctorID) {
+            console.error('Doctor is not authorized to approve this test result');
+            return { error: true, status: 403, message: 'You are not authorized to approve this test result' };
+        }
+
+        testResult.reviewed = true;
+        await testResult.save();
+
+        return { error: false, testResult };
+    } catch (error) {
+        console.error('Error approving test result service:', error);
+        return { error: true, status: 500, message: 'Internal server error' };
+    }
+};

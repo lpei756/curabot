@@ -1,6 +1,6 @@
 import multer from 'multer';
 import path from 'path';
-import { uploadTestResultService, getTestResult, editTestResultService } from '../services/testResultService.js';
+import { uploadTestResultService, getTestResult, editTestResultService, approveTestResultService } from '../services/testResultService.js';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -95,6 +95,28 @@ export const editTestResult = async (req, res) => {
     res.status(200).json(result.testResult);
   } catch (error) {
     console.error('Error editing test result:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const approveTestResult = async (req, res) => {
+  const { testResultId } = req.params;
+  const user = req.user;
+
+  try {
+    if (user.role !== 'doctor') {
+      console.error('User is not authorized to approve this test result');
+      return res.status(403).json({ message: 'You are not authorized to approve this test result' });
+    }
+
+    const result = await approveTestResultService(testResultId, user);
+    if (result.error) {
+      console.error(result.message);
+      return res.status(result.status || 500).json({ message: result.message });
+    }
+    res.status(200).json(result.testResult);
+  } catch (error) {
+    console.error('Error approving test result:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
