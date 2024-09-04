@@ -1,22 +1,24 @@
 import mongoose from 'mongoose';
-import Grid from 'gridfs-stream';
+import { GridFSBucket } from 'mongodb';
 import multer from 'multer';
 import Image from '../models/Image.js';
-import pkg from 'multer-gridfs-storage';
-const { GridFsStorage } = pkg;
+import GridFsStorage from 'multer-gridfs-storage';
 
 const conn = mongoose.connection;
 let gfs;
 
 conn.once('open', () => {
-    gfs = Grid(conn.db, mongoose.mongo);
-    gfs.collection('uploads');
-    console.log('GridFS initialized');
+    gfs = new GridFSBucket(conn.db, {
+        bucketName: 'uploads'
+    });
+    console.log('GridFSBucket initialized');
 });
 
 const storage = new GridFsStorage({
-    db: conn,
+    url: process.env.MONGO_URI,
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
+        console.log('GridFS Storing file:', file.originalname);
         return {
             filename: Date.now() + '-' + file.originalname,
             bucketName: 'uploads'
@@ -37,6 +39,7 @@ export const saveImageService = async (userId, filename) => {
 
     const imageUrl = `${process.env.BASE_URL}/uploads/${filename}`;
     console.log('Constructed image URL:', imageUrl);
+
     const newImage = new Image({
         userId: userId,
         filename: filename,
@@ -69,7 +72,7 @@ export const deleteImage = async (imageId) => {
             throw new Error('Image not found');
         }
 
-        gfs.remove({ filename: deletedImage.filename, root: 'uploads' }, (err) => {
+        gfs.delete(deletedImage._id, (err) => {
             if (err) {
                 console.error(`Error deleting file from GridFS: ${err.message}`);
                 throw new Error(`Error deleting file from GridFS: ${err.message}`);
@@ -84,11 +87,11 @@ export const deleteImage = async (imageId) => {
 
 export const getImageStream = async (filename) => {
     try {
-        const file = await gfs.files.findOne({ filename });
-        if (!file) {
+        const file = await gfs.find({ filename }).toArray();
+        if (!file || file.length === 0) {
             throw new Error('File not found');
         }
-        return gfs.createReadStream(file.filename);
+        return gfs.openDownloadStreamByName(filename);
     } catch (error) {
         throw new Error(`Error retrieving image: ${error.message}`);
     }
