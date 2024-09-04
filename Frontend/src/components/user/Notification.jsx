@@ -18,7 +18,7 @@ function Notification() {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
     const { userId, authToken } = useContext(AuthContext);
-    console.log("User ID from context:", userId);
+
     useEffect(() => {
         if (!userId) {
             setLoading(true);
@@ -188,7 +188,7 @@ function Notification() {
                                 <Button
                                     variant="outlined"
                                     sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
-                                    onClick={() => window.open(notification.pdfFile, '_blank')}
+                                    onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
                                 >
                                     View PDF
                                 </Button>
@@ -271,10 +271,7 @@ function Notification() {
                 </Button>
                 <Button
                     variant="contained"
-                    sx={{
-                        backgroundColor: '#03035d',
-                        color: '#fff',
-                    }}
+                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
                     onClick={handleSendMessage}
                 >
                     Send Message

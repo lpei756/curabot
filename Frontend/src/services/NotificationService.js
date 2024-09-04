@@ -80,7 +80,7 @@ export const sendUserMessage = async (formData, authToken) => {
     }
 };
 
-export const sendDoctorMessage = async (formData, authToken) => {
+export const sendDoctorMessage = async (formData, adminToken) => {
     try {
         const url = API_PATH.notification.sendMessage;
         console.log('Sending doctor message to URL:', url);
@@ -88,7 +88,7 @@ export const sendDoctorMessage = async (formData, authToken) => {
         const response = await axiosApiInstance.post(url, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
-                'Authorization': `Bearer ${authToken}`
+                'Authorization': `Bearer ${adminToken}`
             },
         });
         return response.data;
@@ -97,7 +97,6 @@ export const sendDoctorMessage = async (formData, authToken) => {
         throw new Error(`Unable to send message: ${error.message}`);
     }
 };
-
 
 export const markNotificationAsRead = async (notificationId) => {
     try {
