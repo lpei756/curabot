@@ -62,12 +62,17 @@ export const fetchAdminNotifications = async (receiverId) => {
     }
 };
 
-export const sendUserMessage = async ({senderId, receiverId, message, senderModel, receiverModel}) => {
+export const sendUserMessage = async (formData, authToken) => {
     try {
         const url = API_PATH.notification.sendMessage;
         console.log('Sending user message to URL:', url);
-        console.log('Request payload:', { senderId, receiverId, message, senderModel, receiverModel });
-        const response = await axiosApiInstance.post(url, { senderId, receiverId, message, senderModel, receiverModel });
+        console.log('FormData content:', Object.fromEntries(formData.entries()));
+        const response = await axiosApiInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${authToken}`
+            },
+        });
         return response.data;
     } catch (error) {
         console.error('Error sending user message:', error.message);
@@ -75,19 +80,24 @@ export const sendUserMessage = async ({senderId, receiverId, message, senderMode
     }
 };
 
-export const sendDoctorMessage = async ({ senderId, receiverId, message, senderModel, receiverModel }) => {
+export const sendDoctorMessage = async (formData, authToken) => {
     try {
         const url = API_PATH.notification.sendMessage;
-        const payload = { senderId, receiverId, message, senderModel, receiverModel };
-        console.log('Sending user message to URL:', url);
-        console.log('Request payload:', payload);
-        const response = await axiosApiInstance.post(url, payload);
+        console.log('Sending doctor message to URL:', url);
+        console.log('FormData content:', Object.fromEntries(formData.entries()));
+        const response = await axiosApiInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${authToken}`
+            },
+        });
         return response.data;
     } catch (error) {
-        console.error('Error sending user message:', error.message);
+        console.error('Error sending doctor message:', error.message);
         throw new Error(`Unable to send message: ${error.message}`);
     }
 };
+
 
 export const markNotificationAsRead = async (notificationId) => {
     try {

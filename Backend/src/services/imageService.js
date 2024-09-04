@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
 import Grid from 'gridfs-stream';
-import { GridFsStorage } from 'multer-gridfs-storage';
 import multer from 'multer';
 import Image from '../models/Image.js';
+import pkg from 'multer-gridfs-storage';
+const { GridFsStorage } = pkg;
 
 const conn = mongoose.connection;
 let gfs;
@@ -14,10 +15,8 @@ conn.once('open', () => {
 });
 
 const storage = new GridFsStorage({
-    url: process.env.MONGO_URI,
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
+    db: conn,
     file: (req, file) => {
-        console.log('GridFS Storing file:', file.originalname);
         return {
             filename: Date.now() + '-' + file.originalname,
             bucketName: 'uploads'

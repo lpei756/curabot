@@ -8,16 +8,43 @@ import {
 
 export const sendMessage = async (req, res) => {
     try {
-        const { senderId, senderModel, receiverId, receiverModel, message } = req.body;
-        console.log(`Sending message: ${message} from ${senderModel} ID: ${senderId} to ${receiverModel} ID: ${receiverId}`);
-        const notification = await sendMessageService(senderId, senderModel, receiverId, receiverModel, message);
-        console.log('Notification created:', notification);
+        console.log('Request body:', req.body);
+        console.log('Uploaded file:', req.file);
+        const { senderId, senderModel, receiverId, receiverModel, message, notificationType } = req.body;
+        if (!senderId || !senderModel || !receiverId || !receiverModel || !message) {
+            return res.status(400).json({
+                status: "failed",
+                error: "Invalid request. Please review request and try again.",
+                fields: {
+                    senderId: senderId ? undefined : "senderId is required",
+                    senderModel: senderModel ? undefined : "senderModel is required",
+                    receiverModel: receiverModel ? undefined : "receiverModel is required",
+                    receiverId: receiverId ? undefined : "receiverId is required",
+                    message: message ? undefined : "message is required"
+                }
+            });
+        }
+        let pdfFilePath = null;
+        if (req.file && req.file.filename) {
+            pdfFilePath = `/uploads/${req.file.filename}`;
+        }
+        const notification = await sendMessageService({
+            senderId,
+            senderModel,
+            receiverId,
+            receiverModel,
+            message,
+            notificationType,
+            pdfFilePath
+        });
+        console.log('Notification saved successfully:', notification);
         res.status(201).json({ notification });
     } catch (error) {
         console.error('Error sending message:', error.message);
-        res.status(400).json({ message: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
+
 export const getUserNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
@@ -43,7 +70,6 @@ export const getAdminNotifications = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
 
 export const markAsRead = async (req, res) => {
     try {
