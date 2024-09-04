@@ -11,7 +11,9 @@ import adminRoutes from './routes/adminRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
-import testresultRoutes from './routes/testResultRoutes.js'
+import testresultRoutes from './routes/testResultRoutes.js';
+import cron from 'node-cron';
+import { deleteOldChatHistories } from './services/cleanUpService.js';
 
 const app = express();
 
@@ -41,5 +43,11 @@ app.post('/api/feedback', (req, res) => {
 
     res.status(200).send({ status: 'success', message: 'Feedback received' });
 });
+
+// Schedule the cleanup to run every day at midnight (adjust as needed)
+cron.schedule('0 0 * * *', () => {
+    console.log('Running the chat history cleanup...');
+    deleteOldChatHistories();
+  });  
 
 export default app;
