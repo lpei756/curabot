@@ -1,4 +1,8 @@
-html, body, #root {
+@import "react-day-picker/style.css";
+
+html,
+body,
+#root {
   background-color: #f8f6f6;
   margin: 0;
   padding: 0;
@@ -53,13 +57,15 @@ body {
   overflow: hidden;
 }
 
-.bot-message, .user-message {
+.bot-message,
+.user-message {
   display: flex;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.bot-message .message-box, .user-message .message-box {
+.bot-message .message-box,
+.user-message .message-box {
   padding: 8px;
   border-radius: 8px;
   max-width: 70%;
@@ -96,6 +102,7 @@ body {
   color: #03035D;
   z-index: 1;
 }
+
 .rbc-time-slot:not(.rbc-today .rbc-time-slot) {
   background-color: #f8f6f6;
 }
@@ -133,4 +140,28 @@ body {
 .rbc-toolbar .rbc-btn-group {
   display: flex;
   background-color: #f8f6f6 !important;
+}
+
+.rdp-month_caption {
+  color: black;
+}
+
+.rdp-root {
+  --rdp-accent-color: #03035d;
+  --rdp-month_caption-font: "Ubuntu", sans-serif;
+  background-color: #f8f6f6;
+  color: black;
+  --rdp-day-height: 60px;
+  --rdp-day-width: 60px;
+}
+
+.my-today {
+  background-color: #03035d !important;
+  color: #f8f6f6 !important;
+  border-radius: 50% !important;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

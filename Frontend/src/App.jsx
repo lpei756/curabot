@@ -22,6 +22,7 @@ import SuperAdminPanel from './components/admin/SuperAdminPanel';
 import ReadPatient from './components/admin/ReadPatient';
 import ReadAdmin from './components/admin/ReadAdmin';
 import AdminNotification from './components/admin/AdminNotification';
+import Dashboard from './components/dashboard/Dashboard';
 
 function App() {
     return (
@@ -48,6 +49,7 @@ function App() {
                                 <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />
                                 <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                                 <Route path="/map" element={<ClinicMap />} />
+                                <Route path="/dashboard" element={<Dashboard />} />
                             </Routes>
                         </div>
                     </Router>

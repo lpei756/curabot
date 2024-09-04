@@ -4,8 +4,8 @@ import { createAppointment as createAppointmentService, readAppointment as readA
 export const createAppointment = async (req, res) => {
   try {
     const appointmentData = req.body;
-    const userId = req.user?.user?._id;
-    const userRole = req.user?.user?.role;
+    const userId = req.user?._id;
+    const userRole = req.user?.role;
 
     if (!userId) {
       return res.status(401).json({ message: 'User not authenticated' });
@@ -52,7 +52,7 @@ export const createAppointment = async (req, res) => {
 export const readAppointment = async (req, res) => {
   try {
     const { appointmentID } = req.params;
-    const userId = req.user?.user?._id;
+    const userId = req.user?._id;
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
@@ -74,7 +74,7 @@ export const readAppointment = async (req, res) => {
 
 export const fetchAllAppointments = async (req, res) => {
   try {
-    const userId = req.user?.user?._id;
+    const userId = req.user?._id;
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
     const user = await User.findById(userId);
@@ -96,7 +96,7 @@ export const updateAppointment = async (req, res) => {
   try {
     const { appointmentID } = req.params;
     const updateData = req.body;
-    const userId = req.user?.user?._id;
+    const userId = req.user?._id;
 
     if (!userId) return res.status(401).json({ message: 'User not authenticated' });
 
