@@ -277,7 +277,7 @@ function ChatBot({ }) {
                         }}>
                             Cura
                         </Typography>
-                        <box>
+                        <Box>
                         {authToken && (
                             <IconButton color="inherit" onClick={handleHistoryClick}>
                                 <HistoryRoundedIcon />
@@ -286,7 +286,7 @@ function ChatBot({ }) {
                         <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
                             <ClearRoundedIcon />
                         </IconButton>
-                        </box>
+                        </Box>
                         <Menu
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
