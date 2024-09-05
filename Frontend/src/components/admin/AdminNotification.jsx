@@ -10,7 +10,7 @@ function AdminNotification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [expandedBlock, setExpandedBlock] = useState('receivedNotifications');
+    const [expandedBlock, setExpandedBlock] = useState(null);
     const [newMessage, setNewMessage] = useState('');
     const [selectedPatient, setSelectedPatient] = useState('');
     const [Patients, setPatients] = useState([]);
