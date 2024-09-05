@@ -211,7 +211,7 @@ function ChatBot({ }) {
             return;  // 提前返回，阻止重复发送
         }
 
-    
+
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback, feedbackSent: true } : msg
@@ -256,11 +256,11 @@ function ChatBot({ }) {
             <Box
                 className="chatbot-container"
                 sx={{
-                    width: '400px',
-                    height: '600px',
+                    width: '450px',
+                    height: '800px',
                     position: 'fixed',
-                    bottom: '20px',
-                    right: '20px',
+                    bottom: '50px',
+                    right: '30px',
                     borderRadius: '20px',
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
@@ -285,14 +285,14 @@ function ChatBot({ }) {
                             Cura
                         </Typography>
                         <Box>
-                        {authToken && (
-                            <IconButton color="inherit" onClick={handleHistoryClick}>
-                                <HistoryRoundedIcon />
+                            {authToken && (
+                                <IconButton color="inherit" onClick={handleHistoryClick}>
+                                    <HistoryRoundedIcon />
+                                </IconButton>
+                            )}
+                            <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
+                                <ClearRoundedIcon />
                             </IconButton>
-                        )}
-                        <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
-                            <ClearRoundedIcon />
-                        </IconButton>
                         </Box>
                         <Menu
                             anchorEl={anchorEl}
@@ -412,9 +412,9 @@ function ChatBot({ }) {
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>
-                <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: -100, behavior: 'smooth' })} size="small">
-                <ChevronLeftIcon />
-                </IconButton>
+                    <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: -100, behavior: 'smooth' })} size="small">
+                        <ChevronLeftIcon />
+                    </IconButton>
                     <Box
                         ref={scrollContainerRef}
                         sx={{
@@ -444,7 +444,7 @@ function ChatBot({ }) {
                         ))}
                     </Box>
                     <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: 100, behavior: 'smooth' })} size="small">
-                    <ChevronRightIcon />
+                        <ChevronRightIcon />
                     </IconButton>
                 </Box>
 
@@ -470,18 +470,19 @@ function ChatBot({ }) {
                         }}
                     />
                     {inputValue.trim() !== '' && (
-                        <IconButton type="submit" color="primary" aria-label="send"
+                        <IconButton type="submit" aria-label="send"
                             sx={{
-                                bgcolor: inputValue.trim() !== '' ? '#03035D' : 'transparent',
-                                color: inputValue.trim() !== '' ? 'white' : 'inherit',
-                                '&:hover': {
-                                    bgcolor: inputValue.trim() !== '' ? '#5BC0DE' : 'transparent',
-                                },
+                                color: '#03035D',
                                 transition: 'all 0.3s ease',
-                            }}>
+                                '&:hover': {
+                                    color: '#5BC0DE',
+                                }
+                            }}
+                        >
                             <SendRoundedIcon />
                         </IconButton>
                     )}
+
                 </Paper>
             </Box>
 
