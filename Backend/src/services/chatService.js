@@ -113,21 +113,29 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
                     content: 'Extract symptoms from the following message and determine if they indicate an emergency. Return a JSON object with the symptoms and a flag indicating whether it is an emergency. If no symptoms are found, return "No symptoms detected."'
                 },
                 {
-                    role: 'user', content: userMessage
+                    role: 'user',
+                    content: userMessage
                 }
             ],
         });
 
-        const result = response.choices[0].message.content.trim();
+        const messageContent = response.choices[0].message.content.trim();
+        console.log('Message content:', messageContent);
+
         let symptoms = 'No symptoms detected.';
         let isEmergency = false;
 
         try {
-            const parsedResult = JSON.parse(result);
-            symptoms = parsedResult.symptoms || symptoms;
-            isEmergency = parsedResult.isEmergency || isEmergency;
+            const parsedResult = JSON.parse(messageContent);
+            if (Array.isArray(parsedResult.symptoms)) {
+                symptoms = parsedResult.symptoms.join(', ');
+            } else if (typeof parsedResult.symptoms === 'string') {
+                symptoms = parsedResult.symptoms;
+            }
+            isEmergency = parsedResult.emergency || false;
         } catch (e) {
             console.error('Error parsing result:', e);
+            console.error('Raw result:', messageContent);
         }
 
         if (isEmergency) {
