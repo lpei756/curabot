@@ -2,6 +2,7 @@ import jwt from 'jsonwebtoken';
 import {
     register as registerAdminService,
     login as loginAdminService,
+    me as meService,
     readAdmin as readAdminService,
     updateAdmin as updateAdminService,
     deleteAdmin as deleteAdminService,
@@ -54,6 +55,23 @@ export const adminLogin = async (req, res) => {
     } catch (error) {
         console.error('Error during admin login:', error.message);
         res.status(400).json({ message: error.message });
+    }
+};
+
+export const me = async (req, res) => {
+    try {
+        const adminId = req.admin._id;
+        console.log('Fetching admin with ID:', adminId);
+        const admin = await meService(adminId);
+        if (!admin) {
+            console.error('Admin not found for ID:', adminId);
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+        console.log('Admin data retrieved:');
+        res.status(200).json({ admin });
+    } catch (error) {
+        console.error('Error fetching admin:', error.message);
+        res.status(500).json({ message: 'Server error' });
     }
 };
 

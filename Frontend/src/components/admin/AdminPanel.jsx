@@ -1,10 +1,11 @@
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchAllPatients } from '../../services/AdminService';
-import { fetchAdminNotifications } from '../../services/notificationService';
+import { fetchMe, fetchAllPatients } from '../../services/AdminService';
+import { fetchAdminNotifications } from '../../services/NotificationService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
+import Prescription from './Prescription.jsx';
 import { Link, useNavigate } from 'react-router-dom';
 
 const AdminPanel = () => {
@@ -15,8 +16,29 @@ const AdminPanel = () => {
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
     const [unreadCount, setUnreadCount] = useState(0);
+    const [showPrescription, setShowPrescription] = useState(false);
     const navigate = useNavigate();
-    const { adminId } = useContext(AdminContext);
+    const { adminId, adminToken } = useContext(AdminContext);
+    const [doctorFirstName, setDoctorFirstName] = useState('');
+    const [doctorLastName, setDoctorLastName] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchAdminData = async () => {
+            try {
+                const response = await fetchMe();
+                const adminData = response.admin;
+                console.log("Fetched admin data:", adminData);
+                setDoctorFirstName(adminData.firstName);
+                setDoctorLastName(adminData.lastName);
+                setIsLoading(false); // 加载完成
+            } catch (error) {
+                console.error('Error fetching admin data:', error);
+                setIsLoading(false); // 即使出错，也标记为加载完成
+            }
+        };
+        fetchAdminData();
+    }, [adminToken]);
 
     useEffect(() => {
         if (adminId) {
@@ -67,9 +89,21 @@ const AdminPanel = () => {
         if (patient && patient._id) {
             setSelectedPatient(patient);
             setEditMode(true);
+            setShowPrescription(false);
         } else {
             console.error('Invalid patient selected:', patient);
         }
+    };
+
+    const handlePrescription = (patient) => {
+        setSelectedPatient(patient);
+        setShowPrescription(true);
+        setEditMode(false);
+    };
+
+    const handlePrescriptionSubmit = (prescriptionData) => {
+        console.log('Prescription Submitted:', prescriptionData);
+        setShowPrescription(false);
     };
 
     const handleNavigateToNotifications = () => {
@@ -124,6 +158,18 @@ const AdminPanel = () => {
                     setEditMode={setEditMode}
                     returnPath="/admin/panel"
                 />
+            ) : showPrescription && selectedPatient ? (
+                isLoading ? (
+                    <Typography variant="body1">Loading doctor information...</Typography>
+                ) : (
+                    <Prescription
+                        patient={selectedPatient}
+                        onSubmit={handlePrescriptionSubmit}
+                        doctorFirstName={doctorFirstName}
+                        doctorLastName={doctorLastName}
+                        adminId={adminId}
+                    />
+                )
             ) : (
                 <Box sx={{ marginBottom: 4 }}>
                     <Typography variant="h5" component="h2" gutterBottom>
@@ -176,6 +222,14 @@ const AdminPanel = () => {
                                                 >
                                                     <EditIcon />
                                                 </IconButton>
+                                                <Button
+                                                    onClick={() => handlePrescription(patient)}
+                                                    variant="contained"
+                                                    color="secondary"
+                                                    sx={{ ml: 1 }}
+                                                >
+                                                    Generate Prescription
+                                                </Button>
                                             </TableCell>
                                         </TableRow>
                                     ))

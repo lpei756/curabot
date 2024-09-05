@@ -189,6 +189,10 @@ const adminLoginSchema = Joi.object({
     password: Joi.string().min(6).required()
 });
 
+const meSchema = Joi.object({
+    id: Joi.string().required()
+});
+
 const adminReadSchema = Joi.object({
     id: Joi.string().required()
 });
@@ -322,6 +326,7 @@ export default {
     [doctorPathBase.doctorLogin]: doctorLoginSchema,
     [adminPathBase.register]: adminRegisterSchema,
     [adminPathBase.login]: adminLoginSchema,
+    [adminPathBase.me]: meSchema,
     [adminPathBase.read]: adminReadSchema,
     [adminPathBase.update]: updateAdminSchema,
     [adminPathBase.deleteAdmin]: deleteAdminSchema,

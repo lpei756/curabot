@@ -73,6 +73,21 @@ export const login = async ({ email, password }) => {
     return admin;
 };
 
+export const me = async (adminId) => {
+    try {
+        console.log('Fetching admin with ID:', adminId);
+        const admin = await AdminModel.findById(adminId).select('-password');
+        if (!admin) {
+            console.error('Admin not found for ID:', adminId);
+            throw new Error('Admin not found');
+        }
+        return admin;
+    } catch (error) {
+        console.error('Error fetching admin:', error.message);
+        throw error;
+    }
+};
+
 export const readAdmin = async (adminID) => {
     try {
         const admin = await AdminModel.findById(adminID).select('-password');
