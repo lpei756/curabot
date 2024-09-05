@@ -110,7 +110,7 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'Extract symptoms from the following message and return them as a comma-separated list. If no symptoms are found, return "No symptoms detected."'
+                    content: 'Extract symptoms from the following message and determine if they indicate an emergency. Return a JSON object with the symptoms and a flag indicating whether it is an emergency. If no symptoms are found, return "No symptoms detected."'
                 },
                 {
                     role: 'user', content: userMessage
@@ -118,9 +118,26 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
             ],
         });
 
-        const symptoms = response.choices[0].message.content.trim();
-        console.log('Detected Symptoms:', symptoms);
-        return symptoms !== '' ? symptoms : 'No symptoms detected.';
+        const result = response.choices[0].message.content.trim();
+        let symptoms = 'No symptoms detected.';
+        let isEmergency = false;
+
+        try {
+            const parsedResult = JSON.parse(result);
+            symptoms = parsedResult.symptoms || symptoms;
+            isEmergency = parsedResult.isEmergency || isEmergency;
+        } catch (e) {
+            console.error('Error parsing result:', e);
+        }
+
+        if (isEmergency) {
+            return {
+                response: 'It sounds like an emergency. Please go to the hospital or call 111 immediately.',
+                symptoms
+            };
+        } else {
+            return { symptoms };
+        }
     } catch (error) {
         console.error('Error detecting symptoms:', error);
         throw new Error('Error detecting symptoms');
@@ -129,7 +146,9 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
 
 export const identifySpecialisation = async (symptoms, userLocation) => {
     try {
-        const detectedSymptoms = symptoms;
+        if (symptoms === 'No symptoms detected.') {
+            return { specialisation: 'Unknown', doctors: [] };
+        }
 
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
@@ -139,7 +158,7 @@ export const identifySpecialisation = async (symptoms, userLocation) => {
                     content: 'Identify the medical specialisation based on the symptoms described by the user. Return the specialisation type, and if none can be identified, return "Unknown specialisation".'
                 },
                 {
-                    role: 'user', content: detectedSymptoms
+                    role: 'user', content: symptoms
                 }
             ],
         });
