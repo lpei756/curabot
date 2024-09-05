@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { login } from '../../../services/authService';
@@ -16,6 +16,7 @@ function Login({ onClose, onSuccess }) {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
     const { login: authLogin } = useContext(AuthContext);
+
     const handleLogin = async (e) => {
         e.preventDefault();
         try {
@@ -24,7 +25,7 @@ function Login({ onClose, onSuccess }) {
             authLogin(data.token);
             onSuccess();
             onClose();
-            navigate('/');
+            navigate('/dashboard'); // Navigate to /dashboard after login
         } catch (error) {
             setError('Login failed: ' + error.message);
         }
@@ -33,7 +34,7 @@ function Login({ onClose, onSuccess }) {
     return (
         <Box component="form" onSubmit={handleLogin}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
-                <Typography id="login-modal-title" variant="h6" component="h2"  style={{ color: 'black', textAlign: 'center' }}>
+                <Typography id="login-modal-title" variant="h6" component="h2" style={{ color: 'black', textAlign: 'center' }}>
                     Login
                 </Typography>
                 <IconButton onClick={onClose}>
@@ -69,7 +70,7 @@ function Login({ onClose, onSuccess }) {
                     border: 'none',
                     borderRadius: '5px',
                     cursor: 'pointer'
-                  }}
+                }}
             >
                 Login
             </Button>

@@ -58,5 +58,8 @@ export const API_PATH = {
     getByDoctor: buildApiPath('/api/doctor-availability/:doctorID'),
     getByAddress: buildApiPath('/api/doctor-availability/address/:address'),
     updateIsBooked: buildApiPath('/api/doctor-availability/:slotId/:userId/isBooked')
+  },
+  testresult: {
+    getAll: buildApiPath('/api/test-result/all/results')
   }
 };

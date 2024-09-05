@@ -157,3 +157,35 @@ export const approveTestResultService = async (testResultId, user) => {
         return { error: true, status: 500, message: 'Internal server error' };
     }
 };
+
+export const getAllTestResultsService = async (user) => {
+    try {
+        let query;
+        if (user.role === 'doctor') {
+            const doctor = await Doctor.findById(user._id).exec();
+            if (!doctor) {
+                throw new Error('Doctor not found');
+            }
+            query = { doctorID: doctor.doctorID };
+        } else if (user._id) {
+            const patient = await UserModel.findById(user._id).exec();
+            if (!patient) {
+                throw new Error('Patient not found');
+            }
+            if (patient.patientID) {
+                query = { patientID: patient.patientID, reviewed: true };
+            } else {
+                throw new Error('Patient does not have a patientID');
+            }
+        } else {
+            throw new Error('User does not have a valid role or ID');
+        }
+
+        const testResults = await TestResult.find(query).exec();
+
+        return { error: false, testResults };
+    } catch (error) {
+        console.error('Error retrieving test results in service:', error);
+        return { error: true, status: 500, message: 'Internal server error' };
+    }
+};

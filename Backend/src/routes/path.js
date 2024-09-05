@@ -83,5 +83,6 @@ export const TEST_RESULT_PATHS = {
   upload: '/upload',
   read: '/:testResultId',
   approve: '/:testResultId/approve',
-  edit: '/:testResultId/edit'
+  edit: '/:testResultId/edit',
+  all: '/all/results'
 };

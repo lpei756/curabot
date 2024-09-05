@@ -161,7 +161,7 @@ function ChatBot({ }) {
 
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true }
+                { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true, feedbackSent: false }
             ]);
 
         } catch (error) {
@@ -205,9 +205,16 @@ function ChatBot({ }) {
             return;
         }
 
+        // 如果已经发送了反馈，则不再执行发送操作
+        if (message.feedbackSent) {
+            console.log('Feedback has already been sent for this message');
+            return;  // 提前返回，阻止重复发送
+        }
+
+    
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
-                i === index ? { ...msg, liked: feedback } : msg
+                i === index ? { ...msg, liked: feedback, feedbackSent: true } : msg
             )
         );
 
@@ -277,7 +284,7 @@ function ChatBot({ }) {
                         }}>
                             Cura
                         </Typography>
-                        <box>
+                        <Box>
                         {authToken && (
                             <IconButton color="inherit" onClick={handleHistoryClick}>
                                 <HistoryRoundedIcon />
@@ -286,7 +293,7 @@ function ChatBot({ }) {
                         <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
                             <ClearRoundedIcon />
                         </IconButton>
-                        </box>
+                        </Box>
                         <Menu
                             anchorEl={anchorEl}
                             open={Boolean(anchorEl)}
@@ -405,9 +412,9 @@ function ChatBot({ }) {
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>
-                    <IconButton onClick={() => scroll(-100)} size="small">
-                        <ChevronLeftIcon />
-                    </IconButton>
+                <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: -100, behavior: 'smooth' })} size="small">
+                <ChevronLeftIcon />
+                </IconButton>
                     <Box
                         ref={scrollContainerRef}
                         sx={{
@@ -436,8 +443,8 @@ function ChatBot({ }) {
                             />
                         ))}
                     </Box>
-                    <IconButton onClick={() => scroll(100)} size="small">
-                        <ChevronRightIcon />
+                    <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: 100, behavior: 'smooth' })} size="small">
+                    <ChevronRightIcon />
                     </IconButton>
                 </Box>
 

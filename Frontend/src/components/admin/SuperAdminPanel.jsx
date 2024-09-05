@@ -3,7 +3,7 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteAdmin, fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
-import { fetchFeedbackData } from '../../services/ChartService';
+import { fetchFeedbackData } from '../../services/chartService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
