@@ -1,11 +1,12 @@
 import { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
 import PropTypes from 'prop-types';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -37,6 +38,20 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     },
 }));
 
+const DrawerContainer = styled(Box)(({ theme }) => ({
+    width: '200px',
+    height: '800px',
+    position: 'fixed',
+    bottom: '50px',
+    right: '480px',
+    borderRadius: '20px',
+    backgroundColor: '#f5f5f5',
+    zIndex: 6667,
+    overflow: 'auto',
+    transition: 'transform 0.3s ease',
+    transform: 'translateX(0)',
+}));
+
 function ChatBot({ }) {
     const { toggleChatbot } = useChatbot();
     const { authToken } = useContext(AuthContext);
@@ -49,14 +64,17 @@ function ChatBot({ }) {
     const [isImageDialogOpen, setIsImageDialogOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
     const [sessionId, setSessionId] = useState(localStorage.getItem('chatSessionId') || null);
-    const [anchorEl, setAnchorEl] = useState(null);
+    const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState(null);
     const [recentChatTimes, setRecentChatTimes] = useState([]);
     const [recentChatSessions, setRecentChatSessions] = useState([]);
     const [chatHistoriesFetched, setChatHistoriesFetched] = useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
+    const [filteredChatSessions, setFilteredChatSessions] = useState([]);
+
 
     const quickChats = [
         "How can I book a new appointment",
@@ -226,12 +244,8 @@ function ChatBot({ }) {
         }
     };
 
-    const handleHistoryClick = (event) => {
-        setAnchorEl(anchorEl ? null : event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setAnchorEl(null);
+    const toggleDrawer = () => {
+        setDrawerOpen((prevDrawerOpen) => !prevDrawerOpen);
     };
 
     const showChatHistory = async (sessionId) => {
@@ -245,14 +259,66 @@ function ChatBot({ }) {
             }));
             setMessages(formattedMessages);
             setSelectedSessionId(sessionId);
-            handleCloseMenu();
+            setDrawerOpen(false);
         } catch (error) {
             console.error('Failed to fetch chat history:', error);
         }
     };
 
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const filteredChatTimes = searchTerm
+    ? recentChatTimes.filter(time =>
+        time.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+    : recentChatTimes;
+
     return (
         <>
+            {drawerOpen && (
+                <DrawerContainer>
+                    <AppBar position="static" sx={{
+                        backgroundColor: '#03035D',
+                        boxShadow: 'none',
+                        borderTopLeftRadius: '20px',
+                        borderTopRightRadius: '20px',
+                        height: '60px',
+                        zIndex: 9997,
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: '0 16px',
+                    }}>
+                        <TextField
+                            variant="standard"
+                            placeholder="Search..."
+                            fullWidth
+                            value={searchTerm}
+                            onChange={handleSearchChange}
+                            InputProps={{
+                                startAdornment: <SearchRoundedIcon />,
+                                disableUnderline: true,
+                            }}
+                            sx={{
+                                bgcolor: 'white',
+                                borderRadius: '5px',
+                                marginLeft: '8px',
+                                color: 'black',
+                            }}
+                        />
+                    </AppBar>
+                    <List>
+                        {filteredChatTimes.map((time, index) => (
+                            <ListItem key={index} onClick={() => showChatHistory(recentChatSessions[index].id)}>
+                                <ListItemText primary={time} sx={{ color: 'black' }} />
+                            </ListItem>
+                        ))}
+                    </List>
+                </DrawerContainer>
+            )}
+
             <Box
                 className="chatbot-container"
                 sx={{
@@ -286,7 +352,7 @@ function ChatBot({ }) {
                         </Typography>
                         <Box>
                             {authToken && (
-                                <IconButton color="inherit" onClick={handleHistoryClick}>
+                                <IconButton color="inherit" onClick={toggleDrawer}>
                                     <HistoryRoundedIcon />
                                 </IconButton>
                             )}
@@ -294,36 +360,6 @@ function ChatBot({ }) {
                                 <ClearRoundedIcon />
                             </IconButton>
                         </Box>
-                        <Menu
-                            anchorEl={anchorEl}
-                            open={Boolean(anchorEl)}
-                            onClose={handleCloseMenu}
-                            anchorOrigin={{
-                                vertical: 'bottom',
-                                horizontal: 'center',
-                            }}
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'center',
-                            }}
-                            sx={{
-                                zIndex: 9998,
-                                height: '50%', // Set the height to 50% of the parent (chatbot container)
-                                maxHeight: '300px', // Optionally set a maximum height
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    maxHeight: '100%', // Ensure the Box takes up the full height of the Menu
-                                    overflowY: 'auto', // Enable vertical scrolling if content overflows
-                                }}
-                            ></Box>
-                            {recentChatTimes.map((time, index) => (
-                                <MenuItem key={index} onClick={() => showChatHistory(recentChatSessions[index].id)}>
-                                    {time}
-                                </MenuItem>
-                            ))}
-                        </Menu>
                     </Toolbar>
                 </AppBar>
 
