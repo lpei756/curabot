@@ -295,28 +295,49 @@ export const handleChat = async (req, res) => {
       }
     }
 
-    const detectedSymptoms = await detectSymptomsUsingNLP(userMessage);
-    const symptoms = Array.isArray(detectedSymptoms) ? detectedSymptoms : [detectedSymptoms];
+    const { response, symptoms } = await detectSymptomsUsingNLP(userMessage);
 
-    if (symptoms.length > 0 && symptoms[0] !== 'No symptoms detected.') {
+    console.log('Detected Symptoms:', symptoms);
+
+    let isEmergency = false;
+    try {
+      const parsedResponse = JSON.parse(response || '{}');
+      isEmergency = parsedResponse.is_emergency || parsedResponse.emergency || false;
+    } catch (e) {
+      console.error('Error parsing response as JSON:', e);
+      isEmergency = response.toLowerCase().includes('emergency');
+    }
+
+    if (isEmergency) {
+      const emergencyResponse = 'It sounds like you might be experiencing a medical emergency. Please go to the nearest hospital or call emergency services (111) immediately.';
+      await ChatSession.findByIdAndUpdate(
+        sessionId,
+        { $push: { messages: { sender: 'bot', message: emergencyResponse, isAnonymous } } }
+      );
+      return res.json({ reply: emergencyResponse, sessionId });
+    }
+
+    const symptomsArray = Array.isArray(symptoms) ? symptoms : [symptoms];
+
+    if (symptomsArray.length > 0 && symptomsArray[0] !== 'No symptoms detected.') {
       try {
-        const { specialisation, doctors } = await identifySpecialisation(symptoms.join(', '), userLocation);
+        const { specialisation, doctors } = await identifySpecialisation(symptomsArray.join(', '), userLocation);
         console.log('Specialisation:', specialisation);
 
         if (Array.isArray(doctors) && doctors.length > 0) {
           const doctorDetails = doctors.map(doctor =>
             `<p>
-            <strong>Name:</strong> ${doctor.doctorName},
-            <strong>Clinic:</strong> ${doctor.clinicName},
-            <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km
-            <button onclick="selectDoctor('${doctor.doctorID}')">Select ${doctor.doctorName}</button>
-            </p>`
+                    <strong>Name:</strong> ${doctor.doctorName},
+                    <strong>Clinic:</strong> ${doctor.clinicName},
+                    <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km
+                    <button onclick="selectDoctor('${doctor.doctorID}')">Select ${doctor.doctorName}</button>
+                    </p>`
           ).join('');
 
           const responseMessage = `
-            Based on the symptoms you’ve described, it seems like you might need to consult with a doctor in the field of <strong>${specialisation}</strong>. Here are some doctors who could assist you:
-            ${doctorDetails}
-          `;
+                Based on the symptoms you’ve described, it seems like you might need to consult with a doctor in the field of <strong>${specialisation}</strong>. Here are some doctors who could assist you:
+                ${doctorDetails}
+            `;
 
           await ChatSession.findByIdAndUpdate(
             sessionId,
