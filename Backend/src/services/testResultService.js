@@ -183,11 +183,6 @@ export const getAllTestResultsService = async (user) => {
 
         const testResults = await TestResult.find(query).exec();
 
-        if (!testResults.length) {
-            console.warn('No test results found');
-            return { error: true, status: 404, message: 'No test results found' };
-        }
-
         return { error: false, testResults };
     } catch (error) {
         console.error('Error retrieving test results in service:', error);

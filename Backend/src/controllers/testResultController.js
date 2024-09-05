@@ -124,21 +124,21 @@ export const approveTestResult = async (req, res) => {
 export const getAllTestResults = async (req, res) => {
   const user = req.user;
 
-  console.log('Received request to get test results');
-  console.log('User:', user);
-
   try {
-    const { error, testResults, message, status } = await getAllTestResultsService(user);
+      const { error, testResults, message, status } = await getAllTestResultsService(user);
 
-    if (error) {
-      console.error('Error fetching test results:', message);
-      return res.status(status || 500).json({ message });
-    }
+      if (error) {
+          console.error('Error fetching test results:', message);
+          return res.status(status || 500).json({ message });
+      }
 
-    console.log('Retrieved test results:', testResults);
-    res.status(200).json({ testResults });
+      if (testResults.length === 0) {
+          return res.status(200).json({ message: 'No test results found' });
+      }
+
+      res.status(200).json({ testResults });
   } catch (error) {
-    console.error('Error retrieving test results:', error);
-    res.status(500).json({ message: 'Internal server error' });
+      console.error('Error retrieving test results:', error);
+      res.status(500).json({ message: 'Internal server error' });
   }
 };
