@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText, Badge } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
-import { fetchUserNotifications } from '../../services/NotificationService';
+import { fetchUserNotifications } from '../../services/notificationService';
 import ReadUser from '../user/ReadUser';
 import AppointmentList from '../appointment/AppointmentList';
 import Notification from '../user/Notification';

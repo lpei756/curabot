@@ -1,7 +1,7 @@
 import {useState, useEffect, useContext, useRef} from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification} from '../../services/NotificationService.js';
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification} from '../../services/notificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";

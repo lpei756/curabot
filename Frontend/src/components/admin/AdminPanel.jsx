@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchAllPatients } from '../../services/AdminService';
-import { fetchAdminNotifications } from '../../services/NotificationService';
+import { fetchAdminNotifications } from '../../services/notificationService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import { Link, useNavigate } from 'react-router-dom';
