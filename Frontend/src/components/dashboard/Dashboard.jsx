@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/AuthContext';
 import { fetchUserData } from '../../services/userService';
 import { fetchUserAppointments } from '../../services/appointmentService';
@@ -12,6 +13,7 @@ import prescriptionAnimationData from '../../assets/Prescription.json';
 import testResultAnimationData from '../../assets/TestResult.json';
 import { Box, Typography } from '@mui/material';
 import { DayPicker } from 'react-day-picker';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../App.css';
 
 const Dashboard = () => {
@@ -26,6 +28,11 @@ const Dashboard = () => {
     const [doctorName, setDoctorName] = useState('');
     const [clinicNames, setClinicNames] = useState({});
     const [doctorNames, setDoctorNames] = useState({});
+    const navigate = useNavigate();
+
+    const handleProfileRedirect = () => {
+        navigate('/user');
+    };
 
     useEffect(() => {
         if (!userId) {
@@ -35,7 +42,6 @@ const Dashboard = () => {
 
         const loadData = async () => {
             try {
-                // Fetch user data
                 const userDataResponse = await fetchUserData(userId);
                 if (!userDataResponse || userDataResponse.error) {
                     throw new Error(userDataResponse?.message || 'Failed to fetch user data');
@@ -292,13 +298,34 @@ const Dashboard = () => {
                     >
                         {userData ? (
                             <Box>
-                                <Typography variant="h5" sx={{ marginTop: '-20px', marginBottom: '-20px', display: 'flex', alignItems: 'center' }}>
+                                <Typography
+                                    variant="h5"
+                                    sx={{
+                                        marginTop: '-20px',
+                                        marginBottom: '-20px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        position: 'relative', // Added to position the button absolutely
+                                    }}
+                                >
                                     {hovered.profile ? (
                                         <Lottie animationData={profileAnimationData} style={{ width: '90px', height: '90px' }} />
                                     ) : (
                                         <img src="/Profile.PNG" alt="Profile Icon" style={{ width: '90px', height: '90px' }} />
                                     )}
                                     Profile
+                                    <Box
+                                        sx={{
+                                            position: 'absolute',
+                                            right: 0,
+                                            top: '50%',
+                                            transform: 'translateY(-50%)',
+                                            cursor: 'pointer',
+                                        }}
+                                        onClick={handleProfileRedirect}
+                                    >
+                                        <ArrowForwardIcon />
+                                    </Box>
                                 </Typography>
                                 <Box
                                     sx={{

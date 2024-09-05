@@ -176,6 +176,12 @@ function AppHeader() {
         navigate('/');
     };
 
+    const handleLogoClick = () => {
+        if (isUserLoggedIn || isAdminLoggedIn) {
+            navigate('/dashboard');
+        }
+    };
+
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
@@ -190,26 +196,26 @@ function AppHeader() {
                                     <MapRoundedIcon sx={{ color: 'black' }} />
                                 </MenuIconButton>
                             </Link>
-                            <Link to="/">
-                                <Typography
-                                    variant="h5"
-                                    noWrap
-                                    component="div"
-                                    sx={{
-                                        fontWeight: 'bold',
-                                        color: 'black',
-                                        textDecoration: 'none',
-                                        letterSpacing: '.2rem',
-                                        textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
-                                        position: 'absolute',
-                                        left: '50%',
-                                        transform: 'translateX(-50%)',
-                                    }}
-                                >
-                                    <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
-                                    FRW Healthcare
-                                </Typography>
-                            </Link>
+                            <Typography
+                                variant="h5"
+                                noWrap
+                                component="div"
+                                sx={{
+                                    fontWeight: 'bold',
+                                    color: 'black',
+                                    textDecoration: 'none',
+                                    letterSpacing: '.2rem',
+                                    textShadow: '1px 1px 2px rgba(0,0,0,0.1)',
+                                    position: 'absolute',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    cursor: 'pointer',
+                                }}
+                                onClick={handleLogoClick}
+                            >
+                                <img src={logo} alt="FRW Healthcare Logo" style={{ height: 20, marginRight: 10 }} />
+                                FRW Healthcare
+                            </Typography>
                         </Box>
 
                         {isUserLoggedIn || isAdminLoggedIn ? (
