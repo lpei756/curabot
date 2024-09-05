@@ -7,6 +7,7 @@ export const buildPathWithBase = (paths) => {
 export const ADMIN_PATHS = {
   register: '/admin/register',
   login: '/admin/login',
+  me: '/admin/me',
   read: '/admin/:id',
   update: '/admin/:id',
   delete: '/admin/:id',

@@ -133,3 +133,24 @@ export const fetchDoctors = async () => {
         throw error;
     }
 };
+
+export const fetchMe = async () => {
+    try {
+        const url = API_PATH.admin.me;
+        console.log('Fetching current admin details from URL:', url);
+        const token = tokenStorage.get();
+        if (!token) {
+            throw new Error('Admin token not found.');
+        }
+        const response = await axiosApiInstance.get(url, {
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        console.log('API Response for fetchMe:', response.data);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching current admin details:', error.message);
+        throw error;
+    }
+};

@@ -5,6 +5,7 @@ export const API_PATH = {
     login: buildApiPath('/api/admin/login'),
     register: buildApiPath('/api/admin/register'),
     read: buildApiPath('/api/admin/:id'),
+    me: buildApiPath('/api/admin/me'),
     update: buildApiPath('/api/admin/:id'),
     delete: buildApiPath('/api/admin/:id'),
     logout: buildApiPath('/api/admin/logout'),

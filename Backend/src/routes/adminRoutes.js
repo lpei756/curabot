@@ -2,6 +2,7 @@ import express from 'express';
 import {
     adminRegister,
     adminLogin,
+    me,
     readAdmin,
     updateAdmin,
     deleteAdmin,
@@ -14,6 +15,7 @@ import {
 } from '../controllers/adminController.js';
 import schemaValidator from '../middlewares/schemaValidator.js';
 import {ADMIN_PATHS, buildPathWithBase} from './path.js';
+import adminAuthorization from '../middlewares/adminAuthorization.js';
 
 const router = express.Router();
 
@@ -21,6 +23,7 @@ const adminPathBase = buildPathWithBase(ADMIN_PATHS);
 
 router.post(ADMIN_PATHS.register, schemaValidator(adminPathBase.register), adminRegister);
 router.post(ADMIN_PATHS.login, schemaValidator(adminPathBase.login), adminLogin);
+router.get(ADMIN_PATHS.me, adminAuthorization(['admin', 'doctor']), me);
 router.get(ADMIN_PATHS.read, schemaValidator(adminPathBase.read), readAdmin);
 router.put(ADMIN_PATHS.update, schemaValidator(adminPathBase.update), updateAdmin);
 router.delete(ADMIN_PATHS.delete, deleteAdmin);
