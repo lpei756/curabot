@@ -412,9 +412,9 @@ function ChatBot({ }) {
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>
-                    <IconButton onClick={() => scroll(-100)} size="small">
-                        <ChevronLeftIcon />
-                    </IconButton>
+                <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: -100, behavior: 'smooth' })} size="small">
+                <ChevronLeftIcon />
+                </IconButton>
                     <Box
                         ref={scrollContainerRef}
                         sx={{
@@ -443,8 +443,8 @@ function ChatBot({ }) {
                             />
                         ))}
                     </Box>
-                    <IconButton onClick={() => scroll(100)} size="small">
-                        <ChevronRightIcon />
+                    <IconButton onClick={() => scrollContainerRef.current.scrollBy({ left: 100, behavior: 'smooth' })} size="small">
+                    <ChevronRightIcon />
                     </IconButton>
                 </Box>
 
