@@ -23,6 +23,7 @@ import ReadPatient from './components/admin/ReadPatient';
 import ReadAdmin from './components/admin/ReadAdmin';
 import AdminNotification from './components/admin/AdminNotification';
 import Dashboard from './components/dashboard/Dashboard';
+import TestResultPage from './components/testresult/TestResult';
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                                 <Route path="/appointment/new" element={<AvailableSlotsCalendar />} />
                                 <Route path="/map" element={<ClinicMap />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
+                                <Route path="/test-result" element={<TestResultPage />} />
                             </Routes>
                         </div>
                     </Router>
