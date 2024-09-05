@@ -89,13 +89,6 @@ const Prescription = ({ patient, onSubmit, doctorFirstName, doctorLastName, admi
                 multiline
                 rows={2}
             />
-            <Typography
-                variant="body1"
-                gutterBottom
-                sx={{ whiteSpace: 'pre-line', marginTop: 2 }}
-            >
-                {`Prescription created by Dr. ${prescriptionData.doctorName}: Medications - ${prescriptionData.medications}`}
-            </Typography>
             <Button
                 variant="contained"
                 onClick={handleSubmit}
