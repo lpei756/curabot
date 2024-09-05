@@ -25,6 +25,7 @@ const Dashboard = () => {
     const [hovered, setHovered] = useState({ appointment: false, profile: false, testResult: false, prescription: false });
     const [doctorName, setDoctorName] = useState('');
     const [clinicNames, setClinicNames] = useState({});
+    const [doctorNames, setDoctorNames] = useState({});
 
     useEffect(() => {
         if (!userId) {
@@ -65,6 +66,18 @@ const Dashboard = () => {
                 }, {});
                 setClinicNames(clinicNameMap);
 
+                const doctorIdMap = {};
+                await Promise.all(
+                    appointmentsResponse.map(async (appointment) => {
+                        const doctorId = appointment.assignedGP;
+                        if (doctorId && !doctorIdMap[doctorId]) {
+                            const doctorName = await fetchDoctorName(doctorId);
+                            doctorIdMap[doctorId] = doctorName;
+                        }
+                    })
+                );
+                setDoctorNames(doctorIdMap);
+
             } catch (err) {
                 setError(err.message || 'An unexpected error occurred');
             } finally {
@@ -103,9 +116,9 @@ const Dashboard = () => {
         );
     };
 
-    const formatTime = (dateTime) => {
+    const formatDateTime = (dateTime) => {
         const date = new Date(dateTime);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleDateString('en-CA') + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     };
 
     const filteredAppointments = filterAppointmentsByDate();
@@ -197,26 +210,58 @@ const Dashboard = () => {
                         {selectedDate && filteredAppointments.length > 0 ? (
                             filteredAppointments.map((appointment) => (
                                 <Box key={appointment._id} sx={{ marginBottom: '10px' }}>
-                                    <Typography variant="h5">Appointments for the day:</Typography>
-                                    <Typography variant="body1">Patient: {appointment.patientName}</Typography>
-                                    <Typography variant="body1">Time: {formatTime(appointment.dateTime)}</Typography>
-                                    <Typography variant="body1">Clinic: {clinicNames[appointment.clinic._id]}</Typography>
-                                    <Typography variant="body1">Doctor: {doctorName || appointment.assignedGP}</Typography>
-                                    <Typography variant="body1">Status: {appointment.status}</Typography>
+                                    <Typography variant="h5" sx={{ marginBottom: '5px' }}>Appointment for the day:</Typography>
+                                    {[
+                                        { label: 'Patient:', value: appointment.patientName },
+                                        { label: 'Date & Time:', value: formatDateTime(appointment.dateTime) },
+                                        { label: 'Clinic:', value: clinicNames[appointment.clinic._id] || 'N/A' },
+                                        { label: 'Doctor:', value: doctorNames[appointment.assignedGP] || 'N/A' },
+                                        { label: 'Status:', value: appointment.status },
+                                    ].map(({ label, value }, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                marginBottom: '10px',
+                                            }}
+                                        >
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>
+                                                {label}
+                                            </Typography>
+                                            <Typography variant="body1">{value}</Typography>
+                                        </Box>
+                                    ))}
                                 </Box>
                             ))
                         ) : (
                             upcomingAppointment ? (
                                 <Box>
-                                    <Typography variant="h5">Upcoming Appointment:</Typography>
-                                    <Typography variant="body1">Patient: {upcomingAppointment.patientName}</Typography>
-                                    <Typography variant="body1">Time: {formatTime(upcomingAppointment.dateTime)}</Typography>
-                                    <Typography variant="body1">Clinic: {clinicNames[upcomingAppointment.clinic._id]}</Typography>
-                                    <Typography variant="body1">Doctor: {doctorName || upcomingAppointment.assignedGP}</Typography>
-                                    <Typography variant="body1">Status: {upcomingAppointment.status}</Typography>
+                                    <Typography variant="h5" sx={{ marginBottom: '5px' }}>Upcoming Appointment:</Typography>
+                                    {[
+                                        { label: 'Patient:', value: upcomingAppointment.patientName },
+                                        { label: 'Date & Time:', value: formatDateTime(upcomingAppointment.dateTime) },
+                                        { label: 'Clinic:', value: clinicNames[upcomingAppointment.clinic._id] || 'N/A' },
+                                        { label: 'Doctor:', value: doctorNames[upcomingAppointment.assignedGP] || 'N/A' },
+                                        { label: 'Status:', value: upcomingAppointment.status },
+                                    ].map(({ label, value }, index) => (
+                                        <Box
+                                            key={index}
+                                            sx={{
+                                                display: 'flex',
+                                                justifyContent: 'space-between',
+                                                marginBottom: '10px',
+                                            }}
+                                        >
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>
+                                                {label}
+                                            </Typography>
+                                            <Typography variant="body1">{value}</Typography>
+                                        </Box>
+                                    ))}
                                 </Box>
                             ) : (
-                                <Typography>No appointment for the day.</Typography>
+                                <Typography variant="h5">No appointment for the day.</Typography>
                             )
                         )}
                     </Box>
