@@ -161,7 +161,7 @@ function ChatBot({ }) {
 
             setMessages((prevMessages) => [
                 ...prevMessages,
-                { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true }
+                { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true, feedbackSent: false }
             ]);
 
         } catch (error) {
@@ -205,9 +205,16 @@ function ChatBot({ }) {
             return;
         }
 
+        // 如果已经发送了反馈，则不再执行发送操作
+        if (message.feedbackSent) {
+            console.log('Feedback has already been sent for this message');
+            return;  // 提前返回，阻止重复发送
+        }
+
+    
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
-                i === index ? { ...msg, liked: feedback } : msg
+                i === index ? { ...msg, liked: feedback, feedbackSent: true } : msg
             )
         );
 
