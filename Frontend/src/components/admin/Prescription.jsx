@@ -28,11 +28,17 @@ const Prescription = ({ patient, onSubmit, doctorFirstName, doctorLastName, admi
     };
 
     const handleSubmit = async () => {
-        if (prescriptionData.doctorName && prescriptionData.medications) {
+        if (prescriptionData.doctorName && prescriptionData.medications && prescriptionData.instructions) {
             onSubmit(prescriptionData);
 
+            const formattedMedications = prescriptionData.medications;
+            const formattedInstructions = prescriptionData.instructions;
+
             const formData = new FormData();
-            formData.append('message', `Prescription created by Dr. ${prescriptionData.doctorName}: Medications - ${prescriptionData.medications}`);
+            formData.append(
+                'message',
+                `Prescription created by Dr. ${prescriptionData.doctorName}: Medications - ${formattedMedications}, Instructions - ${formattedInstructions}`
+            );
             formData.append('senderId', adminId);
             formData.append('senderModel', 'Admin');
             formData.append('receiverId', patient._id);
@@ -83,6 +89,13 @@ const Prescription = ({ patient, onSubmit, doctorFirstName, doctorLastName, admi
                 multiline
                 rows={2}
             />
+            <Typography
+                variant="body1"
+                gutterBottom
+                sx={{ whiteSpace: 'pre-line', marginTop: 2 }}
+            >
+                {`Prescription created by Dr. ${prescriptionData.doctorName}: Medications - ${prescriptionData.medications}`}
+            </Typography>
             <Button
                 variant="contained"
                 onClick={handleSubmit}

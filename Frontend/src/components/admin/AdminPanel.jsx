@@ -31,10 +31,10 @@ const AdminPanel = () => {
                 console.log("Fetched admin data:", adminData);
                 setDoctorFirstName(adminData.firstName);
                 setDoctorLastName(adminData.lastName);
-                setIsLoading(false); // 加载完成
+                setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching admin data:', error);
-                setIsLoading(false); // 即使出错，也标记为加载完成
+                setIsLoading(false);
             }
         };
         fetchAdminData();
