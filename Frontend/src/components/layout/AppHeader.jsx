@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
+import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import Container from '@mui/material/Container';
@@ -17,18 +19,6 @@ import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
-
-const MenuIconButton = styled('button')(({ theme }) => ({
-    backgroundColor: 'transparent',
-    borderRadius: '50%',
-    height: 30,
-    width: 30,
-    padding: 20,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-}));
 
 const AnimatedButton = styled('button')(({ variant }) => ({
     background: variant === 'login' ? '#03035d' : 'transparent',
@@ -46,6 +36,26 @@ const AnimatedButton = styled('button')(({ variant }) => ({
         transform: 'scale(1.05)',
         boxShadow: 'none',
         borderColor: 'black'
+    },
+    '&:focus': {
+        outline: 'none',
+    },
+}));
+
+const FRWIconButton = styled(IconButton)(({ theme }) => ({
+    color: 'black',
+    backgroundColor: 'transparent',
+    transition: 'color 0.3s ease',
+    outline: 'none',
+    boxShadow: 'none',
+    '&:hover': {
+        color: '#03035d',
+        backgroundColor: 'transparent',
+        transform: 'scale(1.05)',
+    },
+    '&:focus': {
+        outline: 'none',
+        boxShadow: 'none',
     },
 }));
 
@@ -188,13 +198,18 @@ function AppHeader() {
                 <Container maxWidth="xl">
                     <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <MenuIconButton onClick={toggleDrawer}>
-                                <MenuRoundedIcon sx={{ color: 'black' }} />
-                            </MenuIconButton>
+                            <Link to="/">
+                                <FRWIconButton>
+                                    <HomeRoundedIcon />
+                                </FRWIconButton>
+                            </Link>
+                            <FRWIconButton onClick={toggleDrawer}>
+                                <MenuRoundedIcon />
+                            </FRWIconButton>
                             <Link to="/map">
-                                <MenuIconButton>
-                                    <MapRoundedIcon sx={{ color: 'black' }} />
-                                </MenuIconButton>
+                                <FRWIconButton>
+                                    <MapRoundedIcon />
+                                </FRWIconButton>
                             </Link>
                             <Typography
                                 variant="h5"
@@ -210,6 +225,10 @@ function AppHeader() {
                                     left: '50%',
                                     transform: 'translateX(-50%)',
                                     cursor: 'pointer',
+                                    '&:hover': {
+                                        color: '#03035d',
+                                        backgroundColor: 'transparent',
+                                    },
                                 }}
                                 onClick={handleLogoClick}
                             >

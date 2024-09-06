@@ -79,7 +79,11 @@ const ChatbotButtonAndComponent = () => {
                     color: 'white',
                     zIndex: 9999,
                     '&:hover': {
-                        backgroundColor: '#68cde6'
+                        color: '#68cde6',
+                        backgroundColor: '#03035d'
+                    },
+                    '&:focus': {
+                        outline: 'none', 
                     },
                     padding: '16px',
                     borderRadius: '50%',

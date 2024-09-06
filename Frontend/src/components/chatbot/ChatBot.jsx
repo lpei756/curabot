@@ -313,10 +313,11 @@ function ChatBot({ }) {
                                 onClick={() => showChatHistory(recentChatSessions[index].id)}
                                 sx={{
                                     bgcolor: recentChatSessions[index].id === selectedSessionId ? '#03035D' : 'transparent',
+                                    transition: 'background-color 0.3s ease',
                                     '&:hover': {
-                                        bgcolor: '#5BC0DE',
+                                        bgcolor: '#68cde6',
                                         '& .MuiListItemText-primary': {
-                                            color: 'white', // Change text color to white on hover
+                                            color: 'white',
                                         },
                                     },
                                     borderRadius: '8px',
@@ -327,7 +328,7 @@ function ChatBot({ }) {
                                     primary={time}
                                     sx={{
                                         color: recentChatSessions[index].id === selectedSessionId ? 'white' : 'black',
-                                        transition: 'color 0.3s ease', // Smooth transition for the text color change
+                                        transition: 'color 0.3s ease',
                                     }}
                                 />
                             </ListItem>
@@ -370,11 +371,39 @@ function ChatBot({ }) {
                         </Typography>
                         <Box>
                             {authToken && (
-                                <IconButton color="inherit" onClick={toggleDrawer}>
+                                <IconButton
+                                    color="inherit"
+                                    onClick={toggleDrawer}
+                                    sx={{
+                                        transition: 'color 0.3s ease',
+                                        '&:hover': {
+                                            color: '#68cde6',
+                                        },
+                                        '&:focus': {
+                                            outline: 'none',
+                                            boxShadow: 'none',
+                                        },
+                                    }}
+                                >
                                     <HistoryRoundedIcon />
                                 </IconButton>
                             )}
-                            <IconButton edge="end" color="inherit" onClick={toggleChatbot}>
+                            <IconButton
+                                edge="end"
+                                color="inherit"
+                                onClick={toggleChatbot}
+                                sx={{
+                                    transition: 'color 0.3s ease',
+                                    '&:hover': {
+                                        color: '#5BC0DE',
+                                    },
+                                    '&:focus': {
+                                        outline: 'none',
+                                        boxShadow: 'none',
+                                        backgroundColor: 'transparent', 
+                                    },
+                                }}
+                            >
                                 <ClearRoundedIcon />
                             </IconButton>
                         </Box>

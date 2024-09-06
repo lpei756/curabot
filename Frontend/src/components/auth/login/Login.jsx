@@ -37,7 +37,11 @@ function Login({ onClose, onSuccess }) {
                 <Typography id="login-modal-title" variant="h6" component="h2" style={{ color: 'black', textAlign: 'center' }}>
                     Login
                 </Typography>
-                <IconButton onClick={onClose}>
+                <IconButton onClick={onClose} sx={{
+                    '&:focus': {
+                        outline: 'none',
+                    },
+                }}>
                     <ClearRoundedIcon />
                 </IconButton>
             </Box>
@@ -69,7 +73,10 @@ function Login({ onClose, onSuccess }) {
                     color: '#fff',
                     border: 'none',
                     borderRadius: '5px',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    '&:focus': {
+                        outline: 'none',
+                    },
                 }}
             >
                 Login
