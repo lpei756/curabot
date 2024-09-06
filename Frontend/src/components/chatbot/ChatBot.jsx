@@ -116,15 +116,15 @@ function ChatBot({ }) {
         const fetchUserHistories = async () => {
             try {
                 const histories = await fetchUserChatHistories(userId, authToken);
-
-                const userChatHistories = histories.map(history => ({
-                    time: new Date(history.messages[0].timestamp).toLocaleString(),
-                    id: history._id,
-                }));
-
-                setRecentChatTimes(userChatHistories.map(session => session.time));
-                setRecentChatSessions(userChatHistories);
-
+                // Sort the sessions by date (most recent first) before grouping by date
+                histories.sort((a, b) => {
+                    const dateA = new Date(a.messages[0].timestamp); // Assuming the first message of each session represents the session date
+                    const dateB = new Date(b.messages[0].timestamp);
+                    return dateB - dateA; // Sort in descending order (most recent first)
+                });
+                // Group chat history by date
+                const groupedHistories = groupMessagesByDate(histories);
+                setRecentChatSessions(groupedHistories); // Set the grouped data to state
                 setChatHistoriesFetched(true);
             } catch (error) {
                 console.error('Failed to fetch chat histories:', error);
@@ -135,8 +135,6 @@ function ChatBot({ }) {
             fetchUserHistories();
         }
     }, [userId, authToken, chatHistoriesFetched]);
-
-
 
     useEffect(() => {
         if (messagesEndRef.current) {
@@ -246,31 +244,45 @@ function ChatBot({ }) {
         setDrawerOpen((prevDrawerOpen) => !prevDrawerOpen);
     };
 
-    const showChatHistory = async (sessionId) => {
-        try {
-            // Fetch chat history by the selected sessionId
-            const history = await fetchChatHistoryBySessionId(sessionId, authToken);
-            const formattedMessages = history.messages.map((msg) => ({
-                ...msg,
-                type: msg.sender === 'bot' ? 'bot' : 'user',
-                isHtml: /<\/?[a-z][\s\S]*>/i.test(msg.message),
-            }));
-            setMessages(formattedMessages);
-            setSelectedSessionId(sessionId);
-        } catch (error) {
-            console.error('Failed to fetch chat history:', error);
-        }
+    // Utility function to group messages by date
+    const groupMessagesByDate = (chatSessions) => {
+        const groupedByDate = {};
+
+        chatSessions.forEach(session => {
+            session.messages.forEach(message => {
+                const date = new Date(message.timestamp).toLocaleDateString(); // Format date as string (e.g., "2024/8/28")
+                if (!groupedByDate[date]) {
+                    groupedByDate[date] = [];
+                }
+                groupedByDate[date].push({
+                    ...message,
+                    sessionId: session._id // Preserve the session ID for each message
+                });
+            });
+        });
+
+        return groupedByDate;
+    };
+
+
+    const showChatHistoryForDate = (date) => {
+        // Get messages for the selected date
+        const messagesForDate = recentChatSessions[date] || [];
+
+        // Update messages to show in the chatbot
+        const formattedMessages = messagesForDate.map(msg => ({
+            ...msg,
+            type: msg.sender === 'bot' ? 'bot' : 'user',
+            isHtml: /<\/?[a-z][\s\S]*>/i.test(msg.message), // Detect if message contains HTML tags
+        }));
+
+        setMessages(formattedMessages);
+        setSelectedSessionId(date); // Set the selected date as the current session
     };
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
-
-    const filteredChatTimes = searchTerm
-        ? recentChatTimes.filter(time =>
-            time.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-        : recentChatTimes;
 
     return (
         <>
@@ -307,12 +319,12 @@ function ChatBot({ }) {
                         />
                     </AppBar>
                     <List>
-                        {filteredChatTimes.map((time, index) => (
+                        {Object.keys(recentChatSessions).map((date, index) => (
                             <ListItem
                                 key={index}
-                                onClick={() => showChatHistory(recentChatSessions[index].id)}
+                                onClick={() => showChatHistoryForDate(date)} // Function to show messages for that date
                                 sx={{
-                                    bgcolor: recentChatSessions[index].id === selectedSessionId ? '#03035D' : 'transparent',
+                                    bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
                                     transition: 'background-color 0.3s ease',
                                     '&:hover': {
                                         bgcolor: '#68cde6',
@@ -325,16 +337,15 @@ function ChatBot({ }) {
                                 }}
                             >
                                 <ListItemText
-                                    primary={time}
+                                    primary={date} // Display the date
                                     sx={{
-                                        color: recentChatSessions[index].id === selectedSessionId ? 'white' : 'black',
+                                        color: selectedSessionId === date ? 'white' : 'black',
                                         transition: 'color 0.3s ease',
                                     }}
                                 />
                             </ListItem>
                         ))}
                     </List>
-
                 </DrawerContainer>
             )}
 
@@ -400,7 +411,7 @@ function ChatBot({ }) {
                                     '&:focus': {
                                         outline: 'none',
                                         boxShadow: 'none',
-                                        backgroundColor: 'transparent', 
+                                        backgroundColor: 'transparent',
                                     },
                                 }}
                             >
