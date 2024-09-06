@@ -147,7 +147,7 @@ function ChatBot({ }) {
         const timeGapInMinutes = timeGapInMs / (60 * 1000); // Convert milliseconds to minutes
         const significantGap = timeGapInMinutes > 5; // Define a significant gap as greater than 10 minutes
 
-        console.log(`Time gap between messages: ${timeGapInMinutes.toFixed(2)} minutes`);
+        //console.log(`Time gap between messages: ${timeGapInMinutes.toFixed(2)} minutes`);
 
         return significantGap;
     };
