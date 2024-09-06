@@ -1,4 +1,4 @@
-import { useState, useContext, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
 import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
@@ -66,7 +66,6 @@ function ChatBot({ }) {
     const [sessionId, setSessionId] = useState(localStorage.getItem('chatSessionId') || null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState(null);
-    const [recentChatTimes, setRecentChatTimes] = useState([]);
     const [recentChatSessions, setRecentChatSessions] = useState([]);
     const [chatHistoriesFetched, setChatHistoriesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
@@ -141,6 +140,17 @@ function ChatBot({ }) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
+
+    // Check if two timestamps have a significant gap (e.g., 10 minutes)
+    const isSignificantTimeGap = (previousTimestamp, currentTimestamp) => {
+        const timeGapInMs = new Date(currentTimestamp).getTime() - new Date(previousTimestamp).getTime();
+        const timeGapInMinutes = timeGapInMs / (60 * 1000); // Convert milliseconds to minutes
+        const significantGap = timeGapInMinutes > 5; // Define a significant gap as greater than 10 minutes
+
+        console.log(`Time gap between messages: ${timeGapInMinutes.toFixed(2)} minutes`);
+
+        return significantGap;
+    };
 
     const handleSend = useCallback(async (event, quickMessage = null) => {
         if (event) event.preventDefault();
@@ -422,72 +432,86 @@ function ChatBot({ }) {
                 </AppBar>
 
                 <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
-                    {messages.map((msg, index) => (
-                        <Box
-                            key={index}
-                            display="flex"
-                            mb={2}
-                            alignItems="flex-start"
-                            justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
-                        >
-                            {msg.type === 'bot' && (
-                                <Avatar alt="Bot Avatar" src="icon.png" sx={{
-                                    width: 45,
-                                    height: 45
-                                }} />
-                            )}
-                            <Paper
-                                elevation={0}
-                                sx={{
-                                    ml: msg.type === 'bot' ? 2 : 0,
-                                    mr: msg.type === 'user' ? 2 : 0,
-                                    bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#03035D',
-                                    color: msg.type === 'bot' ? '#333' : 'white',
-                                    p: 2,
-                                    borderRadius: 3,
-                                    maxWidth: "75%",
-                                }}
-                            >
-                                {msg.isHtml ? (
-                                    <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
-                                ) : msg.imageUrl ? (
-                                    <img
-                                        src={msg.imageUrl}
-                                        alt="Uploaded"
-                                        style={{ maxWidth: '100px', cursor: 'pointer' }}
-                                        onClick={() => handleImageClick(msg.imageUrl)}
-                                    />
-                                ) : (
-                                    <Typography>{msg.message}</Typography>
+                    {messages.map((msg, index) => {
+                        // Add logging for timestamps
+                       //if (index > 0) {
+                        //    console.log(`Comparing Message ${index - 1} at ${messages[index - 1].timestamp} with Message ${index} at ${msg.timestamp}`);
+                        //}
+                        const showTimestamp = index === 0 || isSignificantTimeGap(messages[index - 1].timestamp, msg.timestamp);
+                       //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
+
+                        return (
+                            <React.Fragment key={index}>
+                                {/* Display the timestamp if it's the first message or if there is a time gap */}
+                                {showTimestamp && (
+                                    <Typography variant="caption" sx={{ textAlign: 'center', display: 'block', color: '#888' }}>
+                                        {new Date(msg.timestamp).toLocaleString()} {/* Format the date as needed */}
+                                    </Typography>
                                 )}
 
-                                {msg.type === 'bot' && index !== 0 && (
-                                    <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                        <StyledIconButton
-                                            onClick={() => handleFeedback(index, true)}
-                                            aria-label="thumbs up"
-                                        >
-                                            <ThumbIcon isActive={msg.liked === true}>
-                                                <ThumbUpOutlinedIcon />
-                                            </ThumbIcon>
-                                        </StyledIconButton>
-                                        <StyledIconButton
-                                            onClick={() => handleFeedback(index, false)}
-                                            aria-label="thumbs down"
-                                        >
-                                            <ThumbIcon isActive={msg.liked === false}>
-                                                <ThumbDownOutlinedIcon />
-                                            </ThumbIcon>
-                                        </StyledIconButton>
-                                    </Box>
-                                )}
+                                <Box
+                                    display="flex"
+                                    mb={2}
+                                    alignItems="flex-start"
+                                    justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
+                                >
+                                    {msg.type === 'bot' && (
+                                        <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 45, height: 45 }} />
+                                    )}
+                                    <Paper
+                                        elevation={0}
+                                        sx={{
+                                            ml: msg.type === 'bot' ? 2 : 0,
+                                            mr: msg.type === 'user' ? 2 : 0,
+                                            bgcolor: msg.type === 'bot' ? '#f0f0f0' : '#03035D',
+                                            color: msg.type === 'bot' ? '#333' : 'white',
+                                            p: 2,
+                                            borderRadius: 3,
+                                            maxWidth: "75%",
+                                        }}
+                                    >
+                                        {msg.isHtml ? (
+                                            <Typography dangerouslySetInnerHTML={{ __html: msg.message }} />
+                                        ) : msg.imageUrl ? (
+                                            <img
+                                                src={msg.imageUrl}
+                                                alt="Uploaded"
+                                                style={{ maxWidth: '100px', cursor: 'pointer' }}
+                                                onClick={() => handleImageClick(msg.imageUrl)}
+                                            />
+                                        ) : (
+                                            <Typography>{msg.message}</Typography>
+                                        )}
 
-                            </Paper>
-                            {msg.type === 'user' && (
-                                <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
-                            )}
-                        </Box>
-                    ))}
+                                        {msg.type === 'bot' && index !== 0 && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                                <StyledIconButton
+                                                    onClick={() => handleFeedback(index, true)}
+                                                    aria-label="thumbs up"
+                                                >
+                                                    <ThumbIcon isActive={msg.liked === true}>
+                                                        <ThumbUpOutlinedIcon />
+                                                    </ThumbIcon>
+                                                </StyledIconButton>
+                                                <StyledIconButton
+                                                    onClick={() => handleFeedback(index, false)}
+                                                    aria-label="thumbs down"
+                                                >
+                                                    <ThumbIcon isActive={msg.liked === false}>
+                                                        <ThumbDownOutlinedIcon />
+                                                    </ThumbIcon>
+                                                </StyledIconButton>
+                                            </Box>
+                                        )}
+
+                                    </Paper>
+                                    {msg.type === 'user' && (
+                                        <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
+                                    )}
+                                </Box>
+                            </React.Fragment>
+                        );
+                    })}
                     {isLoading && (
                         <Box display="flex" justifyContent="center" p={2}>
                             <Lottie
