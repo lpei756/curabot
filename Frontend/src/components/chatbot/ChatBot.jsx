@@ -40,7 +40,7 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
 
 const DrawerContainer = styled(Box)(({ theme }) => ({
     width: '200px',
-    height: '800px',
+    height: '675px',
     position: 'fixed',
     bottom: '50px',
     right: '480px',
@@ -73,8 +73,6 @@ function ChatBot({ }) {
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
-    const [filteredChatSessions, setFilteredChatSessions] = useState([]);
-
 
     const quickChats = [
         "How can I book a new appointment",
@@ -259,7 +257,6 @@ function ChatBot({ }) {
             }));
             setMessages(formattedMessages);
             setSelectedSessionId(sessionId);
-            setDrawerOpen(false);
         } catch (error) {
             console.error('Failed to fetch chat history:', error);
         }
@@ -270,16 +267,16 @@ function ChatBot({ }) {
     };
 
     const filteredChatTimes = searchTerm
-    ? recentChatTimes.filter(time =>
-        time.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : recentChatTimes;
+        ? recentChatTimes.filter(time =>
+            time.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        : recentChatTimes;
 
     return (
         <>
             {drawerOpen && (
                 <DrawerContainer>
-                    <AppBar position="static" sx={{
+                    <AppBar position="sticky" sx={{
                         backgroundColor: '#03035D',
                         boxShadow: 'none',
                         borderTopLeftRadius: '20px',
@@ -311,11 +308,32 @@ function ChatBot({ }) {
                     </AppBar>
                     <List>
                         {filteredChatTimes.map((time, index) => (
-                            <ListItem key={index} onClick={() => showChatHistory(recentChatSessions[index].id)}>
-                                <ListItemText primary={time} sx={{ color: 'black' }} />
+                            <ListItem
+                                key={index}
+                                onClick={() => showChatHistory(recentChatSessions[index].id)}
+                                sx={{
+                                    bgcolor: recentChatSessions[index].id === selectedSessionId ? '#03035D' : 'transparent',
+                                    '&:hover': {
+                                        bgcolor: '#5BC0DE',
+                                        '& .MuiListItemText-primary': {
+                                            color: 'white', // Change text color to white on hover
+                                        },
+                                    },
+                                    borderRadius: '8px',
+                                    mb: 1,
+                                }}
+                            >
+                                <ListItemText
+                                    primary={time}
+                                    sx={{
+                                        color: recentChatSessions[index].id === selectedSessionId ? 'white' : 'black',
+                                        transition: 'color 0.3s ease', // Smooth transition for the text color change
+                                    }}
+                                />
                             </ListItem>
                         ))}
                     </List>
+
                 </DrawerContainer>
             )}
 
@@ -323,7 +341,7 @@ function ChatBot({ }) {
                 className="chatbot-container"
                 sx={{
                     width: '450px',
-                    height: '800px',
+                    height: '675px',
                     position: 'fixed',
                     bottom: '50px',
                     right: '30px',
