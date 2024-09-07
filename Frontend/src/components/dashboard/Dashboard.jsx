@@ -30,8 +30,20 @@ const Dashboard = () => {
     const [doctorNames, setDoctorNames] = useState({});
     const navigate = useNavigate();
 
+    const handleAppointmentRedirect = () => {
+        navigate('/appointment');
+    };
+
     const handleProfileRedirect = () => {
         navigate('/user');
+    };
+
+    const handleTestResultRedirect = () => {
+        navigate('/test-result');
+    };
+
+    const handlePrescriptionRedirect = () => {
+        navigate('/');
     };
 
     useEffect(() => {
@@ -55,7 +67,15 @@ const Dashboard = () => {
                 setAppointments(appointmentsResponse);
 
                 const testResultsResponse = await fetchTestResults();
-                setTestResults(testResultsResponse.testResults || []);
+
+                // Ensure the test results are sorted by date in descending order
+                const sortedResults = testResultsResponse.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                // Set the latest test result (if available)
+                const latestTestResult = sortedResults.length > 0 ? sortedResults[0] : null;
+
+                // Set state to only hold the latest result
+                setTestResults(latestTestResult ? [latestTestResult] : []);
 
                 const doctorId = userDataResponse.gp;
                 if (doctorId) {
@@ -216,9 +236,19 @@ const Dashboard = () => {
                         {selectedDate && filteredAppointments.length > 0 ? (
                             filteredAppointments.map((appointment) => (
                                 <Box key={appointment._id} sx={{ marginBottom: '10px' }}>
-                                    <Typography variant="h5" sx={{ marginBottom: '5px' }}>Appointment for the day:</Typography>
+                                    <Typography variant="h5" sx={{ marginBottom: '5px', color: 'black' }}>
+                                        Appointment for the day:
+                                        <Box
+                                            sx={{
+                                                marginLeft: '95%',
+                                                marginTop: '-7%'
+                                            }}
+                                            onClick={handleAppointmentRedirect}
+                                        >
+                                            <ArrowForwardIcon />
+                                        </Box>
+                                    </Typography>
                                     {[
-                                        { label: 'Patient:', value: appointment.patientName },
                                         { label: 'Date & Time:', value: formatDateTime(appointment.dateTime) },
                                         { label: 'Clinic:', value: clinicNames[appointment.clinic._id] || 'N/A' },
                                         { label: 'Doctor:', value: doctorNames[appointment.assignedGP] || 'N/A' },
@@ -230,6 +260,7 @@ const Dashboard = () => {
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 marginBottom: '10px',
+                                                color: 'black'
                                             }}
                                         >
                                             <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>
@@ -243,9 +274,19 @@ const Dashboard = () => {
                         ) : (
                             upcomingAppointment ? (
                                 <Box>
-                                    <Typography variant="h5" sx={{ marginBottom: '5px' }}>Upcoming Appointment:</Typography>
+                                    <Typography variant="h5" sx={{ marginBottom: '5px', color: 'black' }}>
+                                        Upcoming Appointment:
+                                        <Box
+                                            sx={{
+                                                marginLeft: '95%',
+                                                marginTop: '-7%'
+                                            }}
+                                            onClick={handleAppointmentRedirect}
+                                        >
+                                            <ArrowForwardIcon />
+                                        </Box>
+                                    </Typography>
                                     {[
-                                        { label: 'Patient:', value: upcomingAppointment.patientName },
                                         { label: 'Date & Time:', value: formatDateTime(upcomingAppointment.dateTime) },
                                         { label: 'Clinic:', value: clinicNames[upcomingAppointment.clinic._id] || 'N/A' },
                                         { label: 'Doctor:', value: doctorNames[upcomingAppointment.assignedGP] || 'N/A' },
@@ -257,6 +298,7 @@ const Dashboard = () => {
                                                 display: 'flex',
                                                 justifyContent: 'space-between',
                                                 marginBottom: '10px',
+                                                color: 'black'
                                             }}
                                         >
                                             <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>
@@ -305,7 +347,8 @@ const Dashboard = () => {
                                         marginBottom: '-20px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        position: 'relative'
+                                        position: 'relative',
+                                        color: 'black'
                                     }}
                                 >
                                     {hovered.profile ? (
@@ -349,7 +392,8 @@ const Dashboard = () => {
                                         sx={{
                                             display: 'flex',
                                             justifyContent: 'space-between',
-                                            marginBottom: '10px'
+                                            marginBottom: '10px',
+                                            color: 'black'
                                         }}
                                     >
                                         <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#03035d' }}>
@@ -387,13 +431,21 @@ const Dashboard = () => {
                             onMouseEnter={() => setHovered(prev => ({ ...prev, testResult: true }))}
                             onMouseLeave={() => setHovered(prev => ({ ...prev, testResult: false }))}
                         >
-                            <Typography variant="h5" sx={{ marginBottom: '5px', display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="h5" sx={{ marginBottom: '5px', display: 'flex', alignItems: 'center', color: 'black' }}>
                                 {hovered.testResult ? (
                                     <Lottie animationData={testResultAnimationData} style={{ marginRight: '10px', width: '40px', height: '40px' }} />
                                 ) : (
                                     <img src="/TestResult.PNG" alt="TestResult Icon" style={{ marginRight: '10px', width: '40px', height: '40px' }} />
                                 )}
                                 Test Results
+                                <Box
+                                    sx={{
+                                        marginLeft: '30%'
+                                    }}
+                                    onClick={handleTestResultRedirect}
+                                >
+                                    <ArrowForwardIcon />
+                                </Box>
                             </Typography>
                             <Box
                                 sx={{
@@ -404,15 +456,13 @@ const Dashboard = () => {
                             />
                             {testResults.length > 0 ? (
                                 testResults.map((result) => (
-                                    <Box key={result._id} sx={{ marginBottom: '10px' }}>
+                                    <Box key={result._id} sx={{ marginBottom: '10px', color: 'black' }}>
                                         <Typography variant="body1">Test ID: {result._id}</Typography>
                                         <Typography variant="body1">Date: {new Date(result.date).toLocaleDateString()}</Typography>
-                                        <Typography variant="body1">Result: {result.result}</Typography>
-                                        <Typography variant="body1">Status: {result.status}</Typography>
                                     </Box>
                                 ))
                             ) : (
-                                <Typography>No test results available</Typography>
+                                <Typography sx={{ color: 'black' }}>No test results available</Typography>
                             )}
                         </Box>
 
@@ -428,13 +478,21 @@ const Dashboard = () => {
                             onMouseEnter={() => setHovered(prev => ({ ...prev, prescription: true }))}
                             onMouseLeave={() => setHovered(prev => ({ ...prev, prescription: false }))}
                         >
-                            <Typography variant="h5" sx={{ marginTop: '-20px', marginBottom: '-15px', display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="h5" sx={{ marginTop: '-20px', marginBottom: '-15px', display: 'flex', alignItems: 'center', color: 'black' }}>
                                 {hovered.prescription ? (
                                     <Lottie animationData={prescriptionAnimationData} style={{ width: '80px', height: '80px' }} />
                                 ) : (
                                     <img src="/Prescription.PNG" alt="Prescription Icon" style={{ width: '80px', height: '80px' }} />
                                 )}
                                 Prescription
+                                <Box
+                                    sx={{
+                                        marginLeft: '22%'
+                                    }}
+                                    onClick={handlePrescriptionRedirect}
+                                >
+                                    <ArrowForwardIcon />
+                                </Box>
                             </Typography>
                             <Box
                                 sx={{

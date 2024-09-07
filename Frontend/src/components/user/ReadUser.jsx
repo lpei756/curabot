@@ -85,6 +85,7 @@ function ReadUser() {
                 padding: '20px',
                 backgroundColor: '#f8f6f6',
                 boxSizing: 'border-box',
+                color: 'black'
             }}
         >
             {editMode ? (
