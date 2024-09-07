@@ -7,7 +7,9 @@ const testResultSchema = new mongoose.Schema({
     pdfText: { type: String, required: false },
     analysis: { type: String, required: false },
     summary: { type: String, required: false },
-    reviewed: { type: Boolean, default: false }
+    reviewed: { type: Boolean, default: false },
+    testName: { type: String, required: true },
+    dateUploaded: { type: Date, default: Date.now }
 });
 
 export default mongoose.model('TestResult', testResultSchema);

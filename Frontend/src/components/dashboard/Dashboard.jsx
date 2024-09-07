@@ -67,14 +67,10 @@ const Dashboard = () => {
                 setAppointments(appointmentsResponse);
 
                 const testResultsResponse = await fetchTestResults();
-
-                // Ensure the test results are sorted by date in descending order
-                const sortedResults = testResultsResponse.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-                // Set the latest test result (if available)
+                const sortedResults = testResultsResponse
+                    .filter(result => result.dateUploaded)
+                    .sort((a, b) => new Date(b.dateUploaded) - new Date(a.dateUploaded));
                 const latestTestResult = sortedResults.length > 0 ? sortedResults[0] : null;
-
-                // Set state to only hold the latest result
                 setTestResults(latestTestResult ? [latestTestResult] : []);
 
                 const doctorId = userDataResponse.gp;
@@ -457,8 +453,14 @@ const Dashboard = () => {
                             {testResults.length > 0 ? (
                                 testResults.map((result) => (
                                     <Box key={result._id} sx={{ marginBottom: '10px', color: 'black' }}>
-                                        <Typography variant="body1">Test ID: {result._id}</Typography>
-                                        <Typography variant="body1">Date: {new Date(result.date).toLocaleDateString()}</Typography>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginBottom: '20px' }}>
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>Test Name:</Typography>
+                                            <Typography variant="body1">{result.testName}</Typography>
+                                        </Box>
+                                        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                            <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>Date:</Typography>
+                                            <Typography variant="body1">{new Date(result.dateUploaded).toLocaleDateString()}</Typography>
+                                        </Box>
                                     </Box>
                                 ))
                             ) : (
