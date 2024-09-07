@@ -1,7 +1,7 @@
 import leven from 'leven';
 import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
-import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
+import { getAllAvailableSlots, findNearestSlot, getAvailabilityByDoctorID } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
@@ -326,12 +326,12 @@ export const handleChat = async (req, res) => {
 
         if (Array.isArray(doctors) && doctors.length > 0) {
           const doctorDetails = doctors.map(doctor =>
-            `<p>
-                    <strong>Name:</strong> ${doctor.doctorName},
-                    <strong>Clinic:</strong> ${doctor.clinicName},
-                    <strong>Distance:</strong> ${doctor.distance.toFixed(2)} km
-                    <button onclick="selectDoctor('${doctor.doctorID}')">Select ${doctor.doctorName}</button>
-                    </p>`
+            `<div>
+              <p><strong>Name:</strong> ${doctor.doctorName}</p>
+              <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
+              <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
+              <button onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select ${doctor.doctorID}</button>
+            </div>`
           ).join('');
 
           const responseMessage = `

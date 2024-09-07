@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
@@ -18,6 +18,7 @@ import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
 import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer, fetchUserChatHistories } from '../../services/chatService';
+import { fetchGpSlotsByDoctorId } from '../../services/availabilityService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
@@ -72,6 +73,8 @@ function ChatBot({ }) {
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
+    const [doctorAvailability, setDoctorAvailability] = useState(null);
+
 
     const quickChats = [
         "How can I book a new appointment",
@@ -88,19 +91,17 @@ function ChatBot({ }) {
                 try {
                     const history = await fetchChatHistoryBySessionId(sessionId, authToken);
                     const formattedMessages = history.messages.map((msg) => {
-                        const isHtml = /<\/?[a-z][\s\S]*>/i.test(msg.message); // Detect if message contains HTML tags
+                        const isHtml = /<\/?[a-z][\s\S]*>/i.test(msg.message);
                         return {
                             ...msg,
                             type: msg.sender === 'bot' ? 'bot' : 'user',
-                            isHtml: isHtml, // Mark if the message is HTML
+                            isHtml: isHtml,
                         };
                     });
                     setMessages(formattedMessages);
                 } catch (error) {
                     console.error('Failed to fetch chat history:', error);
-                    // Handle session expiration or error cases
                     if (error.response && error.response.status === 404) {
-                        // Session not found or expired
                         setSessionId(null);
                         localStorage.removeItem('chatSessionId');
                     }
@@ -115,15 +116,14 @@ function ChatBot({ }) {
         const fetchUserHistories = async () => {
             try {
                 const histories = await fetchUserChatHistories(userId, authToken);
-                // Sort the sessions by date (most recent first) before grouping by date
                 histories.sort((a, b) => {
-                    const dateA = new Date(a.messages[0].timestamp); // Assuming the first message of each session represents the session date
+                    const dateA = new Date(a.messages[0].timestamp);
                     const dateB = new Date(b.messages[0].timestamp);
-                    return dateB - dateA; // Sort in descending order (most recent first)
+                    return dateB - dateA;
                 });
-                // Group chat history by date
+
                 const groupedHistories = groupMessagesByDate(histories);
-                setRecentChatSessions(groupedHistories); // Set the grouped data to state
+                setRecentChatSessions(groupedHistories);
                 setChatHistoriesFetched(true);
             } catch (error) {
                 console.error('Failed to fetch chat histories:', error);
@@ -141,16 +141,33 @@ function ChatBot({ }) {
         }
     }, [messages]);
 
-    // Check if two timestamps have a significant gap (e.g., 10 minutes)
     const isSignificantTimeGap = (previousTimestamp, currentTimestamp) => {
         const timeGapInMs = new Date(currentTimestamp).getTime() - new Date(previousTimestamp).getTime();
-        const timeGapInMinutes = timeGapInMs / (60 * 1000); // Convert milliseconds to minutes
-        const significantGap = timeGapInMinutes > 5; // Define a significant gap as greater than 10 minutes
-
-        //console.log(`Time gap between messages: ${timeGapInMinutes.toFixed(2)} minutes`);
+        const timeGapInMinutes = timeGapInMs / (60 * 1000);
+        const significantGap = timeGapInMinutes > 5;
 
         return significantGap;
     };
+
+    const handleDoctorSelection = async (doctorID) => {
+        try {
+            setIsLoading(true);
+            const data = await fetchGpSlotsByDoctorId(doctorID);
+
+            setDoctorAvailability(data);
+        } catch (error) {
+            console.error('Error fetching doctor availability:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    React.useEffect(() => {
+        window.handleDoctorSelection = handleDoctorSelection;
+        return () => {
+            delete window.handleDoctorSelection;
+        };
+    }, []);
 
     const handleSend = useCallback(async (event, quickMessage = null) => {
         if (event) event.preventDefault();
@@ -229,12 +246,10 @@ function ChatBot({ }) {
             return;
         }
 
-        // 如果已经发送了反馈，则不再执行发送操作
         if (message.feedbackSent) {
             console.log('Feedback has already been sent for this message');
-            return;  // 提前返回，阻止重复发送
+            return;
         }
-
 
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
@@ -254,19 +269,18 @@ function ChatBot({ }) {
         setDrawerOpen((prevDrawerOpen) => !prevDrawerOpen);
     };
 
-    // Utility function to group messages by date
     const groupMessagesByDate = (chatSessions) => {
         const groupedByDate = {};
 
         chatSessions.forEach(session => {
             session.messages.forEach(message => {
-                const date = new Date(message.timestamp).toLocaleDateString(); // Format date as string (e.g., "2024/8/28")
+                const date = new Date(message.timestamp).toLocaleDateString();
                 if (!groupedByDate[date]) {
                     groupedByDate[date] = [];
                 }
                 groupedByDate[date].push({
                     ...message,
-                    sessionId: session._id // Preserve the session ID for each message
+                    sessionId: session._id
                 });
             });
         });
@@ -274,20 +288,17 @@ function ChatBot({ }) {
         return groupedByDate;
     };
 
-
     const showChatHistoryForDate = (date) => {
-        // Get messages for the selected date
         const messagesForDate = recentChatSessions[date] || [];
 
-        // Update messages to show in the chatbot
         const formattedMessages = messagesForDate.map(msg => ({
             ...msg,
             type: msg.sender === 'bot' ? 'bot' : 'user',
-            isHtml: /<\/?[a-z][\s\S]*>/i.test(msg.message), // Detect if message contains HTML tags
+            isHtml: /<\/?[a-z][\s\S]*>/i.test(msg.message)
         }));
 
         setMessages(formattedMessages);
-        setSelectedSessionId(date); // Set the selected date as the current session
+        setSelectedSessionId(date);
     };
 
     const handleSearchChange = (event) => {
@@ -332,7 +343,7 @@ function ChatBot({ }) {
                         {Object.keys(recentChatSessions).map((date, index) => (
                             <ListItem
                                 key={index}
-                                onClick={() => showChatHistoryForDate(date)} // Function to show messages for that date
+                                onClick={() => showChatHistoryForDate(date)}
                                 sx={{
                                     bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
                                     transition: 'background-color 0.3s ease',
@@ -347,7 +358,7 @@ function ChatBot({ }) {
                                 }}
                             >
                                 <ListItemText
-                                    primary={date} // Display the date
+                                    primary={date}
                                     sx={{
                                         color: selectedSessionId === date ? 'white' : 'black',
                                         transition: 'color 0.3s ease',
@@ -434,11 +445,11 @@ function ChatBot({ }) {
                 <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
                     {messages.map((msg, index) => {
                         // Add logging for timestamps
-                       //if (index > 0) {
+                        //if (index > 0) {
                         //    console.log(`Comparing Message ${index - 1} at ${messages[index - 1].timestamp} with Message ${index} at ${msg.timestamp}`);
                         //}
                         const showTimestamp = index === 0 || isSignificantTimeGap(messages[index - 1].timestamp, msg.timestamp);
-                       //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
+                        //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
 
                         return (
                             <React.Fragment key={index}>
@@ -509,9 +520,29 @@ function ChatBot({ }) {
                                         <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 40, height: 40 }} />
                                     )}
                                 </Box>
+
                             </React.Fragment>
                         );
                     })}
+
+                    {doctorAvailability && (
+                        <Box p={2} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                            <Typography variant="h6">Doctor Availability:</Typography>
+                            {doctorAvailability.length > 0 ? (
+                                doctorAvailability.map((slot, index) => (
+                                    <Typography key={index}>
+                                        Date: {new Date(slot.date).toLocaleDateString()} -
+                                        Time: {new Date(slot.startTime).toLocaleTimeString()} to
+                                        {new Date(slot.endTime).toLocaleTimeString()}
+                                        {slot.isBooked ? ' (Booked)' : ' (Available)'}
+                                    </Typography>
+                                ))
+                            ) : (
+                                <Typography>No availability data found.</Typography>
+                            )}
+                        </Box>
+                    )}
+
                     {isLoading && (
                         <Box display="flex" justifyContent="center" p={2}>
                             <Lottie
@@ -526,7 +557,6 @@ function ChatBot({ }) {
                             />
                         </Box>
                     )}
-                    <div ref={messagesEndRef} />
                 </Box>
 
                 <Box sx={{ display: 'flex', alignItems: 'center', bgcolor: '#CCCCDE', p: 1 }}>

@@ -44,7 +44,6 @@ app.post('/api/feedback', (req, res) => {
     res.status(200).send({ status: 'success', message: 'Feedback received' });
 });
 
-// Schedule the cleanup to run every day at midnight (adjust as needed)
 cron.schedule('0 0 * * *', () => {
     console.log('Running the chat history cleanup...');
     deleteOldChatHistories();

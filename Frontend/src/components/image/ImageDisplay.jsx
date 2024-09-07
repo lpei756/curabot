@@ -68,8 +68,8 @@ function ImageDisplay({ userId }) {
                         key={`${image._id}-${index}`}
                         sx={{
                             position: 'relative',
-                            my: 0.5, // 垂直间距 5px
-                            mx: 0.5, // 水平间距 5px
+                            my: 0.5,
+                            mx: 0.5,
                             textAlign: 'center',
                             display: 'inline-block',
                             '&:hover .zoom-icon': {
