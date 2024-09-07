@@ -6,52 +6,54 @@ import { AuthContext } from '../../context/AuthContext';
 import { createAppointment } from '../../services/appointmentService';
 import { getDoctorById } from '../../services/doctorService';
 import { getClinicById } from '../../services/clinicService';
+import { sendUserMessage } from '../../services/NotificationService';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
+import PropTypes from 'prop-types';
 
-const StyledModal = styled(Modal)(({ theme }) => ({
+const StyledModal = styled(Modal)(() => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'auto'
 }));
 
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box)(() => ({
     color: 'black',
-    padding: theme.spacing(3),
+    padding: '24px',
     backgroundColor: '#f8f6f6',
-    borderRadius: theme.shape.borderRadius,
-    boxShadow: theme.shadows[5],
+    borderRadius: '8px',
+    boxShadow: '0px 4px 6px rgba(0, 0, 0, 0.1)',
     width: '1000px',
     height: '600px',
     overflow: 'auto',
     display: 'flex',
     flexDirection: 'row',
-    gap: theme.spacing(2),
+    gap: '16px',
 }));
 
-const TextContainer = styled(Box)(({ theme }) => ({
+const TextContainer = styled(Box)(() => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
 }));
 
-const ImageAndMapContainer = styled(Box)(({ theme }) => ({
+const ImageAndMapContainer = styled(Box)(() => ({
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    gap: theme.spacing(2),
+    gap: '16px',
 }));
 
-const StyledImage = styled('img')(({ theme }) => ({
+const StyledImage = styled('img')(() => ({
     width: '100%',
     maxHeight: '300px',
     objectFit: 'cover',
 }));
 
-const GoogleMapSection = styled(Box)(({ theme }) => ({
+const GoogleMapSection = styled(Box)(() => ({
     width: '100%',
     height: '300px',
 }));
@@ -61,7 +63,7 @@ const AppointmentDetail = ({ open, onClose, event }) => {
     const [clinic, setClinic] = useState(null);
     const [loading, setLoading] = useState(true);
     const [location, setLocation] = useState(null);
-    const { userId } = useContext(AuthContext);
+    const { userId, authToken } = useContext(AuthContext);
 
     useEffect(() => {
         if (event?.doctorID) {
@@ -111,10 +113,20 @@ const AppointmentDetail = ({ open, onClose, event }) => {
         try {
             const result = await createAppointment(appointmentData);
             console.log('Appointment Created:', result);
+            console.log('Doctor ID:', doctor._id);
+            const formData = new FormData();
+            formData.append('senderId', userId);
+            formData.append('receiverId', doctor._id);
+            formData.append('message', `You have a new appointment with ${event.title} on ${new Date(event.start).toLocaleString()}.`);
+            formData.append('senderModel', 'User');
+            formData.append('receiverModel', 'Doctor');
+
+            await sendUserMessage(formData, authToken);
+            console.log('Notification sent to doctor:', formData);
 
             onClose();
         } catch (error) {
-            console.error('Error saving appointment or updating slot:', error.response ? error.response.data : error.message);
+            console.error('Error saving appointment or sending notification:', error.response ? error.response.data : error.message);
         }
     };
 
@@ -152,6 +164,9 @@ const AppointmentDetail = ({ open, onClose, event }) => {
                         <>
                             <Typography variant="body1">
                                 <strong>Clinic:</strong> {clinic.name}
+
+
+
                             </Typography>
                             <Typography variant="body1">
                                 <strong>Location:</strong> {clinic.address}
@@ -200,6 +215,19 @@ const AppointmentDetail = ({ open, onClose, event }) => {
             </StyledBox>
         </StyledModal>
     );
+};
+
+// PropTypes 验证
+AppointmentDetail.propTypes = {
+    open: PropTypes.bool.isRequired,
+    onClose: PropTypes.func.isRequired,
+    event: PropTypes.shape({
+        doctorID: PropTypes.string.isRequired,
+        start: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+        end: PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)]).isRequired,
+        title: PropTypes.string.isRequired,
+        slotId: PropTypes.string.isRequired,
+    }),
 };
 
 export default AppointmentDetail;
