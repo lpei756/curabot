@@ -19,6 +19,8 @@ import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
 import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer, fetchUserChatHistories } from '../../services/chatService';
 import { fetchGpSlotsByDoctorId } from '../../services/availabilityService';
+import { createAppointment } from '../../services/appointmentService';
+import { getDoctorById } from '../../services/doctorService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
@@ -154,7 +156,9 @@ function ChatBot({ }) {
             setIsLoading(true);
             const data = await fetchGpSlotsByDoctorId(doctorID);
 
-            setDoctorAvailability(data);
+            const availableSlots = data.filter(data => !data.isBooked);
+
+            setDoctorAvailability(availableSlots);
         } catch (error) {
             console.error('Error fetching doctor availability:', error);
         } finally {
@@ -168,6 +172,39 @@ function ChatBot({ }) {
             delete window.handleDoctorSelection;
         };
     }, []);
+
+    const handleBookSlot = async (slot) => {
+        try {
+            setIsLoading(true);
+
+            const doctorResponse = await getDoctorById(slot.doctorID);
+            const clinicID = doctorResponse.clinic;
+
+            const appointmentData = {
+                dateTime: new Date(slot.startTime).toISOString().slice(0, 16),
+                clinic: clinicID,
+                assignedGP: slot.doctorID,
+                slotId: slot._id
+            };
+
+            const response = await createAppointment(appointmentData);
+            console.log('Appointment created successfully:', response);
+
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { id: uuidv4(), type: 'bot', message: 'Your appointment has been booked successfully.' }
+            ]);
+
+        } catch (error) {
+            console.error('Error booking appointment:', error);
+            setMessages((prevMessages) => [
+                ...prevMessages,
+                { id: uuidv4(), type: 'bot', message: 'There was an error booking your appointment. Please try again.' }
+            ]);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     const handleSend = useCallback(async (event, quickMessage = null) => {
         if (event) event.preventDefault();
@@ -453,10 +490,9 @@ function ChatBot({ }) {
 
                         return (
                             <React.Fragment key={index}>
-                                {/* Display the timestamp if it's the first message or if there is a time gap */}
                                 {showTimestamp && (
                                     <Typography variant="caption" sx={{ textAlign: 'center', display: 'block', color: '#888' }}>
-                                        {new Date(msg.timestamp).toLocaleString()} {/* Format the date as needed */}
+                                        {new Date(msg.timestamp).toLocaleString()}
                                     </Typography>
                                 )}
 
@@ -526,16 +562,36 @@ function ChatBot({ }) {
                     })}
 
                     {doctorAvailability && (
-                        <Box p={2} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2 }}>
+                        <Box p={2} sx={{ backgroundColor: '#f5f5f5', borderRadius: 2, border: '1px solid #ddd', width: '80%', margin: '0 auto' }}>
                             <Typography variant="h6">Doctor Availability:</Typography>
                             {doctorAvailability.length > 0 ? (
                                 doctorAvailability.map((slot, index) => (
-                                    <Typography key={index}>
-                                        Date: {new Date(slot.date).toLocaleDateString()} -
-                                        Time: {new Date(slot.startTime).toLocaleTimeString()} to
-                                        {new Date(slot.endTime).toLocaleTimeString()}
-                                        {slot.isBooked ? ' (Booked)' : ' (Available)'}
-                                    </Typography>
+                                    <Box
+                                        key={index}
+                                        sx={{
+                                            display: 'flex',
+                                            flexDirection: 'column'
+                                        }}
+                                    >
+                                        <Typography>
+                                            Date: {new Date(slot.date).toLocaleDateString()}
+                                        </Typography>
+                                        <Typography sx={{ mt: 1 }}>
+                                            Time: {new Date(slot.startTime).toLocaleTimeString()} to {new Date(slot.endTime).toLocaleTimeString()}
+                                        </Typography>
+                                        <Button
+                                            sx={{
+                                                mr: 1,
+                                                marginTop: '10px',
+                                                bgcolor: '#03035D',
+                                                color: 'white',
+                                                borderRadius: '20px',
+                                            }}
+                                            onClick={() => handleBookSlot(slot)}
+                                        >
+                                            MAKE AN APPOINTMENT
+                                        </Button>
+                                    </Box>
                                 ))
                             ) : (
                                 <Typography>No availability data found.</Typography>
