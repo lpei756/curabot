@@ -305,7 +305,7 @@ const Dashboard = () => {
                                         marginBottom: '-20px',
                                         display: 'flex',
                                         alignItems: 'center',
-                                        position: 'relative', // Added to position the button absolutely
+                                        position: 'relative'
                                     }}
                                 >
                                     {hovered.profile ? (

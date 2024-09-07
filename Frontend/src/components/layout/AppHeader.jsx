@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded';
 import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import Container from '@mui/material/Container';
@@ -198,11 +197,6 @@ function AppHeader() {
                 <Container maxWidth="xl">
                     <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <Link to="/">
-                                <FRWIconButton>
-                                    <HomeRoundedIcon />
-                                </FRWIconButton>
-                            </Link>
                             <FRWIconButton onClick={toggleDrawer}>
                                 <MenuRoundedIcon />
                             </FRWIconButton>
