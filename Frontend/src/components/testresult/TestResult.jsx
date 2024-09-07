@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 import { fetchTestResults } from '../../services/testResultService';
+import '../../App.css';
 
 function TestResultsPage() {
     const [testResults, setTestResults] = useState([]);
@@ -43,17 +44,18 @@ function TestResultsPage() {
 
     return (
         <Box sx={{ padding: 3 }}>
-            <Typography variant="h4" gutterBottom>
-                All Test Results
+            <Typography variant="h4" sx={{ color: 'black' }} gutterBottom>
+                Test Results
             </Typography>
             {testResults.length === 0 ? (
-                <Typography variant="body1">No test results available.</Typography>
+                <Typography variant="body1" sx={{ color: 'black' }}>No test results available.</Typography>
             ) : (
                 <Box>
                     {testResults.map(result => (
-                        <Box key={result._id} sx={{ marginBottom: 2, padding: 2, border: '1px solid #ddd', borderRadius: 2 }}>
+                        <Box key={result._id} sx={{ marginBottom: 2, padding: 2, border: '1px solid #ddd', borderRadius: 2, color: 'black' }}>
                             <Typography variant="h6">Test ID: {result._id}</Typography>
-                            <Typography variant="body1">Date: {new Date(result.date).toLocaleDateString()}</Typography>
+                            <Typography variant="body1">Test Name: {result.testName}</Typography>
+                            <Typography variant="body1">Date: {new Date(result.dateUploaded).toLocaleDateString()}</Typography>
                             <Typography variant="body1">Summary: {result.summary}</Typography>
                             <Typography variant="body1">Analysis: {result.analysis}</Typography>
                         </Box>

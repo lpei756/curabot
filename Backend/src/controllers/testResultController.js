@@ -31,7 +31,7 @@ export const uploadTestResult = async (req, res) => {
     console.log('Request body after upload:', req.body);
     console.log('Uploaded file:', req.file);
 
-    const { patientID, doctorID } = req.body;
+    const { patientID, doctorID, testName } = req.body;
     const file = req.file;
 
     if (!file) {
@@ -48,6 +48,7 @@ export const uploadTestResult = async (req, res) => {
       patientID,
       doctorID,
       fileName: file.filename,
+      testName
     };
 
     try {
@@ -125,20 +126,20 @@ export const getAllTestResults = async (req, res) => {
   const user = req.user;
 
   try {
-      const { error, testResults, message, status } = await getAllTestResultsService(user);
+    const { error, testResults, message, status } = await getAllTestResultsService(user);
 
-      if (error) {
-          console.error('Error fetching test results:', message);
-          return res.status(status || 500).json({ message });
-      }
+    if (error) {
+      console.error('Error fetching test results:', message);
+      return res.status(status || 500).json({ message });
+    }
 
-      if (testResults.length === 0) {
-          return res.status(200).json({ message: 'No test results found' });
-      }
+    if (testResults.length === 0) {
+      return res.status(200).json({ message: 'No test results found' });
+    }
 
-      res.status(200).json({ testResults });
+    res.status(200).json({ testResults });
   } catch (error) {
-      console.error('Error retrieving test results:', error);
-      res.status(500).json({ message: 'Internal server error' });
+    console.error('Error retrieving test results:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
