@@ -178,7 +178,7 @@ export const handleChat = async (req, res) => {
                   <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
                   <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
                   <p><strong>Distance:</strong> ${distance} km</p>
-                  <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" onclick="
+                  <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
                       (async function() {
                           try {
                               const response = await fetch('http://localhost:3001/api/appointments/create', {
@@ -261,7 +261,7 @@ export const handleChat = async (req, res) => {
           reply += `
                   <p><strong>Date:</strong> ${new Date(appointment.startTime).toLocaleDateString()}</p>
                   <p><strong>Time:</strong> ${new Date(appointment.startTime).toLocaleTimeString()}</p>
-                  <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer;" onclick="
+                  <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
                   (async function() {
                       try {
                           const response = await fetch('http://localhost:3001/api/appointments/${appointment.appointmentID}', {
@@ -330,7 +330,7 @@ export const handleChat = async (req, res) => {
               <p><strong>Name:</strong> ${doctor.doctorName}</p>
               <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
               <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
-              <button onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select ${doctor.doctorID}</button>
+              <button  style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px" onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select</button>
             </div>`
           ).join('');
 
