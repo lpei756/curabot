@@ -211,7 +211,7 @@ const Dashboard = () => {
                         <DayPicker
                             mode="single"
                             classNames={{
-                                today: 'my-today',
+                                today: 'my-today'
                             }}
                             selected={selectedDate}
                             onSelect={setSelectedDate}
