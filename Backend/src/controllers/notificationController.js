@@ -1,7 +1,6 @@
 import {
     sendMessage as sendMessageService,
-    getUserNotifications as getUserNotificationsService,
-    getAdminNotifications as getAdminNotificationsService,
+    getNotifications as getNotificationsService,
     markAsRead as markAsReadService,
     deleteNotification as deleteNotificationService,
 } from '../services/notificationService.js';
@@ -48,9 +47,10 @@ export const sendMessage = async (req, res) => {
 export const getUserNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
-        console.log(`Fetching notifications for user with ID: ${userId}`);
-        const notifications = await getUserNotificationsService(userId);
-        console.log(`Notifications found: ${notifications.length} for user with ID: ${userId}`);
+        const { receiverModel } = req.query;
+        console.log(`Fetching notifications for ${receiverModel} with ID: ${userId}`);
+        const notifications = await getNotificationsService(userId, receiverModel || 'User');
+        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${userId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
@@ -61,9 +61,10 @@ export const getUserNotifications = async (req, res) => {
 export const getAdminNotifications = async (req, res) => {
     try {
         const { adminId } = req.params;
-        console.log(`Fetching notifications for admin with ID: ${adminId}`);
-        const notifications = await getAdminNotificationsService(adminId);
-        console.log(`Notifications found: ${notifications.length} for admin with ID: ${adminId}`);
+        const { receiverModel } = req.query;
+        console.log(`Fetching notifications for ${receiverModel} with ID: ${adminId}`);
+        const notifications = await getNotificationsService(adminId, receiverModel || 'Admin');
+        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${adminId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);

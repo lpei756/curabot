@@ -36,10 +36,11 @@ export const upload = multer({
     }
 }).single('pdfFile');
 
-export const getUserNotifications = async (userId) => {
+
+export const getNotifications = async (receiverId, receiverModel) => {
     try {
-        console.log('Fetching notifications for receiver with ID:', userId);
-        const notifications = await Notification.find({ receiver: userId }).sort({ date: -1 });
+        console.log(`Fetching notifications for ${receiverModel} with ID: ${receiverId}`);
+        const notifications = await Notification.find({ receiver: receiverId, receiverModel }).sort({ date: -1 });
         console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {
@@ -48,31 +49,24 @@ export const getUserNotifications = async (userId) => {
     }
 };
 
-export const getAdminNotifications = async (adminId) => {
-    try {
-        console.log('Fetching notifications for receiver with ID:', adminId);
-        const notifications = await Notification.find({ receiver: adminId }).sort({ date: -1 });
-        console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
-        return notifications;
-    } catch (error) {
-        console.error('Error fetching notifications:', error.message);
-        throw error;
-    }
-};
 
 const getUserOrAdmin = async (id, model) => {
     console.log(`Fetching ${model} with ID: ${id}`);
     let result;
-    if (model === 'User') {
+    if (model === 'Doctor') {
+        result = await Admin.findOne({ _id: id, role: 'doctor' });
+        if (!result) {
+            result = await Doctor.findById(id);
+        }
+    } else if (model === 'User') {
         result = await User.findById(id);
     } else if (model === 'Admin') {
         result = await Admin.findById(id);
-    } else if (model === 'Doctor') {
-        result = await Doctor.findById(id);  // 确保 Doctor 模型已导入
     } else {
         console.error(`Unknown model: ${model}`);
         return null;
     }
+
     if (!result) {
         console.error(`${model} with ID: ${id} not found`);
     } else {
@@ -80,6 +74,7 @@ const getUserOrAdmin = async (id, model) => {
     }
     return result;
 };
+
 
 export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
     let sender, receiver;

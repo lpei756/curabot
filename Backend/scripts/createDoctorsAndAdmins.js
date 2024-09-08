@@ -337,12 +337,12 @@ async function createAdminsForExistingDoctors() {
                 firstName: doctor.firstName,
                 lastName: doctor.lastName,
                 email,
-                password: await bcrypt.hash('defaultpassword', 10),
+                password: 'Pass123',
                 role: 'doctor',
                 doctor: doctor._id,
             });
             await admin.save();
-            console.log(`Admin created for Doctor ${doctor.firstName} ${doctor.lastName}`);
+            console.log(`Admin created for Doctor ${doctor.firstName} ${doctor.lastName} with email: ${email}`);
         }
     } catch (error) {
         console.error('Error creating admins for doctors:', error);
