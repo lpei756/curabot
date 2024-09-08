@@ -85,7 +85,7 @@ function Notification() {
             formData.append('receiverId', selectedDoctor);
             formData.append('message', newMessage);
             formData.append('senderModel', "User");
-            formData.append('receiverModel', "Admin");
+            formData.append('receiverModel', "Doctor");
             if (pdfFile) {
                 console.log("Attaching PDF file:", pdfFile.name);
                 formData.append('pdfFile', pdfFile);

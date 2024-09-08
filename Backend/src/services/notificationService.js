@@ -4,6 +4,7 @@ import multer from 'multer';
 import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
+import Doctor from '../models/Doctor.js';
 
 const conn = mongoose.connection;
 let gfs;
@@ -60,7 +61,24 @@ export const getAdminNotifications = async (adminId) => {
 };
 
 const getUserOrAdmin = async (id, model) => {
-    return model === 'User' ? await User.findById(id) : await Admin.findById(id);
+    console.log(`Fetching ${model} with ID: ${id}`);
+    let result;
+    if (model === 'User') {
+        result = await User.findById(id);
+    } else if (model === 'Admin') {
+        result = await Admin.findById(id);
+    } else if (model === 'Doctor') {
+        result = await Doctor.findById(id);  // 确保 Doctor 模型已导入
+    } else {
+        console.error(`Unknown model: ${model}`);
+        return null;
+    }
+    if (!result) {
+        console.error(`${model} with ID: ${id} not found`);
+    } else {
+        console.log(`${model} found:`, result);
+    }
+    return result;
 };
 
 export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
