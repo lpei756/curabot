@@ -31,16 +31,16 @@ const registerSchema = Joi.object({
     middleName: Joi.string().allow("").optional(),
     lastName: Joi.string().required(),
     dateOfBirth: Joi.date().required(),
-    gender: Joi.string().required(),
+    gender: Joi.string().optional(),
     bloodGroup: Joi.string().optional(),
     ethnicity: Joi.string().optional(),
     address: Joi.string().required(),
     phone: Joi.string().required(),
     emergencyContact: Joi.object({
-        name: Joi.string().required(),
-        phone: Joi.string().required(),
-        relationship: Joi.string().required()
-    }).required(),
+        name: Joi.string().optional(),
+        phone: Joi.string().optional(),
+        relationship: Joi.string().optional()
+    }).optional(),
     medicalHistory: Joi.object({
         chronicDiseases: Joi.string().optional(),
         pastSurgeries: Joi.string().optional(),
@@ -49,10 +49,10 @@ const registerSchema = Joi.object({
         allergies: Joi.string().optional()
     }).optional(),
     insurance: Joi.object({
-        provider: Joi.string().required(),
+        provider: Joi.string().optional(),
         policyNumber: Joi.string().allow("").optional(),
         coverageDetails: Joi.string().optional()
-    }).required()
+    }).optional()
 });
 
 const loginSchema = Joi.object({

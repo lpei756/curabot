@@ -5,24 +5,13 @@ import Doctor from '../models/Doctor.js';
 
 export const register = async (userData) => {
     const {
-        email,
-        password,
-        firstName,
-        middleName,
-        lastName,
-        dateOfBirth,
-        gender,
-        bloodGroup,
-        ethnicity,
-        address,
-        phone,
-        emergencyContact,
-        medicalHistory,
-        insurance,
-        gp,
-        appointments,
-        images,
-        notifications,
+      email,
+      password,
+      firstName,
+      lastName,
+      phone,
+      address,
+      dateOfBirth
     } = userData;
 
     const existingUser = await User.findOne({ email });
@@ -35,21 +24,21 @@ export const register = async (userData) => {
         email,
         password: hashedPassword,
         firstName,
-        middleName,
         lastName,
-        dateOfBirth,
-        gender,
-        bloodGroup,
-        ethnicity,
-        address,
         phone,
-        emergencyContact,
-        medicalHistory,
-        insurance,
-        gp,
-        appointments,
-        images,
-        notifications,
+        address,
+        dateOfBirth,
+        middleName: undefined,
+        gender: undefined,
+        bloodGroup: undefined,
+        ethnicity: undefined,
+        emergencyContact: undefined,
+        medicalHistory: undefined,
+        insurance: undefined,
+        gp: undefined,
+        appointments: [],
+        images: [],
+        notifications: []
     });
 
     await user.save();
