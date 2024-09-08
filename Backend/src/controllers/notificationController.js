@@ -61,10 +61,11 @@ export const getUserNotifications = async (req, res) => {
 export const getAdminNotifications = async (req, res) => {
     try {
         const { adminId } = req.params;
-        const { receiverModel } = req.query;
-        console.log(`Fetching notifications for ${receiverModel} with ID: ${adminId}`);
-        const notifications = await getNotificationsService(adminId, receiverModel || 'Admin');
-        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${adminId}`);
+        const { receiverModel } = req.query; // 获取传递的receiverModel
+        const model = receiverModel || 'Doctor'; // 默认值设置为Doctor
+        console.log(`Fetching notifications for ${model} with ID: ${adminId}`);
+        const notifications = await getNotificationsService(adminId, model);
+        console.log(`Notifications found: ${notifications.length} for ${model} with ID: ${adminId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
