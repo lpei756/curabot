@@ -3,6 +3,7 @@ import { generateAnalysis, generateSummary } from '../utils/aiUtils.js';
 import pdfExtract from 'pdf-text-extract';
 import UserModel from '../models/User.js';
 import Doctor from '../models/Doctor.js'
+import fs from 'fs';
 
 export const uploadTestResultService = async (testResultData) => {
     try {
@@ -31,15 +32,24 @@ export const uploadTestResultService = async (testResultData) => {
 };
 
 const extractTextFromPDF = async (filePath) => {
-    return new Promise((resolve, reject) => {
-        pdfExtract(filePath, (err, pages) => {
-            if (err) {
-                console.error('Error extracting text from PDF:', err);
-                return reject(err);
-            }
-            resolve(pages.join(' '));
+    try {
+        if (!fs.existsSync(filePath)) {
+            throw new Error('File does not exist');
+        }
+
+        return new Promise((resolve, reject) => {
+            pdfExtract(filePath, (err, pages) => {
+                if (err) {
+                    console.error('Error extracting text from PDF:', err);
+                    return reject(err);
+                }
+                resolve(pages.join(' '));
+            });
         });
-    });
+    } catch (error) {
+        console.error('Error in extractTextFromPDF:', error);
+        throw error;
+    }
 };
 
 export const getTestResult = async (testResultId, user) => {
