@@ -77,7 +77,7 @@ function AdminNotification() {
             formData.append('senderId', adminId);
             formData.append('receiverId', selectedPatient);
             formData.append('message', newMessage);
-            formData.append('senderModel', "Admin");
+            formData.append('senderModel', "Doctor");
             formData.append('receiverModel', "User");
             if (pdfFile) {
                 console.log("Attaching PDF file:", pdfFile.name);
