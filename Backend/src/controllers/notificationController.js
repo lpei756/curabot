@@ -61,17 +61,32 @@ export const getUserNotifications = async (req, res) => {
 export const getAdminNotifications = async (req, res) => {
     try {
         const { adminId } = req.params;
-        const { receiverModel } = req.query; // 获取传递的receiverModel
-        const model = receiverModel || 'Doctor'; // 默认值设置为Doctor
-        console.log(`Fetching notifications for ${model} with ID: ${adminId}`);
-        const notifications = await getNotificationsService(adminId, model);
-        console.log(`Notifications found: ${notifications.length} for ${model} with ID: ${adminId}`);
+        const { receiverModel } = req.query;
+
+        // 确定是否需要检查Admin集合
+        let actualId = adminId; // 默认使用传入的ID
+        if (receiverModel === 'Doctor') {
+            const admin = await Admin.findOne({ _id: adminId, role: 'doctor' });
+            if (admin) {
+                actualId = admin._id; // 如果admin存在且角色为doctor
+            } else {
+                const doctor = await Doctor.findById(adminId);
+                if (!doctor) {
+                    return res.status(404).json({ message: "Doctor not found" });
+                }
+                actualId = doctor._id; // 使用Doctor集合中的ID
+            }
+        }
+
+        const notifications = await getNotificationsService(actualId, receiverModel || 'Doctor');
+        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${actualId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
         res.status(400).json({ message: error.message });
     }
 };
+
 
 export const markAsRead = async (req, res) => {
     try {
