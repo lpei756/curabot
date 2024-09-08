@@ -3,6 +3,7 @@ import { generateAnalysis, generateSummary } from '../utils/aiUtils.js';
 import pdfExtract from 'pdf-text-extract';
 import UserModel from '../models/User.js';
 import Doctor from '../models/Doctor.js'
+import AdminModel from '../models/Admin.js';
 import fs from 'fs';
 
 export const uploadTestResultService = async (testResultData) => {
@@ -63,7 +64,8 @@ export const getTestResult = async (testResultId, user) => {
         let isAuthorized = false;
 
         if (user.role === 'doctor') {
-            const doctor = await Doctor.findById(user._id).exec();
+            const doctorRawID = await AdminModel.findById(user._id).exec();
+            const doctor = await Doctor.findById(doctorRawID.doctor).exec();
 
             if (doctor) {
                 if (doctor.doctorID === testResult.doctorID) {
@@ -106,7 +108,8 @@ export const editTestResultService = async (testResultId, user, updatedFields) =
             return { error: true, status: 404, message: 'Test result not found' };
         }
 
-        const doctor = await Doctor.findById(user._id).exec();
+        const doctorRawID = await AdminModel.findById(user._id).exec();
+        const doctor = await Doctor.findById(doctorRawID.doctor).exec();
         if (!doctor) {
             console.error('Doctor not found with given _id');
             return { error: true, status: 404, message: 'Doctor not found' };
@@ -146,7 +149,8 @@ export const approveTestResultService = async (testResultId, user) => {
             return { error: true, status: 404, message: 'Test result not found' };
         }
 
-        const doctor = await Doctor.findById(user._id).exec();
+        const doctorRawID = await AdminModel.findById(user._id).exec();
+        const doctor = await Doctor.findById(doctorRawID.doctor).exec();
 
         if (!doctor) {
             console.error('Doctor not found with given _id');
@@ -172,7 +176,8 @@ export const getAllTestResultsService = async (user) => {
     try {
         let query;
         if (user.role === 'doctor') {
-            const doctor = await Doctor.findById(user._id).exec();
+            const doctorRawID = await AdminModel.findById(user._id).exec();
+            const doctor = await Doctor.findById(doctorRawID.doctor).exec();
             if (!doctor) {
                 throw new Error('Doctor not found');
             }

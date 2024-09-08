@@ -7,33 +7,35 @@ export const AdminContext = createContext();
 export const AdminProvider = ({ children }) => {
     const [adminToken, setAdminToken] = useState('');
     const [adminId, setAdminId] = useState(null);
+    const [role, setRole] = useState(null);
 
     useEffect(() => {
         const token = tokenStorage.get();
         if (token) {
             setAdminToken(token);
-            const fetchedAdminId = parseAdminToken(token);
-            console.log("Parsed Admin ID on mount:", fetchedAdminId);
-            setAdminId(fetchedAdminId);
+            const { adminId, role } = parseAdminToken(token);
+            setAdminId(adminId);
+            setRole(role);
         }
     }, []);
 
     const login = (token) => {
         tokenStorage.save(token);
         setAdminToken(token);
-        const fetchedAdminId = parseAdminToken(token);
-        console.log("Parsed Admin ID on login:", fetchedAdminId);
-        setAdminId(fetchedAdminId);
+        const { adminId, role } = parseAdminToken(token);
+        setAdminId(adminId);
+        setRole(role);
     };
 
     const logout = () => {
         tokenStorage.remove();
         setAdminToken('');
         setAdminId(null);
+        setRole(null);
     };
 
     return (
-        <AdminContext.Provider value={{ adminToken, adminId, login, logout }}>
+        <AdminContext.Provider value={{ adminToken, adminId, role, login, logout }}>
             {children}
         </AdminContext.Provider>
     );
@@ -47,15 +49,17 @@ function parseAdminToken(token) {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         const adminId = payload?.user?._id;
-        if (adminId) {
+        const role = payload?.user?.role;
+        if (adminId && role) {
             console.log("Parsed Admin ID:", adminId);
-            return adminId;
+            console.log("Parsed Role:", role);
+            return { adminId, role };
         } else {
             console.error('Admin ID not found in token payload');
-            return null;
+            return { adminId: null, role: null };
         }
     } catch (e) {
         console.error('Failed to parse adminId from token:', e);
-        return null;
+        return { adminId: null, role: null };
     }
 }

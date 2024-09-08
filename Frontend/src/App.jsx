@@ -24,6 +24,8 @@ import ReadAdmin from './components/admin/ReadAdmin';
 import AdminNotification from './components/admin/AdminNotification';
 import Dashboard from './components/dashboard/Dashboard';
 import TestResultPage from './components/testresult/TestResult';
+import AdminTestResultsPage from './components/admin/AdminTestResult';
+import AdminTestResultDetailPage from './components/admin/AdminTestResultDeatil';
 
 function App() {
     return (
@@ -42,6 +44,8 @@ function App() {
                                 <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
                                 <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
                                 <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
+                                <Route path="/admin/panel/test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>} />
+                                <Route path="/admin/panel/test-result/:id" element={<AdminTestResultDetailPage returnPath="/admin/panel"/>} />
                                 <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                                 <Route path="/admin/:adminId" element={<ReadAdmin />} />
                                 <Route path="/user" element={<ReadUser />} />

@@ -110,6 +110,10 @@ const AdminPanel = () => {
         navigate('/admin/panel/adminnotification');
     };
 
+    const handleNavigateToTestResult = () => {
+        navigate('/admin/panel/test-result');
+    };
+
     return (
         <Box sx={{ padding: 4 }}>
             <Box
@@ -135,6 +139,20 @@ const AdminPanel = () => {
                     onClick={handleNavigateToNotifications}
                 >
                     Notifications {unreadCount > 0 ? `(${unreadCount})` : ''}
+                </Button>
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#03035d',
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: '#03035d',
+                        },
+                        marginLeft: '-900px'
+                    }}
+                    onClick={handleNavigateToTestResult}
+                >
+                    Test Results
                 </Button>
             </Box>
 
@@ -200,13 +218,13 @@ const AdminPanel = () => {
                                         <TableRow key={patient._id}>
                                             <TableCell>
                                                 <Link to={`/admin/panel/patient/${patient._id}`}
-                                                      style={{
-                                                          textDecoration: 'none',
-                                                          color: '#03035d',
-                                                          fontWeight: 'bold',
-                                                      }}
-                                                      onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                      onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                    style={{
+                                                        textDecoration: 'none',
+                                                        color: '#03035d',
+                                                        fontWeight: 'bold',
+                                                    }}
+                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                 >
                                                     {patient.firstName}
                                                 </Link>

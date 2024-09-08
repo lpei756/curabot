@@ -170,6 +170,19 @@ export const readPatient = async (patientID) => {
     }
 };
 
+export const getUserByPatientIdService = async (patientID) => {
+    try {
+        const user = await UserModel.findOne({ patientID }).select('-password');
+        if (!user) {
+            return { error: true, status: 404, message: 'User not found' };
+        }
+        return { error: false, user };
+    } catch (error) {
+        console.error('Error fetching user in service:', error);
+        return { error: true, status: 500, message: 'Internal server error' };
+    }
+};
+
 export const updatePatient = async (id, updateData) => {
     const user = await UserModel.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!user) throw new Error('User not found');

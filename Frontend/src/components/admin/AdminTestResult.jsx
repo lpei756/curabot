@@ -1,21 +1,17 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import PDFViewer from './PDFViewer';
+import PDFViewer from '../testresult/PDFViewer';
 import { fetchTestResults } from '../../services/testResultService';
-import Dialog from '@mui/material/Dialog';
-import DialogContent from '@mui/material/DialogContent';
-import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 import '../../App.css';
 
-function TestResultsPage() {
+function AdminTestResultsPage() {
     const [testResults, setTestResults] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const [selectedResult, setSelectedResult] = useState(null);
-    const [openDialog, setOpenDialog] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchResults = async () => {
@@ -33,14 +29,8 @@ function TestResultsPage() {
         fetchResults();
     }, []);
 
-    const handleOpenDialog = (result) => {
-        setSelectedResult(result);
-        setOpenDialog(true);
-    };
-
-    const handleCloseDialog = () => {
-        setSelectedResult(null);
-        setOpenDialog(false);
+    const handleOpenDetailPage = (resultId) => {
+        navigate(`/admin/panel/test-result/${resultId}`);
     };
 
     if (loading) {
@@ -79,18 +69,20 @@ function TestResultsPage() {
                             sx={{
                                 marginBottom: 3,
                                 padding: 2,
-                                border: '1px solid #03035d',
+                                border: '1px solid',
+                                borderColor: result.reviewed ? '#03a65d' : '#f0ad4e', // Green for reviewed, orange for not reviewed
                                 borderRadius: 2,
                                 color: 'black',
                                 maxWidth: '900px',
                                 maxHeight: '350px',
                                 display: 'flex',
                                 cursor: 'pointer',
+                                backgroundColor: result.reviewed ? '#d4edda' : '#f8d7da', // Light green for reviewed, light red for not reviewed
                                 '&:hover': {
-                                    backgroundColor: '#f0f0f0'
+                                    backgroundColor: result.reviewed ? '#c3e6cb' : '#f5c6cb'
                                 }
                             }}
-                            onClick={() => handleOpenDialog(result)}
+                            onClick={() => handleOpenDetailPage(result._id)} // Navigate to the detail page on click
                         >
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Box sx={{ flex: 1, width: '150px', height: '350px', overflow: 'hidden' }}>
@@ -118,41 +110,8 @@ function TestResultsPage() {
             ) : (
                 <Typography sx={{ color: 'black' }}>No test results available</Typography>
             )}
-
-            <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="lg" sx={{ color: '#f8f6f6' }}>
-                <DialogContent>
-                    {selectedResult && (
-                        <Box sx={{ display: 'flex', gap: 10 }}>
-                            <Box sx={{ flex: 1, width: '400px', height: '700px' }}>
-                                <PDFViewer pdfUrl={`http://localhost:3001/uploads/${selectedResult.fileName}`} />
-                            </Box>
-                            <Box sx={{ flex: 1 }}>
-                                <Typography variant="h6" gutterBottom >
-                                    <strong style={{ color: '#03035d' }}>Test Name:</strong> {selectedResult.testName}
-                                </Typography>
-                                <Typography variant="body1">
-                                    <strong style={{ color: '#03035d' }}>Date Uploaded:</strong> {new Date(selectedResult.dateUploaded).toLocaleDateString()}
-                                </Typography>
-                                <Typography variant="body1" sx={{ marginTop: 2 }}>
-                                    <strong style={{ color: '#03035d' }}>Summary:</strong>
-                                    <br></br>
-                                    {selectedResult.summary}
-                                </Typography>
-                                <Typography variant="body1" sx={{ marginTop: 2 }}>
-                                    <strong style={{ color: '#03035d' }}>Analysis:</strong>
-                                    <br></br>
-                                    {selectedResult.analysis}
-                                </Typography>
-                            </Box>
-                        </Box>
-                    )}
-                </DialogContent>
-                <DialogActions sx={{ justifyContent: 'center' }}>
-                    <Button onClick={handleCloseDialog} sx={{ borderRadius: '20px', backgroundColor: '#03035d', color: '#f8f6f6' }} >Close</Button>
-                </DialogActions>
-            </Dialog>
         </Box>
     );
 }
 
-export default TestResultsPage;
+export default AdminTestResultsPage;

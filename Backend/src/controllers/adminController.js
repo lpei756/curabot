@@ -11,7 +11,8 @@ import {
     getAllPatients as getAllPatientsService,
     readPatient as readPatientService,
     updatePatient as updatePatientService,
-    fetchDoctors as fetchDoctorsService
+    fetchDoctors as fetchDoctorsService,
+    getUserByPatientIdService
 } from '../services/adminService.js';
 import bcrypt from 'bcrypt';
 
@@ -152,6 +153,20 @@ export const getAllPatients = async (req, res) => {
     } catch (error) {
         console.error('Error fetching all patients:', error.message);
         res.status(500).json({ message: 'Server error' });
+    }
+};
+
+export const getUserByPatientId = async (req, res) => {
+    try {
+        const { patientID } = req.params;
+        const { error, user, message, status } = await getUserByPatientIdService(patientID);
+        if (error) {
+            return res.status(status || 500).json({ message });
+        }
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
     }
 };
 

@@ -92,6 +92,18 @@ export const fetchPatientData = async (patientId) => {
     }
 };
 
+export const fetchPatientbyID = async (patientID) => {
+    try {
+        const url = API_PATH.admin.getbyPatientID.replace(':patientID', patientID);
+        const response = await axiosApiInstance.get(url);
+        const patientData = response.data;
+        return patientData;
+    } catch (error) {
+        console.error('Patient read error:', error);
+        throw error;
+    }
+};
+
 export const fetchAdminData = async (adminId) => {
     try {
         const url = API_PATH.admin.read.replace(':id', adminId);
