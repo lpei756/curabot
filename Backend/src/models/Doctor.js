@@ -20,21 +20,10 @@ const DoctorSchema = new mongoose.Schema({
 DoctorSchema.pre('save', async function (next) {
   const doctor = this;
   if (!doctor.isNew) return next();
+
   try {
     const count = await mongoose.model('Doctor').countDocuments();
     doctor.doctorID = `D${String(count + 1).padStart(3, '0')}`;
-    const salt = await bcrypt.genSalt(10);
-    doctor.password = await bcrypt.hash(doctor.password, salt);
-    const admin = new AdminModel({
-      firstName: doctor.firstName,
-      lastName: doctor.lastName,
-      email: doctor.email,
-      password: doctor.password,
-      role: 'doctor',
-      doctor: doctor._id
-    });
-    await admin.save();
-
     next();
   } catch (error) {
     next(error);
