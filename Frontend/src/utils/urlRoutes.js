@@ -11,6 +11,7 @@ export const API_PATH = {
     logout: buildApiPath('/api/admin/logout'),
     getAllAdmins: buildApiPath('/api/admin'),
     getAllPatients: buildApiPath('/api/patient'),
+    getbyPatientID: buildApiPath('/api/patientID/:patientID'),
     readPatient: buildApiPath('/api/patient/:id'),
     updatePatient: buildApiPath('/api/patient/:id'),
     getDoctors: buildApiPath('/api/doctors'),
@@ -60,6 +61,9 @@ export const API_PATH = {
     updateIsBooked: buildApiPath('/api/doctor-availability/:slotId/:userId/isBooked')
   },
   testresult: {
-    getAll: buildApiPath('/api/test-result/all/results')
+    getAll: buildApiPath('/api/test-result/all/results'),
+    get: buildApiPath('/api/test-result/:testResultId'),
+    edit: buildApiPath('/api/test-result/:testResultId/edit'),
+    approve: buildApiPath('/api/test-result/:testResultId/approve')
   }
 };

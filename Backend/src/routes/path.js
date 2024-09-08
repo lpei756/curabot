@@ -15,6 +15,7 @@ export const ADMIN_PATHS = {
   getAllAdmins: '/admin',
   getAllPatients: '/patient',
   readPatient: '/patient/:id',
+  getbyPatientID: '/patientID/:patientID',
   updatePatient: '/patient/:id',
   getDoctors: '/doctors',
 };
