@@ -217,7 +217,6 @@ const AppointmentDetail = ({ open, onClose, event }) => {
     );
 };
 
-// PropTypes 验证
 AppointmentDetail.propTypes = {
     open: PropTypes.bool.isRequired,
     onClose: PropTypes.func.isRequired,
