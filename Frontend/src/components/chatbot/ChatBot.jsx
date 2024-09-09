@@ -70,8 +70,11 @@ function ChatBot({ }) {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [selectedSessionId, setSelectedSessionId] = useState(null);
     const [recentChatSessions, setRecentChatSessions] = useState([]);
+    const [filteredChatSessions, setFilteredChatSessions] = useState([]); 
     const [chatHistoriesFetched, setChatHistoriesFetched] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
+    const [searchSuggestion, setSearchSuggestion] = useState(null);
+    const [searchClicked, setSearchClicked] = useState(false);
     const scrollContainerRef = useRef(null);
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
@@ -338,27 +341,32 @@ function ChatBot({ }) {
     };
 
     const handleSearchChange = (event) => {
-        const searchTerm = event.target.value.toLowerCase();
+        const searchTerm = event.target.value.trim();
         setSearchTerm(searchTerm);
-    
-        if (searchTerm.trim() === '') {
-            // When search is cleared, display sessions by date again
-            setRecentChatSessions(groupMessagesByDate(recentChatSessions));
-            return;
+
+        if (searchTerm === '') {
+            setSearchSuggestion(null);
+        } else {
+            setSearchSuggestion(`Search for: "${searchTerm}"`);  // Create suggestion
         }
-    
-        // Filter chat histories based on search term
-        const filteredSessions = Object.keys(recentChatSessions).reduce((acc, date) => {
-            const filteredMessages = recentChatSessions[date].filter((msg) => msg.message.toLowerCase().includes(searchTerm));
-            if (filteredMessages.length > 0) {
-                acc[date] = filteredMessages;
-            }
-            return acc;
-        }, {});
-    
-        // Group the filtered sessions by date
-        setRecentChatSessions(filteredSessions);
-    };    
+    };
+
+    const handleSearchClick = () => {
+        if (recentChatSessions && typeof recentChatSessions === 'object') {
+            const filteredSessions = {};
+            Object.keys(recentChatSessions).forEach(date => {
+                const filteredMessages = recentChatSessions[date].filter(message =>
+                    message.message.includes(searchTerm)
+                );
+                if (filteredMessages.length > 0) {
+                    filteredSessions[date] = filteredMessages;
+                }
+            });
+            setRecentChatSessions(filteredSessions);
+        } else {
+            console.error("Chat sessions data is not an array or is undefined");
+        }
+    };
 
     return (
         <>
@@ -377,58 +385,110 @@ function ChatBot({ }) {
                         padding: '0 16px',
                     }}>
                         <TextField
+                            id="standard-basic"
+                            size="small"
                             variant="standard"
-                            placeholder="Search..."
                             fullWidth
                             value={searchTerm}
                             onChange={handleSearchChange}
                             InputProps={{
-                                startAdornment: <SearchRoundedIcon />,
-                                disableUnderline: true,
+                                startAdornment: (
+                                    <SearchRoundedIcon
+                                        sx={{ color: 'white' }}
+                                    />
+                                )
                             }}
                             sx={{
-                                bgcolor: 'white',
                                 borderRadius: '5px',
                                 marginLeft: '8px',
-                                color: 'black',
+                                '& .MuiInputBase-root': {
+                                    color: 'white',  // Text color
+                                },
+                                '& .MuiInputLabel-root': {
+                                    color: 'white',  // Label color
+                                },
+                                '& .MuiInput-underline:before': {
+                                    borderBottomColor: 'white',  // Default underline color
+                                },
+                                '& .MuiInput-underline:after': {
+                                    borderBottomColor: '#68cde6',  // Underline color when focused
+                                },
+                            }}
+                            InputLabelProps={{
+                                shrink: searchTerm.length > 0 || undefined,  // Enable shrinking animation only when the input has value
                             }}
                         />
                     </AppBar>
-                    <List>
-    {Object.keys(recentChatSessions).length === 0 ? (
-        <Typography variant="body2" color="textSecondary" align="center">
-            No results found for "{searchTerm}"
-        </Typography>
-    ) : (
-        Object.keys(recentChatSessions).map((date, index) => (
-            <ListItem
-                key={index}
-                onClick={() => showChatHistoryForDate(date)}
-                sx={{
-                    bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
-                    transition: 'background-color 0.3s ease',
-                    '&:hover': {
-                        bgcolor: selectedSessionId === date ? '#03035D' : '#68cde6',
-                        '& .MuiListItemText-primary': {
-                            color: 'white',
-                        },
-                    },
-                    borderRadius: '8px',
-                    mb: 1,
-                }}
-            >
-                <ListItemText
-                    primary={date}
-                    sx={{
-                        color: selectedSessionId === date ? 'white' : 'black',
-                        transition: 'color 0.3s ease',
-                    }}
-                />
-            </ListItem>
-        ))
-    )}
-</List>
 
+                    <List>
+                        {searchTerm === '' ? (
+                            // Display the dates if no search term is entered
+                            Object.keys(recentChatSessions).map((date, index) => (
+                                <ListItem
+                                    key={index}
+                                    onClick={() => showChatHistoryForDate(date)}
+                                    sx={{
+                                        bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
+                                        transition: 'background-color 0.3s ease',
+                                        '&:hover': {
+                                            bgcolor: selectedSessionId === date ? '#03035D' : '#68cde6',
+                                            '& .MuiListItemText-primary': {
+                                                color: 'white',
+                                            },
+                                        },
+                                        borderRadius: '8px',
+                                        mb: 1,
+                                    }}
+                                >
+                                    <ListItemText
+                                        primary={date}
+                                        sx={{
+                                            color: selectedSessionId === date ? 'white' : 'black',
+                                            transition: 'color 0.3s ease',
+                                        }}
+                                    />
+                                </ListItem>
+                            ))
+                        ) : (
+                            // Display the filtered chat history after clicking "Search for"
+                            <>
+                                <ListItem onClick={handleSearchClick}>
+                                    <ListItemText
+                                        primary={
+                                            <span style={{ color: 'black' }}>
+                                                Search for:{" "}
+                                                <span style={{ color: '#03035D', fontWeight: 'bold' }}>
+                                                    "{searchTerm}"
+                                                </span>
+                                            </span>
+                                        }
+                                    />
+                                </ListItem>
+
+                                {/* Rendering chat messages */}
+                                {Object.keys(recentChatSessions).length > 0 ? (
+                                    Object.keys(recentChatSessions).map((date, index) => (
+                                        // For each date (key), map over the messages
+                                        recentChatSessions[date].map((message, msgIndex) => (
+                                            <ListItem key={`${date}-${msgIndex}`}>
+                                                <Avatar alt="User Avatar" src={message.sender === 'bot' ? 'botAvatarUrl' : 'userAvatarUrl'} sx={{ width: 45, height: 45, mr: 2 }} />
+                                                <Box sx={{ flexGrow: 1 }}>
+                                                    <Typography variant="body1" sx={{ color: 'black' }}>
+                                                        {message.message}
+                                                    </Typography>
+                                                    <Typography variant="caption" sx={{ color: 'gray' }}>
+                                                        {new Date(message.timestamp).toLocaleString()}
+                                                    </Typography>
+                                                </Box>
+                                            </ListItem>
+                                        ))
+                                    ))
+                                ) : (
+                                    <Typography color={'black'}>No chat sessions available.</Typography>
+                                )}
+                            </>
+                        )}
+                    </List>
                 </DrawerContainer>
             )}
 
