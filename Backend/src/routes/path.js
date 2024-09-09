@@ -27,6 +27,7 @@ export const AUTH_PATHS = {
   updateUser: '/user/:id',
   logout: '/logout',
   getGP: '/gp/:id',
+  sendCode: '/send-verification-code'
 };
 
 export const APPOINTMENT_PATHS = {

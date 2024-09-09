@@ -13,6 +13,10 @@ export const getDoctorsByClinic = async (clinicId) => {
 
 export const getDoctorById = async (doctorId) => {
     try {
+        if (doctorId === "Not assigned" || doctorId === null || doctorId === undefined) {
+            return { firstName: "Not", lastName: "assigned" };
+        }
+
         const response = await axiosApiInstance.get(API_PATH.doctor.read.replace(':doctorID', doctorId));
         return response.data;
     } catch (error) {

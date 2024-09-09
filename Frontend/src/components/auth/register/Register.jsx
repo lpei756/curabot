@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Stepper, Step, StepLabel, LinearProgress } from '@mui/material';
 import PropTypes from 'prop-types';
-import { register } from '../../../services/authService';
+import { register, sendVerificationCode } from '../../../services/authService';
 
 const steps = ['Account Set Up', 'Personal Information'];
 
@@ -15,12 +15,52 @@ const Register = ({ onSuccess }) => {
         phone: '',
         email: '',
         password: '',
+        verificationCode: '',
     });
 
     const [activeStep, setActiveStep] = useState(0);
     const [error, setError] = useState(null);
     const [passwordError, setPasswordError] = useState('');
+    const [verificationMessage, setVerificationMessage] = useState('');
+    const [isCodeSent, setIsCodeSent] = useState(false);
+    const [isCooldown, setIsCooldown] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(0);
     const navigate = useNavigate();
+
+    const handleSendVerificationCode = async () => {
+        if (!formData.email) {
+            setVerificationMessage('Please enter your email first.');
+            return;
+        }
+
+        if (isCooldown) {
+            setVerificationMessage(`You can only request a new code every 3 minutes. Please wait ${timeLeft} seconds.`);
+            return;
+        }
+
+        try {
+            const response = await sendVerificationCode(formData.email);
+            setIsCodeSent(true);
+            setVerificationMessage('Verification code sent to your email!');
+            setIsCooldown(true);
+            setTimeLeft(180);
+
+            const timer = setInterval(() => {
+                setTimeLeft((prevTime) => {
+                    if (prevTime <= 1) {
+                        clearInterval(timer);
+                        setIsCooldown(false);
+                        setVerificationMessage('You can now request a new code.');
+                        return 0;
+                    }
+                    return prevTime - 1;
+                });
+            }, 1000);
+        } catch (err) {
+            console.error('Error sending verification code:', err);
+            setVerificationMessage('Failed to send verification code. Try again.');
+        }
+    };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -52,6 +92,7 @@ const Register = ({ onSuccess }) => {
             ...formData,
             dateOfBirth: new Date(formData.dateOfBirth),
         };
+
         try {
             const data = await register(convertedFormData);
             console.log('Registered user:', data.user.firstName, data.user.lastName, data.user.email);
@@ -80,9 +121,31 @@ const Register = ({ onSuccess }) => {
                             fullWidth
                             margin="normal"
                             required
-                            error={!!passwordError}
-                            helperText={passwordError}
                         />
+                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 2 }}>
+                            <TextField
+                                label="Verification Code"
+                                variant="standard"
+                                name="verificationCode"
+                                value={formData.verificationCode}
+                                onChange={handleChange}
+                                margin="normal"
+                                required
+                                sx={{ flexGrow: 1 }}
+                            />
+                            <Button
+                                onClick={handleSendVerificationCode}
+                                variant="outlined"
+                                sx={{ ml: 2, color: '#03035d', borderColor: '#03035d' }}
+                            >
+                                Send Verification Code
+                            </Button>
+                        </Box>
+                        {verificationMessage && (
+                            <Typography color={isCodeSent ? 'green' : 'error'} variant="body2" sx={{ mt: 2 }}>
+                                {verificationMessage}
+                            </Typography>
+                        )}
                         <TextField
                             label="Password"
                             variant="standard"
@@ -187,8 +250,8 @@ const Register = ({ onSuccess }) => {
                                     },
                                     '&.Mui-active': {
                                         color: '#03035d',
-                                    }
-                                }
+                                    },
+                                },
                             }}
                         >
                             {label}
@@ -213,7 +276,7 @@ const Register = ({ onSuccess }) => {
                         '&:hover': {
                             borderColor: '#03035d',
                             backgroundColor: 'rgba(3, 3, 93, 0.04)',
-                        }
+                        },
                     }}
                 >
                     Back
@@ -225,7 +288,7 @@ const Register = ({ onSuccess }) => {
                         color: '#fff',
                         '&:hover': {
                             backgroundColor: '#020246',
-                        }
+                        },
                     }}
                     onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                 >
@@ -234,7 +297,7 @@ const Register = ({ onSuccess }) => {
             </Box>
         </Box>
     );
-}
+};
 
 Register.propTypes = {
     onSuccess: PropTypes.func,
