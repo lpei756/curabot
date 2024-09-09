@@ -66,13 +66,13 @@ function Notification() {
         loadDoctors();
     }, [userId]);
 
-    const handleSendMessage = async () => {
+    const handleSendMessage = async (messageContent, doctorId) => {
         try {
-            if (!selectedDoctor) {
+            if (!doctorId) {
                 setError("Please select a doctor before sending a message.");
                 return;
             }
-            if (!newMessage) {
+            if (!messageContent) {
                 setError("Message content cannot be empty.");
                 return;
             }
@@ -82,8 +82,8 @@ function Notification() {
             }
             const formData = new FormData();
             formData.append('senderId', userId);
-            formData.append('receiverId', selectedDoctor);
-            formData.append('message', newMessage);
+            formData.append('receiverId', doctorId);
+            formData.append('message', messageContent);
             formData.append('senderModel', "User");
             formData.append('receiverModel', "Doctor");
             if (pdfFile) {
@@ -103,6 +103,12 @@ function Notification() {
             console.error("Error sending message:", err.message);
             setError(`Unable to send message: ${err.message}`);
         }
+    };
+
+    const handleRepeatPrescription = (notification) => {
+        const doctorId = notification.sender; // Assuming notification.sender is the doctor ID
+        const message = "Can you please repeat this prescription for me?";
+        handleSendMessage(message, doctorId);
     };
 
     const handleBackToHomepage = () => {
@@ -244,6 +250,17 @@ function Notification() {
                             >
                                 Delete
                             </Button>
+
+                            {/* Check for "Prescription created by" in the notification message */}
+                            {notification.message.includes("Prescription created by") && (
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
+                                    onClick={() => handleRepeatPrescription(notification)}
+                                >
+                                    Repeat
+                                </Button>
+                            )}
 
                             {/* 回复功能 */}
                             <Box sx={{ marginTop: '10px' }}>
