@@ -58,7 +58,6 @@ const AdminPanel = () => {
 
             const fetchUnreadNotifications = async () => {
                 try {
-                    console.log("Using Admin ID:", adminId);
                     const notifications = await fetchAdminNotifications(adminId);
                     const unreadNotifications = notifications.filter(notification => !notification.isRead);
                     setUnreadCount(unreadNotifications.length);
@@ -85,25 +84,20 @@ const AdminPanel = () => {
     }, [patientSearchQuery, patients]);
 
     const handleEdit = (patient) => {
-        console.log('Selected Patient:', patient);
-        if (patient && patient._id) {
-            setSelectedPatient(patient);
-            setEditMode(true);
-            setShowPrescription(false);
-        } else {
-            console.error('Invalid patient selected:', patient);
-        }
+        setSelectedPatient(patient);
+        setEditMode(true);
+        setShowPrescription(false);
     };
 
     const handlePrescription = (patient) => {
         setSelectedPatient(patient);
         setShowPrescription(true);
         setEditMode(false);
-    };
-
-    const handlePrescriptionSubmit = (prescriptionData) => {
-        console.log('Prescription Submitted:', prescriptionData);
-        setShowPrescription(false);
+        if (adminId) {
+            navigate(`/admin/${adminId}/prescription`, { state: { patient } });
+        } else {
+            console.error('adminId is missing!');
+        }
     };
 
     const handleNavigateToNotifications = () => {
@@ -181,8 +175,6 @@ const AdminPanel = () => {
                     <Typography variant="body1">Loading doctor information...</Typography>
                 ) : (
                     <Prescription
-                        patient={selectedPatient}
-                        onSubmit={handlePrescriptionSubmit}
                         doctorFirstName={doctorFirstName}
                         doctorLastName={doctorLastName}
                         adminId={adminId}
@@ -218,13 +210,13 @@ const AdminPanel = () => {
                                         <TableRow key={patient._id}>
                                             <TableCell>
                                                 <Link to={`/admin/panel/patient/${patient._id}`}
-                                                    style={{
-                                                        textDecoration: 'none',
-                                                        color: '#03035d',
-                                                        fontWeight: 'bold',
-                                                    }}
-                                                    onMouseEnter={(e) => e.target.style.color = '#ff5733'}
-                                                    onMouseLeave={(e) => e.target.style.color = '#03035d'}
+                                                      style={{
+                                                          textDecoration: 'none',
+                                                          color: '#03035d',
+                                                          fontWeight: 'bold',
+                                                      }}
+                                                      onMouseEnter={(e) => e.target.style.color = '#ff5733'}
+                                                      onMouseLeave={(e) => e.target.style.color = '#03035d'}
                                                 >
                                                     {patient.firstName}
                                                 </Link>

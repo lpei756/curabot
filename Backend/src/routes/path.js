@@ -78,6 +78,7 @@ export const NOTIFICATION_PATHS = {
   getAdminNotifications: '/notification/admin/:adminId',
   markAsRead: '/notification/:notificationId/read',
   delete: '/notification/:notificationId/delete',
+  generatePrescription: '/api/admin/:adminId/prescription',
 };
 
 export const TEST_RESULT_PATHS = {

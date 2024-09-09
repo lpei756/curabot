@@ -1,23 +1,39 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { useLocation } from 'react-router-dom';
 import { Box, Typography, TextField, Button } from '@mui/material';
-import PropTypes from 'prop-types';
 import { sendDoctorMessage } from '../../services/NotificationService';
+import { fetchMe } from '../../services/AdminService';
+import { AdminContext } from '../../context/AdminContext';
 
-const Prescription = ({ patient, onSubmit, doctorFirstName, doctorLastName, adminId }) => {
+const Prescription = () => {
+    const { adminId } = useContext(AdminContext);
+    const location = useLocation();
+    const { patient } = location.state || {};
     const [prescriptionData, setPrescriptionData] = useState({
         doctorName: '',
         medications: '',
         instructions: '',
     });
+    const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (doctorFirstName && doctorLastName) {
-            setPrescriptionData((prevData) => ({
-                ...prevData,
-                doctorName: `${doctorFirstName} ${doctorLastName}`,
-            }));
-        }
-    }, [doctorFirstName, doctorLastName]);
+        const fetchAdminData = async () => {
+            try {
+                const response = await fetchMe();
+                const adminData = response.admin;
+                setPrescriptionData((prevData) => ({
+                    ...prevData,
+                    doctorName: `${adminData.firstName} ${adminData.lastName}`,
+                }));
+                setIsLoading(false); // Data loaded
+            } catch (error) {
+                console.error('Error fetching admin data:', error);
+                setIsLoading(false);
+            }
+        };
+        fetchAdminData();
+    }, []);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -28,88 +44,97 @@ const Prescription = ({ patient, onSubmit, doctorFirstName, doctorLastName, admi
     };
 
     const handleSubmit = async () => {
-        if (prescriptionData.doctorName && prescriptionData.medications && prescriptionData.instructions) {
-            onSubmit(prescriptionData);
+        if (!adminId) {
+            setError('Admin ID is missing.');
+            return;
+        }
 
-            const formattedMedications = prescriptionData.medications;
-            const formattedInstructions = prescriptionData.instructions;
+        if (prescriptionData.doctorName && prescriptionData.medications && prescriptionData.instructions) {
+            const { doctorName, medications, instructions } = prescriptionData;
 
             const formData = new FormData();
             formData.append(
                 'message',
-                `Prescription created by Dr. ${prescriptionData.doctorName}: Medications - ${formattedMedications}, Instructions - ${formattedInstructions}`
+                `Prescription created by Dr. ${doctorName}: Medications - ${medications}, Instructions - ${instructions}`
             );
             formData.append('senderId', adminId);
-            formData.append('senderModel', 'Admin');
+            formData.append('senderModel', 'Doctor');
             formData.append('receiverId', patient._id);
             formData.append('receiverModel', 'User');
 
             try {
                 await sendDoctorMessage(formData);
-                alert("Prescription sent to patient!");
+                alert('Prescription sent to patient!');
             } catch (error) {
-                console.error("Error sending prescription notification:", error);
+                console.error('Error sending prescription notification:', error);
+                setError('Failed to send prescription. Please try again.');
             }
         } else {
-            alert('Please fill in all fields');
+            setError('Please fill in all fields');
         }
     };
 
+    if (isLoading) {
+        return <Typography variant="body1">Loading doctor information...</Typography>;
+    }
+
     return (
         <Box sx={{ padding: 2 }}>
-            <Typography variant="h5" gutterBottom>
-                Prescription for {patient.firstName} {patient.lastName}
-            </Typography>
-            <TextField
-                label="Doctor Name"
-                name="doctorName"
-                value={prescriptionData.doctorName}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-                disabled
-            />
-            <TextField
-                label="Medications"
-                name="medications"
-                value={prescriptionData.medications}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-                multiline
-                rows={4}
-            />
-            <TextField
-                label="Instructions"
-                name="instructions"
-                value={prescriptionData.instructions}
-                onChange={handleInputChange}
-                fullWidth
-                margin="normal"
-                multiline
-                rows={2}
-            />
-            <Button
-                variant="contained"
-                onClick={handleSubmit}
-                sx={{ backgroundColor: '#03035d', marginTop: 2 }}
-            >
-                Submit Prescription
-            </Button>
+            {patient ? (
+                <>
+                    <Typography variant="h5" gutterBottom>
+                        Prescription for {patient.firstName} {patient.lastName}
+                    </Typography>
+
+                    {error && (
+                        <Typography variant="body2" color="error" gutterBottom>
+                            {error}
+                        </Typography>
+                    )}
+
+                    <TextField
+                        label="Doctor Name"
+                        name="doctorName"
+                        value={prescriptionData.doctorName}
+                        fullWidth
+                        margin="normal"
+                        disabled
+                    />
+                    <TextField
+                        label="Medications"
+                        name="medications"
+                        value={prescriptionData.medications}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={4}
+                    />
+                    <TextField
+                        label="Instructions"
+                        name="instructions"
+                        value={prescriptionData.instructions}
+                        onChange={handleInputChange}
+                        fullWidth
+                        margin="normal"
+                        multiline
+                        rows={2}
+                    />
+                    <Button
+                        variant="contained"
+                        onClick={handleSubmit}
+                        sx={{ backgroundColor: '#03035d', marginTop: 2 }}
+                    >
+                        Submit Prescription
+                    </Button>
+                </>
+            ) : (
+                <Typography variant="body2" color="error">
+                    Patient information is missing.
+                </Typography>
+            )}
         </Box>
     );
-};
-
-Prescription.propTypes = {
-    patient: PropTypes.shape({
-        firstName: PropTypes.string.isRequired,
-        lastName: PropTypes.string.isRequired,
-        _id: PropTypes.string.isRequired,
-    }).isRequired,
-    onSubmit: PropTypes.func.isRequired,
-    doctorFirstName: PropTypes.string.isRequired,
-    doctorLastName: PropTypes.string.isRequired,
-    adminId: PropTypes.string.isRequired,
 };
 
 export default Prescription;

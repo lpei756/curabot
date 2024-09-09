@@ -40,6 +40,10 @@ function EditPatient({ patientData, setPatientData, patientId, setEditMode, retu
     };
 
     const handleUpdate = async () => {
+        const cleanedData = { ...updatedData };
+        if (!cleanedData.insurance.policyNumber) {
+            delete cleanedData.insurance.policyNumber;
+        }
         console.log('Updating patient with data:', updatedData);
         try {
             const data = await updatePatientData(patientId, updatedData);

@@ -9,6 +9,7 @@ import {
     buildPathWithBase,
     TEST_RESULT_PATHS
 } from '../routes/path.js';
+import {generatePrescription} from "../controllers/notificationController.js";
 
 const adminPathBase = buildPathWithBase(ADMIN_PATHS);
 const authPathBase = buildPathWithBase(AUTH_PATHS);
@@ -295,6 +296,16 @@ const deleteNotificationParamsSchema = Joi.object({
     notificationId: Joi.string().required(),
 });
 
+const generatePrescriptionSchema = Joi.object({
+    senderId: Joi.string().required(),
+    senderModel: Joi.string().valid('User', 'Admin', 'Doctor').required(),
+    receiverModel: Joi.string().valid('User', 'Admin', 'Doctor').required(),
+    receiverId: Joi.string().required(),
+    message: Joi.string().required(),
+    notificationType: Joi.string().valid('info', 'warning', 'alert').default('info'),
+});
+
+
 const testResultSchema = Joi.object({
     patientID: Joi.string().optional(),
     doctorID: Joi.string().optional(),
@@ -343,6 +354,7 @@ export default {
     [notificationPathBase.markAsRead + '_params']: markAsReadParamsSchema,
     [notificationPathBase.deleteNotification]: deleteNotificationSchema,
     [notificationPathBase.deleteNotification + '_params']: deleteNotificationParamsSchema,
+    [notificationPathBase.generatePrescription]: generatePrescriptionSchema,
     [testresultPathBase.upload]: testResultSchema,
     [testresultPathBase.edit]: edittestResultSchema,
     '/api/feedback': feedbackSchema,

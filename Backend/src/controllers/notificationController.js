@@ -120,3 +120,37 @@ export const deleteNotification = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
+
+export const generatePrescription = async (req, res) => {
+    try {
+        console.log('Prescription request received:', req.body);
+        const { doctorId, patientId, medications, instructions } = req.body;
+        if (!doctorId || !patientId || !medications || !instructions) {
+            return res.status(400).json({
+                status: "failed",
+                error: "Invalid request. Missing required fields.",
+                fields: {
+                    doctorId: doctorId ? undefined : "doctorId is required",
+                    patientId: patientId ? undefined : "patientId is required",
+                    medications: medications ? undefined : "medications are required",
+                    instructions: instructions ? undefined : "instructions are required"
+                }
+            });
+        }
+        const message = `Prescription created by Doctor ${doctorId}: Medications - ${medications}, Instructions - ${instructions}`;
+        const notification = await sendMessageService({
+            senderId: doctorId,
+            senderModel: "Doctor",
+            receiverId: patientId,
+            receiverModel: "User",
+            message,
+            notificationType: "prescription"
+        });
+        console.log('Prescription notification sent successfully:', notification);
+        res.status(201).json({ message: 'Prescription generated successfully', notification });
+    } catch (error) {
+        console.error('Error generating prescription:', error.message);
+        res.status(500).json({ error: error.message });
+    }
+};
+
