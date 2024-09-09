@@ -28,3 +28,13 @@ export const register = async (userData) => {
     throw error;
   }
 };
+
+export const sendVerificationCode = async (email) => {
+  try {
+      const response = await axiosApiInstance.post(API_PATH.auth.sendCode, { email });
+      return response.data;
+  } catch (error) {
+      console.error('Error sending verification code:', error);
+      throw error;
+  }
+};

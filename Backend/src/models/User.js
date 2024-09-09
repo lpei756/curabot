@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import crypto from 'crypto';
 
 const UserSchema = new mongoose.Schema({
+  verificationCode: { type: String, default: null },
+  isVerified: { type: Boolean, default: false },
   patientID: { type: String, unique: true },
   nhi: { type: String, unique: true },
   firstName: { type: String, required: true },

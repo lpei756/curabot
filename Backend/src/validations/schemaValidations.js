@@ -27,6 +27,7 @@ const feedbackSchema = Joi.object({
 const registerSchema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(6).required(),
+    verificationCode: Joi.string().required(),
     firstName: Joi.string().required(),
     middleName: Joi.string().allow("").optional(),
     lastName: Joi.string().required(),
@@ -37,21 +38,21 @@ const registerSchema = Joi.object({
     address: Joi.string().required(),
     phone: Joi.string().required(),
     emergencyContact: Joi.object({
-        name: Joi.string().optional(),
-        phone: Joi.string().optional(),
-        relationship: Joi.string().optional()
+        name: Joi.string().allow("").optional(),
+        phone: Joi.string().allow("").optional(),
+        relationship: Joi.string().allow("").optional()
     }).optional(),
     medicalHistory: Joi.object({
-        chronicDiseases: Joi.string().optional(),
-        pastSurgeries: Joi.string().optional(),
-        familyMedicalHistory: Joi.string().optional(),
-        medicationList: Joi.string().optional(),
-        allergies: Joi.string().optional()
+        chronicDiseases: Joi.string().allow("").optional(),
+        pastSurgeries: Joi.string().allow("").optional(),
+        familyMedicalHistory: Joi.string().allow("").optional(),
+        medicationList: Joi.string().allow("").optional(),
+        allergies: Joi.string().allow("").optional()
     }).optional(),
     insurance: Joi.object({
-        provider: Joi.string().optional(),
+        provider: Joi.string().allow("").optional(),
         policyNumber: Joi.string().allow("").optional(),
-        coverageDetails: Joi.string().optional()
+        coverageDetails: Joi.string().allow("").optional()
     }).optional()
 });
 

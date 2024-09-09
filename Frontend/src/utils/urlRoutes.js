@@ -22,7 +22,8 @@ export const API_PATH = {
     read: buildApiPath('/api/auth/user/:id'),
     update: buildApiPath('/api/auth/user/:id'),
     logout: buildApiPath('/api/auth/logout'),
-    getGP: buildApiPath('/api/auth/gp/:id')
+    getGP: buildApiPath('/api/auth/gp/:id'),
+    sendCode: buildApiPath('/api/auth/send-verification-code')
   },
   appointment: {
     create: buildApiPath('/api/appointments/create'),

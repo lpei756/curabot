@@ -2,47 +2,10 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 import Doctor from '../models/Doctor.js';
+import { verifyCodeAndRegister } from './verificationService.js';
 
 export const register = async (userData) => {
-    const {
-      email,
-      password,
-      firstName,
-      lastName,
-      phone,
-      address,
-      dateOfBirth
-    } = userData;
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) throw new Error('User already exists');
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = new User({
-        email,
-        password: hashedPassword,
-        firstName,
-        lastName,
-        phone,
-        address,
-        dateOfBirth,
-        middleName: undefined,
-        gender: undefined,
-        bloodGroup: undefined,
-        ethnicity: undefined,
-        emergencyContact: undefined,
-        medicalHistory: undefined,
-        insurance: undefined,
-        gp: undefined,
-        appointments: [],
-        images: [],
-        notifications: []
-    });
-
-    await user.save();
-    return user;
+  return await verifyCodeAndRegister(userData);
 };
 
 export const login = async ({ email, password }) => {
