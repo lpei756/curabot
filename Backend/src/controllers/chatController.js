@@ -347,11 +347,76 @@ export const handleChat = async (req, res) => {
         } else {
           const noSpecialisationReply = 'I’m sorry, but I couldn’t find any relevant specialisations based on the symptoms you mentioned. It might be helpful to provide more details or consult a healthcare professional directly. If you need any further assistance, feel free to let me know.';
           console.log('No specialisation found');
+          const availableSlots = await getAllAvailableSlots();
+
+          if (!availableSlots || availableSlots.length === 0) {
+            const noSpecialisationReply = 'I’m sorry, but I couldn’t find any relevant specialisations and there are no available slots at the moment. Please try again later.';
+            await ChatSession.findByIdAndUpdate(
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noSpecialisationReply, isAnonymous } } }
+            );
+            return res.json({ reply: noSpecialisationReply, sessionId });
+          }
+
+          const user = await readUser(userId);
+          const nearestSlot = await findNearestSlot(availableSlots, userLocation, user);
+
+          if (!nearestSlot) {
+            const noMatchReply = 'Sorry, I couldn’t find any doctors relevant to your symptoms, and there are no available appointments right now. Please try again later.';
+            await ChatSession.findByIdAndUpdate(
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noMatchReply, isAnonymous } } }
+            );
+            return res.json({ reply: noMatchReply, sessionId });
+          }
+
+          const doctorResult = await getDoctorByIdService(nearestSlot.doctorID);
+          if (doctorResult.error) {
+            return res.status(doctorResult.status).json({ message: doctorResult.message, sessionId });
+          }
+
+          const clinicId = doctorResult.doctor.clinic;
+          const distance = nearestSlot.tempDistance || 'N/A';
+
+          const nearestSlotResponse = `
+            Sorry, I couldn’t find a doctor relevant to your symptoms, but I found an nearest available slot:
+            <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
+            <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
+            <p><strong>Distance:</strong> ${distance} km</p>
+            <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
+                (async function() {
+                    try {
+                        const response = await fetch('http://localhost:3001/api/appointments/create', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Authorization': '${authToken}'
+                            },
+                            body: JSON.stringify({
+                                dateTime: '${nearestSlot.startTime.toISOString()}',
+                                clinic: '${clinicId}',
+                                assignedGP: '${nearestSlot.doctorID}',
+                                slotId: '${nearestSlot._id}'
+                            })
+                        });
+                        const data = await response.json();
+                        if (response.ok) {
+                            alert('Your appointment has been successfully booked.');
+                        } else {
+                            alert('Error: ' + data.message);
+                        }
+                    } catch (error) {
+                        alert('Sorry, something went wrong. Please try again.');
+                    }
+                })()
+            ">Book Now</button>
+            `;
+
           await ChatSession.findByIdAndUpdate(
             sessionId,
-            { $push: { messages: { sender: 'bot', message: noSpecialisationReply, isAnonymous } } }
+            { $push: { messages: { sender: 'bot', message: nearestSlotResponse, isAnonymous } } }
           );
-          return res.json({ reply: noSpecialisationReply, sessionId });
+          return res.json({ reply: nearestSlotResponse, sessionId });
         }
       } catch (error) {
         console.error('Error handling specialisation:', error);
