@@ -156,6 +156,42 @@ function Notification() {
         }
     };
 
+    const handleReplyMessageChange = (notificationId, message) => {
+        setNotifications(notifications.map(notification =>
+            notification._id === notificationId
+                ? { ...notification, replyMessage: message }
+                : notification
+        ));
+    };
+
+    const handleSendReply = async (notification) => {
+        try {
+            if (!notification.replyMessage) {
+                setError("Reply message cannot be empty.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('senderId', userId);
+            formData.append('receiverId', notification.sender);
+            formData.append('message', notification.replyMessage);
+            formData.append('senderModel', "User");
+            formData.append('receiverModel', "Doctor");
+
+            const response = await sendUserMessage(formData, authToken);
+            console.log("Reply sent successfully:", response);
+
+            setNotifications(notifications.map(notif =>
+                notif._id === notification._id
+                    ? { ...notif, replyMessage: '' }
+                    : notif
+            ));
+            setError(null);
+        } catch (err) {
+            console.error("Error sending reply:", err.message);
+            setError(`Unable to send reply: ${err.message}`);
+        }
+    };
+
     if (loading) return <Typography>Loading...</Typography>;
     if (error) return <Typography>Error: {error}</Typography>;
 
@@ -208,6 +244,25 @@ function Notification() {
                             >
                                 Delete
                             </Button>
+
+                            {/* 回复功能 */}
+                            <Box sx={{ marginTop: '10px' }}>
+                                <TextField
+                                    label="Reply"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={notification.replyMessage || ''}
+                                    onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
+                                    sx={{ marginBottom: '10px' }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                                    onClick={() => handleSendReply(notification)}
+                                >
+                                    Send Reply
+                                </Button>
+                            </Box>
                         </Box>
                     ))
                 ) : (
@@ -319,7 +374,9 @@ function Block({ title, isOpen, onClick, children }) {
         >
             <Typography variant="h6" sx={{ marginBottom: '10px' }}>{title}</Typography>
             <Collapse in={isOpen}>
-                {children}
+                <Box onClick={(e) => e.stopPropagation()}>
+                    {children}
+                </Box>
             </Collapse>
         </Box>
     );
