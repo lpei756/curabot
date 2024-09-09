@@ -101,6 +101,7 @@ function AdminNotification() {
     const handleBackToAdminPanel = () => {
         navigate('/admin/panel');
     };
+
     const handleMarkAsRead = async (notificationId) => {
         try {
             console.log("Marking notification as read, ID:", notificationId);
@@ -145,6 +146,42 @@ function AdminNotification() {
             setPdfFile(file);
         } else {
             console.error('No file selected.');
+        }
+    };
+
+    const handleReplyMessageChange = (notificationId, message) => {
+        setNotifications(notifications.map(notification =>
+            notification._id === notificationId
+                ? { ...notification, replyMessage: message }
+                : notification
+        ));
+    };
+
+    const handleSendReply = async (notification) => {
+        try {
+            if (!notification.replyMessage) {
+                setError("Reply message cannot be empty.");
+                return;
+            }
+            const formData = new FormData();
+            formData.append('senderId', adminId);
+            formData.append('receiverId', notification.sender);
+            formData.append('message', notification.replyMessage);
+            formData.append('senderModel', "Doctor");
+            formData.append('receiverModel', "User");
+
+            const response = await sendDoctorMessage(formData, adminToken);
+            console.log("Reply sent successfully:", response);
+
+            setNotifications(notifications.map(notif =>
+                notif._id === notification._id
+                    ? { ...notif, replyMessage: '' }
+                    : notif
+            ));
+            setError(null);
+        } catch (err) {
+            console.error("Error sending reply:", err.message);
+            setError(`Unable to send reply: ${err.message}`);
         }
     };
 
@@ -200,6 +237,24 @@ function AdminNotification() {
                             >
                                 Delete
                             </Button>
+
+                            <Box sx={{ marginTop: '10px' }}>
+                                <TextField
+                                    label="Reply"
+                                    variant="outlined"
+                                    fullWidth
+                                    value={notification.replyMessage || ''}
+                                    onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
+                                    sx={{ marginBottom: '10px' }}
+                                />
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                                    onClick={() => handleSendReply(notification)}
+                                >
+                                    Send Reply
+                                </Button>
+                            </Box>
                         </Box>
                     ))
                 ) : (
@@ -312,7 +367,9 @@ function Block({ title, isOpen, onClick, children }) {
         >
             <Typography variant="h6" sx={{ marginBottom: '10px' }}>{title}</Typography>
             <Collapse in={isOpen}>
-                {children}
+                <Box onClick={(e) => e.stopPropagation()}>
+                    {children}
+                </Box>
             </Collapse>
         </Box>
     );
