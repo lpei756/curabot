@@ -26,6 +26,7 @@ import Dashboard from './components/dashboard/Dashboard';
 import TestResultPage from './components/testresult/TestResult';
 import AdminTestResultsPage from './components/admin/AdminTestResult';
 import AdminTestResultDetailPage from './components/admin/AdminTestResultDeatil';
+import Prescription from './components/admin/Prescription.jsx';
 
 function App() {
     return (
@@ -56,6 +57,7 @@ function App() {
                                 <Route path="/map" element={<ClinicMap />} />
                                 <Route path="/dashboard" element={<Dashboard />} />
                                 <Route path="/test-result" element={<TestResultPage />} />
+                                <Route path="/admin/:adminId/prescription" element={<Prescription />} />
                             </Routes>
                         </div>
                     </Router>
@@ -87,7 +89,7 @@ const ChatbotButtonAndComponent = () => {
                         backgroundColor: '#03035d'
                     },
                     '&:focus': {
-                        outline: 'none', 
+                        outline: 'none',
                     },
                     padding: '16px',
                     borderRadius: '50%',

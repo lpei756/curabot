@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/notificationService.js';
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification, generatePrescription } from '../../services/notificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
@@ -96,6 +96,10 @@ function AdminNotification() {
             console.error("Error sending message:", err.message);
             setError(`Unable to send message: ${err.message}`);
         }
+    };
+
+    const handleRepeatPrescription = (patient) => {
+        navigate('/admin//:adminId/prescription', { state: { patient } });
     };
 
     const handleBackToAdminPanel = () => {
@@ -237,6 +241,17 @@ function AdminNotification() {
                             >
                                 Delete
                             </Button>
+
+                            {/* 如果通知包含“Can you please repeat this prescription”时显示 "sent repeat" 按钮 */}
+                            {notification.message.includes("repeat") && (
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
+                                    onClick={() => handleRepeatPrescription(notification.patient)}
+                                >
+                                    sent repeat
+                                </Button>
+                            )}
 
                             <Box sx={{ marginTop: '10px' }}>
                                 <TextField

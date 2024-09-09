@@ -121,3 +121,22 @@ export const deleteNotification = async (notificationId) => {
         throw new Error(`Unable to delete notification: ${error.message}`);
     }
 };
+
+export const generatePrescription = async (formData, adminToken) => {
+    try {
+        const url = API_PATH.notification.generatePrescription;
+        console.log('Generating prescription to URL:', url);
+        console.log('FormData content:', Object.fromEntries(formData.entries()));
+        const response = await axiosApiInstance.post(url, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${adminToken}`
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error generating prescription:', error.message);
+        throw new Error(`Unable to generate prescription: ${error.message}`);
+    }
+};
+
