@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Box, Typography, List, ListItem, TextField } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import PDFViewer from './PDFViewer';
 import { fetchTestResults } from '../../services/testResultService';
@@ -9,6 +8,27 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import '../../App.css';
+
+const renderAnalysisText = (text) => {
+    const sections = text.split('\n\n');
+    return sections.map((section, index) => {
+        const [title, ...contentLines] = section.split('\n');
+        return (
+            <Box key={index} sx={{ marginBottom: 1 }}>
+                <Typography variant="body1">
+                    {title}
+                </Typography>
+                <List>
+                    {contentLines.map((line, i) => (
+                        <ListItem key={i}>
+                            <Typography variant="body1">{line}</Typography>
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+        );
+    });
+};
 
 function TestResultsPage() {
     const [testResults, setTestResults] = useState([]);
@@ -140,8 +160,8 @@ function TestResultsPage() {
                                 </Typography>
                                 <Typography variant="body1" sx={{ marginTop: 2 }}>
                                     <strong style={{ color: '#03035d' }}>Analysis:</strong>
+                                    {renderAnalysisText(selectedResult.analysis)}
                                     <br></br>
-                                    {selectedResult.analysis}
                                 </Typography>
                             </Box>
                         </Box>

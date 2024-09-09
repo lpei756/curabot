@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import { Box, Typography, List, ListItem, TextField } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
 import PDFViewer from '../testresult/PDFViewer';
 import { fetchTestResultById, editTestResult, approveTestResult } from '../../services/testResultService';
@@ -9,6 +8,27 @@ import { AdminContext } from '../../context/AdminContext';
 import { fetchPatientbyID } from '../../services/AdminService';
 import Button from '@mui/material/Button';
 import '../../App.css';
+
+const renderAnalysisText = (text) => {
+    const sections = text.split('\n\n');
+    return sections.map((section, index) => {
+        const [title, ...contentLines] = section.split('\n');
+        return (
+            <Box key={index} sx={{ marginBottom: 1 }}>
+                <Typography variant="body1">
+                    {title}
+                </Typography>
+                <List>
+                    {contentLines.map((line, i) => (
+                        <ListItem key={i}>
+                            <Typography variant="body1">{line}</Typography>
+                        </ListItem>
+                    ))}
+                </List>
+            </Box>
+        );
+    });
+};
 
 function AdminTestResultDetailPage() {
     const { id } = useParams();
@@ -141,20 +161,25 @@ function AdminTestResultDetailPage() {
                             <strong style={{ color: '#03035d' }}>Analysis:</strong>
                             <br />
                             {isEditing ? (
-                                <textarea
+                                <TextField
                                     value={modalContent.analysis}
                                     onChange={(e) => setModalContent({ ...modalContent, analysis: e.target.value })}
-                                    rows={4}
-                                    style={{ width: '100%', height: '400px' }}
+                                    multiline
+                                    rows={10}
+                                    fullWidth
+                                    variant="outlined"
+                                    sx={{ marginTop: 1 }}
                                 />
                             ) : (
-                                <span>{testResult.analysis}</span>
+                                <Box sx={{ marginTop: 1 }}>
+                                    {renderAnalysisText(testResult.analysis)}
+                                </Box>
                             )}
                         </Typography>
                     </Box>
                 </Box>
             )}
-            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 10 }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 5 }}>
                 {role === 'doctor' && (
                     <>
                         <Button

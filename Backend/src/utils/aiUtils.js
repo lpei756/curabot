@@ -16,24 +16,28 @@ export const generateAnalysis = async (pdfText, patientId) => {
         const { medicalHistory } = patient;
 
         const analysisPrompt = `
-        Analyze the following test result:
+        Analyze the following test result and provide a clear, structured report using bullet points. Each section should be organized with bullet points for easy reading. 
+
+        Test Result:
         ${pdfText}
   
         Patient's Medical History:
-        - Chronic Diseases: ${medicalHistory.chronicDiseases}
-        - Past Surgeries: ${medicalHistory.pastSurgeries}
-        - Family Medical History: ${medicalHistory.familyMedicalHistory}
-        - Medication List: ${medicalHistory.medicationList}
-        - Allergies: ${medicalHistory.allergies}
-  
-        Provide a detailed analysis based on the test result and medical history.`;
+        - Chronic Diseases: ${medicalHistory.chronicDiseases || 'Not available'}
+        - Past Surgeries: ${medicalHistory.pastSurgeries || 'Not available'}
+        - Family Medical History: ${medicalHistory.familyMedicalHistory || 'Not available'}
+        - Medication List: ${medicalHistory.medicationList || 'Not available'}
+        - Allergies: ${medicalHistory.allergies || 'Not available'}
 
+        NOTED only generate the analysis, don't need any other.
+  
+        Use simple language and avoid medical jargon where possible.`;
+        
         const response = await openai.chat.completions.create({
             model: 'gpt-4',
             messages: [
                 {
                     role: 'system',
-                    content: 'Generate a detailed analysis of the test result based on the patient’s medical history and the text extracted from the PDF. Please note that only analysis is required, no recommendations need to be made. ONLY analyse the test result, do not make any opinion on it.'
+                    content: 'Generate a clear and structured analysis of the test result based on the patient’s medical history. Use bullet points for analysis. Ensure the language is simple and easy to understand. ONLY ANALYSIS, NO OTHER THINGS ARE NEEDED.'
                 },
                 {
                     role: 'user',
