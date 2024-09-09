@@ -77,7 +77,6 @@ function ChatBot({ }) {
     const { userId } = useContext(AuthContext);
     const [doctorAvailability, setDoctorAvailability] = useState(null);
 
-
     const quickChats = [
         "How can I book a new appointment",
         "How do I cancel my appointment",
@@ -339,8 +338,27 @@ function ChatBot({ }) {
     };
 
     const handleSearchChange = (event) => {
-        setSearchTerm(event.target.value);
-    };
+        const searchTerm = event.target.value.toLowerCase();
+        setSearchTerm(searchTerm);
+    
+        if (searchTerm.trim() === '') {
+            // When search is cleared, display sessions by date again
+            setRecentChatSessions(groupMessagesByDate(recentChatSessions));
+            return;
+        }
+    
+        // Filter chat histories based on search term
+        const filteredSessions = Object.keys(recentChatSessions).reduce((acc, date) => {
+            const filteredMessages = recentChatSessions[date].filter((msg) => msg.message.toLowerCase().includes(searchTerm));
+            if (filteredMessages.length > 0) {
+                acc[date] = filteredMessages;
+            }
+            return acc;
+        }, {});
+    
+        // Group the filtered sessions by date
+        setRecentChatSessions(filteredSessions);
+    };    
 
     return (
         <>
@@ -377,33 +395,40 @@ function ChatBot({ }) {
                         />
                     </AppBar>
                     <List>
-                        {Object.keys(recentChatSessions).map((date, index) => (
-                            <ListItem
-                                key={index}
-                                onClick={() => showChatHistoryForDate(date)}
-                                sx={{
-                                    bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
-                                    transition: 'background-color 0.3s ease',
-                                    '&:hover': {
-                                        bgcolor: '#68cde6',
-                                        '& .MuiListItemText-primary': {
-                                            color: 'white',
-                                        },
-                                    },
-                                    borderRadius: '8px',
-                                    mb: 1,
-                                }}
-                            >
-                                <ListItemText
-                                    primary={date}
-                                    sx={{
-                                        color: selectedSessionId === date ? 'white' : 'black',
-                                        transition: 'color 0.3s ease',
-                                    }}
-                                />
-                            </ListItem>
-                        ))}
-                    </List>
+    {Object.keys(recentChatSessions).length === 0 ? (
+        <Typography variant="body2" color="textSecondary" align="center">
+            No results found for "{searchTerm}"
+        </Typography>
+    ) : (
+        Object.keys(recentChatSessions).map((date, index) => (
+            <ListItem
+                key={index}
+                onClick={() => showChatHistoryForDate(date)}
+                sx={{
+                    bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
+                    transition: 'background-color 0.3s ease',
+                    '&:hover': {
+                        bgcolor: selectedSessionId === date ? '#03035D' : '#68cde6',
+                        '& .MuiListItemText-primary': {
+                            color: 'white',
+                        },
+                    },
+                    borderRadius: '8px',
+                    mb: 1,
+                }}
+            >
+                <ListItemText
+                    primary={date}
+                    sx={{
+                        color: selectedSessionId === date ? 'white' : 'black',
+                        transition: 'color 0.3s ease',
+                    }}
+                />
+            </ListItem>
+        ))
+    )}
+</List>
+
                 </DrawerContainer>
             )}
 
