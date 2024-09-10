@@ -80,31 +80,14 @@ export const sendUserMessage = async (formData, authToken) => {
     }
 };
 
-// export const sendDoctorMessage = async (formData, adminToken) => {
-//     try {
-//         const url = API_PATH.notification.sendMessage;
-//         console.log('Sending doctor message to URL:', url);
-//         console.log('FormData content:', Object.fromEntries(formData.entries()));
-//         const response = await axiosApiInstance.post(url, formData, {
-//             headers: {
-//                 'Content-Type': 'multipart/form-data',
-//                 'Authorization': `Bearer ${adminToken}`
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error sending doctor message:', error.message);
-//         throw new Error(`Unable to send message: ${error.message}`);
-//     }
-// };
-export const sendDoctorMessage = async (data, adminToken) => {
+export const sendDoctorMessage = async (formData, adminToken) => {
     try {
         const url = API_PATH.notification.sendMessage;
         console.log('Sending doctor message to URL:', url);
-        console.log('Data content:', data);
-        const response = await axiosApiInstance.post(url, data, {
+        console.log('FormData content:', Object.fromEntries(formData.entries()));
+        const response = await axiosApiInstance.post(url, formData, {
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'multipart/form-data',
                 'Authorization': `Bearer ${adminToken}`
             },
         });
@@ -114,6 +97,23 @@ export const sendDoctorMessage = async (data, adminToken) => {
         throw new Error(`Unable to send message: ${error.message}`);
     }
 };
+// export const sendDoctorMessage = async (data, adminToken) => {
+//     try {
+//         const url = API_PATH.notification.sendMessage;
+//         console.log('Sending doctor message to URL:', url);
+//         console.log('Data content:', data);
+//         const response = await axiosApiInstance.post(url, data, {
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 'Authorization': `Bearer ${adminToken}`
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error sending doctor message:', error.message);
+//         throw new Error(`Unable to send message: ${error.message}`);
+//     }
+// };
 
 export const markNotificationAsRead = async (notificationId) => {
     try {
