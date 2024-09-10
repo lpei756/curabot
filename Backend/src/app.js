@@ -8,6 +8,7 @@ import doctorRoutes from "./routes/doctorRoutes.js";
 import chatRoutes from './routes/chatRoutes.js';
 import imageRoutes from "./routes/imageRoutes.js";
 import adminRoutes from './routes/adminRoutes.js';
+import prescriptionsRoutes from './routes/prescriptionRoutes.js'
 import notificationRoutes from './routes/notificationRoutes.js';
 import doctorAvailabilityRoutes from './routes/doctorAvailabilityRoutes.js';
 import feedbackRoutes from './routes/feedbackRoutes.js';
@@ -35,7 +36,8 @@ app.use('/api', adminRoutes);
 app.use('/api', notificationRoutes);
 app.use('/api/doctor-availability', doctorAvailabilityRoutes);
 app.use('/api/feedback', feedbackRoutes);
-app.use('/api/test-result', testresultRoutes)
+app.use('/api/test-result', testresultRoutes);
+app.use('/api/prescriptions', prescriptionsRoutes);
 
 app.post('/api/feedback', (req, res) => {
     const { messageId, feedback } = req.body;
