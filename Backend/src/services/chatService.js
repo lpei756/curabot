@@ -2,6 +2,7 @@ import axios from 'axios';
 import OpenAI from 'openai';
 import ChatSession from '../models/ChatSession.js';
 import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
+import ClinicModel from '../models/Clinic.js';
 import { geocodeAddress, haversineDistance } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
 import { getClinicByIdService } from '../services/clinicService.js';
@@ -237,5 +238,61 @@ export const identifySpecialisation = async (symptoms, userLocation) => {
     } catch (error) {
         console.error('Error identifying specialisation:', error);
         throw new Error('Error identifying specialisation');
+    }
+};
+
+export const findClinicDetailsUsingNLP = async (userMessage) => {
+    try {
+        const openAIResponse = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Extract clinic-related information from the following message. Return a JSON object with the location, service type, and requested contact info. If any information is missing or unclear, return null for that field.'
+                },
+                {
+                    role: 'user',
+                    content: userMessage
+                }
+            ],
+        });
+
+        const messageContent = openAIResponse.choices[0].message.content.trim();
+
+        let location = null;
+        try {
+            const parsedResult = JSON.parse(messageContent);
+            location = parsedResult.location || null;
+        } catch (e) {
+            console.error('Error parsing result:', e);
+            console.error('Raw result:', messageContent);
+        }
+
+        if (!location) {
+            return { response: 'Could not detect the location from your query. Please try again.' };
+        }
+
+        const query = { address: new RegExp(location, 'i') };
+        let clinics = [];
+        try {
+            clinics = await ClinicModel.find(query);
+        } catch (error) {
+            console.error('Error querying clinic database:', error);
+            return { response: 'Error retrieving clinic details from the database.' };
+        }
+
+        if (!clinics.length) {
+            return { response: `No clinics found in ${location}.` };
+        }
+
+        let clinicResponses = `The clinics in ${location} are listed below:<br/><br/>`;
+        clinics.forEach(clinic => {
+            clinicResponses += `Name: ${clinic.name}<br/>Address: ${clinic.address}<br/><br/>`;
+        });
+
+        return { responses: [clinicResponses] };
+    } catch (error) {
+        console.error('Error processing clinic details:', error);
+        throw new Error('Error processing clinic details');
     }
 };
