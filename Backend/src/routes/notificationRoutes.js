@@ -28,6 +28,5 @@ router.get(NOTIFICATION_PATHS.getUserNotifications, authenticate, schemaValidato
 router.get(NOTIFICATION_PATHS.getAdminNotifications, authenticate, schemaValidator(notificationPathBase.getAdminNotifications), getAdminNotifications);
 router.put(NOTIFICATION_PATHS.markAsRead, authenticate, schemaValidator(notificationPathBase.markAsRead), markAsRead);
 router.delete(NOTIFICATION_PATHS.delete, authenticate, deleteNotification);
-router.post(NOTIFICATION_PATHS.generatePrescription, authenticate, schemaValidator(notificationPathBase.generatePrescription), generatePrescription);
-
+router.post(NOTIFICATION_PATHS.generatePrescription, authenticate, generatePrescription);
 export default router;

@@ -1,12 +1,12 @@
 import { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Typography, TextField, Button } from '@mui/material';
-import { sendDoctorMessage } from '../../services/NotificationService';
+import { generatePrescription } from '../../services/NotificationService';
 import { fetchMe } from '../../services/AdminService';
 import { AdminContext } from '../../context/AdminContext';
 
 const Prescription = () => {
-    const { adminId } = useContext(AdminContext);
+    const { adminId, adminToken } = useContext(AdminContext);
     const location = useLocation();
     const { patient } = location.state || {};
     const [prescriptionData, setPrescriptionData] = useState({
@@ -51,23 +51,20 @@ const Prescription = () => {
 
         if (prescriptionData.doctorName && prescriptionData.medications && prescriptionData.instructions) {
             const { doctorName, medications, instructions } = prescriptionData;
-
-            const formData = new FormData();
-            formData.append(
-                'message',
-                `Prescription created by Dr. ${doctorName}: Medications - ${medications}, Instructions - ${instructions}`
-            );
-            formData.append('senderId', adminId);
-            formData.append('senderModel', 'Doctor');
-            formData.append('receiverId', patient._id);
-            formData.append('receiverModel', 'User');
+            const data = {
+                doctorId: adminId,
+                userId: patient._id,
+                medications,
+                instructions,
+                doctorName,
+            };
 
             try {
-                await sendDoctorMessage(formData);
-                alert('Prescription sent to patient!');
+                await generatePrescription(data, adminToken);
+                alert('Prescription saved and notification sent successfully!');
             } catch (error) {
-                console.error('Error sending prescription notification:', error);
-                setError('Failed to send prescription. Please try again.');
+                console.error('Error processing prescription or sending notification:', error);
+                setError('Failed to save prescription or send notification. Please try again.');
             }
         } else {
             setError('Please fill in all fields');
