@@ -139,8 +139,6 @@ export const deleteNotification = async (notificationId) => {
     }
 };
 
-
-
 export const generatePrescription = async (data, adminToken) => {
     try {
         const url = API_PATH.notification.generatePrescription;

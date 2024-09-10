@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification, generatePrescription } from '../../services/notificationService.js';
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/notificationService.js';
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
@@ -99,8 +99,14 @@ function AdminNotification() {
     };
 
     const handleRepeatPrescription = (patient) => {
-        navigate('/admin//:adminId/prescription', { state: { patient } });
+        if (patient && patient._id) {
+            console.log("Navigating to prescription page with patient:", patient);
+            navigate(`/admin/${adminId}/prescription`, { state: { patient } });
+        } else {
+            console.error("Patient information is missing or incomplete");
+        }
     };
+
 
     const handleBackToAdminPanel = () => {
         navigate('/admin/panel');
@@ -242,7 +248,6 @@ function AdminNotification() {
                                 Delete
                             </Button>
 
-                            {/* 如果通知包含“Can you please repeat this prescription”时显示 "sent repeat" 按钮 */}
                             {notification.message.includes("repeat") && (
                                 <Button
                                     variant="contained"
@@ -252,6 +257,7 @@ function AdminNotification() {
                                     sent repeat
                                 </Button>
                             )}
+
 
                             <Box sx={{ marginTop: '10px' }}>
                                 <TextField
