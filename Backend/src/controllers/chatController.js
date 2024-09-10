@@ -1,7 +1,7 @@
 import leven from 'leven';
-import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP } from '../services/chatService.js';
+import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP, findClinicDetailsUsingNLP } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
-import { getAllAvailableSlots, findNearestSlot, getAvailabilityByDoctorID } from '../services/doctorAvailabilityService.js';
+import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
@@ -63,6 +63,17 @@ export const handleChat = async (req, res) => {
       sessionId,
       { $push: { messages: { sender: 'user', message: userMessage, isAnonymous } } }
     );
+
+    const clinicResponse = await findClinicDetailsUsingNLP(userMessage);
+    if (clinicResponse && clinicResponse.responses && clinicResponse.responses.length > 0) {
+      console.log('Clinic Response:', clinicResponse);
+      const responses = clinicResponse.responses.join('<br/>');
+      await ChatSession.findByIdAndUpdate(
+        sessionId,
+        { $push: { messages: { sender: 'bot', message: responses, isAnonymous } } }
+      );
+      return res.json({ reply: responses, sessionId });
+    }
 
     const appointmentRequestKeywords = [
       'show my appointments',
