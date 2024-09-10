@@ -89,3 +89,7 @@ export const TEST_RESULT_PATHS = {
   edit: '/:testResultId/edit',
   all: '/all/results'
 };
+
+export const PRESCRIPTION_PATHS = {
+  read: '/all'
+};
