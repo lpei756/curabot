@@ -82,7 +82,7 @@ function Notification() {
             }
             const formData = new FormData();
             formData.append('senderId', userId);
-            formData.append('receiverId', doctorId);
+            formData.append('receiverId', doctorId); // 确保这里的 doctorId 正确传递
             formData.append('message', messageContent);
             formData.append('senderModel', "User");
             formData.append('receiverModel', "Doctor");
@@ -306,7 +306,7 @@ function Notification() {
                         value={selectedDoctor}
                         onChange={(e) => {
                             console.log("Doctor selected:", e.target.value);
-                            setSelectedDoctor(e.target.value);
+                            setSelectedDoctor(e.target.value);  // 确保这里的 `selectedDoctor` 被正确设置
                         }}
                         label="Select Doctor"
                     >
@@ -344,10 +344,11 @@ function Notification() {
                 <Button
                     variant="contained"
                     sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                    onClick={handleSendMessage}
+                    onClick={() => handleSendMessage(newMessage, selectedDoctor)}  // 确保 `selectedDoctor` 被正确传递
                 >
                     Send Message
                 </Button>
+
                 {expandedBlock === 'sentMessage' && (
                     <Typography sx={{ marginTop: '10px', color: 'green' }}>Message sent successfully!</Typography>
                 )}
