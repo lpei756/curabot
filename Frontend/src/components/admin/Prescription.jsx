@@ -18,6 +18,14 @@ const Prescription = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (patient && patient._id) {
+            console.log("Received patient information:", patient);
+        } else {
+            console.error("Patient information is missing");
+        }
+    }, [patient]);
+
+    useEffect(() => {
         const fetchAdminData = async () => {
             try {
                 const response = await fetchMe();
