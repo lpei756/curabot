@@ -98,12 +98,21 @@ function AdminNotification() {
         }
     };
 
-    const handleRepeatPrescription = (patient) => {
+    const handleRepeatPrescription = (notification) => {
+        console.log("Notification received in handleRepeatPrescription:", notification);
+        let patient = notification.patient;
+
+        // 如果 patient 数据缺失，通过 sender 或 receiver 去加载相关患者信息
+        if (!patient && notification.senderModel === "User") {
+            // 通过 senderId 加载患者信息
+            patient = Patients.find(p => p._id === notification.sender);
+        }
+
         if (patient && patient._id) {
             console.log("Navigating to prescription page with patient:", patient);
             navigate(`/admin/${adminId}/prescription`, { state: { patient } });
         } else {
-            console.error("Patient information is missing or incomplete");
+            console.error("Patient information is missing or incomplete", notification);
         }
     };
 
@@ -218,66 +227,68 @@ function AdminNotification() {
                 onClick={() => toggleBlock('receivedNotifications')}
             >
                 {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                        <Box key={notification._id} sx={{ marginBottom: '10px' }}>
-                            <Typography><strong>From:</strong> {notification.senderName}</Typography>
-                            <Typography><strong>Message:</strong> {notification.message}</Typography>
-                            <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
-                            {notification.pdfFile && (
-                                <Button
-                                    variant="outlined"
-                                    sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
-                                    onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
-                                >
-                                    View PDF
-                                </Button>
-                            )}
-                            <Button
-                                variant="contained"
-                                sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
-                                disabled={notification.isRead}
-                                onClick={() => handleMarkAsRead(notification._id)}
-                            >
-                                {notification.isRead ? 'Read' : 'Mark as Read'}
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                sx={{ borderColor: '#ff0000', color: '#ff0000' }}
-                                onClick={() => handleDeleteNotification(notification._id)}
-                            >
-                                Delete
-                            </Button>
-
-                            {notification.message.includes("repeat") && (
+                    notifications.map((notification) => {
+                        console.log("Rendering notification:", notification);
+                        return (
+                            <Box key={notification._id} sx={{ marginBottom: '10px' }}>
+                                <Typography><strong>From:</strong> {notification.senderName}</Typography>
+                                <Typography><strong>Message:</strong> {notification.message}</Typography>
+                                <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
+                                {notification.pdfFile && (
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
+                                        onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
+                                    >
+                                        View PDF
+                                    </Button>
+                                )}
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
-                                    onClick={() => handleRepeatPrescription(notification.patient)}
+                                    sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
+                                    disabled={notification.isRead}
+                                    onClick={() => handleMarkAsRead(notification._id)}
                                 >
-                                    sent repeat
+                                    {notification.isRead ? 'Read' : 'Mark as Read'}
                                 </Button>
-                            )}
-
-
-                            <Box sx={{ marginTop: '10px' }}>
-                                <TextField
-                                    label="Reply"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={notification.replyMessage || ''}
-                                    onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
-                                    sx={{ marginBottom: '10px' }}
-                                />
                                 <Button
-                                    variant="contained"
-                                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                                    onClick={() => handleSendReply(notification)}
+                                    variant="outlined"
+                                    sx={{ borderColor: '#ff0000', color: '#ff0000' }}
+                                    onClick={() => handleDeleteNotification(notification._id)}
                                 >
-                                    Send Reply
+                                    Delete
                                 </Button>
+
+                                {notification.message.includes("repeat") && (
+                                    <Button
+                                        variant="contained"
+                                        sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
+                                        onClick={() => handleRepeatPrescription(notification)}
+                                    >
+                                        sent repeat
+                                    </Button>
+                                )}
+
+                                <Box sx={{ marginTop: '10px' }}>
+                                    <TextField
+                                        label="Reply"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={notification.replyMessage || ''}
+                                        onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
+                                        sx={{ marginBottom: '10px' }}
+                                    />
+                                    <Button
+                                        variant="contained"
+                                        sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                                        onClick={() => handleSendReply(notification)}
+                                    >
+                                        Send Reply
+                                    </Button>
+                                </Box>
                             </Box>
-                        </Box>
-                    ))
+                        );
+                    })
                 ) : (
                     <Typography>No notifications received.</Typography>
                 )}
