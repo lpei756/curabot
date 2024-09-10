@@ -27,6 +27,7 @@ import TestResultPage from './components/testresult/TestResult';
 import AdminTestResultsPage from './components/admin/AdminTestResult';
 import AdminTestResultDetailPage from './components/admin/AdminTestResultDeatil';
 import Prescription from './components/admin/Prescription.jsx';
+import Prescriptions from './components/prescriptions/Prescriptions';
 
 function App() {
     return (
@@ -50,6 +51,7 @@ function App() {
                                 <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                                 <Route path="/admin/:adminId" element={<ReadAdmin />} />
                                 <Route path="/user" element={<ReadUser />} />
+                                <Route path="/prescriptions" element={<Prescriptions />} />
                                 <Route path="/appointment" element={<AppointmentList />} />
                                 <Route path="/notification" element={<Notification />} />
                                 <Route path="/appointment/:appointmentID/update" element={<UpdateAppointment />} />

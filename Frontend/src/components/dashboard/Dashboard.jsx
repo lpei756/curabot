@@ -6,6 +6,7 @@ import { fetchUserAppointments } from '../../services/appointmentService';
 import { fetchTestResults } from '../../services/testResultService';
 import { getDoctorById } from '../../services/doctorService';
 import { getClinicById } from '../../services/clinicService';
+import { getAllPrescriptions } from '../../services/prescriptionService';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import profileAnimationData from '../../assets/Profile.json';
@@ -21,6 +22,7 @@ const Dashboard = () => {
     const [userData, setUserData] = useState(null);
     const [appointments, setAppointments] = useState([]);
     const [testResults, setTestResults] = useState([]);
+    const [prescriptions, setPrescriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedDate, setSelectedDate] = useState(undefined);
@@ -43,7 +45,7 @@ const Dashboard = () => {
     };
 
     const handlePrescriptionRedirect = () => {
-        navigate('/');
+        navigate('/prescriptions');
     };
 
     useEffect(() => {
@@ -99,6 +101,23 @@ const Dashboard = () => {
                     })
                 );
                 setDoctorNames(doctorIdMap);
+
+                const prescriptionsResponse = await getAllPrescriptions();
+                console.log('API Response:', prescriptionsResponse);
+
+                const filteredPrescriptions = prescriptionsResponse.filter(prescription => prescription.createdAt);
+                console.log('Filtered Prescriptions:', filteredPrescriptions);
+
+                const sortedPrescriptions = filteredPrescriptions.sort((a, b) => {
+                    const dateA = new Date(a.createdAt);
+                    const dateB = new Date(b.createdAt);
+                    return dateB - dateA; // Sort in descending order
+                });
+                console.log('Sorted Prescriptions:', sortedPrescriptions);
+
+                const latestPrescription = sortedPrescriptions.length > 0 ? sortedPrescriptions[0] : null;
+                setPrescriptions(latestPrescription);
+                console.log('Latest Prescription:', latestPrescription);
 
             } catch (err) {
                 setError(err.message || 'An unexpected error occurred');
@@ -503,7 +522,24 @@ const Dashboard = () => {
                                     backgroundColor: '#03035d'
                                 }}
                             />
-                            {/* Add your prescription content here */}
+                            {prescriptions ? (
+                                <Box sx={{ marginBottom: '10px', color: 'black' }}>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px', marginBottom: '10px' }}>
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>Medication:</Typography>
+                                        <Typography variant="body1">{prescriptions.medications}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>Prescribed by:</Typography>
+                                        <Typography variant="body1">{prescriptions.doctorName || 'Unknown Doctor'}</Typography>
+                                    </Box>
+                                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: '#03035d' }}>Date:</Typography>
+                                        <Typography variant="body1">{prescriptions.createdAt ? new Date(prescriptions.createdAt).toLocaleDateString() : 'No Date Available'}</Typography>
+                                    </Box>
+                                </Box>
+                            ) : (
+                                <Typography sx={{ color: 'black' }}>No prescriptions available</Typography>
+                            )}
                         </Box>
                     </Box>
                 </Box>
