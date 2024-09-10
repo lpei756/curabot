@@ -80,14 +80,31 @@ export const sendUserMessage = async (formData, authToken) => {
     }
 };
 
-export const sendDoctorMessage = async (formData, adminToken) => {
+// export const sendDoctorMessage = async (formData, adminToken) => {
+//     try {
+//         const url = API_PATH.notification.sendMessage;
+//         console.log('Sending doctor message to URL:', url);
+//         console.log('FormData content:', Object.fromEntries(formData.entries()));
+//         const response = await axiosApiInstance.post(url, formData, {
+//             headers: {
+//                 'Content-Type': 'multipart/form-data',
+//                 'Authorization': `Bearer ${adminToken}`
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         console.error('Error sending doctor message:', error.message);
+//         throw new Error(`Unable to send message: ${error.message}`);
+//     }
+// };
+export const sendDoctorMessage = async (data, adminToken) => {
     try {
         const url = API_PATH.notification.sendMessage;
         console.log('Sending doctor message to URL:', url);
-        console.log('FormData content:', Object.fromEntries(formData.entries()));
-        const response = await axiosApiInstance.post(url, formData, {
+        console.log('Data content:', data);
+        const response = await axiosApiInstance.post(url, data, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${adminToken}`
             },
         });
@@ -122,14 +139,16 @@ export const deleteNotification = async (notificationId) => {
     }
 };
 
-export const generatePrescription = async (formData, adminToken) => {
+
+
+export const generatePrescription = async (data, adminToken) => {
     try {
         const url = API_PATH.notification.generatePrescription;
         console.log('Generating prescription to URL:', url);
-        console.log('FormData content:', Object.fromEntries(formData.entries()));
-        const response = await axiosApiInstance.post(url, formData, {
+        console.log('Data content:', data);
+        const response = await axiosApiInstance.post(url, data, {
             headers: {
-                'Content-Type': 'multipart/form-data',
+                'Content-Type': 'application/json',
                 'Authorization': `Bearer ${adminToken}`
             },
         });
@@ -139,4 +158,7 @@ export const generatePrescription = async (formData, adminToken) => {
         throw new Error(`Unable to generate prescription: ${error.message}`);
     }
 };
+
+
+
 

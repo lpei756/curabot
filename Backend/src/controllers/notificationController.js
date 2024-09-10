@@ -3,7 +3,11 @@ import {
     getNotifications as getNotificationsService,
     markAsRead as markAsReadService,
     deleteNotification as deleteNotificationService,
+    generatePrescription as generatePrescriptionService,
 } from '../services/notificationService.js';
+import Admin from '../models/Admin.js';
+import Doctor from '../models/Doctor.js';
+
 
 export const sendMessage = async (req, res) => {
     try {
@@ -63,21 +67,19 @@ export const getAdminNotifications = async (req, res) => {
         const { adminId } = req.params;
         const { receiverModel } = req.query;
 
-        // 确定是否需要检查Admin集合
-        let actualId = adminId; // 默认使用传入的ID
+        let actualId = adminId;
         if (receiverModel === 'Doctor') {
             const admin = await Admin.findOne({ _id: adminId, role: 'doctor' });
             if (admin) {
-                actualId = admin._id; // 如果admin存在且角色为doctor
+                actualId = admin._id;
             } else {
                 const doctor = await Doctor.findById(adminId);
                 if (!doctor) {
                     return res.status(404).json({ message: "Doctor not found" });
                 }
-                actualId = doctor._id; // 使用Doctor集合中的ID
+                actualId = doctor._id;
             }
         }
-
         const notifications = await getNotificationsService(actualId, receiverModel || 'Doctor');
         console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${actualId}`);
         res.status(200).json({ notifications });
@@ -124,33 +126,35 @@ export const deleteNotification = async (req, res) => {
 export const generatePrescription = async (req, res) => {
     try {
         console.log('Prescription request received:', req.body);
-        const { doctorId, patientId, medications, instructions } = req.body;
-        if (!doctorId || !patientId || !medications || !instructions) {
+        const { doctorId, userId, medications, instructions } = req.body;
+        if (!doctorId || !userId || !medications || !instructions) {
             return res.status(400).json({
                 status: "failed",
                 error: "Invalid request. Missing required fields.",
                 fields: {
                     doctorId: doctorId ? undefined : "doctorId is required",
-                    patientId: patientId ? undefined : "patientId is required",
+                    userId: userId ? undefined : "userId is required",
                     medications: medications ? undefined : "medications are required",
                     instructions: instructions ? undefined : "instructions are required"
                 }
             });
         }
-        const message = `Prescription created by Doctor ${doctorId}: Medications - ${medications}, Instructions - ${instructions}`;
+        const prescription = await generatePrescriptionService({ doctorId, userId, medications, instructions });
+        const message = `Prescription created by Dr. ${prescription.doctorName}: Medications - ${medications}, Instructions - ${instructions}`;
         const notification = await sendMessageService({
-            senderId: doctorId,
-            senderModel: "Doctor",
-            receiverId: patientId,
-            receiverModel: "User",
+            senderId: prescription.doctor,
+            senderModel: 'Doctor',
+            receiverId: prescription.patient,
+            receiverModel: 'User',
             message,
-            notificationType: "prescription"
+            notificationType: 'prescription'
         });
-        console.log('Prescription notification sent successfully:', notification);
-        res.status(201).json({ message: 'Prescription generated successfully', notification });
+        console.log('Prescription and notification sent successfully:', { prescription, notification });
+        res.status(201).json({ message: 'Prescription generated successfully', prescription, notification });
     } catch (error) {
         console.error('Error generating prescription:', error.message);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: `Error generating prescription: ${error.message}` });
     }
 };
+
 

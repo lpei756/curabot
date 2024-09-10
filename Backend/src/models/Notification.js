@@ -12,7 +12,7 @@ const NotificationSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
     notificationType: {
         type: String,
-        enum: ['info', 'warning', 'alert'],
+        enum: ['info', 'warning', 'alert', 'prescription'],
         default: 'info',
     },
     pdfFile: { type: String, required: false },
