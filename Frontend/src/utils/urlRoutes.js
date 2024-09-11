@@ -69,6 +69,7 @@ export const API_PATH = {
     approve: buildApiPath('/api/test-result/:testResultId/approve')
   },
   prescriptions: {
-    getAll: buildApiPath('/api/prescriptions/all')
+    getAll: buildApiPath('/api/prescriptions/all'),
+    getUserPrescriptions: buildApiPath('/api/prescriptions/:userId')
   }
 };
