@@ -105,19 +105,24 @@ const Dashboard = () => {
                 const prescriptionsResponse = await getAllPrescriptions();
                 console.log('API Response:', prescriptionsResponse);
 
-                const filteredPrescriptions = prescriptionsResponse.filter(prescription => prescription.createdAt);
-                console.log('Filtered Prescriptions:', filteredPrescriptions);
+                if (Array.isArray(prescriptionsResponse)) {
+                    const filteredPrescriptions = prescriptionsResponse.filter(prescription => prescription.createdAt);
+                    console.log('Filtered Prescriptions:', filteredPrescriptions);
 
-                const sortedPrescriptions = filteredPrescriptions.sort((a, b) => {
-                    const dateA = new Date(a.createdAt);
-                    const dateB = new Date(b.createdAt);
-                    return dateB - dateA; // Sort in descending order
-                });
-                console.log('Sorted Prescriptions:', sortedPrescriptions);
+                    const sortedPrescriptions = filteredPrescriptions.sort((a, b) => {
+                        const dateA = new Date(a.createdAt);
+                        const dateB = new Date(b.createdAt);
+                        return dateB - dateA;
+                    });
+                    console.log('Sorted Prescriptions:', sortedPrescriptions);
 
-                const latestPrescription = sortedPrescriptions.length > 0 ? sortedPrescriptions[0] : null;
-                setPrescriptions(latestPrescription);
-                console.log('Latest Prescription:', latestPrescription);
+                    const latestPrescription = sortedPrescriptions.length > 0 ? sortedPrescriptions[0] : null;
+                    setPrescriptions(latestPrescription);
+                    console.log('Latest Prescription:', latestPrescription);
+                } else {
+                    console.log('No prescriptions available');
+                    setPrescriptions(null);
+                }
 
             } catch (err) {
                 setError(err.message || 'An unexpected error occurred');

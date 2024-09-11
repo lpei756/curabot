@@ -8,7 +8,12 @@ export const getAllPrescriptions = async (token) => {
                 Authorization: `Bearer ${token}`
             }
         });
-        return response.data;
+
+        if (response.data && response.data.length > 0) {
+            return response.data;
+        } else {
+            return 'No prescriptions available';
+        }
     } catch (error) {
         console.error('Error fetching prescriptions:', error);
         throw error;
