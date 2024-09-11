@@ -105,9 +105,10 @@ function AdminTestResultDetailPage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: 3,
+            padding: 4,
             height: '100vh',
-            overflow: 'auto'
+            overflow: 'auto',
+            marginLeft: '250px'
         }}>
             <Typography variant="h3" sx={{ color: 'black', fontWeight: 'bold', marginBottom: '30px' }}>
                 Test Result Details

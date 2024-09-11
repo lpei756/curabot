@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { fetchMe, fetchAllPatients } from '../../services/AdminService';
-import { fetchAdminNotifications } from '../../services/NotificationService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import Prescription from './Prescription.jsx';
@@ -15,7 +14,6 @@ const AdminPanel = () => {
     const [error, setError] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [selectedPatient, setSelectedPatient] = useState(null);
-    const [unreadCount, setUnreadCount] = useState(0);
     const [showPrescription, setShowPrescription] = useState(false);
     const navigate = useNavigate();
     const { adminId, adminToken } = useContext(AdminContext);
@@ -56,18 +54,7 @@ const AdminPanel = () => {
                 }
             };
 
-            const fetchUnreadNotifications = async () => {
-                try {
-                    const notifications = await fetchAdminNotifications(adminId);
-                    const unreadNotifications = notifications.filter(notification => !notification.isRead);
-                    setUnreadCount(unreadNotifications.length);
-                } catch (err) {
-                    console.error('Error fetching notifications:', err.message);
-                }
-            };
-
             fetchData();
-            fetchUnreadNotifications();
         }
     }, [adminId]);
 
@@ -100,16 +87,8 @@ const AdminPanel = () => {
         }
     };
 
-    const handleNavigateToNotifications = () => {
-        navigate('/admin/panel/adminnotification');
-    };
-
-    const handleNavigateToTestResult = () => {
-        navigate('/admin/panel/test-result');
-    };
-
     return (
-        <Box sx={{ padding: 4 }}>
+        <Box sx={{ padding: 4, marginLeft: '250px' }}>
             <Box
                 sx={{
                     display: 'flex',
@@ -118,36 +97,6 @@ const AdminPanel = () => {
                     mb: 4,
                 }}
             >
-                <Typography variant="h4" component="h1">
-                    Admin Panel
-                </Typography>
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: '#03035d',
-                        color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#03035d',
-                        }
-                    }}
-                    onClick={handleNavigateToNotifications}
-                >
-                    Notifications {unreadCount > 0 ? `(${unreadCount})` : ''}
-                </Button>
-                <Button
-                    variant="contained"
-                    sx={{
-                        backgroundColor: '#03035d',
-                        color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#03035d',
-                        },
-                        marginLeft: '-900px'
-                    }}
-                    onClick={handleNavigateToTestResult}
-                >
-                    Test Results
-                </Button>
             </Box>
 
             {error && (

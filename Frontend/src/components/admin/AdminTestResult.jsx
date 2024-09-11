@@ -54,9 +54,9 @@ function AdminTestResultsPage() {
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            padding: 3,
             height: '100vh',
-            overflow: 'auto'
+            overflow: 'auto',
+            padding: 4
         }}>
             <Typography variant="h3" sx={{ color: 'black', fontWeight: 'bold', marginBottom: '30px' }}>
                 Test Results
