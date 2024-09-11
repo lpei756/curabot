@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Container, CircularProgress } from '@mui/material';
-import { getUserPrescriptions } from '../../services/prescriptionService.js';
+import { getUserPrescriptions } from '../../services/PrescriptionService.js';
 import { AuthContext } from '../../context/AuthContext';
 
 const PrescriptionList = () => {

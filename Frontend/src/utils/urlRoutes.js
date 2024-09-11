@@ -41,7 +41,6 @@ export const API_PATH = {
     getAdminNotifications: buildApiPath('/api/notification/admin/:adminId'),
     markAsRead: buildApiPath('/api/notification/:notificationId/read'),
     delete: buildApiPath('/api/notification/:notificationId/delete'),
-    generatePrescription: buildApiPath('/api/admin/:adminId/prescription'),
   },
   clinic: {
     all: buildApiPath('/api/clinics'),
@@ -69,6 +68,7 @@ export const API_PATH = {
     approve: buildApiPath('/api/test-result/:testResultId/approve')
   },
   prescriptions: {
+    generatePrescription: buildApiPath('/api/prescriptions/admin/:adminId'),
     getAll: buildApiPath('/api/prescriptions/all'),
     getUserPrescriptions: buildApiPath('/api/prescriptions/:userId')
   }

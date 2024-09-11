@@ -1,6 +1,23 @@
 import axiosApiInstance from '../utils/axiosInstance';
 import { API_PATH } from '../utils/urlRoutes';
 
+export const generatePrescription = async (data, adminToken) => {
+    try {
+        const url = API_PATH.prescriptions.generatePrescription;
+        console.log('Generating prescription to URL:', url);
+        console.log('Data content:', data);
+        const response = await axiosApiInstance.post(url, data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error generating prescription:', error.message);
+        throw new Error(`Unable to generate prescription: ${error.message}`);
+    }
+};
 export const getAllPrescriptions = async (token) => {
     try {
         const response = await axiosApiInstance.get(API_PATH.prescriptions.getAll, {

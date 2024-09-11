@@ -9,7 +9,6 @@ import {
     buildPathWithBase,
     TEST_RESULT_PATHS
 } from '../routes/path.js';
-import {generatePrescription} from "../controllers/notificationController.js";
 
 const adminPathBase = buildPathWithBase(ADMIN_PATHS);
 const authPathBase = buildPathWithBase(AUTH_PATHS);

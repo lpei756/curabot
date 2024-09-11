@@ -62,7 +62,7 @@ function App() {
                                     <Route path="/map" element={<ClinicMap />} />
                                     <Route path="/dashboard" element={<Dashboard />} />
                                     <Route path="/test-result" element={<TestResultPage />} />
-                                    <Route path="/admin/:adminId/prescription" element={<Prescription />} />
+                                    <Route path="/prescriptions/admin/:adminId" element={<Prescription />} />
                                 </Routes>
                             </div>
                             <ChatbotButtonAndComponent />

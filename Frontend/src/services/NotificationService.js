@@ -97,23 +97,6 @@ export const sendDoctorMessage = async (formData, adminToken) => {
         throw new Error(`Unable to send message: ${error.message}`);
     }
 };
-// export const sendDoctorMessage = async (data, adminToken) => {
-//     try {
-//         const url = API_PATH.notification.sendMessage;
-//         console.log('Sending doctor message to URL:', url);
-//         console.log('Data content:', data);
-//         const response = await axiosApiInstance.post(url, data, {
-//             headers: {
-//                 'Content-Type': 'application/json',
-//                 'Authorization': `Bearer ${adminToken}`
-//             },
-//         });
-//         return response.data;
-//     } catch (error) {
-//         console.error('Error sending doctor message:', error.message);
-//         throw new Error(`Unable to send message: ${error.message}`);
-//     }
-// };
 
 export const markNotificationAsRead = async (notificationId) => {
     try {
@@ -138,25 +121,3 @@ export const deleteNotification = async (notificationId) => {
         throw new Error(`Unable to delete notification: ${error.message}`);
     }
 };
-
-export const generatePrescription = async (data, adminToken) => {
-    try {
-        const url = API_PATH.notification.generatePrescription;
-        console.log('Generating prescription to URL:', url);
-        console.log('Data content:', data);
-        const response = await axiosApiInstance.post(url, data, {
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${adminToken}`
-            },
-        });
-        return response.data;
-    } catch (error) {
-        console.error('Error generating prescription:', error.message);
-        throw new Error(`Unable to generate prescription: ${error.message}`);
-    }
-};
-
-
-
-

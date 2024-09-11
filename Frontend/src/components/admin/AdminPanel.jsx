@@ -81,7 +81,7 @@ const AdminPanel = () => {
         setShowPrescription(true);
         setEditMode(false);
         if (adminId) {
-            navigate(`/admin/${adminId}/prescription`, { state: { patient } });
+            navigate(`/prescriptions/admin/${adminId}`, { state: { patient } });
         } else {
             console.error('adminId is missing!');
         }
