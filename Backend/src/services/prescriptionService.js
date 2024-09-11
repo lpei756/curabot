@@ -14,7 +14,11 @@ export const getAllPrescriptions = async (userId, userRole) => {
                 .populate('patient', '_id name');
         }
 
-        return prescriptions;
+        if (prescriptions && prescriptions.length > 0) {
+            return prescriptions;
+        } else {
+            return 'No prescriptions available';
+        }
 
     } catch (error) {
         console.error('Error in PrescriptionService:', error);
