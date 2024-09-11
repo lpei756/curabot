@@ -3,7 +3,6 @@ import {
     getNotifications as getNotificationsService,
     markAsRead as markAsReadService,
     deleteNotification as deleteNotificationService,
-    generatePrescription as generatePrescriptionService,
 } from '../services/notificationService.js';
 import Admin from '../models/Admin.js';
 import Doctor from '../models/Doctor.js';
@@ -122,39 +121,3 @@ export const deleteNotification = async (req, res) => {
         res.status(400).json({ message: error.message });
     }
 };
-
-export const generatePrescription = async (req, res) => {
-    try {
-        console.log('Prescription request received:', req.body);
-        const { doctorId, userId, medications, instructions } = req.body;
-        if (!doctorId || !userId || !medications || !instructions) {
-            return res.status(400).json({
-                status: "failed",
-                error: "Invalid request. Missing required fields.",
-                fields: {
-                    doctorId: doctorId ? undefined : "doctorId is required",
-                    userId: userId ? undefined : "userId is required",
-                    medications: medications ? undefined : "medications are required",
-                    instructions: instructions ? undefined : "instructions are required"
-                }
-            });
-        }
-        const prescription = await generatePrescriptionService({ doctorId, userId, medications, instructions });
-        const message = `Prescription created by Dr. ${prescription.doctorName}: Medications - ${medications}, Instructions - ${instructions}`;
-        const notification = await sendMessageService({
-            senderId: prescription.doctor,
-            senderModel: 'Doctor',
-            receiverId: prescription.patient,
-            receiverModel: 'User',
-            message,
-            notificationType: 'prescription'
-        });
-        console.log('Prescription and notification sent successfully:', { prescription, notification });
-        res.status(201).json({ message: 'Prescription generated successfully', prescription, notification });
-    } catch (error) {
-        console.error('Error generating prescription:', error.message);
-        res.status(500).json({ error: `Error generating prescription: ${error.message}` });
-    }
-};
-
-

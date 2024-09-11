@@ -1,14 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
-import { Box, Typography, Container, CircularProgress } from '@mui/material';
-import { getAllPrescriptions } from '../../services/prescriptionService.js';
+import { Box, Typography, Container, CircularProgress, Button } from '@mui/material';
+import { getAllPrescriptions } from '../../services/PrescriptionService.js';
+import { sendUserMessage } from '../../services/NotificationService.js';
 import { AuthContext } from '../../context/AuthContext';
 
 const Prescriptions = () => {
     const [prescriptions, setPrescriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const { token } = useContext(AuthContext);
+    const { token, userId } = useContext(AuthContext);
 
     useEffect(() => {
         const fetchPrescriptions = async () => {
@@ -21,9 +21,34 @@ const Prescriptions = () => {
                 setLoading(false);
             }
         };
-
         fetchPrescriptions();
     }, [token]);
+
+    const handleRepeatPrescription = async (prescription) => {
+        const message = "Can you please repeat this prescription for me?";
+        const doctorId = prescription.doctor?._id;
+
+        if (!doctorId) {
+            console.error("Prescription doctor info:", prescription);
+            setError("Doctor ID is missing for this prescription.");
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('senderId', userId);
+            formData.append('receiverId', doctorId);
+            formData.append('message', message);
+            formData.append('senderModel', "User");
+            formData.append('receiverModel', "Doctor");
+
+            const response = await sendUserMessage(formData, token);
+            console.log("Message sent successfully:", response);
+        } catch (err) {
+            console.error("Error sending repeat request:", err.message);
+            setError(`Unable to send repeat request: ${err.message}`);
+        }
+    };
 
     if (loading) return <CircularProgress />;
     if (error) return <Typography color="error">{error}</Typography>;
@@ -67,6 +92,16 @@ const Prescriptions = () => {
                             <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                                 <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Date:</Typography>
                                 <Typography variant="body1">{new Date(prescription.createdAt).toLocaleDateString()}</Typography>
+                            </Box>
+
+                            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
+                                <Button
+                                    variant="contained"
+                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff' }}
+                                    onClick={() => handleRepeatPrescription(prescription)}
+                                >
+                                    Repeat
+                                </Button>
                             </Box>
                         </Box>
                     ))}

@@ -78,8 +78,7 @@ export const NOTIFICATION_PATHS = {
   getUserNotifications: '/notification/user/:userId',
   getAdminNotifications: '/notification/admin/:adminId',
   markAsRead: '/notification/:notificationId/read',
-  delete: '/notification/:notificationId/delete',
-  generatePrescription: '/admin/:adminId/prescription',
+  delete: '/notification/:notificationId/delete'
 };
 
 export const TEST_RESULT_PATHS = {
@@ -91,6 +90,7 @@ export const TEST_RESULT_PATHS = {
 };
 
 export const PRESCRIPTION_PATHS = {
+  generatePrescription: '/admin/:adminId',
   read: '/all',
   getUserPrescriptions: '/:userId',
 };

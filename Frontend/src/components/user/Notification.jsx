@@ -82,7 +82,7 @@ function Notification() {
             }
             const formData = new FormData();
             formData.append('senderId', userId);
-            formData.append('receiverId', doctorId); // 确保这里的 doctorId 正确传递
+            formData.append('receiverId', doctorId);
             formData.append('message', messageContent);
             formData.append('senderModel', "User");
             formData.append('receiverModel', "Doctor");
@@ -106,7 +106,7 @@ function Notification() {
     };
 
     const handleRepeatPrescription = (notification) => {
-        const doctorId = notification.sender; // Assuming notification.sender is the doctor ID
+        const doctorId = notification.sender;
         const message = "Can you please repeat this prescription for me?";
         handleSendMessage(message, doctorId);
     };
@@ -306,7 +306,7 @@ function Notification() {
                         value={selectedDoctor}
                         onChange={(e) => {
                             console.log("Doctor selected:", e.target.value);
-                            setSelectedDoctor(e.target.value);  // 确保这里的 `selectedDoctor` 被正确设置
+                            setSelectedDoctor(e.target.value);
                         }}
                         label="Select Doctor"
                     >
@@ -344,7 +344,7 @@ function Notification() {
                 <Button
                     variant="contained"
                     sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                    onClick={() => handleSendMessage(newMessage, selectedDoctor)}  // 确保 `selectedDoctor` 被正确传递
+                    onClick={() => handleSendMessage(newMessage, selectedDoctor)}
                 >
                     Send Message
                 </Button>

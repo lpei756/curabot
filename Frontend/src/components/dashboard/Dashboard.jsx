@@ -6,7 +6,7 @@ import { fetchUserAppointments } from '../../services/appointmentService';
 import { fetchTestResults } from '../../services/testResultService';
 import { getDoctorById } from '../../services/doctorService';
 import { getClinicById } from '../../services/clinicService';
-import { getAllPrescriptions } from '../../services/prescriptionService';
+import { getAllPrescriptions } from '../../services/PrescriptionService.js';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import profileAnimationData from '../../assets/Profile.json';
