@@ -216,7 +216,7 @@ function AppHeader() {
     };
 
     const handleLogoClick = () => {
-        if (isUserLoggedIn || isAdminLoggedIn) {
+        if (isUserLoggedIn) {
             navigate('/dashboard');
         }
     };

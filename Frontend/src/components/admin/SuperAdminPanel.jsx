@@ -178,7 +178,7 @@ const SuperAdminPanel = () => {
     const getTrendOptions = (title, data) => {
         if (!Array.isArray(data)) {
             console.error(`Expected array but got ${typeof data} for ${title}`);
-            return {};  // 返回一个空的配置对象以避免错误
+            return {};
         }
     
         return {
@@ -218,7 +218,7 @@ const SuperAdminPanel = () => {
     };
 
     return (
-        <Box sx={{ padding: 4 }}>
+        <Box sx={{ padding: 4, marginLeft: '250px' }}>
             <Typography variant="h4" component="h1" gutterBottom>
                 Super Admin Panel
             </Typography>
