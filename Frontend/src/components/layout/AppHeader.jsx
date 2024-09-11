@@ -1,12 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import Badge from '@mui/material/Badge';
 import Typography from '@mui/material/Typography';
-import MenuRoundedIcon from '@mui/icons-material/MenuRounded';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Login from '../auth/login/Login';
@@ -17,7 +18,17 @@ import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
+import { AuthContext } from '../../context/AuthContext';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
+import { fetchUserNotifications } from '../../services/notificationService';
+
+const BadgeStyled = styled(Badge)(({ theme }) => ({
+    '& .MuiBadge-badge': {
+        borderRadius: '50%',
+        top: 15,
+        right: 15,
+    },
+}));
 
 const AnimatedButton = styled('button')(({ variant }) => ({
     background: variant === 'login' ? '#03035d' : 'transparent',
@@ -118,7 +129,10 @@ function AppHeader() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [adminId, setAdminId] = useState('');
     const [userId, setUserId] = useState('');
+    const [unreadCount, setUnreadCount] = useState(0);
+    const { userId: contextUserId } = useContext(AuthContext);
     const navigate = useNavigate();
+    const currentPort = window.location.port;
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -148,6 +162,22 @@ function AppHeader() {
         }
 
     }, []);
+
+    useEffect(() => {
+        const fetchUnreadNotifications = async () => {
+            try {
+                const notifications = await fetchUserNotifications(contextUserId || userId);
+                console.log('Fetched notifications:', notifications);
+                const unreadNotifications = notifications.filter(notification => !notification.isRead);
+                setUnreadCount(unreadNotifications.length);
+            } catch (err) {
+                console.error('Error fetching notifications:', err.message);
+            }
+        };
+        if (contextUserId || userId) {
+            fetchUnreadNotifications();
+        }
+    }, [contextUserId, userId]);
 
     const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
@@ -198,12 +228,20 @@ function AppHeader() {
                     <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
                             <FRWIconButton onClick={toggleDrawer}>
-                                <MenuRoundedIcon />
                             </FRWIconButton>
                             <Link to="/map">
                                 <FRWIconButton>
                                     <MapRoundedIcon />
                                 </FRWIconButton>
+                            </Link>
+                            <Link to="/notification">
+                                <BadgeStyled badgeContent={unreadCount} color="error">
+                                    <IconButton color="inherit">
+                                        <FRWIconButton>
+                                            <NotificationsIcon />
+                                        </FRWIconButton>
+                                    </IconButton>
+                                </BadgeStyled>
                             </Link>
                             <Typography
                                 variant="h5"
@@ -230,20 +268,21 @@ function AppHeader() {
                                 FRW Healthcare
                             </Typography>
                         </Box>
-
                         {isUserLoggedIn || isAdminLoggedIn ? (
                             <AnimatedButton variant="login" onClick={handleLogout}>
                                 <span>Logout</span>
                             </AnimatedButton>
                         ) : (
                             <Box sx={{ display: 'flex', gap: 2 }}>
-                                <Link to="/register">
-                                    <AnimatedButton>
-                                        <span>Register</span>
-                                    </AnimatedButton>
-                                </Link>
-                                <AnimatedButton variant="login" onClick={toggleUserLoginModal}>
-                                    <span>Login</span>
+                                {currentPort === '5174' || currentPort === '5175' ? null : (
+                                    <Link to="/register">
+                                        <AnimatedButton>
+                                            <span>Register</span>
+                                        </AnimatedButton>
+                                    </Link>
+                                )}
+                                <AnimatedButton variant="login" onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}>
+                                    <span>{currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}</span>
                                 </AnimatedButton>
                             </Box>
                         )}
@@ -254,37 +293,7 @@ function AppHeader() {
             <LoginModal open={isUserLoginOpen} onClose={toggleUserLoginModal} onSuccess={handleUserLoginSuccess} />
             <AdminLoginModal open={isAdminLoginOpen} onClose={toggleAdminLoginModal} onSuccess={handleAdminLoginSuccess} />
 
-            <Drawer anchor="left" open={isDrawerOpen} onClose={toggleDrawer}>
-                <Box
-                    sx={{ width: 250, padding: 2, height: '100%', position: 'relative' }}
-                    role="presentation"
-                    onClick={toggleDrawer}
-                    onKeyDown={toggleDrawer}
-                >
-                    {isUserLoggedIn ? (
-                        <UserOptionsList options={['Profile', 'Appointment', 'Notification']} userId={userId} />
-                    ) : (
-                        <Typography>Please login to see user information</Typography>
-                    )}
-                    {!isUserLoggedIn && !isAdminLoggedIn && (
-                        <Box
-                            sx={{
-                                position: 'absolute',
-                                bottom: 16,
-                                left: 16,
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: 1,
-                                cursor: 'pointer',
-                            }}
-                        >
-                            <AnimatedButton variant="login" onClick={toggleAdminLoginModal}>
-                                <span>Admin Login</span>
-                            </AnimatedButton>
-                        </Box>
-                    )}
-                </Box>
-            </Drawer>
+
         </>
     );
 }
