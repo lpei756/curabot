@@ -98,7 +98,7 @@ function AdminNotification() {
         }
     };
 
-    const handleRepeatPrescription = (notification) => {
+    const handleViewPrescription = (notification) => {
         console.log("Notification received in handleRepeatPrescription:", notification);
         let patient = notification.patient;
         if (!patient && notification.senderModel === "User") {
@@ -106,11 +106,12 @@ function AdminNotification() {
         }
         if (patient && patient._id) {
             console.log("Navigating to prescription page with patient:", patient);
-            navigate(`/admin/${adminId}/prescription`, { state: { patient } });
+            navigate(`/prescriptions/${patient._id}`);
         } else {
             console.error("Patient information is missing or incomplete", notification);
         }
     };
+
 
     const handleBackToAdminPanel = () => {
         navigate('/admin/panel');
@@ -258,9 +259,9 @@ function AdminNotification() {
                                     <Button
                                         variant="contained"
                                         sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
-                                        onClick={() => handleRepeatPrescription(notification)}
+                                        onClick={() => handleViewPrescription(notification)}
                                     >
-                                        sent repeat
+                                        VIEW PRESCRIPTION
                                     </Button>
                                 )}
 

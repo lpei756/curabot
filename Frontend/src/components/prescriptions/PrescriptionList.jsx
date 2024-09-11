@@ -38,7 +38,7 @@ const PrescriptionList = () => {
     return (
         <Container>
             <Typography variant="h4" align="center" gutterBottom>
-                Prescriptions for User: {patientName}
+                Prescriptions for {patientName}
             </Typography>
             {prescriptions.length > 0 ? (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
