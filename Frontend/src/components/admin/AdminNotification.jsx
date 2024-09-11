@@ -101,13 +101,9 @@ function AdminNotification() {
     const handleRepeatPrescription = (notification) => {
         console.log("Notification received in handleRepeatPrescription:", notification);
         let patient = notification.patient;
-
-        // 如果 patient 数据缺失，通过 sender 或 receiver 去加载相关患者信息
         if (!patient && notification.senderModel === "User") {
-            // 通过 senderId 加载患者信息
             patient = Patients.find(p => p._id === notification.sender);
         }
-
         if (patient && patient._id) {
             console.log("Navigating to prescription page with patient:", patient);
             navigate(`/admin/${adminId}/prescription`, { state: { patient } });
@@ -115,7 +111,6 @@ function AdminNotification() {
             console.error("Patient information is missing or incomplete", notification);
         }
     };
-
 
     const handleBackToAdminPanel = () => {
         navigate('/admin/panel');

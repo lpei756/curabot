@@ -91,5 +91,6 @@ export const TEST_RESULT_PATHS = {
 };
 
 export const PRESCRIPTION_PATHS = {
-  read: '/all'
+  read: '/all',
+  getUserPrescriptions: '/:userId',
 };
