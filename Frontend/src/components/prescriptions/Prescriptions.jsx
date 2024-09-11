@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Container, CircularProgress } from '@mui/material';
 import { getAllPrescriptions } from '../../services/prescriptionService.js';
 import { AuthContext } from '../../context/AuthContext';
@@ -47,6 +47,11 @@ const Prescriptions = () => {
                                 maxWidth: '600px',
                             }}
                         >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
+                                <Typography variant="body1" sx={{ fontWeight: 'bold' }}>User:</Typography>
+                                <Typography variant="body1">{prescription.patientName || 'Unknown Patient'}</Typography>
+                            </Box>
+
                             <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                                 <Typography variant="body1" sx={{ fontWeight: 'bold' }}>Doctor:</Typography>
                                 <Typography variant="body1">{prescription.doctorName || 'Unknown Doctor'}</Typography>
