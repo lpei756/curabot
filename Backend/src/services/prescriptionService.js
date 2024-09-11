@@ -107,3 +107,48 @@ export const getUserPrescriptions = async (userId) => {
     }
 };
 
+export const repeatPrescription = async ({ doctorId, userId, prescriptionId }) => {
+    try {
+        console.log('Repeat prescription request received:', { doctorId, userId, prescriptionId });
+
+        // 查找现有的处方
+        const existingPrescription = await Prescription.findById(prescriptionId);
+        if (!existingPrescription) {
+            throw new Error('Original prescription not found');
+        }
+
+        const adminDoctor = await Admin.findOne({ _id: doctorId, role: 'doctor' });
+        if (!adminDoctor) {
+            throw new Error('Doctor not found in Admin collection');
+        }
+
+        const doctorDetails = await Doctor.findById(adminDoctor.doctor);
+        if (!doctorDetails) {
+            throw new Error('Doctor details not found in Doctor collection');
+        }
+
+        const patient = await User.findById(userId);
+        if (!patient) {
+            throw new Error('Patient not found');
+        }
+
+        // 生成新的处方，基于现有的处方
+        const prescription = new Prescription({
+            doctor: adminDoctor._id,
+            patient: patient._id,
+            medications: existingPrescription.medications,
+            instructions: existingPrescription.instructions,
+            doctorName: `${doctorDetails.firstName} ${doctorDetails.lastName}`,
+            patientName: `${patient.firstName} ${patient.lastName}`,
+        });
+
+        await prescription.save();
+        console.log('Repeat prescription generated successfully:', prescription);
+
+        return prescription;
+    } catch (error) {
+        console.error('Error in repeatPrescriptionService:', error.message);
+        throw new Error(`Error generating repeat prescription: ${error.message}`);
+    }
+};
+
