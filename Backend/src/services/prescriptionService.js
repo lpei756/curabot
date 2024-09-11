@@ -6,25 +6,21 @@ import User from "../models/User.js";
 export const generatePrescription = async ({ doctorId, userId, medications, instructions }) => {
     try {
         console.log('Prescription generation request received:', { doctorId, userId, medications, instructions });
-
         const adminDoctor = await Admin.findOne({ _id: doctorId, role: 'doctor' });
         if (!adminDoctor) {
             throw new Error('Doctor not found in Admin collection');
         }
         console.log('Admin record found:', adminDoctor);
-
         const doctorDetails = await Doctor.findById(adminDoctor.doctor);
         if (!doctorDetails) {
             throw new Error('Doctor details not found in Doctor collection');
         }
         console.log('Doctor details found:', doctorDetails);
-
         const patient = await User.findById(userId);
         if (!patient) {
             throw new Error('Patient not found');
         }
         console.log('Patient details found:', patient);
-
         const prescription = new Prescription({
             doctor: adminDoctor._id,
             patient: patient._id,
@@ -33,10 +29,8 @@ export const generatePrescription = async ({ doctorId, userId, medications, inst
             doctorName: `${doctorDetails.firstName} ${doctorDetails.lastName}`,
             patientName: `${patient.firstName} ${patient.lastName}`,
         });
-
         await prescription.save();
         console.log('Prescription generated successfully:', prescription);
-
         return prescription;
     } catch (error) {
         console.error('Error in generatePrescriptionService:', error.message);
@@ -74,7 +68,6 @@ export const getAllPrescriptions = async (userId, userRole) => {
                 })
                 .populate('patient', '_id firstName lastName');
         }
-
         if (prescriptions && prescriptions.length > 0) {
             return prescriptions;
         } else {
@@ -84,7 +77,6 @@ export const getAllPrescriptions = async (userId, userRole) => {
         throw error;
     }
 };
-
 
 export const getUserPrescriptions = async (userId) => {
     try {
