@@ -3,6 +3,7 @@ import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, i
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
 import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
+import { getAllPrescriptions } from '../services/prescriptionService.js';
 import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
@@ -103,6 +104,14 @@ export const handleChat = async (req, res) => {
       'delete'
     ];
 
+    const repeatPrescriptionKeywords = [
+      'repeat prescription',
+      'repeat medicine',
+      'refill prescription',
+      'refill medicine',
+      'repeat'
+    ];
+
     const threshold = 2;
 
     const matchesKeyword = (message, keywords) => {
@@ -137,6 +146,46 @@ export const handleChat = async (req, res) => {
         return res.json({ reply: appointmentsReply, sessionId });
       } catch (error) {
         return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
+      }
+    }
+
+    if (matchesKeyword(userMessage, repeatPrescriptionKeywords)) {
+      if (!authToken) {
+        return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.', sessionId });
+      }
+    
+      try {
+        const userId = extractUserIdFromToken(authToken);
+        if (!userId) {
+          return res.status(401).json({ error: 'Unauthorized: Invalid token', sessionId });
+        }
+
+        const repeatResponsRaw = await getAllPrescriptions(userId, authToken);
+
+        if (!Array.isArray(repeatResponsRaw)) {
+          return res.status(500).json({ error: 'Unexpected response format from getAllPrescriptions', sessionId });
+        }
+
+        const repeatRespons = repeatResponsRaw
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .slice(0, 3);
+    
+        const formattedResponse = repeatRespons.map(prescription => `
+          Here are your last three prescriptions, which one would you like to repeat:
+          <strong>Medications</strong>: ${prescription.medications} </br>
+          <strong>Instructions</strong>: ${prescription.instructions} </br>
+          <strong>Doctor</strong>: ${prescription.doctorName} </br>
+          <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}
+          `).join('</br></br>');
+    
+        await ChatSession.findByIdAndUpdate(
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: formattedResponse, isAnonymous } } }
+        );
+        return res.json({ reply: formattedResponse, sessionId });
+      } catch (error) {
+        console.error('Error handling repeat prescription request:', error);
+        return res.status(500).json({ error: 'Internal server error', sessionId });
       }
     }
 
