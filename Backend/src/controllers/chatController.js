@@ -153,7 +153,7 @@ export const handleChat = async (req, res) => {
       if (!authToken) {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.', sessionId });
       }
-    
+
       try {
         const userId = extractUserIdFromToken(authToken);
         if (!userId) {
@@ -169,15 +169,26 @@ export const handleChat = async (req, res) => {
         const repeatRespons = repeatResponsRaw
           .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
           .slice(0, 3);
-    
-        const formattedResponse = repeatRespons.map(prescription => `
-          Here are your last three prescriptions, which one would you like to repeat:
-          <strong>Medications</strong>: ${prescription.medications} </br>
-          <strong>Instructions</strong>: ${prescription.instructions} </br>
-          <strong>Doctor</strong>: ${prescription.doctorName} </br>
-          <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}
-          `).join('</br></br>');
-    
+
+        const formattedResponse = repeatRespons.map(prescription => {
+          const encodedData = encodeURIComponent(JSON.stringify({
+            id: prescription._id,
+            doctorId: prescription.doctor?._id,
+            patientName: prescription.patientName,
+            medications: prescription.medications,
+            instructions: prescription.instructions
+          }));
+
+          return `
+                Here are your last three prescriptions, which one would you like to repeat:
+                <strong>Medications</strong>: ${prescription.medications} </br>
+                <strong>Instructions</strong>: ${prescription.instructions} </br>
+                <strong>Doctor</strong>: ${prescription.doctorName} </br>
+                <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}</br>
+                <button onclick="window.repeatPrescription('${encodedData}')">Repeat</button>
+            `;
+        }).join('</br></br>');
+
         await ChatSession.findByIdAndUpdate(
           sessionId,
           { $push: { messages: { sender: 'bot', message: formattedResponse, isAnonymous } } }

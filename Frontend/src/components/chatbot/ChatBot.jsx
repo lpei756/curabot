@@ -23,6 +23,7 @@ import { createAppointment } from '../../services/appointmentService';
 import { getDoctorById } from '../../services/doctorService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
+import { sendUserMessage } from '../../services/NotificationService.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -79,6 +80,7 @@ function ChatBot() {
     const { userId } = useContext(AuthContext);
     const [doctorAvailability, setDoctorAvailability] = useState(null);
     const [searchClicked, setSearchClicked] = useState(false);
+    const [error, setError] = useState(null);
 
     const quickChats = [
         "How can I book a new appointment",
@@ -172,6 +174,40 @@ function ChatBot() {
         window.handleDoctorSelection = handleDoctorSelection;
         return () => {
             delete window.handleDoctorSelection;
+        };
+    }, []);
+
+    const handleRepeatPrescription = async (encodedData) => {
+        const { id, doctorId, patientName, medications, instructions } = JSON.parse(decodeURIComponent(encodedData));
+
+        const message = "Can you please repeat this prescription for me?";
+
+        if (!doctorId) {
+            console.error("Doctor ID is missing for this prescription.");
+            setError("Doctor ID is missing for this prescription.");
+            return;
+        }
+
+        try {
+            const formData = new FormData();
+            formData.append('senderId', userId);
+            formData.append('receiverId', doctorId);
+            formData.append('message', message);
+            formData.append('senderModel', "User");
+            formData.append('receiverModel', "Doctor");
+
+            const response = await sendUserMessage(formData, authToken);
+            console.log("Message sent successfully:", response);
+        } catch (err) {
+            console.error("Error sending repeat request:", err.message);
+            setError(`Unable to send repeat request: ${err.message}`);
+        }
+    };
+
+    React.useEffect(() => {
+        window.repeatPrescription = handleRepeatPrescription;
+        return () => {
+            delete window.repeatPrescription;
         };
     }, []);
 
@@ -344,17 +380,15 @@ function ChatBot() {
         const searchTerm = event.target.value.trim();
         setSearchTerm(searchTerm);
         setSearchClicked(false);
-        // Automatically clear filtered results when the search input is cleared
         setFilteredChatSessions([]);
         if (searchTerm === '') {
             setSearchSuggestion(null);
 
         } else {
-            setSearchSuggestion(`Search for: "${searchTerm}"`);  // Create suggestion
+            setSearchSuggestion(`Search for: "${searchTerm}"`);
         }
     };
 
-    // Perform search on recentChatSessions
     const handleSearchClick = () => {
         const filteredSessions = {};
         setSearchClicked(true);
@@ -369,7 +403,7 @@ function ChatBot() {
                 }
             });
 
-            setFilteredChatSessions(filteredSessions);  // Store filtered results
+            setFilteredChatSessions(filteredSessions);
         }
     };
 
@@ -415,7 +449,6 @@ function ChatBot() {
                     </AppBar>
 
                     <List>
-                        {/* Only show search suggestion when search hasn't been clicked and the search term exists */}
                         {searchTerm !== '' && !searchClicked && (
                             <ListItem onClick={handleSearchClick}>
                                 <ListItemText
@@ -431,7 +464,6 @@ function ChatBot() {
                             </ListItem>
                         )}
 
-                        {/* Show grouped history dates only when the search term is empty */}
                         {searchTerm === '' && !searchClicked && Object.keys(recentChatSessions).map((date, index) => (
                             <ListItem
                                 key={index}
@@ -458,7 +490,6 @@ function ChatBot() {
                         ))}
                     </List>
 
-                    {/* Show filtered chat results if there are any */}
                     {Object.keys(filteredChatSessions).length > 0 && (
                         <List>
                             {Object.keys(filteredChatSessions).map((date, index) => (
@@ -478,7 +509,6 @@ function ChatBot() {
                         </List>
                     )}
 
-                    {/* Show "No results found" message if searchClicked is true and no results */}
                     {Object.keys(filteredChatSessions).length === 0 && searchClicked && (
                         <ListItem>
                             <ListItemText
