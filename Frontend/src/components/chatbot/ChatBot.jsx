@@ -395,9 +395,33 @@ function ChatBot() {
 
         if (searchTerm.trim() !== '') {
             Object.keys(recentChatSessions).forEach(date => {
-                const filteredMessages = recentChatSessions[date].filter(message =>
-                    message.message.toLowerCase().includes(searchTerm.toLowerCase())
-                );
+                const filteredMessages = recentChatSessions[date]
+                    .filter(message =>
+                        message.message.toLowerCase().includes(searchTerm.toLowerCase())
+                    )
+                    .map(message => {
+                        // Find the search term index
+                        const searchIndex = message.message.toLowerCase().indexOf(searchTerm.toLowerCase());
+                        const totalCharacters = 20; // Total number of characters before and after the search term
+                        const half = Math.floor(totalCharacters / 2); // To balance before and after the search term
+
+                        // Calculate start and end indices for truncation
+                        const start = Math.max(0, searchIndex - half);
+                        const end = Math.min(message.message.length, searchIndex + searchTerm.length + half);
+
+                        // Extract text before, the term itself, and after the search term
+                        const beforeText = message.message.slice(start, searchIndex);
+                        const afterText = message.message.slice(searchIndex + searchTerm.length, end);
+
+                        // Create the truncated message with ellipses if necessary
+                        const truncatedMessage = `${start > 0 ? '...' : ''}${beforeText}${message.message.substr(searchIndex, searchTerm.length)}${afterText}${end < message.message.length ? '...' : ''}`;
+
+                        // Return the truncated message along with original message metadata
+                        return {
+                            ...message,
+                            truncatedMessage
+                        };
+                    });
                 if (filteredMessages.length > 0) {
                     filteredSessions[date] = filteredMessages;
                 }
@@ -495,9 +519,14 @@ function ChatBot() {
                             {Object.keys(filteredChatSessions).map((date, index) => (
                                 filteredChatSessions[date].map((message, msgIndex) => (
                                     <ListItem key={`${date}-${msgIndex}`}>
+                                        {message.sender === 'bot' ? (
+                                            <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 30, height: 30, mr: 1 }} />
+                                        ) : (
+                                            <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 30, height: 30, mr: 1 }} />
+                                        )}
                                         <Box sx={{ flexGrow: 1 }}>
                                             <Typography variant="body1" sx={{ color: 'black' }}>
-                                                {message.message}
+                                                <span dangerouslySetInnerHTML={{ __html: message.truncatedMessage.replace(new RegExp(searchTerm, 'gi'), match => `<span style="color: #03035D">${match}</span>`) }} />
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: 'gray' }}>
                                                 {new Date(message.timestamp).toLocaleString()}
