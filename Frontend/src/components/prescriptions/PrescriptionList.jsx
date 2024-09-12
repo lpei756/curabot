@@ -18,9 +18,14 @@ const PrescriptionList = () => {
             try {
                 const data = await getUserPrescriptions(userId, adminToken);
                 console.log('Fetched prescriptions:', data);
-                setPrescriptions(Array.isArray(data) ? data : []);
-                if (Array.isArray(data) && data.length > 0) {
-                    setPatientName(data[0].patientName || 'Unknown Patient');
+
+                const sortedData = Array.isArray(data)
+                    ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    : [];
+
+                setPrescriptions(sortedData);
+                if (sortedData.length > 0) {
+                    setPatientName(sortedData[0].patientName || 'Unknown Patient');
                 }
                 setLoading(false);
             } catch (err) {
@@ -35,7 +40,7 @@ const PrescriptionList = () => {
     const sendRepeatPrescription = async (prescription) => {
         try {
             const data = {
-                doctorId: adminId,  // 使用 adminId 作为 doctorId
+                doctorId: adminId,
                 userId: userId,
                 prescriptionId: prescription._id,
             };
