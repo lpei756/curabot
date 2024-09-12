@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Container, CircularProgress, Button } from '@mui/material';
 import { repeatPrescriptionService, getUserPrescriptions } from '../../services/PrescriptionService.js';
-import { AuthContext } from '../../context/AuthContext';
+import { AdminContext } from '../../context/AdminContext';
 
 const PrescriptionList = () => {
     const { userId } = useParams();
@@ -11,12 +11,12 @@ const PrescriptionList = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const { token, user } = useContext(AuthContext);
+    const { adminToken, adminId } = useContext(AdminContext);
 
     useEffect(() => {
         const fetchPrescriptions = async () => {
             try {
-                const data = await getUserPrescriptions(userId, token);
+                const data = await getUserPrescriptions(userId, adminToken);
                 console.log('Fetched prescriptions:', data);
                 setPrescriptions(Array.isArray(data) ? data : []);
                 if (Array.isArray(data) && data.length > 0) {
@@ -30,20 +30,17 @@ const PrescriptionList = () => {
         };
 
         fetchPrescriptions();
-    }, [userId, token]);
+    }, [userId, adminToken]);
 
     const sendRepeatPrescription = async (prescription) => {
         try {
             const data = {
-                doctorId: user._id, // 当前医生的ID
-                userId: userId,     // 患者的ID
-                prescriptionId: prescription._id, // 处方ID
+                doctorId: adminId,  // 使用 adminId 作为 doctorId
+                userId: userId,
+                prescriptionId: prescription._id,
             };
-
             console.log('Sending repeat prescription with data:', data);
-
-            // 调用后端重复处方生成API
-            const response = await repeatPrescriptionService(data, token);
+            const response = await repeatPrescriptionService(data, adminToken);
             console.log('Repeat prescription generated successfully:', response);
             alert('Repeat prescription generated successfully!');
         } catch (error) {

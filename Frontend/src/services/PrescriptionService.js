@@ -58,20 +58,15 @@ export const getUserPrescriptions = async (userId, token) => {
 
 export const repeatPrescriptionService = async (data, adminToken) => {
     try {
-        // 使用重复处方的API路径
         const url = API_PATH.prescriptions.repeatPrescription;
         console.log('Repeating prescription to URL:', url);
         console.log('Data content:', data);
-
-        // 发起 POST 请求，重复生成处方
         const response = await axiosApiInstance.post(url, data, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${adminToken}`
             },
         });
-
-        // 返回生成的新处方数据
         return response.data;
     } catch (error) {
         console.error('Error repeating prescription:', error.message);

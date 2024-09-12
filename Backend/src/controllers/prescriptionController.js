@@ -73,7 +73,6 @@ export const repeatPrescription = async (req, res) => {
     try {
         console.log('Repeat prescription request received:', req.body);
         const { doctorId, userId, prescriptionId } = req.body;
-
         if (!doctorId || !userId || !prescriptionId) {
             return res.status(400).json({
                 status: "failed",
@@ -85,10 +84,8 @@ export const repeatPrescription = async (req, res) => {
                 }
             });
         }
-
         const prescription = await repeatPrescriptionService({ doctorId, userId, prescriptionId });
         const message = `Repeat Prescription created by Dr. ${prescription.doctorName}: Medications - ${prescription.medications}, Instructions - ${prescription.instructions}`;
-
         const notification = await sendMessageService({
             senderId: prescription.doctor,
             senderModel: 'Doctor',
@@ -97,7 +94,6 @@ export const repeatPrescription = async (req, res) => {
             message,
             notificationType: 'prescription'
         });
-
         console.log('Repeat prescription and notification sent successfully:', { prescription, notification });
         res.status(201).json({ message: 'Repeat prescription generated successfully', prescription, notification });
     } catch (error) {
