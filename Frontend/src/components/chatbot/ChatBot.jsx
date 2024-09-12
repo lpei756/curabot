@@ -76,11 +76,14 @@ function ChatBot() {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchSuggestion, setSearchSuggestion] = useState(null);
     const scrollContainerRef = useRef(null);
+    const messageRefs = useRef({});
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
     const [doctorAvailability, setDoctorAvailability] = useState(null);
     const [searchClicked, setSearchClicked] = useState(false);
     const [error, setError] = useState(null);
+    const [scrollToMessageId, setScrollToMessageId] = useState(null);
+    const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
 
     const quickChats = [
         "How can I book a new appointment",
@@ -142,10 +145,10 @@ function ChatBot() {
     }, [userId, authToken, chatHistoriesFetched]);
 
     useEffect(() => {
-        if (messagesEndRef.current) {
+        if (shouldScrollToBottom && messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages]);
+    }, [messages, shouldScrollToBottom]);
 
     const isSignificantTimeGap = (previousTimestamp, currentTimestamp) => {
         const timeGapInMs = new Date(currentTimestamp).getTime() - new Date(previousTimestamp).getTime();
@@ -169,6 +172,17 @@ function ChatBot() {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (scrollToMessageId && messageRefs.current[scrollToMessageId]) {
+            // Scroll to the specific message when `scrollToMessageId` is set
+            messageRefs.current[scrollToMessageId].scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setScrollToMessageId(null); // Clear the scrollToMessageId after scrolling
+        } else if (shouldScrollToBottom && messagesEndRef.current) {
+            // Regular scroll to the bottom when new messages are sent/received
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [messages, scrollToMessageId, shouldScrollToBottom]);
 
     React.useEffect(() => {
         window.handleDoctorSelection = handleDoctorSelection;
@@ -258,6 +272,8 @@ function ChatBot() {
         setInputValue('');
         setIsLoading(true);
 
+        setShouldScrollToBottom(true);
+
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -280,6 +296,8 @@ function ChatBot() {
                 { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true, feedbackSent: false }
             ]);
 
+            setShouldScrollToBottom(true);
+
         } catch (error) {
             let errorMessage = 'Sorry, something went wrong. Please try again.';
             if (error.message === 'Unauthorized') {
@@ -289,6 +307,7 @@ function ChatBot() {
                 ...prevMessages,
                 { id: uuidv4(), type: 'bot', message: errorMessage }
             ]);
+            setShouldScrollToBottom(true);
         } finally {
             setIsLoading(false);
         }
@@ -363,7 +382,7 @@ function ChatBot() {
         return groupedByDate;
     };
 
-    const showChatHistoryForDate = (date) => {
+    const showChatHistoryForDate = (date, messageId = null) => {
         const messagesForDate = recentChatSessions[date] || [];
 
         const formattedMessages = messagesForDate.map(msg => ({
@@ -374,6 +393,13 @@ function ChatBot() {
 
         setMessages(formattedMessages);
         setSelectedSessionId(date);
+        if (messageId) {
+            setScrollToMessageId(messageId);  // We set this to scroll to the exact message later
+        } else {
+            setScrollToMessageId(null);  // If no specific message, reset scroll target
+        }
+
+        setShouldScrollToBottom(false);  // Disable automatic scrolling to the bottom
     };
 
     const handleSearchChange = (event) => {
@@ -518,7 +544,19 @@ function ChatBot() {
                         <List>
                             {Object.keys(filteredChatSessions).map((date, index) => (
                                 filteredChatSessions[date].map((message, msgIndex) => (
-                                    <ListItem key={`${date}-${msgIndex}`}>
+                                    <ListItem key={`${date}-${msgIndex}`}
+                                        onClick={() => showChatHistoryForDate(date, message.id)}
+                                        sx={{
+                                            bgcolor: selectedSessionId === `${date}-${msgIndex}` ? '#03035D' : 'transparent',
+                                            transition: 'background-color 0.3s ease',
+                                            '&:hover': {
+                                                bgcolor: selectedSessionId === `${date}-${msgIndex}` ? '#03035D' : '#68cde6',
+                                                '& .MuiListItemText-primary': { color: 'white' },
+                                            },
+                                            borderRadius: '8px',
+                                            mb: 1,
+                                        }}
+                                    >
                                         {message.sender === 'bot' ? (
                                             <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 30, height: 30, mr: 1 }} />
                                         ) : (
@@ -529,7 +567,14 @@ function ChatBot() {
                                                 <span dangerouslySetInnerHTML={{ __html: message.truncatedMessage.replace(new RegExp(searchTerm, 'gi'), match => `<span style="color: #03035D">${match}</span>`) }} />
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: 'gray' }}>
-                                                {new Date(message.timestamp).toLocaleString()}
+                                                {new Date(message.timestamp).toLocaleString(undefined, {
+                                                    year: 'numeric',
+                                                    month: 'numeric',
+                                                    day: 'numeric',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false,
+                                                })}
                                             </Typography>
                                         </Box>
                                     </ListItem>
@@ -646,6 +691,8 @@ function ChatBot() {
                                     mb={2}
                                     alignItems="flex-start"
                                     justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
+                                    ref={el => (messageRefs.current[msg.id] = el)}
+                                    key={msg.id}
                                 >
                                     {msg.type === 'bot' && (
                                         <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 45, height: 45 }} />
