@@ -14,7 +14,12 @@ const Prescriptions = () => {
         const fetchPrescriptions = async () => {
             try {
                 const data = await getAllPrescriptions(token);
-                setPrescriptions(data);
+
+                const sortedData = Array.isArray(data)
+                    ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+                    : [];
+
+                setPrescriptions(sortedData);
                 setLoading(false);
             } catch (err) {
                 setError('Error fetching prescriptions');
