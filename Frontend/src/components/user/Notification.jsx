@@ -1,6 +1,5 @@
 import { useState, useEffect, useContext, useRef } from 'react';
-import PropTypes from 'prop-types';
-import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
+import { Typography, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
 import { fetchDoctors } from '../../services/AdminService.js';
 import { AuthContext } from "../../context/AuthContext";
@@ -143,11 +142,6 @@ function Notification() {
         }
     };
 
-    const toggleBlock = (block) => {
-        console.log("Toggling block:", block);
-        setExpandedBlock(expandedBlock === block ? null : block);
-    };
-
     const handleUploadClick = () => {
         fileInputRef.current.click();
     };
@@ -208,203 +202,216 @@ function Notification() {
                 flexDirection: 'column',
                 alignItems: 'center',
                 width: '100%',
-                maxWidth: '800px',
+                maxWidth: '1300px',
                 margin: 'auto',
                 padding: '20px',
                 backgroundColor: '#f8f6f6',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                minHeight: '100vh'
             }}
         >
-            <Block
-                title="Received Notifications"
-                isOpen={expandedBlock === 'receivedNotifications'}
-                onClick={() => toggleBlock('receivedNotifications')}
-            >
-                {notifications.length > 0 ? (
-                    notifications.map((notification) => (
-                        <Box key={notification._id} sx={{ marginBottom: '10px' }}>
-                            <Typography><strong>From:</strong> {notification.senderName}</Typography>
-                            <Typography><strong>Message:</strong> {notification.message}</Typography>
-                            <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
-                            {notification.pdfFile && (
-                                <Button
-                                    variant="outlined"
-                                    sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
-                                    onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
-                                >
-                                    View PDF
-                                </Button>
-                            )}
-                            <Button
-                                variant="contained"
-                                sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: '#fff', marginRight: '10px' }}
-                                disabled={notification.isRead}
-                                onClick={() => handleMarkAsRead(notification._id)}
+            <Box sx={{
+                flex: 1,
+                marginRight: '10px',
+                padding: '20px',
+                borderRadius: '8px',
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                height: '100%',
+                gap: '20px',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>
+                <Box sx={{ width: '100%', maxHeight: '700px', overflowY: 'auto' }}>
+                    <Typography variant="h6" gutterBottom>Received Notifications</Typography>
+                    {notifications.length > 0 ? (
+                        notifications.map((notification) => (
+                            <Box
+                                key={notification._id}
+                                sx={{
+                                    marginBottom: '20px',
+                                    padding: '15px',
+                                    border: '1px solid #ddd',
+                                    borderRadius: '8px'
+                                }}
                             >
-                                {notification.isRead ? 'Read' : 'Mark as Read'}
-                            </Button>
-                            <Button
-                                variant="outlined"
-                                sx={{ borderColor: '#ff0000', color: '#ff0000' }}
-                                onClick={() => handleDeleteNotification(notification._id)}
-                            >
-                                Delete
-                            </Button>
+                                <Typography><strong>From:</strong> {notification.senderName}</Typography>
+                                <Typography><strong>Message:</strong> {notification.message}</Typography>
+                                <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
 
-                            {/* Check for "Prescription created by" in the notification message */}
-                            {notification.message.includes("Prescription created by") && (
-                                <Button
-                                    variant="contained"
-                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
-                                    onClick={() => handleRepeatPrescription(notification)}
-                                >
-                                    Repeat
-                                </Button>
-                            )}
+                                {notification.pdfFile && (
+                                    <Box sx={{ marginBottom: '10px' }}>
+                                        <Button
+                                            variant="outlined"
+                                            sx={{ borderColor: '#007bff', color: '#007bff' }}
+                                            onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
+                                        >
+                                            View PDF
+                                        </Button>
+                                    </Box>
+                                )}
 
-                            {/* 回复功能 */}
-                            <Box sx={{ marginTop: '10px' }}>
-                                <TextField
-                                    label="Reply"
-                                    variant="outlined"
-                                    fullWidth
-                                    value={notification.replyMessage || ''}
-                                    onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
-                                    sx={{ marginBottom: '10px' }}
-                                />
-                                <Button
-                                    variant="contained"
-                                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                                    onClick={() => handleSendReply(notification)}
-                                >
-                                    Send Reply
-                                </Button>
+                                <Box sx={{ marginTop: '10px' }}>
+                                    <TextField
+                                        label="Reply"
+                                        variant="outlined"
+                                        fullWidth
+                                        value={notification.replyMessage || ''}
+                                        onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
+                                        sx={{ marginBottom: '10px' }}
+                                    />
+                                </Box>
+
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '5px', marginTop: '10px' }}>
+                                    <Button
+                                        variant="contained"
+                                        sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: notification.isRead ? '#000' : '#fff' }}
+                                        disabled={notification.isRead}
+                                        onClick={() => handleMarkAsRead(notification._id)}
+                                    >
+                                        {notification.isRead ? 'Read' : 'Mark as Read'}
+                                    </Button>
+
+                                    <Button
+                                        variant="outlined"
+                                        sx={{ borderColor: '#ff0000', color: '#ff0000' }}
+                                        onClick={() => handleDeleteNotification(notification._id)}
+                                    >
+                                        Delete
+                                    </Button>
+
+                                    {notification.message.includes("Prescription created by") && (
+                                        <Button
+                                            variant="contained"
+                                            sx={{ backgroundColor: '#f0ad4e', color: '#fff' }}
+                                            onClick={() => handleRepeatPrescription(notification)}
+                                        >
+                                            Repeat
+                                        </Button>
+                                    )}
+
+                                    <Button
+                                        variant="contained"
+                                        sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                                        onClick={() => handleSendReply(notification)}
+                                    >
+                                        Send Reply
+                                    </Button>
+                                </Box>
                             </Box>
-                        </Box>
-                    ))
-                ) : (
-                    <Typography>No notifications received.</Typography>
-                )}
-            </Block>
-
-            <Box
-                sx={{
-                    width: '100%',
-                    padding: '15px',
-                    marginBottom: '15px',
-                    border: '2px solid #ddd',
-                    borderRadius: '5px',
-                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                    backgroundColor: '#fff',
-                }}
-            >
-                <Typography variant="h6" sx={{ marginBottom: '10px' }}>Send a Message</Typography>
-                <FormControl fullWidth sx={{ marginBottom: '10px' }}>
-                    <InputLabel id="select-doctor-label">Select Doctor</InputLabel>
-                    <Select
-                        labelId="select-doctor-label"
-                        value={selectedDoctor}
-                        onChange={(e) => {
-                            console.log("Doctor selected:", e.target.value);
-                            setSelectedDoctor(e.target.value);
-                        }}
-                        label="Select Doctor"
-                    >
-                        {doctors.map((doctor) => (
-                            <MenuItem key={doctor._id} value={doctor._id}>
-                                {`${doctor.firstName} ${doctor.lastName}`}
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-                <TextField
-                    label="New Message"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    fullWidth
-                    multiline
-                    rows={4}
-                    variant="outlined"
-                    sx={{ marginBottom: '10px' }}
-                />
-                <Button
-                    variant="contained"
-                    sx={{ backgroundColor: '#fff', color: '#03035d' }}
-                    onClick={handleUploadClick}
-                >
-                    Upload PDF
-                    <input
-                        type="file"
-                        accept="application/pdf"
-                        hidden
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                    />
-                </Button>
-                <Button
-                    variant="contained"
-                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                    onClick={() => handleSendMessage(newMessage, selectedDoctor)}
-                >
-                    Send Message
-                </Button>
-
-                {expandedBlock === 'sentMessage' && (
-                    <Typography sx={{ marginTop: '10px', color: 'green' }}>Message sent successfully!</Typography>
-                )}
-            </Box>
-            <Button
-                variant="contained"
-                sx={{
-                    mt: 4,
-                    backgroundColor: '#03035d',
-                    color: 'white',
-                    '&:hover': {
-                        backgroundColor: '#03035d',
-                    }
-                }}
-                onClick={handleBackToHomepage}
-            >
-                Back to Homepage
-            </Button>
-        </Box>
-    );
-}
-
-function Block({ title, isOpen, onClick, children }) {
-    return (
-        <Box
-            onClick={onClick}
-            sx={{
-                width: '100%',
-                padding: '15px',
-                marginBottom: '15px',
-                border: '2px solid #ddd',
-                borderRadius: '5px',
-                boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-                backgroundColor: '#fff',
-                cursor: 'pointer',
-                transition: 'background-color 0.3s',
-                '&:hover': {
-                    backgroundColor: '#fff',
-                }
-            }}
-        >
-            <Typography variant="h6" sx={{ marginBottom: '10px' }}>{title}</Typography>
-            <Collapse in={isOpen}>
-                <Box onClick={(e) => e.stopPropagation()}>
-                    {children}
+                        ))
+                    ) : (
+                        <Typography>No notifications received.</Typography>
+                    )}
                 </Box>
-            </Collapse>
+
+                <Box
+                    sx={{
+                        width: '100%',
+                        padding: '20px',
+                        height: '50%',
+                        marginBottom: '20px',
+                        border: '1px solid #e0e0e0',
+                        borderRadius: '8px',
+                        boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.05)',
+                        backgroundColor: '#03035d'
+                    }}
+                >
+                    <Typography variant="h6" sx={{ marginBottom: '16px', color: '#f8f6f6' }}>
+                        Send a Message
+                    </Typography>
+
+                    <FormControl fullWidth sx={{ marginBottom: '16px', '& .MuiInputLabel-root': { color: '#f8f6f6' }, '& .MuiOutlinedInput-root': { borderColor: '#f8f6f6' } }}>
+                        <InputLabel id="select-doctor-label">Select Doctor</InputLabel>
+                        <Select
+                            labelId="select-doctor-label"
+                            value={selectedDoctor}
+                            onChange={(e) => {
+                                console.log("Doctor selected:", e.target.value);
+                                setSelectedDoctor(e.target.value);
+                            }}
+                            label="Select Doctor"
+                            sx={{
+                                '& .MuiSelect-select': { color: '#f8f6f6' },
+                                '& .MuiSelect-icon': { color: '#f8f6f6' },
+                                '& .MuiOutlinedInput-notchedOutline': { borderColor: '#f8f6f6' }
+                            }}
+                        >
+                            {doctors.map((doctor) => (
+                                <MenuItem key={doctor._id} value={doctor._id} sx={{ color: '#f8f6f6' }}>
+                                    {`${doctor.firstName} ${doctor.lastName}`}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+
+                    <TextField
+                        label="New Message"
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        fullWidth
+                        multiline
+                        rows={4}
+                        variant="outlined"
+                        sx={{ marginBottom: '16px', backgroundColor: '#f8f6f6' }}
+                    />
+
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <Button
+                            variant="outlined"
+                            sx={{ borderColor: '#f8f6f6', color: '#f8f6f6' }}
+                            onClick={handleUploadClick}
+                        >
+                            Upload PDF
+                            <input
+                                type="file"
+                                accept="application/pdf"
+                                hidden
+                                ref={fileInputRef}
+                                onChange={handleFileChange}
+                            />
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#f8f6f6',
+                                color: '#03035d',
+                                '&:hover': {
+                                    backgroundColor: '#0056b3',
+                                }
+                            }}
+                            onClick={() => handleSendMessage(newMessage, selectedDoctor)}
+                        >
+                            Send Message
+                        </Button>
+                    </Box>
+
+                    {expandedBlock === 'sentMessage' && (
+                        <Typography sx={{ marginTop: '16px', color: 'green' }}>
+                            Message sent successfully!
+                        </Typography>
+                    )}
+                </Box>
+            </Box>
+            <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', mt: 4 }}>
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#03035d',
+                        color: 'white',
+                        '&:hover': {
+                            backgroundColor: '#03035d',
+                        }
+                    }}
+                    onClick={handleBackToHomepage}
+                >
+                    Back to Homepage
+                </Button>
+            </Box>
         </Box>
     );
 }
-
-Block.propTypes = {
-    title: PropTypes.string.isRequired,
-    isOpen: PropTypes.bool.isRequired,
-    onClick: PropTypes.func.isRequired,
-    children: PropTypes.node.isRequired,
-};
 
 export default Notification;
