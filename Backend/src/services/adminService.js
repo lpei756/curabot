@@ -138,9 +138,7 @@ export const logout = () => {
 
 export const getAllAdmins = async () => {
     try {
-        console.log('Starting to fetch all admins from the database...');
         const admins = await AdminModel.find().select('-password');
-        console.log('Admins fetched successfully:', admins);
         return admins;
     } catch (error) {
         console.error('Error in getAllAdminsService:', error.message);

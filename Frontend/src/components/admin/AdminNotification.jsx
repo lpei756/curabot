@@ -213,7 +213,8 @@ function AdminNotification() {
                 margin: 'auto',
                 padding: '20px',
                 backgroundColor: '#f8f6f6',
-                boxSizing: 'border-box'
+                boxSizing: 'border-box',
+                minHeight: '100vh'
             }}
         >
             <Block
