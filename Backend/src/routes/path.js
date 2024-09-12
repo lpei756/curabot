@@ -1,3 +1,5 @@
+import {repeatPrescription} from "../controllers/prescriptionController.js";
+
 export const buildPathWithBase = (paths) => {
   return Object.fromEntries(
     Object.entries(paths).map(([key, value]) => [key, `/api${value}`])
@@ -93,4 +95,5 @@ export const PRESCRIPTION_PATHS = {
   generatePrescription: '/admin/:adminId',
   read: '/all',
   getUserPrescriptions: '/:userId',
+  repeatPrescription: '/repeat',
 };

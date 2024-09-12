@@ -70,6 +70,7 @@ export const API_PATH = {
   prescriptions: {
     generatePrescription: buildApiPath('/api/prescriptions/admin/:adminId'),
     getAll: buildApiPath('/api/prescriptions/all'),
-    getUserPrescriptions: buildApiPath('/api/prescriptions/:userId')
+    getUserPrescriptions: buildApiPath('/api/prescriptions/:userId'),
+    repeatPrescription: buildApiPath('/api/prescriptions/repeat')
   }
 };
