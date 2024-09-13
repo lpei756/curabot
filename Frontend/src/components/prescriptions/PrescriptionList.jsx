@@ -35,7 +35,7 @@ const PrescriptionList = () => {
     const sendRepeatPrescription = async (prescription) => {
         try {
             const data = {
-                doctorId: adminId,  // 使用 adminId 作为 doctorId
+                doctorId: adminId,
                 userId: userId,
                 prescriptionId: prescription._id,
             };

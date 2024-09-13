@@ -1,5 +1,3 @@
-import {repeatPrescription} from "../controllers/prescriptionController.js";
-
 export const buildPathWithBase = (paths) => {
   return Object.fromEntries(
     Object.entries(paths).map(([key, value]) => [key, `/api${value}`])
