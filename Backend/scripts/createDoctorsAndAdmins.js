@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import DoctorModel from '../src/models/Doctor.js';
 import AdminModel from '../src/models/Admin.js';

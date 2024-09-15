@@ -1,5 +1,5 @@
 import User from '../models/User.js';
-import { createAppointment as createAppointmentService, readAppointment as readAppointmentService, updateAppointment as updateAppointmentService, deleteAppointment as deleteAppointmentService, getAppointmentsForUser } from '../services/appointmentService.js';
+import { createAppointment as createAppointmentService, readAppointment as readAppointmentService, updateAppointment as updateAppointmentService, deleteAppointment as deleteAppointmentService, getAppointmentsForUser, getAppointmentsForAUser } from '../services/appointmentService.js';
 
 export const createAppointment = async (req, res) => {
   try {
@@ -130,6 +130,25 @@ export const deleteAppointment = async (req, res) => {
     res.status(200).json({ message: 'Appointment cancelled successfully' });
   } catch (error) {
     console.error('Error cancelling appointment:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+export const fetchAllAppointment = async (req, res) => {
+  try {
+    const { patientID } = req.params;  // 从请求参数中获取 patientID
+    if (!patientID) return res.status(400).json({ message: 'Patient ID is required' });
+
+    // 使用 getAppointmentsForAUser 服务函数来获取该用户的预约
+    const appointments = await getAppointmentsForAUser(patientID);
+
+    if (appointments.error) {
+      return res.status(appointments.status).json({ message: appointments.message });
+    }
+
+    res.status(200).json(appointments);
+  } catch (error) {
+    console.error('Error fetching appointments for the user:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
