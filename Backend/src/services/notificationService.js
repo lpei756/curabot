@@ -5,8 +5,8 @@ import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 import Doctor from '../models/Doctor.js';
-
 const conn = mongoose.connection;
+
 let gfs;
 
 conn.once('open', () => {
