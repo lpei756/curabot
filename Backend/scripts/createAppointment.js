@@ -11,7 +11,7 @@ const appointments = [
     {
         patientID: "292379",
         patientName: "Bess Yang",
-        dateTime: new Date("2024-09-16T11:59:00.000Z"),
+        dateTime: new Date("2024-09-16T01:29:00.000Z"),
         assignedGP: "D001",
         clinic: new mongoose.Types.ObjectId("66ac6360d1864aef73c64a69"),
         slotId: new mongoose.Types.ObjectId("66ce4b9e209366f4a8cd7a55"),
@@ -20,7 +20,7 @@ const appointments = [
     {
         patientID: "292379",
         patientName: "Bess Yang",
-        dateTime: new Date("2024-09-16T11:58:00.000Z"),
+        dateTime: new Date("2024-09-16T01:58:00.000Z"),
         assignedGP: "D001",
         clinic: new mongoose.Types.ObjectId("66ac6360d1864aef73c64a69"),
         slotId: new mongoose.Types.ObjectId("66ce4b9e209366f4a8cd7a55"),

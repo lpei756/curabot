@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const NotificationSchema = new mongoose.Schema({
-    sender: { type: mongoose.Schema.Types.Mixed, refPath: 'senderModel', required: true },
+    sender: { type: mongoose.Schema.Types.Mixed, refPath: 'senderModel', required: false },
     receiver: { type: mongoose.Schema.Types.ObjectId, refPath: 'receiverModel', required: true },
     senderModel: { type: String, required: true, enum: ['User', 'Doctor', 'Admin', 'System'] },
     receiverModel: { type: String, required: true, enum: ['User', 'Doctor', 'Admin'] },

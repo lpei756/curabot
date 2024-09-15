@@ -91,7 +91,7 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
     let senderName;
     if (senderId === 'system') {
         senderName = 'System';
-        senderId = null;
+        senderId = null;  // 系统通知不需要 senderId
     } else {
         const sender = await getUserOrAdmin(senderId, senderModel);
         if (!sender) {
@@ -99,17 +99,23 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         }
         senderName = `${sender.firstName} ${sender.lastName}`;
     }
-    let receiverObjectId = receiverId;
+    let receiverObjectId;
     if (mongoose.Types.ObjectId.isValid(receiverId)) {
         receiverObjectId = new mongoose.Types.ObjectId(receiverId);
     } else {
-        receiverObjectId = receiverId;
+        const user = await User.findOne({ patientID: receiverId });
+        if (!user) {
+            throw new Error('Receiver not found with patientID');
+        }
+        receiverObjectId = user._id;
     }
+
     const receiver = await getUserOrAdmin(receiverObjectId, receiverModel);
     if (!receiver) {
         throw new Error('Receiver not found');
     }
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
+
     const notification = new Notification({
         sender: senderId,
         senderModel,
@@ -123,6 +129,7 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         notificationType,
         pdfFile: pdfFilePath
     });
+
     try {
         await notification.save();
         return notification;
