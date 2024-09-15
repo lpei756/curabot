@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import { getAppointmentsForAUser } from '../src/services/appointmentService.js';
 import { sendMessage } from '../src/services/NotificationService.js';
 import dotenv from 'dotenv';
+import { ObjectId } from 'mongodb';
 
 dotenv.config({ path: './Backend/.env' });
 
@@ -25,20 +26,17 @@ async function testReminderFunction() {
                 console.log(`Appointment ${appointment._id} is within the 5-hour window.`);
                 const messageContent = `Reminder: You have an appointment with ${appointment.doctorName} in 5 hours.`;
 
-                let receiverId = appointment.patientID;
-
-                // 检查 receiverId 是否为合法的 ObjectId，并进行转换
-                if (!mongoose.Types.ObjectId.isValid(receiverId)) {
-                    try {
-                        receiverId = new mongoose.Types.ObjectId(receiverId);  // 转换为 ObjectId
-                    } catch (error) {
-                        console.error(`Error converting receiverId ${receiverId} to ObjectId:`, error);
-                        return;
-                    }
+                // 将 patientID 转换为 ObjectId 类型，确保符合 Mongoose 的模型定义
+                let receiverId;
+                try {
+                    receiverId = new ObjectId(appointment.patientID);
+                } catch (error) {
+                    console.error(`Invalid ObjectId for receiverId: ${appointment.patientID}`, error);
+                    return;  // 如果 ObjectId 无效，则跳过此条消息
                 }
 
                 const messageData = {
-                    senderId: 'system',
+                    senderId: new ObjectId('system'),  // 假设'system'是有效的 ObjectId，根据实际情况替换
                     receiverId: receiverId,
                     message: messageContent,
                     senderModel: "System",
@@ -47,7 +45,7 @@ async function testReminderFunction() {
 
                 try {
                     console.log('Sending message:', messageData);
-                    await sendMessage(messageData);
+                    await sendMessage(messageData);  // 调用sendMessage函数
                     console.log(`Reminder sent to user ${appointment.patientID} for appointment ${appointment._id}`);
                 } catch (error) {
                     console.error(`Failed to send reminder to user ${appointment.patientID}:`, error);
@@ -63,8 +61,6 @@ async function testReminderFunction() {
 
 // 连接 MongoDB 并运行提醒函数
 mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     connectTimeoutMS: 30000,  // 设置连接超时为30秒
     socketTimeoutMS: 45000  // 设置socket超时为45秒
 }).then(() => {

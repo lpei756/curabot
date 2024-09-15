@@ -89,40 +89,32 @@ const getUserOrAdmin = async (id, model) => {
 
 export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
     let senderName;
-
-    // 如果 senderId 是 'system'，允许 sender 为 'system' 或 null
     if (senderId === 'system') {
         senderName = 'System';
-        senderId = null;  // 或者直接将 sender 设置为 'system'
+        senderId = null;
     } else {
-        // 获取发送者的名称
         const sender = await getUserOrAdmin(senderId, senderModel);
         if (!sender) {
             throw new Error('Sender not found');
         }
         senderName = `${sender.firstName} ${sender.lastName}`;
     }
-
-    // 检查并转换 receiverId 为合法的 ObjectId
     let receiverObjectId = receiverId;
-    if (!mongoose.Types.ObjectId.isValid(receiverId)) {
-        receiverObjectId = new mongoose.Types.ObjectId(receiverId);  // 转换为 ObjectId
+    if (mongoose.Types.ObjectId.isValid(receiverId)) {
+        receiverObjectId = new mongoose.Types.ObjectId(receiverId);
+    } else {
+        receiverObjectId = receiverId;
     }
-
-    // 获取接收者的名称
     const receiver = await getUserOrAdmin(receiverObjectId, receiverModel);
     if (!receiver) {
         throw new Error('Receiver not found');
     }
-
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
-
-    // 创建通知对象
     const notification = new Notification({
-        sender: senderId === 'system' ? 'system' : senderId,
+        sender: senderId,
         senderModel,
         senderName,
-        receiver: receiverObjectId,  // 确保是 ObjectId 类型
+        receiver: receiverObjectId,
         receiverModel,
         receiverName,
         message,
@@ -131,10 +123,13 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         notificationType,
         pdfFile: pdfFilePath
     });
-
-    // 保存通知
-    await notification.save();
-    return notification;
+    try {
+        await notification.save();
+        return notification;
+    } catch (error) {
+        console.error(`Failed to save notification: ${error.message}`);
+        throw error;
+    }
 };
 
 export const markAsRead = async (notificationId) => {
