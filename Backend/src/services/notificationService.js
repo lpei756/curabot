@@ -49,50 +49,80 @@ export const getNotifications = async (receiverId, receiverModel) => {
     }
 };
 
-
 const getUserOrAdmin = async (id, model) => {
     console.log(`Fetching ${model} with ID: ${id}`);
     let result;
-    if (model === 'Doctor') {
-        result = await Admin.findOne({ _id: id, role: 'doctor' });
-        if (!result) {
-            result = await Doctor.findById(id);
-        }
-    } else if (model === 'User') {
-        result = await User.findById(id);
-    } else if (model === 'Admin') {
-        result = await Admin.findById(id);
-    } else {
-        console.error(`Unknown model: ${model}`);
-        return null;
-    }
+    try {
+        if (model === 'Doctor') {
+            result = await Admin.findOne({ _id: id, role: 'doctor' });
+            if (!result) {
+                result = await Doctor.findById(id);
+            }
+        } else if (model === 'User') {
+            // 检查 ID 是否为合法的 ObjectId，如果不是，则使用 patientID 进行查找
+            if (mongoose.Types.ObjectId.isValid(id)) {
+                result = await User.findById(id);  // 直接通过 _id 查找用户
+            } else {
+                result = await User.findOne({ patientID: id });  // 使用 patientID 查找
+            }
 
-    if (!result) {
-        console.error(`${model} with ID: ${id} not found`);
-    } else {
-        console.log(`${model} found:`, result);
+            if (!result) {
+                throw new Error(`User with ID ${id} not found`);
+            }
+        } else if (model === 'Admin') {
+            result = await Admin.findById(id);
+        } else {
+            console.error(`Unknown model: ${model}`);
+            return null;
+        }
+        if (!result) {
+            console.error(`${model} with ID: ${id} not found`);
+        } else {
+            console.log(`${model} found:`, result);
+        }
+        return result;
+    } catch (error) {
+        console.error(`Error fetching ${model} with ID ${id}:`, error.message);
+        throw new Error(`Error fetching ${model} with ID ${id}`);
     }
-    return result;
 };
 
-
 export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
-    let sender, receiver;
-    sender = await getUserOrAdmin(senderId, senderModel);
-    if (!sender) {
-        throw new Error('Sender not found');
+    let senderName;
+
+    // 如果 senderId 是 'system'，允许 sender 为 'system' 或 null
+    if (senderId === 'system') {
+        senderName = 'System';
+        senderId = null;  // 或者直接将 sender 设置为 'system'
+    } else {
+        // 获取发送者的名称
+        const sender = await getUserOrAdmin(senderId, senderModel);
+        if (!sender) {
+            throw new Error('Sender not found');
+        }
+        senderName = `${sender.firstName} ${sender.lastName}`;
     }
-    const senderName = `${sender.firstName} ${sender.lastName}`;
-    receiver = await getUserOrAdmin(receiverId, receiverModel);
+
+    // 检查并转换 receiverId 为合法的 ObjectId
+    let receiverObjectId = receiverId;
+    if (!mongoose.Types.ObjectId.isValid(receiverId)) {
+        receiverObjectId = new mongoose.Types.ObjectId(receiverId);  // 转换为 ObjectId
+    }
+
+    // 获取接收者的名称
+    const receiver = await getUserOrAdmin(receiverObjectId, receiverModel);
     if (!receiver) {
         throw new Error('Receiver not found');
     }
+
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
+
+    // 创建通知对象
     const notification = new Notification({
-        sender: senderId,
+        sender: senderId === 'system' ? 'system' : senderId,
         senderModel,
         senderName,
-        receiver: receiverId,
+        receiver: receiverObjectId,  // 确保是 ObjectId 类型
         receiverModel,
         receiverName,
         message,
@@ -101,6 +131,8 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         notificationType,
         pdfFile: pdfFilePath
     });
+
+    // 保存通知
     await notification.save();
     return notification;
 };

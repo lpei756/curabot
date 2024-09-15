@@ -35,7 +35,8 @@ export const APPOINTMENT_PATHS = {
   read: '/:appointmentID',
   update: '/:appointmentID/update',
   delete: '/:appointmentID',
-  all: '/'
+  all: '/',
+  userAppointment: '/'
 };
 
 export const CLINIC_PATHS = {
