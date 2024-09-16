@@ -122,7 +122,7 @@ export const sendMessage = async ({
         throw new Error('Receiver not found');
     }
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
-    const notification = new Notification({
+    const notificationData = {
         sender: senderId,
         senderModel,
         senderName,
@@ -133,9 +133,13 @@ export const sendMessage = async ({
         isRead: false,
         date: new Date(),
         notificationType,
-        appointmentID,
         pdfFile: pdfFilePath
-    });
+    };
+    if (!appointmentID || appointmentID.trim() === "") {
+        appointmentID = `AUTO-${new Date().getTime()}`;
+    }
+    notificationData.appointmentID = appointmentID;
+    const notification = new Notification(notificationData);
     try {
         await notification.save();
         console.log('Notification saved successfully.');
@@ -145,7 +149,6 @@ export const sendMessage = async ({
         throw error;
     }
 };
-
 
 export const markAsRead = async (notificationId) => {
     try {

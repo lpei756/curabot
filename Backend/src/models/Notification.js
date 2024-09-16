@@ -21,7 +21,14 @@ const NotificationSchema = new mongoose.Schema({
     pdfFile: { type: String, required: false },
 });
 
-NotificationSchema.index({ receiver: 1, appointmentID: 1 }, { unique: true, partialFilterExpression: { appointmentID: { $exists: true, $ne: null } } });
+NotificationSchema.index(
+    { receiver: 1, appointmentID: 1 },
+    {
+        unique: true,
+        partialFilterExpression: { appointmentID: { $ne: "" } }
+    }
+);
+
 NotificationSchema.pre('save', function (next) {
     console.log('Preparing to save Notification:');
     console.log(`SenderModel: ${this.senderModel}, Receiver: ${this.receiver}, AppointmentID: ${this.appointmentID}, NotificationType: ${this.notificationType}`);
@@ -38,7 +45,6 @@ NotificationSchema.pre('save', function (next) {
     }
     next();
 });
-
 
 const NotificationModel = mongoose.model('Notification', NotificationSchema);
 export default NotificationModel;
