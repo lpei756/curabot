@@ -7,7 +7,7 @@ const UserSchema = new mongoose.Schema({
   patientID: { type: String, unique: true },
   nhi: { type: String, unique: true },
   firstName: { type: String, required: true },
-  middleName: { type: String },
+  middleName: { type: String, default: '' },
   lastName: { type: String, required: true },
   dateOfBirth: { type: Date, required: true },
   gender: { type: String, default: 'Prefer not to say', enum: ['Male', 'Female', 'Non-binary', 'FTM', 'MTF', 'Genderqueer', 'Other', 'Prefer not to say'] },

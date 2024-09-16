@@ -127,6 +127,17 @@ export const handleChat = async (req, res) => {
       return res.json({ reply: moneyEmojis, sessionId });
     }
 
+    if (userMessage.trim().toLowerCase() === 'how can i book a new appointment') {
+      const bookingReply = 'For booking a new appointment, you can send messages such as "Booking" or "Book appointment" in the chatbot to request an auto-booking. You can also navigate to the appointment booking page to find an available slot.';
+      
+      await ChatSession.findByIdAndUpdate(
+        sessionId,
+        { $push: { messages: { sender: 'bot', message: bookingReply, isAnonymous } } }
+      );
+      
+      return res.json({ reply: bookingReply, sessionId });
+    }
+
     if (matchesKeyword(userMessage, appointmentRequestKeywords)) {
       if (!authToken) {
         return res.status(401).json({ error: 'Unauthorized: No token provided. Please log in to view your appointments.', sessionId });
