@@ -4,10 +4,10 @@ import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import { sendMessage } from './notificationService.js';
 
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 * * * *', async () => {
     try {
         const now = new Date();
-        const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000);
+        const fiveHoursLater = new Date(now.getTime() + 24 * 60 * 60 * 1000);
         console.log(`Current time: ${now}`);
         console.log(`Checking for appointments between now and ${fiveHoursLater}`);
         const appointments = await Appointment.find({
