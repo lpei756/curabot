@@ -1,63 +1,57 @@
 import cron from 'node-cron';
 import Appointment from '../models/Appointment.js';
-import { sendMessage } from './notificationService.js';
 import Notification from '../models/Notification.js';
-import User from '../models/User.js';  // 假设 User 模型存在
+import User from '../models/User.js';
+import { sendMessage } from './notificationService.js';
 
-cron.schedule('* * * * *', async () => {  // 每分钟执行一次，方便测试
+cron.schedule('* * * * *', async () => {
     try {
         const now = new Date();
-        const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000);  // 当前时间 + 5小时
+        const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000);
         console.log(`Current time: ${now}`);
         console.log(`Checking for appointments between now and ${fiveHoursLater}`);
-
-        // 查找在接下来的5小时内即将进行的预约
         const appointments = await Appointment.find({
             dateTime: { $gte: now, $lt: fiveHoursLater },
             status: 'Scheduled'
         });
-
         console.log(`Found ${appointments.length} appointments requiring reminders.`);
-
-        // 遍历找到的预约并发送提醒
+        const patientIds = appointments.map(appointment => appointment.patientID);
+        const users = await User.find({ patientID: { $in: patientIds } });
         for (const appointment of appointments) {
-            const message = `Reminder: Your appointment is scheduled for ${appointment.dateTime}. Please ensure to be on time.`;
-
-            console.log(`Checking if reminder already sent to patient ID: ${appointment.patientID}`);
-
-            // 首先确保我们有患者的 ObjectId
-            const user = await User.findOne({ patientID: appointment.patientID });
+            const user = users.find(u => u.patientID === appointment.patientID);
             if (!user) {
-                console.error(`User not found with patientID: ${appointment.patientID}`);
-                continue;  // 如果找不到用户，跳过该提醒
+                console.error(`User not found for patientID: ${appointment.patientID}`);
+                continue;
             }
-
-            // 检查是否已经发送过相同的提醒
+            console.log(`Processing appointmentID: ${appointment.appointmentID} for patientID: ${appointment.patientID}`);
+            if (!appointment.appointmentID || appointment.appointmentID.trim() === "") {
+                console.error(`Invalid or missing appointmentID for appointment: ${appointment._id}`);
+                continue;
+            }
+            const message = `Reminder: Your appointment (ID: ${appointment.appointmentID}) is scheduled for ${appointment.dateTime}. Please ensure to be on time.`;
+            console.log(`Checking if reminder already sent for appointment ID: ${appointment.appointmentID} to patient ID: ${appointment.patientID}`);
             const existingReminder = await Notification.findOne({
-                receiver: user._id,  // 使用 ObjectId 作为 receiver
+                receiver: user._id,
                 notificationType: 'Reminder',
-                message: message,
+                appointmentID: appointment.appointmentID.toString()
             });
-
             if (!existingReminder) {
-                console.log(`Sending reminder to patient ID: ${appointment.patientID}`);
-
+                console.log(`AppointmentID before sending message: ${appointment.appointmentID}`);
                 await sendMessage({
                     senderId: 'system',
                     senderModel: 'System',
-                    receiverId: user._id,  // 使用 ObjectId
+                    receiverId: user._id,
                     receiverModel: 'User',
                     message: message,
                     notificationType: 'Reminder',
-                    pdfFilePath: null  // 无PDF文件
+                    appointmentID: appointment.appointmentID.toString(),
+                    pdfFilePath: null
                 });
-
-                console.log(`Reminder sent successfully to patient ID: ${appointment.patientID}`);
+                console.log(`Reminder sent successfully for appointment ID: ${appointment.appointmentID} to patient ID: ${appointment.patientID}`);
             } else {
-                console.log(`Reminder already sent to patient ID: ${appointment.patientID}, skipping.`);
+                console.log(`Reminder already sent for appointment ID: ${appointment.appointmentID} to patient ID: ${appointment.patientID}, skipping.`);
             }
         }
-
     } catch (error) {
         console.error(`Error sending reminder notifications: ${error.message}`, error);
     }

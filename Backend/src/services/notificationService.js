@@ -59,13 +59,11 @@ const getUserOrAdmin = async (id, model) => {
                 result = await Doctor.findById(id);
             }
         } else if (model === 'User') {
-            // 检查 ID 是否为合法的 ObjectId，如果不是，则使用 patientID 进行查找
             if (mongoose.Types.ObjectId.isValid(id)) {
-                result = await User.findById(id);  // 直接通过 _id 查找用户
+                result = await User.findById(id);
             } else {
-                result = await User.findOne({ patientID: id });  // 使用 patientID 查找
+                result = await User.findOne({ patientID: id });
             }
-
             if (!result) {
                 throw new Error(`User with ID ${id} not found`);
             }
@@ -87,11 +85,21 @@ const getUserOrAdmin = async (id, model) => {
     }
 };
 
-export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
+export const sendMessage = async ({
+                                      senderId,
+                                      senderModel,
+                                      receiverId,
+                                      receiverModel,
+                                      message,
+                                      notificationType,
+                                      appointmentID,
+                                      pdfFilePath
+                                  }) => {
+    console.log(`Inside sendMessage: notificationType is ${notificationType}`);
     let senderName;
     if (senderId === 'system') {
         senderName = 'System';
-        senderId = null;  // 系统通知不需要 senderId
+        senderId = null;
     } else {
         const sender = await getUserOrAdmin(senderId, senderModel);
         if (!sender) {
@@ -109,13 +117,11 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         }
         receiverObjectId = user._id;
     }
-
     const receiver = await getUserOrAdmin(receiverObjectId, receiverModel);
     if (!receiver) {
         throw new Error('Receiver not found');
     }
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
-
     const notification = new Notification({
         sender: senderId,
         senderModel,
@@ -127,17 +133,19 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         isRead: false,
         date: new Date(),
         notificationType,
+        appointmentID,
         pdfFile: pdfFilePath
     });
-
     try {
         await notification.save();
+        console.log('Notification saved successfully.');
         return notification;
     } catch (error) {
         console.error(`Failed to save notification: ${error.message}`);
         throw error;
     }
 };
+
 
 export const markAsRead = async (notificationId) => {
     try {
