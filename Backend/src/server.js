@@ -1,6 +1,7 @@
 import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import app from './app.js';
+import './services/scheduler.js';
 
 dotenv.config();
 

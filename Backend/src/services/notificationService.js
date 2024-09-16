@@ -5,8 +5,8 @@ import Notification from '../models/Notification.js';
 import User from '../models/User.js';
 import Admin from '../models/Admin.js';
 import Doctor from '../models/Doctor.js';
-
 const conn = mongoose.connection;
+
 let gfs;
 
 conn.once('open', () => {
@@ -49,50 +49,84 @@ export const getNotifications = async (receiverId, receiverModel) => {
     }
 };
 
-
 const getUserOrAdmin = async (id, model) => {
     console.log(`Fetching ${model} with ID: ${id}`);
     let result;
-    if (model === 'Doctor') {
-        result = await Admin.findOne({ _id: id, role: 'doctor' });
-        if (!result) {
-            result = await Doctor.findById(id);
+    try {
+        if (model === 'Doctor') {
+            result = await Admin.findOne({ _id: id, role: 'doctor' });
+            if (!result) {
+                result = await Doctor.findById(id);
+            }
+        } else if (model === 'User') {
+            if (mongoose.Types.ObjectId.isValid(id)) {
+                result = await User.findById(id);
+            } else {
+                result = await User.findOne({ patientID: id });
+            }
+            if (!result) {
+                throw new Error(`User with ID ${id} not found`);
+            }
+        } else if (model === 'Admin') {
+            result = await Admin.findById(id);
+        } else {
+            console.error(`Unknown model: ${model}`);
+            return null;
         }
-    } else if (model === 'User') {
-        result = await User.findById(id);
-    } else if (model === 'Admin') {
-        result = await Admin.findById(id);
-    } else {
-        console.error(`Unknown model: ${model}`);
-        return null;
+        if (!result) {
+            console.error(`${model} with ID: ${id} not found`);
+        } else {
+            console.log(`${model} found:`, result);
+        }
+        return result;
+    } catch (error) {
+        console.error(`Error fetching ${model} with ID ${id}:`, error.message);
+        throw new Error(`Error fetching ${model} with ID ${id}`);
     }
-
-    if (!result) {
-        console.error(`${model} with ID: ${id} not found`);
-    } else {
-        console.log(`${model} found:`, result);
-    }
-    return result;
 };
 
-
-export const sendMessage = async ({ senderId, senderModel, receiverId, receiverModel, message, notificationType, pdfFilePath }) => {
-    let sender, receiver;
-    sender = await getUserOrAdmin(senderId, senderModel);
-    if (!sender) {
-        throw new Error('Sender not found');
+export const sendMessage = async ({
+                                      senderId,
+                                      senderModel,
+                                      receiverId,
+                                      receiverModel,
+                                      message,
+                                      notificationType,
+                                      appointmentID,
+                                      pdfFilePath
+                                  }) => {
+    console.log(`Inside sendMessage: notificationType is ${notificationType}`);
+    let senderName;
+    if (senderId === 'system') {
+        senderName = 'System';
+        senderId = null;
+    } else {
+        const sender = await getUserOrAdmin(senderId, senderModel);
+        if (!sender) {
+            throw new Error('Sender not found');
+        }
+        senderName = `${sender.firstName} ${sender.lastName}`;
     }
-    const senderName = `${sender.firstName} ${sender.lastName}`;
-    receiver = await getUserOrAdmin(receiverId, receiverModel);
+    let receiverObjectId;
+    if (mongoose.Types.ObjectId.isValid(receiverId)) {
+        receiverObjectId = new mongoose.Types.ObjectId(receiverId);
+    } else {
+        const user = await User.findOne({ patientID: receiverId });
+        if (!user) {
+            throw new Error('Receiver not found with patientID');
+        }
+        receiverObjectId = user._id;
+    }
+    const receiver = await getUserOrAdmin(receiverObjectId, receiverModel);
     if (!receiver) {
         throw new Error('Receiver not found');
     }
     const receiverName = `${receiver.firstName} ${receiver.lastName}`;
-    const notification = new Notification({
+    const notificationData = {
         sender: senderId,
         senderModel,
         senderName,
-        receiver: receiverId,
+        receiver: receiverObjectId,
         receiverModel,
         receiverName,
         message,
@@ -100,9 +134,20 @@ export const sendMessage = async ({ senderId, senderModel, receiverId, receiverM
         date: new Date(),
         notificationType,
         pdfFile: pdfFilePath
-    });
-    await notification.save();
-    return notification;
+    };
+    if (!appointmentID || appointmentID.trim() === "") {
+        appointmentID = `AUTO-${new Date().getTime()}`;
+    }
+    notificationData.appointmentID = appointmentID;
+    const notification = new Notification(notificationData);
+    try {
+        await notification.save();
+        console.log('Notification saved successfully.');
+        return notification;
+    } catch (error) {
+        console.error(`Failed to save notification: ${error.message}`);
+        throw error;
+    }
 };
 
 export const markAsRead = async (notificationId) => {
