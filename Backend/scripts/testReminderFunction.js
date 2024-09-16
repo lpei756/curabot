@@ -25,18 +25,16 @@ async function testReminderFunction() {
             if (diffInHours <= 5 && diffInHours > 0) {
                 console.log(`Appointment ${appointment._id} is within the 5-hour window.`);
                 const messageContent = `Reminder: You have an appointment with ${appointment.doctorName} in 5 hours.`;
-
-                // 将 patientID 转换为 ObjectId 类型，确保符合 Mongoose 的模型定义
                 let receiverId;
                 try {
                     receiverId = new ObjectId(appointment.patientID);
                 } catch (error) {
                     console.error(`Invalid ObjectId for receiverId: ${appointment.patientID}`, error);
-                    return;  // 如果 ObjectId 无效，则跳过此条消息
+                    return;
                 }
 
                 const messageData = {
-                    senderId: new ObjectId('system'),  // 假设'system'是有效的 ObjectId，根据实际情况替换
+                    senderId: new ObjectId('system'),
                     receiverId: receiverId,
                     message: messageContent,
                     senderModel: "System",
@@ -45,7 +43,7 @@ async function testReminderFunction() {
 
                 try {
                     console.log('Sending message:', messageData);
-                    await sendMessage(messageData);  // 调用sendMessage函数
+                    await sendMessage(messageData);
                     console.log(`Reminder sent to user ${appointment.patientID} for appointment ${appointment._id}`);
                 } catch (error) {
                     console.error(`Failed to send reminder to user ${appointment.patientID}:`, error);
@@ -59,13 +57,12 @@ async function testReminderFunction() {
     }
 }
 
-// 连接 MongoDB 并运行提醒函数
 mongoose.connect(process.env.MONGO_URI, {
-    connectTimeoutMS: 30000,  // 设置连接超时为30秒
-    socketTimeoutMS: 45000  // 设置socket超时为45秒
+    connectTimeoutMS: 30000,
+    socketTimeoutMS: 45000
 }).then(() => {
     console.log('MongoDB connected successfully');
-    testReminderFunction();  // 在连接成功后运行提醒函数
+    testReminderFunction();
 }).catch((error) => {
     console.error('Error connecting to MongoDB:', error);
 });

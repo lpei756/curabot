@@ -17,10 +17,14 @@ const NotificationSchema = new mongoose.Schema({
         enum: ['info', 'warning', 'alert', 'prescription', 'Reminder'],
         default: 'info',
     },
+    appointmentID: { type: String, default: '' },
     pdfFile: { type: String, required: false },
 });
 
+NotificationSchema.index({ receiver: 1, appointmentID: 1 }, { unique: true, partialFilterExpression: { appointmentID: { $exists: true, $ne: null } } });
 NotificationSchema.pre('save', function (next) {
+    console.log('Preparing to save Notification:');
+    console.log(`SenderModel: ${this.senderModel}, Receiver: ${this.receiver}, AppointmentID: ${this.appointmentID}, NotificationType: ${this.notificationType}`);
     if (this.senderModel === 'System') {
         this.sender = 'system';
     } else if (!mongoose.isValidObjectId(this.sender)) {
@@ -29,8 +33,12 @@ NotificationSchema.pre('save', function (next) {
     if (!mongoose.isValidObjectId(this.receiver)) {
         return next(new Error('Receiver must be a valid ObjectId'));
     }
+    if (this.notificationType === 'Reminder' && (!this.appointmentID || this.appointmentID.trim() === "")) {
+        return next(new Error('Reminder notifications must have a valid appointmentID'));
+    }
     next();
 });
+
 
 const NotificationModel = mongoose.model('Notification', NotificationSchema);
 export default NotificationModel;
