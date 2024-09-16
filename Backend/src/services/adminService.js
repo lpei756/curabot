@@ -8,10 +8,11 @@ import mongoose from 'mongoose';
 export const register = async (adminData) => {
     const { email, password, firstName, lastName, role, clinic, languagesSpoken, specialty } = adminData;
     console.log('Starting registration process with data:', { email, firstName, lastName, role, clinic, languagesSpoken, specialty });
+
     const existingAdmin = await AdminModel.findOne({ email });
     if (existingAdmin) {
         console.error('Admin already exists with email:', email);
-        throw new Error('Admin already exists');
+        throw { status: 400, message: 'Admin already exists' };
     }
 
     const admin = new AdminModel({
@@ -36,19 +37,24 @@ export const register = async (adminData) => {
         const savedDoctor = await doctor.save();
         admin.doctor = savedDoctor._id;
 
-        await ClinicModel.findByIdAndUpdate(
-            clinic,
-            {
-                $push: {
-                    doctors: {
-                        firstName: savedDoctor.firstName,
-                        lastName: savedDoctor.lastName,
-                        doctorID: savedDoctor.doctorID,
+        try {
+            await ClinicModel.findByIdAndUpdate(
+                clinic,
+                {
+                    $push: {
+                        doctors: {
+                            firstName: savedDoctor.firstName,
+                            lastName: savedDoctor.lastName,
+                            doctorID: savedDoctor.doctorID,
+                        },
                     },
                 },
-            },
-            { new: true }
-        );
+                { new: true }
+            );
+        } catch (clinicError) {
+            console.error('Error updating clinic:', clinicError);
+            throw { status: 500, message: 'Error updating clinic' };
+        }
     }
 
     console.log('Saving new admin to the database:', admin);

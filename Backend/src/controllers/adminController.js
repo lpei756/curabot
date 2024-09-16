@@ -21,12 +21,18 @@ export const adminRegister = async (req, res) => {
         console.log('Received request for admin registration:', req.body);
         const admin = await registerAdminService(req.body);
         console.log('Admin object returned from registerAdminService:', admin);
+
+        if (!admin) {
+            throw { status: 500, message: 'Admin registration failed' };
+        }
+
         const token = generateToken(admin._id, admin.role);
         console.log('JWT token generated for admin:', token);
         res.status(201).json({ admin, token });
     } catch (error) {
         console.error('Error during admin registration:', error.message);
-        res.status(400).json({ message: error.message });
+        const status = error.status || 400;
+        res.status(status).json({ message: error.message, details: error.details || 'Validation failed' });
     }
 };
 
