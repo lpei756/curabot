@@ -12,7 +12,7 @@ export const sendVerificationCode = async (email) => {
 
     await sendEmail(email, 'Email Verification Code', emailContent);
 
-    await User.updateOne({ email }, { verificationCode }, { upsert: true });
+    await User.updateOne({ email }, { $set: { verificationCode } }, { upsert: true });
 
     return { message: 'Verification code sent to email' };
 };
@@ -30,16 +30,11 @@ export const verifyCodeAndRegister = async (userData) => {
     } = userData;
 
     const user = await User.findOne({ email });
-    if (!user) throw new Error('User not found');
-    if (user.verificationCode !== verificationCode) throw new Error('Invalid verification code');
+    if (!user) throw { status: 422, message: 'User not found' };
+    if (user.verificationCode !== verificationCode) throw { status: 422, message: 'Invalid verification code' };
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-
-    const patientID = crypto.randomInt(100000, 1000000).toString();
-    const letters = crypto.randomBytes(3).toString('hex').toUpperCase().slice(0, 3);
-    const numbers = Math.floor(1000 + Math.random() * 9000);
-    const nhi = `${letters}${numbers}`;
 
     user.password = hashedPassword;
     user.firstName = firstName;
@@ -49,14 +44,20 @@ export const verifyCodeAndRegister = async (userData) => {
     user.dateOfBirth = dateOfBirth;
     user.isVerified = true;
     user.verificationCode = null;
-    user.patientID = patientID;
-    user.nhi = nhi;
+
+    if (!user.patientID) {
+        user.patientID = crypto.randomInt(100000, 1000000).toString();
+        const letters = crypto.randomBytes(3).toString('hex').toUpperCase().slice(0, 3);
+        const numbers = Math.floor(1000 + Math.random() * 9000);
+        user.nhi = `${letters}${numbers}`;
+    }
 
     await user.save();
 
     return {
         message: 'Registration successful',
         user: {
+            _id: user._id,
             email: user.email,
             firstName: user.firstName,
             lastName: user.lastName,

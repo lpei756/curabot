@@ -1,13 +1,14 @@
 import jwt from 'jsonwebtoken';
-import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService ,getUserGP} from '../services/authService.js';
+import { register as registerService, login as loginService, readUser as readUserService, updateUser as updateUserService, logout as logoutService, getUserGP } from '../services/authService.js';
 
 export const register = async (req, res) => {
   try {
-    const user = await registerService(req.body);
-    const token = generateToken(user._id);
-    res.status(201).json({ user, token });
+    const result = await registerService(req.body);
+    const token = generateToken(result.user._id);
+    res.status(201).json({ user: result.user, token });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error('Error during registration:', error);
+    res.status(error.status || 400).json({ message: error.message });
   }
 };
 
@@ -32,12 +33,12 @@ export const readUser = async (req, res) => {
     const user = await readUserService(id);
     if (!user) {
       console.log('User not found for ID:', id);
-      throw new Error('User not found');
+      return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ user });
   } catch (error) {
     console.error('Error fetching user:', error.message);
-    res.status(404).json({ message: error.message });
+    res.status(404).json({ message: 'User not found' });
   }
 };
 
