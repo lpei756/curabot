@@ -6,6 +6,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { API_PATH } from '../../utils/urlRoutes';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 function ImageDisplay({ userId }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -96,7 +97,7 @@ function ImageDisplay({ userId }) {
                             onClick={() => handleImageClick(image._id)}
                         >
                             <img
-                                src={`${import.meta.env.VITE_API_URL}/uploads/${image.filename}`}
+                                src={`${apiUrl}/uploads/${image.filename}`}
                                 alt={`User uploaded ${image.filename} - ${index}`}
                             />
                             <ZoomInIcon

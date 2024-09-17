@@ -6,7 +6,7 @@ import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
+const apiUrl = import.meta.env.VITE_API_URL;
 function AdminNotification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
