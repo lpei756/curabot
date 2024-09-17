@@ -9,7 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import '../../App.css';
 
-const apiUrl = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
 const renderAnalysisText = (text) => {
     const sections = text.split('\n\n');
     return sections.map((section, index) => {
