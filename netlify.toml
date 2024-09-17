@@ -1,7 +1,8 @@
 [build]
-base = "Frontend" # 前端代码目录
-publish = "dist" # Vite 构建输出的文件夹，确保在Frontend下
-command = "npm run build:user" # 确保这个命令在Frontend的package.json中定义
+base = "Frontend"
+publish = "dist"
+command = "npm run build:user"
 
 [build.environment]
 NODE_VERSION = "14.17.0"
+
