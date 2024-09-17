@@ -12,15 +12,13 @@ import Container from '@mui/material/Container';
 import { styled } from '@mui/material/styles';
 import Login from '../auth/login/Login';
 import AdminLogin from '../auth/login/AdminLogin';
-import UserOptionsList from './Menu';
-import Drawer from '@mui/material/Drawer';
 import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
 import { AuthContext } from '../../context/AuthContext';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
-import { fetchUserNotifications } from '../../services/notificationService';
+import { fetchUserNotifications } from '../../services/NotificationService.js';
 
 const BadgeStyled = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
