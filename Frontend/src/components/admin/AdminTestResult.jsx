@@ -7,7 +7,7 @@ import PDFViewer from '../testresult/PDFViewer';
 import { fetchTestResults } from '../../services/testResultService';
 import '../../App.css';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 function AdminTestResultsPage() {
     const [testResults, setTestResults] = useState([]);
