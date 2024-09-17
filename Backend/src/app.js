@@ -18,7 +18,13 @@ import { deleteOldChatHistories } from './services/cleanUpService.js';
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: ['https://curabot.netlify.app', 'https://curabotadmin.netlify.app', 'https://curabotsuperadmin.netlify.app'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -49,6 +55,6 @@ app.post('/api/feedback', (req, res) => {
 cron.schedule('0 0 * * *', () => {
     console.log('Running the chat history cleanup...');
     deleteOldChatHistories();
-  });  
+  });
 
 export default app;
