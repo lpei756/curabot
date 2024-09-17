@@ -8,12 +8,12 @@ NODE_VERSION = "14.17.0"
 
 [[redirects]]
 from = "/admin/*"
-to = "/admin/:splat"
+to = "/index.html"
 status = 200
 
 [[redirects]]
 from = "/superadmin/*"
-to = "/superadmin/:splat"
+to = "/index.html"
 status = 200
 
 [[redirects]]
