@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
 import multer from 'multer';
 import Image from '../models/Image.js';
-import GridFsStorage from 'multer-gridfs-storage';
+import { GridFsStorage } from 'multer-gridfs-storage';
 
 const conn = mongoose.connection;
 let gfs;
