@@ -1,0 +1,7 @@
+[build]
+base = "Frontend/"         # 设置构建的基础目录为 Frontend 文件夹
+publish = "Frontend/dist/" # 指定构建输出的目录，确保与 Vite 的输出目录一致
+command = "npm run build"  # 这里应填写用于构建项目的命令
+
+[build.environment]
+NODE_VERSION = "14.17.0"
