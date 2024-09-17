@@ -12,6 +12,7 @@
     "build:superadmin": "vite build --config vite.config.superadmin.js",
     "build:user": "vite build --config vite.config.user.js",
     "build": "npm run build:user",
+    "build:all": "npm run build:user && npm run build:admin && npm run build:superadmin",
     "preview:admin": "vite preview --config vite.config.admin.js",
     "preview:superadmin": "vite preview --config vite.config.superadmin.js",
     "preview:user": "vite preview --config vite.config.user.js",
