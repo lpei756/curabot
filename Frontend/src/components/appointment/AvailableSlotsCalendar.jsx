@@ -5,11 +5,11 @@ import { Calendar as BigCalendar, dateFnsLocalizer } from 'react-big-calendar';
 import { format, parse, startOfWeek, getDay, addWeeks } from 'date-fns';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../../App.css';
-import { fetchUserData } from '../../services/userService';
-import { fetchAvailableSlotsByDate, fetchAllAvailableSlots, fetchGpSlotsByDoctorId, fetchSlotsByAddress } from '../../services/availabilityService';
-import { AuthContext } from '../../context/AuthContext';
+import { fetchUserData } from '../../services/userService.js';
+import { fetchAvailableSlotsByDate, fetchAllAvailableSlots, fetchGpSlotsByDoctorId, fetchSlotsByAddress } from '../../services/availabilityService.js';
+import { AuthContext } from '../../context/AuthContext.jsx';
 import Diversity1Icon from '@mui/icons-material/Diversity1';
-import AppointmentDetail from './AppointmentDetail';
+import AppointmentDetail from './AppointmentDetail.jsx';
 
 const localizer = dateFnsLocalizer({
     format,

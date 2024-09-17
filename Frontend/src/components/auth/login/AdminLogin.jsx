@@ -1,14 +1,14 @@
 import {useContext, useState} from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { adminLogin } from '../../../services/AdminService';
+import { adminLogin } from '../../../services/AdminService.js';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import {AdminContext} from "../../../context/AdminContext";
+import {AdminContext} from "../../../context/AdminContext.jsx";
 
 function AdminLogin({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');

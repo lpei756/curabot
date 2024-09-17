@@ -3,7 +3,7 @@ import animationData from '../../assets/homepage.json';
 import { useState } from 'react';
 import Modal from '@mui/material/Modal';
 import Box from '@mui/material/Box';
-import AdminLogin from '../auth/login/AdminLogin';
+import AdminLogin from '../auth/login/AdminLogin.jsx';
 import PropTypes from 'prop-types';
 
 const AdminLoginModal = ({ open, onClose, onSuccess }) => (
@@ -38,10 +38,10 @@ function Homepage() {
 
     if (currentPort === '5174' || currentPort === '5175') {
         return (
-            <AdminLoginModal 
-                open={isAdminLoginOpen} 
-                onClose={() => setIsAdminLoginOpen(false)} 
-                onSuccess={() => { /* Handle admin login success */ }} 
+            <AdminLoginModal
+                open={isAdminLoginOpen}
+                onClose={() => setIsAdminLoginOpen(false)}
+                onSuccess={() => { /* Handle admin login success */ }}
             />
         );
     }

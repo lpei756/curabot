@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Container, CircularProgress, Button } from '@mui/material';
 import { getAllPrescriptions } from '../../services/PrescriptionService.js';
 import { sendUserMessage } from '../../services/NotificationService.js';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext.jsx';
 
 const Prescriptions = () => {
     const [prescriptions, setPrescriptions] = useState([]);

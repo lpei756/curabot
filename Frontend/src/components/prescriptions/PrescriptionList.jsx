@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams } from 'react-router-dom';
 import { Box, Typography, Container, CircularProgress, Button } from '@mui/material';
 import { repeatPrescriptionService, getUserPrescriptions } from '../../services/PrescriptionService.js';
-import { AdminContext } from '../../context/AdminContext';
+import { AdminContext } from '../../context/AdminContext.jsx';
 
 const PrescriptionList = () => {
     const { userId } = useParams();

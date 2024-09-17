@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchMe, fetchAllPatients } from '../../services/AdminService';
-import { AdminContext } from '../../context/AdminContext';
+import { fetchMe, fetchAllPatients } from '../../services/AdminService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
 import EditPatient from './EditPatient.jsx';
 import Prescription from './Prescription.jsx';
 import { Link, useNavigate } from 'react-router-dom';

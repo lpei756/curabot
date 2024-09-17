@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, TextField, Button } from '@mui/material';
-import { updateUserData } from '../../services/userService';
+import { updateUserData } from '../../services/userService.js';
 import { useNavigate } from 'react-router-dom';
 
 function EditUser({ userData, setUserData, userId, setEditMode }) {
