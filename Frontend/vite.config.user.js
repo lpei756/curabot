@@ -8,6 +8,6 @@ export default defineConfig({
   },
   envPrefix: 'VITE_',
   build: {
-    outDir: 'dist',
+    outDir: 'dist/user',
   }
 });
