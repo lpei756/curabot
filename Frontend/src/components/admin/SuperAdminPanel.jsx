@@ -3,11 +3,10 @@ import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteAdmin, fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
-import { fetchFeedbackData } from '../../services/chartService';
+import { fetchFeedbackData } from '../../services/chatService';
 import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
-import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import FeedbackCharts from '../charts/FeedbackCharts';
 
@@ -19,7 +18,7 @@ const SuperAdminPanel = () => {
     const [filteredAdmins, setFilteredAdmins] = useState([]);
     const [filteredPatients, setFilteredPatients] = useState([]);
     const [error, setError] = useState(null);
-    const [editMode, setEditMode] = useState(null); 
+    const [editMode, setEditMode] = useState(null);
     const [selectedItem, setSelectedItem] = useState(null);
     const [feedbackData, setFeedbackData] = useState(null);
     const navigate = useNavigate();
@@ -46,7 +45,7 @@ const SuperAdminPanel = () => {
                 }
 
                 console.log('Fetching feedback data');
-                const feedbackData = await fetchFeedbackData(); 
+                const feedbackData = await fetchFeedbackData();
 
                 // 确保反馈数据结构正确
                 if (feedbackData && typeof feedbackData === 'object') {
@@ -109,16 +108,6 @@ const SuperAdminPanel = () => {
         }
     };
 
-    const handleEdit = (patient) => {
-        console.log('Selected Patient:', patient);
-        if (patient && patient._id) {
-            setSelectedItem(patient);
-            setEditMode('patient');
-        } else {
-            console.error('Invalid patient selected:', patient);
-        }
-    };
-
     const handleDelete = async (adminId) => {
 
         if (window.confirm('Are you sure you want to delete this account?')) {
@@ -137,85 +126,13 @@ const SuperAdminPanel = () => {
 
             }
         }}
-    const getChartOptions = (title, data, color) => {
-        if (!Array.isArray(data)) {
-            console.error(`Expected array but got ${typeof data} for ${title}`);
-            return {};
-        }
-
-        return {
-            title: {
-                text: title,
-                left: 'center',
-            },
-            tooltip: {
-                trigger: 'axis',
-            },
-            xAxis: {
-                type: 'category',
-                data: data.map(item => item.name),
-            },
-            yAxis: {
-                type: 'value',
-            },
-            series: [
-                {
-                    data: data.map(item => item.count),
-                    type: 'bar',
-                    itemStyle: {
-                        color: color,
-                    },
-                },
-            ],
-        };
-    };
 
     const handleAddAdminClick = () => {
 
         navigate('/admin/register');
-        
+
     }
-    const getTrendOptions = (title, data) => {
-        if (!Array.isArray(data)) {
-            console.error(`Expected array but got ${typeof data} for ${title}`);
-            return {};
-        }
-    
-        return {
-            title: {
-                text: title,
-                left: 'center',
-            },
-            tooltip: {
-                trigger: 'axis',
-            },
-            xAxis: {
-                type: 'category',
-                data: data.map(item => item._id),
-            },
-            yAxis: {
-                type: 'value',
-            },
-            series: [
-                {
-                    name: 'Positive',
-                    data: data.map(item => item.positive),
-                    type: 'line',
-                    itemStyle: {
-                        color: '#82ca9d',
-                    },
-                },
-                {
-                    name: 'Negative',
-                    data: data.map(item => item.negative),
-                    type: 'line',
-                    itemStyle: {
-                        color: '#ff5733',
-                    },
-                },
-            ],
-        };
-    };
+
 
     return (
         <Box sx={{ padding: 4, marginLeft: '250px' }}>

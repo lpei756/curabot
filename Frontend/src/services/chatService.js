@@ -2,12 +2,13 @@ import axiosApiInstance from '../utils/axiosInstance.js';
 import { API_PATH } from '../utils/urlRoutes.js';
 import axios from 'axios';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 export const sendChatMessage = async (message, authToken, userLocation, sessionId) => {
   try {
     const headers = authToken ? { Authorization: `Bearer ${authToken}` } : {};
 
-    const response = await axiosApiInstance.post(API_PATH.chat.send, 
-      { message, userLocation, sessionId }, 
+    const response = await axiosApiInstance.post(API_PATH.chat.send,
+      { message, userLocation, sessionId },
       { headers }
     );
     return response;
@@ -24,7 +25,7 @@ export const sendFeedbackToServer = async (messageId, feedback) => {
   console.log('Sending feedback:', { messageId, feedback });
 
   try {
-      const response = await axios.post('http://localhost:3001/api/feedback', {
+      const response = await axios.post('${apiUrl}/api/feedback', {
           messageId,
           feedback
       });
@@ -38,7 +39,7 @@ export const sendFeedbackToServer = async (messageId, feedback) => {
 
 export const fetchChatHistoryBySessionId = async (sessionId, authToken) => {
     try {
-        const response = await axios.get(`http://localhost:3001/api/chat/history/${sessionId}`, {
+        const response = await axios.get(`${apiUrl}/api/chat/history/${sessionId}`, {
             headers: {
                 Authorization: `Bearer ${authToken}`,
             },
@@ -52,7 +53,7 @@ export const fetchChatHistoryBySessionId = async (sessionId, authToken) => {
 
 export const fetchUserChatHistories = async (userId, authToken) => {
   try {
-    const response = await axios.get(`http://localhost:3001/api/chat/user/${userId}/history`, {
+    const response = await axios.get(`${apiUrl}/api/chat/user/${userId}/history`, {
       headers: {
         Authorization: `Bearer ${authToken}`,
       },
@@ -60,6 +61,17 @@ export const fetchUserChatHistories = async (userId, authToken) => {
     return response.data.chatSessions;
   } catch (error) {
     console.error('Error fetching chat histories:', error);
+
     throw error;
   }
+};
+
+export const fetchFeedbackData = async () => {
+    try {
+        const response = await axios.get(`${apiUrl}/api/feedback/summary`);
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching feedback data:', error);
+        throw error;
+    }
 };

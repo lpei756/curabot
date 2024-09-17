@@ -3,17 +3,20 @@ import OpenAI from 'openai';
 import ChatSession from '../models/ChatSession.js';
 import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
 import ClinicModel from '../models/Clinic.js';
-import { geocodeAddress, haversineDistance } from '../services/doctorAvailabilityService.js';
-import { getDoctorByIdService } from '../services/doctorService.js';
-import { getClinicByIdService } from '../services/clinicService.js';
+import { geocodeAddress, haversineDistance } from './doctorAvailabilityService.js';
+import { getDoctorByIdService } from './doctorService.js';
+import { getClinicByIdService } from './clinicService.js';
+import dotenv from 'dotenv';
 
+dotenv.config();
+const BASE_URL = process.env.BASE_URL;
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY,
 });
 
 export const getAppointmentsForUser = async (userId, authToken) => {
     try {
-        const userResponse = await axios.get(`http://localhost:3001/api/auth/user/${userId}`, {
+        const userResponse = await axios.get(`${BASE_URL}/api/auth/user/${userId}`, {
             headers: {
                 'Authorization': authToken,
             },
@@ -47,7 +50,7 @@ export const getAppointmentsForUser = async (userId, authToken) => {
         return `
     Here are your appointments:
     <div>${appointmentList}</div>
-    <a href="http://localhost:5173/appointment" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#03035D; text-decoration:none; border-radius:5px; margin-bottom:10px;">View Details</a>
+    <a href="${BASE_URL}/appointment" style="display:inline-block; padding:10px 20px; font-size:16px; color:white; background-color:#03035D; text-decoration:none; border-radius:5px; margin-bottom:10px;">View Details</a>
     <br>
     Let me know if you would like to make an appointment, update an appointment, or delete an appointment.
 `;
@@ -75,22 +78,6 @@ export const processChatWithOpenAI = async (userMessage) => {
     } catch (error) {
         console.error('Error with OpenAI API:', error);
         throw new Error('Error processing chat with OpenAI');
-    }
-};
-
-export const sendFeedbackToServer = async (messageId, feedback) => {
-    console.log('Sending feedback:', { messageId, feedback });
-
-    try {
-        const response = await axios.post('http://localhost:3001/api/feedback', {
-            messageId,
-            feedback
-        });
-        console.log('Server response:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error sending feedback:', error);
-        throw new Error('Error sending feedback');
     }
 };
 

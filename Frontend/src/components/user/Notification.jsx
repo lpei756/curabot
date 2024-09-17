@@ -4,7 +4,7 @@ import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, delete
 import { fetchDoctors } from '../../services/AdminService.js';
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -221,7 +221,6 @@ function Notification() {
                 height: '100%',
                 gap: '20px',
                 alignItems: 'center',
-                justifyContent: 'center'
             }}>
                 <Box sx={{ width: '100%', maxHeight: '700px', overflowY: 'auto' }}>
                     <Typography variant="h6" gutterBottom>Received Notifications</Typography>
@@ -245,7 +244,7 @@ function Notification() {
                                         <Button
                                             variant="outlined"
                                             sx={{ borderColor: '#007bff', color: '#007bff' }}
-                                            onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
+                                            onClick={() => window.open(`${apiUrl}${notification.pdfFile}`, '_blank')}
                                         >
                                             View PDF
                                         </Button>

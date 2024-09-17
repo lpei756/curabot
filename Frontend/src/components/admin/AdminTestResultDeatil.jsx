@@ -9,6 +9,7 @@ import { fetchPatientbyID } from '../../services/AdminService';
 import Button from '@mui/material/Button';
 import '../../App.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const renderAnalysisText = (text) => {
     const sections = text.split('\n\n');
     return sections.map((section, index) => {
@@ -116,7 +117,7 @@ function AdminTestResultDetailPage() {
             {testResult && (
                 <Box sx={{ display: 'flex', gap: 5, width: '100%', maxWidth: '1200px' }}>
                     <Box sx={{ flex: 1, width: '100%', height: '700px' }}>
-                        <PDFViewer pdfUrl={`http://localhost:3001/uploads/${testResult.fileName}`} />
+                        <PDFViewer pdfUrl={`${apiUrl}/uploads/${testResult.fileName}`} />
                     </Box>
                     <Box sx={{ flex: 1 }}>
                         <Typography variant="h6" sx={{ color: 'black' }} gutterBottom>
