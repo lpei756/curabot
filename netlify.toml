@@ -1,7 +1,7 @@
 [build]
 base = "Frontend"
 command = "npm run build:all"
-publish = "dist/user"
+publish = "dist"
 
 [build.environment]
 NODE_VERSION = "14.17.0"
