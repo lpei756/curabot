@@ -1,20 +1,9 @@
 [build]
 base = "Frontend"
-command = "npm run build:all"
 publish = "dist"
 
 [build.environment]
 NODE_VERSION = "14.17.0"
-
-[[redirects]]
-from = "/admin/*"
-to = "/admin/index.html"
-status = 200
-
-[[redirects]]
-from = "/superadmin/*"
-to = "/superadmin/index.html"
-status = 200
 
 [[redirects]]
 from = "/*"
