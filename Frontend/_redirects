@@ -1,1 +1,1 @@
-/api/*  https://curachatbot.herokuapp.com/api/:splat  200
+/*  https://curachatbot.herokuapp.com/:splat  200
