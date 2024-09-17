@@ -1,40 +1,36 @@
-# 配置 user 端
+# 通用配置
 [build]
-publish = "dist" # user 端发布的目录
-command = "npm run build:user" # user 端的构建命令
+command = "npm install && npm run build:user"
+publish = "dist"
 
+# 通用重定向规则
 [[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
+
+# user 端的生产环境配置
+[context.production]
+command = "npm run build:user"  # user 端的构建命令
+publish = "dist"  # user 端的发布目录
 
 [context.production.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api"
 
-# 配置 admin（doctor）端
+# admin 端的生产环境配置
 [context.admin]
-publish = "dist/admin" # admin 端发布的目录
-command = "npm run build:admin" # admin 端的构建命令
-
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+command = "npm run build:admin"  # admin 端的构建命令
+publish = "dist/admin"  # admin 端的发布目录
 
 [context.admin.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api"
 
-# 配置 superadmin 端
+# superadmin 端的生产环境配置
 [context.superadmin]
-publish = "dist/superadmin" # superadmin 端发布的目录
-command = "npm run build:superadmin" # superadmin 端的构建命令
-
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+command = "npm run build:superadmin"  # superadmin 端的构建命令
+publish = "dist/superadmin"  # superadmin 端的发布目录
 
 [context.superadmin.environment]
 NODE_ENV = "production"
