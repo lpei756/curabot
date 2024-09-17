@@ -6,5 +6,8 @@ export default defineConfig({
   server: {
     port: 5173
   },
-  envPrefix: 'VITE_'
+  envPrefix: 'VITE_',
+  build: {
+    outDir: 'dist', // 确保 Vite 将构建输出到 dist 文件夹
+  }
 });
