@@ -9,7 +9,7 @@ import { fetchPatientbyID } from '../../services/AdminService';
 import Button from '@mui/material/Button';
 import '../../App.css';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const renderAnalysisText = (text) => {
     const sections = text.split('\n\n');

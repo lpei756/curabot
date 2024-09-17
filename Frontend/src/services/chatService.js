@@ -2,7 +2,7 @@ import axiosApiInstance from '../utils/axiosInstance.js';
 import { API_PATH } from '../utils/urlRoutes.js';
 import axios from 'axios';
 
-const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 export const sendChatMessage = async (message, authToken, userLocation, sessionId) => {
   try {
