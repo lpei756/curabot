@@ -4,7 +4,9 @@ import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, delete
 import { fetchDoctors } from '../../services/AdminService.js';
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-const apiUrl = import.meta.env.VITE_API_URL;
+
+const apiUrl = import.meta.env.VITE_API_URL || 'https://curabot.netlify.app';
+
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
