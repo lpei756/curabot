@@ -7,8 +7,5 @@ export default defineConfig({
     port: 5174
   },
   envPrefix: 'VITE_',
-  build: {
-    outDir: 'dist/admin',
-  }
 });
 
