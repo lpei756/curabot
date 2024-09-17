@@ -1,5 +1,5 @@
-import axiosApiInstance from '../utils/axiosInstance';
-import { API_PATH } from '../utils/urlRoutes';
+import axiosApiInstance from '../utils/axiosInstance.js';
+import { API_PATH } from '../utils/urlRoutes.js';
 
 export const generatePrescription = async (data, adminToken) => {
     try {

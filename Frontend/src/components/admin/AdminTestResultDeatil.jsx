@@ -2,10 +2,10 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, List, ListItem, TextField } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import PDFViewer from '../testresult/PDFViewer';
-import { fetchTestResultById, editTestResult, approveTestResult } from '../../services/testResultService';
-import { AdminContext } from '../../context/AdminContext';
-import { fetchPatientbyID } from '../../services/AdminService';
+import PDFViewer from '../testresult/PDFViewer.jsx';
+import { fetchTestResultById, editTestResult, approveTestResult } from '../../services/testResultService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
+import { fetchPatientbyID } from '../../services/AdminService.js';
 import Button from '@mui/material/Button';
 import '../../App.css';
 

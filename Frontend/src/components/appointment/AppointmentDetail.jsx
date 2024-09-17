@@ -2,11 +2,11 @@ import axios from 'axios';
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Modal, Button } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import { AuthContext } from '../../context/AuthContext';
-import { createAppointment } from '../../services/appointmentService';
-import { getDoctorById } from '../../services/doctorService';
-import { getClinicById } from '../../services/clinicService';
-import { sendUserMessage } from '../../services/NotificationService';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { createAppointment } from '../../services/appointmentService.js';
+import { getDoctorById } from '../../services/doctorService.js';
+import { getClinicById } from '../../services/clinicService.js';
+import { sendUserMessage } from '../../services/NotificationService.js';
 import { APIProvider, Map, AdvancedMarker, Pin } from "@vis.gl/react-google-maps";
 import PropTypes from 'prop-types';
 

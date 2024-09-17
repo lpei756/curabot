@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, TextField, Button } from '@mui/material';
-import { updatePatientData } from '../../services/adminService';
+import { updatePatientData } from '../../services/adminService.js';
 import { useNavigate } from 'react-router-dom';
 
 function EditPatient({ patientData, setPatientData, patientId, setEditMode, returnPath }) {

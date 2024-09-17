@@ -2,8 +2,8 @@ import { useState, useEffect, useContext } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { generatePrescription } from '../../services/PrescriptionService.js';
-import { fetchMe } from '../../services/AdminService';
-import { AdminContext } from '../../context/AdminContext';
+import { fetchMe } from '../../services/AdminService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
 
 const Prescription = () => {
     const { adminId, adminToken } = useContext(AdminContext);

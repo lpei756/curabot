@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
-import PDFViewer from '../testresult/PDFViewer';
-import { fetchTestResults } from '../../services/testResultService';
+import PDFViewer from '../testresult/PDFViewer.jsx';
+import { fetchTestResults } from '../../services/testResultService.js';
 import '../../App.css';
 
 const apiUrl = import.meta.env.VITE_API_URL;

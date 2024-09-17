@@ -1,6 +1,4 @@
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
-import AdminModel from './Admin.js';
 
 const DoctorSchema = new mongoose.Schema({
   doctorID: { type: String, unique: true },
