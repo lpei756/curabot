@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, TextField, Button } from '@mui/material';
-import { updateAdminData } from '../../services/adminService.js';
+import { updateAdminData } from '../../services/AdminService.js';
 import { useNavigate } from 'react-router-dom';
 
 function EditAdmin({ adminData, setAdminData, adminId, setEditMode }) {

@@ -5,7 +5,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import ImageDisplay from '../image/ImageDisplay.jsx';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
-import { fetchPatientData } from '../../services/adminService.js';
+import { fetchPatientData } from '../../services/AdminService.js';
 
 function ReadPatient({ returnPath }) {
     const { patientId } = useParams();
