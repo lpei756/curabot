@@ -7,6 +7,7 @@ import PDFViewer from '../testresult/PDFViewer';
 import { fetchTestResults } from '../../services/testResultService';
 import '../../App.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 function AdminTestResultsPage() {
     const [testResults, setTestResults] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -86,7 +87,7 @@ function AdminTestResultsPage() {
                         >
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Box sx={{ flex: 1, width: '150px', height: '350px', overflow: 'hidden' }}>
-                                    <PDFViewer pdfUrl={`http://localhost:3001/uploads/${result.fileName}`} />
+                                    <PDFViewer pdfUrl={`${apiUrl}/uploads/${result.fileName}`} />
                                 </Box>
                                 <Box sx={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     <Typography variant="h6" sx={{ display: 'flex', justifyContent: 'space-between' }}>

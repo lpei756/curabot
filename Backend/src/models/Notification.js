@@ -14,7 +14,7 @@ const NotificationSchema = new mongoose.Schema({
     date: { type: Date, default: Date.now },
     notificationType: {
         type: String,
-        enum: ['info', 'warning', 'alert', 'prescription', 'Reminder'],
+        enum: ['info', 'warning', 'alert', 'prescription', 'Reminder', 'appointment_update', 'appointment_cancelled'],
         default: 'info',
     },
     appointmentID: { type: String, default: '' },

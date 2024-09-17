@@ -5,7 +5,7 @@ import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, del
 import { fetchAllPatients } from '../../services/AdminService';
 import { AdminContext } from "../../context/AdminContext";
 import { useNavigate } from "react-router-dom";
-
+const apiUrl = import.meta.env.VITE_API_URL;
 function AdminNotification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -235,7 +235,7 @@ function AdminNotification() {
                                     <Button
                                         variant="outlined"
                                         sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
-                                        onClick={() => window.open(`http://localhost:3001${notification.pdfFile}`, '_blank')}
+                                        onClick={() => window.open(`${apiUrl}${notification.pdfFile}`, '_blank')}
                                     >
                                         View PDF
                                     </Button>

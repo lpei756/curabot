@@ -8,9 +8,10 @@ import { readUser } from '../services/authService.js';
 import * as cheerio from 'cheerio';
 import { v4 as uuidv4 } from 'uuid';
 import ChatSession from '../models/ChatSession.js';
-
+import dotenv from 'dotenv';
+dotenv.config();
 const sessionStore = {};
-
+const BASE_URL = process.env.BASE_URL;
 const isSessionExpired = (lastActivityTime) => {
   const currentTime = new Date();
   return (currentTime - new Date(lastActivityTime)) > 15 * 60 * 1000;
@@ -129,12 +130,12 @@ export const handleChat = async (req, res) => {
 
     if (userMessage.trim().toLowerCase() === 'how can i book a new appointment') {
       const bookingReply = 'For booking a new appointment, you can send messages such as "Booking" or "Book appointment" in the chatbot to request an auto-booking. You can also navigate to the appointment booking page to find an available slot.';
-      
+
       await ChatSession.findByIdAndUpdate(
         sessionId,
         { $push: { messages: { sender: 'bot', message: bookingReply, isAnonymous } } }
       );
-      
+
       return res.json({ reply: bookingReply, sessionId });
     }
 
@@ -263,7 +264,7 @@ export const handleChat = async (req, res) => {
                   <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
                       (async function() {
                           try {
-                              const response = await fetch('http://localhost:3001/api/appointments/create', {
+                              const response = await fetch('${BASE_URL}/api/appointments/create', {
                                   method: 'POST',
                                   headers: {
                                       'Content-Type': 'application/json',
@@ -287,7 +288,7 @@ export const handleChat = async (req, res) => {
                           }
                       })()
                   ">Book Now</button>
-                  <p>If you are not satisfied with this slot, you can <a href="http://localhost:5173/appointment/new">choose a different slot here</a>.</p>
+                  <p>If you are not satisfied with this slot, you can <a href="${BASE_URL}/appointment/new">choose a different slot here</a>.</p>
               `;
         await ChatSession.findByIdAndUpdate(
           sessionId,
@@ -346,7 +347,7 @@ export const handleChat = async (req, res) => {
                   <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
                   (async function() {
                       try {
-                          const response = await fetch('http://localhost:3001/api/appointments/${appointment.appointmentID}', {
+                          const response = await fetch('${BASE_URL}/api/appointments/${appointment.appointmentID}', {
                           method: 'DELETE', 
                           headers: {
                               'Content-Type': 'application/json',
@@ -468,7 +469,7 @@ export const handleChat = async (req, res) => {
             <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
                 (async function() {
                     try {
-                        const response = await fetch('http://localhost:3001/api/appointments/create', {
+                        const response = await fetch('${BASE_URL}/api/appointments/create', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',

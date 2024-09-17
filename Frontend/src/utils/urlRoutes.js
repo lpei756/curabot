@@ -33,7 +33,11 @@ export const API_PATH = {
     all: buildApiPath('/api/appointments')
   },
   chat: {
-    send: buildApiPath('/api/chat')
+    send: buildApiPath('/api/chat'),
+    feedback: buildApiPath('/api/feedback'),
+    history: buildApiPath('/api/chat/history/${sessionId}'),
+    userHistory: buildApiPath('/api/chat/user/${userId}/history'),
+
   },
   notification: {
     sendMessage: buildApiPath('/api/notification/send'),

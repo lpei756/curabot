@@ -9,6 +9,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import '../../App.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const renderAnalysisText = (text) => {
     const sections = text.split('\n\n');
     return sections.map((section, index) => {
@@ -114,7 +115,7 @@ function TestResultsPage() {
                         >
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Box sx={{ flex: 1, width: '150px', height: '350px', overflow: 'hidden' }}>
-                                    <PDFViewer pdfUrl={`http://localhost:3001/uploads/${result.fileName}`} />
+                                    <PDFViewer pdfUrl={`${apiUrl}/uploads/${result.fileName}`} />
                                 </Box>
                                 <Box sx={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                     <Typography variant="h6" sx={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -144,7 +145,7 @@ function TestResultsPage() {
                     {selectedResult && (
                         <Box sx={{ display: 'flex', gap: 10 }}>
                             <Box sx={{ flex: 1, width: '400px', height: '700px' }}>
-                                <PDFViewer pdfUrl={`http://localhost:3001/uploads/${selectedResult.fileName}`} />
+                                <PDFViewer pdfUrl={`${apiUrl}/uploads/${selectedResult.fileName}`} />
                             </Box>
                             <Box sx={{ flex: 1 }}>
                                 <Typography variant="h6" gutterBottom >
