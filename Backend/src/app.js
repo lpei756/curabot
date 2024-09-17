@@ -22,6 +22,7 @@ const corsOptions = {
     origin: ['https://curabot.netlify.app', 'https://curabotadmin.netlify.app', 'https://curabotsuperadmin.netlify.app'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
+    optionsSuccessStatus: 200,
 };
 
 app.use(cors(corsOptions));
