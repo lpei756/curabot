@@ -18,14 +18,7 @@ import { deleteOldChatHistories } from './services/cleanUpService.js';
 
 const app = express();
 
-const corsOptions = {
-    origin: ['https://curabot.netlify.app', 'https://curabotadmin.netlify.app', 'https://curabotsuperadmin.netlify.app'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true,
-    optionsSuccessStatus: 200,
-};
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
