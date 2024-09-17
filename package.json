@@ -9,6 +9,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "dev": "vite"
+    "dev": "vite",
+    "heroku-postbuild": "npm install --legacy-peer-deps && npm run build"
   }
 }
