@@ -7,7 +7,6 @@ import mongoose from 'mongoose';
 
 export const register = async (adminData) => {
     const { email, password, firstName, lastName, role, clinic, languagesSpoken, specialty } = adminData;
-    console.log('Starting registration process with data:', { email, firstName, lastName, role, clinic, languagesSpoken, specialty });
 
     const existingAdmin = await AdminModel.findOne({ email });
     if (existingAdmin) {
@@ -34,33 +33,41 @@ export const register = async (adminData) => {
             specialty,
         });
 
-        const savedDoctor = await doctor.save();
-        admin.doctor = savedDoctor._id;
-
         try {
-            await ClinicModel.findByIdAndUpdate(
-                clinic,
-                {
-                    $push: {
-                        doctors: {
-                            firstName: savedDoctor.firstName,
-                            lastName: savedDoctor.lastName,
-                            doctorID: savedDoctor.doctorID,
+            const savedDoctor = await doctor.save();
+            admin.doctor = savedDoctor._id;
+
+            try {
+                await ClinicModel.findByIdAndUpdate(
+                    clinic,
+                    {
+                        $push: {
+                            doctors: {
+                                firstName: savedDoctor.firstName,
+                                lastName: savedDoctor.lastName,
+                                doctorID: savedDoctor.doctorID,
+                            },
                         },
                     },
-                },
-                { new: true }
-            );
-        } catch (clinicError) {
-            console.error('Error updating clinic:', clinicError);
-            throw { status: 500, message: 'Error updating clinic' };
+                    { new: true }
+                );
+            } catch (clinicError) {
+                console.error('Error updating clinic:', clinicError);
+                throw { status: 500, message: 'Error updating clinic' };
+            }
+        } catch (doctorSaveError) {
+            console.error('Error saving doctor:', doctorSaveError);
+            throw { status: 500, message: 'Doctor registration failed' };
         }
     }
 
-    console.log('Saving new admin to the database:', admin);
-    await admin.save();
-    console.log('Admin registered successfully:', admin);
-    return admin;
+    try {
+        await admin.save();
+        return admin;
+    } catch (adminSaveError) {
+        console.error('Error saving admin:', adminSaveError);
+        throw { status: 500, message: 'Admin registration failed' };
+    }
 };
 
 export const login = async ({ email, password }) => {
