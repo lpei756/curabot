@@ -1,14 +1,14 @@
 import { useContext, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../../../services/authService';
+import { login } from '../../../services/authService.js';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
-import { AuthContext } from "../../../context/AuthContext";
+import { AuthContext } from "../../../context/AuthContext.jsx";
 
 function Login({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');

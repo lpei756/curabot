@@ -10,7 +10,7 @@ import { Box, List, ListItem, ListItemText } from "@mui/material";
 import axios from "axios";
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
-import { getClinics } from '../../services/clinicService';
+import { getClinics } from '../../services/clinicService.js';
 
 const haversineDistance = (lat1, lon1, lat2, lon2) => {
     const R = 6371;

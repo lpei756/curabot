@@ -2,8 +2,8 @@ import { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress } from '@mui/material';
-import { AuthContext } from '../../context/AuthContext';
-import { API_PATH } from '../../utils/urlRoutes';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { API_PATH } from '../../utils/urlRoutes.js';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 
 const apiUrl = import.meta.env.VITE_API_URL;

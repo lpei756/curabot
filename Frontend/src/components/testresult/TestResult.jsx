@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Box, Typography, List, ListItem } from '@mui/material';
 import CircularProgress from '@mui/material/CircularProgress';
-import PDFViewer from './PDFViewer';
-import { fetchTestResults } from '../../services/testResultService';
+import PDFViewer from './PDFViewer.jsx';
+import { fetchTestResults } from '../../services/testResultService.js';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';

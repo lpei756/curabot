@@ -16,8 +16,8 @@ import Modal from '@mui/material/Modal';
 import '../../App.css';
 import logo from '/logo.png';
 import PropTypes from 'prop-types';
-import { AuthContext } from '../../context/AuthContext';
-import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage.js';
 import { fetchUserNotifications } from '../../services/NotificationService.js';
 
 const BadgeStyled = styled(Badge)(({ theme }) => ({
