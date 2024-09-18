@@ -2,9 +2,14 @@ import connectDB from './config/database.js';
 import app from './app.js';
 import './services/scheduler.js';
 
+// Use dynamic import for dotenv in ES module
 if (process.env.NODE_ENV !== 'production') {
-    require('dotenv').config();
-    console.log("Development environment variables loaded");
+    import('dotenv').then(dotenv => {
+        dotenv.config();
+        console.log("Development environment variables loaded");
+    }).catch(error => {
+        console.error("Failed to load dotenv", error);
+    });
 }
 
 connectDB()
