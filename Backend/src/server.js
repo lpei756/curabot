@@ -1,10 +1,9 @@
-import dotenv from 'dotenv';
 import connectDB from './config/database.js';
 import app from './app.js';
 import './services/scheduler.js';
 
 if (process.env.NODE_ENV !== 'production') {
-    dotenv.config();
+    require('dotenv').config();
     console.log("Development environment variables loaded");
 }
 
