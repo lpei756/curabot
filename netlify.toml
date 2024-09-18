@@ -3,9 +3,6 @@
 command = "npm ci && npm run build:all"  # 同时构建 user, admin 和 superadmin
 publish = "dist"  # 默认发布目录
 
-[build.environment]
-NODE_VERSION = "14.17.0"
-
 # 通用重定向规则
 [[redirects]]
 from = "/*"
