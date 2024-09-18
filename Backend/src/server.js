@@ -2,7 +2,6 @@ import connectDB from './config/database.js';
 import app from './app.js';
 import './services/scheduler.js';
 
-// 只在非生产环境下加载 dotenv
 if (process.env.NODE_ENV !== 'production') {
     import('dotenv').then(dotenv => dotenv.config());
     console.log("Development environment variables loaded");
