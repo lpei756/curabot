@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import { AuthContext } from "../../../context/AuthContext.jsx";
+
 function Login({ onClose, onSuccess }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

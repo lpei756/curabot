@@ -4,6 +4,7 @@ import { TextField, Button, Box, Typography, MenuItem, Select, InputLabel, FormC
 import PropTypes from 'prop-types';
 import { adminRegister } from '../../../services/AdminService.js';
 
+
 const clinicOptions = [
     { _id: "66ac6360d1864aef73c64a69", name: "Urgent Care Auckland" },
     { _id: "66ac6360d1864aef73c64a6a", name: "Urgent Care Clinic Wellington" },

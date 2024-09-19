@@ -20,7 +20,7 @@ const Charts = ({ data }) => {
             <PieChart
                 series={[
                     {
-                            data: Object.values(data.weekly).map((item, index) => ({
+                        data: Object.values(data.weekly).map((item, index) => ({
                             id: index,
                             value: item.positive + item.negative,
                             label: `Week ${index + 1}`,

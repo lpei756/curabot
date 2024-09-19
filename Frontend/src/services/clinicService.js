@@ -1,7 +1,5 @@
-
 import axiosApiInstance from '../utils/axiosInstance.js';
 import { API_PATH } from '../utils/urlRoutes.js';
-
 
 export const getClinics = async () => {
   try {
@@ -21,4 +19,5 @@ export const getClinicById = async (clinicId) => {
     console.error('Error fetching clinic:', error);
     throw error;
   }
+
 };
