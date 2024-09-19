@@ -3,7 +3,6 @@ import { fetchUserAppointments, deleteAppointment } from '../../services/appoint
 import { useNavigate } from 'react-router-dom';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,6 +41,7 @@ const AppointmentList = () => {
   };
 
   const handleBookingClick = () => {
+
     window.location.href = `${apiUrl}/appointment/new`;
   };
 
