@@ -45,6 +45,7 @@
     "react-router-dom": "^6.26.0",
     "uuid": "^10.0.0",
     "dotenv": "^16.4.5",
+    "express": "^4.19.2",
     "vite": "^5.3.4"
   },
   "devDependencies": {
