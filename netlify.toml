@@ -29,3 +29,8 @@ publish = "dist/superadmin"  # 超级管理员端的发布目录
 [context.superadmin.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200
