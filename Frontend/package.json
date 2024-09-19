@@ -5,6 +5,10 @@
   "type": "module",
   "proxy": "http://localhost:3000",
   "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
     "dev:admin": "vite --config vite.config.admin.js",
     "dev:superadmin": "vite --config vite.config.superadmin.js",
     "dev:user": "vite --config vite.config.user.js",
