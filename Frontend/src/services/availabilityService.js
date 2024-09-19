@@ -1,6 +1,5 @@
 import { API_PATH } from '../utils/urlRoutes.js';
 
-
 const apiRequest = async (url, options = {}) => {
     const token = localStorage.getItem('authToken');
 

@@ -8,6 +8,7 @@ import { readAppointment, updateAppointment } from '../../services/appointmentSe
 import { getClinics } from '../../services/clinicService.js';
 import { getDoctorsByClinic } from '../../services/doctorService.js';
 
+
 const UpdateAppointment = () => {
     const { appointmentID } = useParams();
     const [formValues, setFormValues] = useState({

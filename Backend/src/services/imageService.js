@@ -16,7 +16,6 @@ conn.once('open', () => {
 
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
         console.log('GridFS Storing file:', file.originalname);
         return {
@@ -25,6 +24,7 @@ const storage = new GridFsStorage({
         };
     }
 });
+
 
 export const upload = multer({
     storage,
@@ -71,7 +71,6 @@ export const deleteImage = async (imageId) => {
         if (!deletedImage) {
             throw new Error('Image not found');
         }
-
 
         gfs.delete(new mongoose.Types.ObjectId(deletedImage._id), (err) => {
             if (err) {

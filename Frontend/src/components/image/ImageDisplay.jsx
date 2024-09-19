@@ -98,6 +98,7 @@ function ImageDisplay({ userId }) {
                             onClick={() => handleImageClick(image._id)}
                         >
                             <img
+
                                 src={`${apiUrl}/uploads/${image.filename}`}
                                 alt={`User uploaded ${image.filename} - ${index}`}
                             />
