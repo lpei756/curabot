@@ -131,7 +131,7 @@ const AdminPanel = () => {
                 )
             ) : (
                 <Box sx={{ marginBottom: 4 }}>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography variant="h5" component="h2" sx={{color: 'black'}} gutterBottom>
                         Patients
                     </Typography>
                     <TextField
@@ -185,7 +185,7 @@ const AdminPanel = () => {
                                                     onClick={() => handlePrescription(patient)}
                                                     variant="contained"
                                                     color="secondary"
-                                                    sx={{ ml: 1 }}
+                                                    sx={{ ml: 1, backgroundColor: '#03035d' }}
                                                 >
                                                     Generate Prescription
                                                 </Button>

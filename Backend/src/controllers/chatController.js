@@ -92,7 +92,8 @@ export const handleChat = async (req, res) => {
       'auto appointment',
       'booking',
       'book',
-      'schedule'
+      'schedule',
+      'make an appointment'
     ];
 
     const cancelAppointmentKeywords = [
@@ -109,8 +110,7 @@ export const handleChat = async (req, res) => {
       'repeat prescription',
       'repeat medicine',
       'refill prescription',
-      'refill medicine',
-      'repeat'
+      'refill medicine'
     ];
 
     const threshold = 2;
