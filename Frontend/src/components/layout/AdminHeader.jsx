@@ -121,7 +121,7 @@ const AdminHeader = () => {
                             onClick={() => handleNavigation('/admin/clinic-stuff')}
                             sx={{ justifyContent: 'flex-start', color: 'black', display: 'block', marginBottom: '10px' }}
                         >
-                            Clinic Stuff
+                            Clinic Staff
                         </Button>
                         <Button
                             color="inherit"
