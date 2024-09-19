@@ -9,7 +9,7 @@
     "multer-gridfs-storage": "^4.0.3"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node Backend/src/server.js",
     "dev": "vite"
   }
 }
