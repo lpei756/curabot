@@ -10,7 +10,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { API_PATH } from '../../utils/urlRoutes.js';
-
 function ImageUpload({ open, onClose, onImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState(null);

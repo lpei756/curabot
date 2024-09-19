@@ -7,6 +7,7 @@ import { API_PATH } from '../../utils/urlRoutes.js';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 
 const apiUrl = import.meta.env.VITE_API_URL;
+
 function ImageDisplay({ userId }) {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
