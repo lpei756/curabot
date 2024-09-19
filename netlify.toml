@@ -1,14 +1,3 @@
-# 通用配置
-[build]
-command = "npm ci && npm run build:all"  # 同时构建 user, admin 和 superadmin
-publish = "dist"  # 默认发布目录
-
-# 通用重定向规则
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
 # user 端的生产环境配置
 [context.production]
 command = "npm run build:user"  # user 端的构建命令
