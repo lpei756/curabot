@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import Clinic from '../models/Clinic';
-import { getDoctorByIdService } from '../services/doctorService';
+import Clinic from '../models/Clinic.js';
+import { getDoctorByIdService } from '../services/doctorService.js';
 
 export const getDoctorsByClinic = async (req, res) => {
   const { clinicId } = req.params;
