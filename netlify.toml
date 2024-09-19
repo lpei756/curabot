@@ -1,6 +1,6 @@
 # 设置全局变量
 [build.environment]
-NODE_VERSION = "14"
+NODE_VERSION = "16"
 NPM_FLAGS = "--production=false"
 
 # 用户端的生产环境配置
