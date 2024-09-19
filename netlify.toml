@@ -6,7 +6,7 @@ NPM_FLAGS = "--production=false"
 # 用户端的生产环境配置
 [context.production]
 command = "npm run build:user"  # 用户端的构建命令
-publish = "dist"  # 用户端的发布目录
+publish = "dist/user"  # 用户端的发布目录
 
 [context.production.environment]
 NODE_ENV = "production"
