@@ -1,3 +1,4 @@
+/* global process */
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react-swc';
 
@@ -11,7 +12,10 @@ export default ({ mode }) => {
     },
     envPrefix: 'VITE_',
     define: {
-      'process.env': env,  // 通过 define 注入全局的环境变量
+      'process.env': env,
+    },
+    build: {
+      outDir: 'dist/user',
     },
   });
 };

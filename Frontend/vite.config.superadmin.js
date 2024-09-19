@@ -8,14 +8,14 @@ export default ({ mode }) => {
   return defineConfig({
     plugins: [react()],
     server: {
-      port: 5175, // 不同的端口用于超级管理员
+      port: 5175,
     },
     envPrefix: 'VITE_',
     define: {
       'process.env': env,
     },
     build: {
-      outDir: 'dist/superadmin', // 构建输出目录为 superadmin 文件夹
+      outDir: 'dist/superadmin',
     },
   });
 };
