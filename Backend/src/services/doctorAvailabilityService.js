@@ -23,7 +23,13 @@ export const setAvailability = async (doctorID, date, startTime, endTime, isBook
 };
 
 export const getAvailabilityByDoctorID = async (doctorID) => {
-    return await DoctorAvailability.find({ doctorID });
+    try {
+        const availability = await DoctorAvailability.find({ doctorID }).exec();
+        return availability;
+    } catch (error) {
+        console.error('Error fetching availability by doctor ID:', error);
+        throw error;
+    }
 };
 
 export const getAllAvailabilityByDate = async (date) => {
@@ -39,7 +45,9 @@ export const getAvailabilityByAddress = async (partialAddress) => {
 
         if (!clinic) {
             console.error('Clinic not found for partial address:', partialAddress);
-            throw new Error('Clinic not found');
+            const error = new Error('No availability found for this location');
+            error.statusCode = 404;
+            throw error;
         }
 
         console.log('Clinic found:', clinic);
@@ -52,7 +60,10 @@ export const getAvailabilityByAddress = async (partialAddress) => {
         return availability;
     } catch (error) {
         console.error('Error fetching availability by address:', error);
-        throw error;
+        if (error.statusCode === 404) {
+            throw error;
+        }
+        throw new Error('Server error');
     }
 };
 

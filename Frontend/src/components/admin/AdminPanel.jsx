@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
-import { fetchMe, fetchAllPatients } from '../../services/AdminService.js';
-import { AdminContext } from '../../context/AdminContext.jsx';
+import { fetchMe, fetchAllPatients } from '../../services/AdminService';
+import { AdminContext } from '../../context/AdminContext';
 import EditPatient from './EditPatient.jsx';
 import Prescription from './Prescription.jsx';
 import { Link, useNavigate } from 'react-router-dom';
@@ -131,7 +131,7 @@ const AdminPanel = () => {
                 )
             ) : (
                 <Box sx={{ marginBottom: 4 }}>
-                    <Typography variant="h5" component="h2" gutterBottom>
+                    <Typography variant="h5" component="h2" sx={{color: 'black'}} gutterBottom>
                         Patients
                     </Typography>
                     <TextField
@@ -185,7 +185,7 @@ const AdminPanel = () => {
                                                     onClick={() => handlePrescription(patient)}
                                                     variant="contained"
                                                     color="secondary"
-                                                    sx={{ ml: 1 }}
+                                                    sx={{ ml: 1, backgroundColor: '#03035d' }}
                                                 >
                                                     Generate Prescription
                                                 </Button>

@@ -14,6 +14,10 @@ describe('connectDB', () => {
         process.exit = jest.fn();
     });
 
+    afterAll(async () => {
+        await mongoose.disconnect();
+    });
+
     it('should connect to MongoDB successfully', async () => {
         mongoose.connect.mockResolvedValueOnce(true);
 

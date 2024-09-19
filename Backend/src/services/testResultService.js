@@ -44,6 +44,7 @@ const extractTextFromPDF = async (filePath) => {
                     console.error('Error extracting text from PDF:', err);
                     return reject(err);
                 }
+                console.log('Extracted pages:', pages);
                 resolve(pages.join(' '));
             });
         });
