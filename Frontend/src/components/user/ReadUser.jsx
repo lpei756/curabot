@@ -8,7 +8,6 @@ import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
 import { getDoctorById } from '../../services/doctorService.js';
 import { AuthContext } from "../../context/AuthContext.jsx";
-
 function ReadUser() {
     const [userData, setUserData] = useState(null);
     const [doctorName, setDoctorName] = useState(null);

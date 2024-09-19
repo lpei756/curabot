@@ -24,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const __dirname = path.resolve();
+
 app.get('/', (req, res) => {
     res.send('Welcome to the Curabot Backend API');
 });

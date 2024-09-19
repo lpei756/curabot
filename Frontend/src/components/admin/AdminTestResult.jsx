@@ -8,7 +8,6 @@ import { fetchTestResults } from '../../services/testResultService.js';
 import '../../App.css';
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
 function AdminTestResultsPage() {
     const [testResults, setTestResults] = useState([]);
     const [loading, setLoading] = useState(true);
