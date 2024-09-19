@@ -5,12 +5,11 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogTitle from '@mui/material/DialogTitle';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../../context/AuthContext.jsx';
 import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
-import { API_PATH } from '../../utils/urlRoutes';
-
+import { API_PATH } from '../../utils/urlRoutes.js';
 function ImageUpload({ open, onClose, onImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState(null);

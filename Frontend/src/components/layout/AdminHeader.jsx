@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { fetchAdminNotifications } from '../../services/NotificationService';
-import { AdminContext } from '../../context/AdminContext';
+import { fetchAdminNotifications } from '../../services/NotificationService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
 import logo from '/logo.png';
 import GroupsIcon from '@mui/icons-material/Groups';
 import ArticleIcon from '@mui/icons-material/Article';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import LogoutIcon from '@mui/icons-material/Logout';
-import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage';
+import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage.js';
 
 const AdminHeader = () => {
     const navigate = useNavigate();

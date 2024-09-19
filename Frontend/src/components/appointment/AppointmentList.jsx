@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { fetchUserAppointments, deleteAppointment } from '../../services/appointmentService';
+import { fetchUserAppointments, deleteAppointment } from '../../services/appointmentService.js';
 import { useNavigate } from 'react-router-dom';
 
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -41,7 +41,8 @@ const AppointmentList = () => {
   };
 
   const handleBookingClick = () => {
-    window.location.href = '${apiUrl}/appointment/new';
+
+    window.location.href = `${apiUrl}/appointment/new`;
   };
 
   const handleAppointmentClick = (appointment) => {

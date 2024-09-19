@@ -2,10 +2,10 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Collapse, Button } from '@mui/material';
 import { useParams, useNavigate } from 'react-router-dom';
-import ImageDisplay from '../image/ImageDisplay';
+import ImageDisplay from '../image/ImageDisplay.jsx';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
-import { fetchPatientData } from '../../services/adminService';
+import { fetchPatientData } from '../../services/AdminService.js';
 
 function ReadPatient({ returnPath }) {
     const { patientId } = useParams();

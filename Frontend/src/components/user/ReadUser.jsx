@@ -2,12 +2,12 @@ import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, Collapse } from '@mui/material';
 import ImageDisplay from '../image/ImageDisplay';
-import { fetchUserData } from '../../services/userService';
+import { fetchUserData } from '../../services/userService.js';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
-import { getDoctorById } from '../../services/doctorService';
-import { AuthContext } from "../../context/AuthContext";
+import { getDoctorById } from '../../services/doctorService.js';
+import { AuthContext } from "../../context/AuthContext.jsx";
 
 function ReadUser() {
     const [userData, setUserData] = useState(null);

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import { GridFSBucket } from 'mongodb';
 import multer from 'multer';
 import Image from '../models/Image.js';
-import GridFsStorage from 'multer-gridfs-storage';
+import { GridFsStorage } from 'multer-gridfs-storage';
 
 const conn = mongoose.connection;
 let gfs;
@@ -16,7 +16,6 @@ conn.once('open', () => {
 
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
-    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
         console.log('GridFS Storing file:', file.originalname);
         return {
@@ -25,6 +24,7 @@ const storage = new GridFsStorage({
         };
     }
 });
+
 
 export const upload = multer({
     storage,
@@ -72,7 +72,7 @@ export const deleteImage = async (imageId) => {
             throw new Error('Image not found');
         }
 
-        gfs.delete(deletedImage._id, (err) => {
+        gfs.delete(new mongoose.Types.ObjectId(deletedImage._id), (err) => {
             if (err) {
                 console.error(`Error deleting file from GridFS: ${err.message}`);
                 throw new Error(`Error deleting file from GridFS: ${err.message}`);
@@ -88,7 +88,7 @@ export const deleteImage = async (imageId) => {
 export const getImageStream = async (filename) => {
     try {
         const file = await gfs.find({ filename }).toArray();
-        if (!file || file.length === 0) {
+        if (!file || files.length === 0) {
             throw new Error('File not found');
         }
         return gfs.openDownloadStreamByName(filename);

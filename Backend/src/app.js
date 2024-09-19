@@ -24,6 +24,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 const __dirname = path.resolve();
+app.get('/', (req, res) => {
+    res.send('Welcome to the Curabot Backend API');
+});
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
@@ -49,6 +52,7 @@ app.post('/api/feedback', (req, res) => {
 cron.schedule('0 0 * * *', () => {
     console.log('Running the chat history cleanup...');
     deleteOldChatHistories();
-  });  
+  });
+
 
 export default app;

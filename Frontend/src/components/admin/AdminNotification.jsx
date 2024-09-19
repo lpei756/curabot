@@ -1,9 +1,9 @@
 import { useState, useEffect, useContext, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { Typography, Box, Button, TextField, Collapse, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/notificationService.js';
-import { fetchAllPatients } from '../../services/AdminService';
-import { AdminContext } from "../../context/AdminContext";
+import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
+import { fetchAllPatients } from '../../services/AdminService.js';
+import { AdminContext } from "../../context/AdminContext.jsx";
 import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
 function AdminNotification() {

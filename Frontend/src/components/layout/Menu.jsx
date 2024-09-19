@@ -2,11 +2,11 @@ import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import { List, ListItem, ListItemText, Badge } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { fetchUserNotifications } from '../../services/notificationService';
-import ReadUser from '../user/ReadUser';
-import AppointmentList from '../appointment/AppointmentList';
-import Notification from '../user/Notification';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { fetchUserNotifications } from '../../services/NotificationService.js';
+import ReadUser from '../user/ReadUser.jsx';
+import AppointmentList from '../appointment/AppointmentList.jsx';
+import Notification from '../user/Notification.jsx';
 
 const UserOptionsList = ({ options }) => {
     const [selectedOption, setSelectedOption] = useState(null);

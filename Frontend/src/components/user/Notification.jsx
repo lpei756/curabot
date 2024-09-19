@@ -2,9 +2,11 @@ import { useState, useEffect, useContext, useRef } from 'react';
 import { Typography, Box, Button, TextField, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { fetchUserNotifications, sendUserMessage, markNotificationAsRead, deleteNotification } from '../../services/NotificationService.js';
 import { fetchDoctors } from '../../services/AdminService.js';
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "../../context/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
+
 const apiUrl = import.meta.env.VITE_API_URL;
+
 function Notification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);

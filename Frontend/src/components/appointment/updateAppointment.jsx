@@ -4,9 +4,10 @@ import Button from '@mui/material/Button';
 import MenuItem from '@mui/material/MenuItem';
 import Box from '@mui/material/Box';
 import { useParams, useNavigate } from 'react-router-dom';
-import { readAppointment, updateAppointment } from '../../services/appointmentService';
-import { getClinics } from '../../services/clinicService';
-import { getDoctorsByClinic } from '../../services/doctorService';
+import { readAppointment, updateAppointment } from '../../services/appointmentService.js';
+import { getClinics } from '../../services/clinicService.js';
+import { getDoctorsByClinic } from '../../services/doctorService.js';
+
 
 const UpdateAppointment = () => {
     const { appointmentID } = useParams();

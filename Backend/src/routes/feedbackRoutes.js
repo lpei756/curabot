@@ -1,7 +1,7 @@
 // feedbackRoutes.js
 import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
-import Feedback from '../models/feedback.js'; 
+import Feedback from '../models/feedback.js';
 
 
 const router = express.Router();
@@ -37,8 +37,8 @@ router.get('/summary', async (req, res) => {
     try {
         const feedbacks = await Feedback.find({});
 
-        const weeklySummary = {}; 
-        const monthlySummary = {}; 
+        const weeklySummary = {};
+        const monthlySummary = {};
         const quarterlySummary = {};
         const trendSummary = [];
 

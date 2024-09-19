@@ -1,11 +1,11 @@
 import { useEffect, useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/AuthContext';
-import { fetchUserData } from '../../services/userService';
-import { fetchUserAppointments } from '../../services/appointmentService';
-import { fetchTestResults } from '../../services/testResultService';
-import { getDoctorById } from '../../services/doctorService';
-import { getClinicById } from '../../services/clinicService';
+import { AuthContext } from '../../context/AuthContext.jsx';
+import { fetchUserData } from '../../services/userService.js';
+import { fetchUserAppointments } from '../../services/appointmentService.js';
+import { fetchTestResults } from '../../services/testResultService.js';
+import { getDoctorById } from '../../services/doctorService.js';
+import { getClinicById } from '../../services/clinicService.js';
 import { getAllPrescriptions } from '../../services/PrescriptionService.js';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';

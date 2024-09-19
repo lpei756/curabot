@@ -2,13 +2,13 @@ import { useState, useEffect, useContext } from 'react';
 import { Box, Typography, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, TextField, Button } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { deleteAdmin, fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService';
-import { fetchFeedbackData } from '../../services/chatService';
-import { AdminContext } from '../../context/AdminContext';
+import { deleteAdmin, fetchAllAdminIDs, fetchAllPatients } from '../../services/AdminService.js';
+import { fetchFeedbackData } from '../../services/chatService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
 import EditPatient from './EditPatient.jsx';
 import EditAdmin from './EditAdmin.jsx';
 import { Link, useNavigate } from 'react-router-dom';
-import FeedbackCharts from '../charts/FeedbackCharts';
+import FeedbackCharts from '../charts/FeedbackCharts.jsx';
 
 const SuperAdminPanel = () => {
     const [admins, setAdmins] = useState([]);

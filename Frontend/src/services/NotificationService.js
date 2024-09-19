@@ -1,5 +1,5 @@
-import axiosApiInstance from '../utils/axiosInstance';
-import { API_PATH } from '../utils/urlRoutes';
+import axiosApiInstance from '../utils/axiosInstance.js';
+import { API_PATH } from '../utils/urlRoutes.js';
 
 export const fetchUserNotifications = async (receiverId) => {
     console.log('fetchUserNotifications called with receiverId:', receiverId);

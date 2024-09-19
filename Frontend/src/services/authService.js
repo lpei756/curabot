@@ -1,6 +1,6 @@
-import axiosApiInstance from '../utils/axiosInstance';
-import { tokenStorage } from '../utils/localStorage';
-import { API_PATH } from '../utils/urlRoutes';
+import axiosApiInstance from '../utils/axiosInstance.js';
+import { tokenStorage } from '../utils/localStorage.js';
+import { API_PATH } from '../utils/urlRoutes.js';
 
 console.log('Stored Token:', tokenStorage.get());
 
