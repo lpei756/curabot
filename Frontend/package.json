@@ -15,7 +15,6 @@
     "build:admin": "vite build --config vite.config.admin.js",
     "build:superadmin": "vite build --config vite.config.superadmin.js",
     "build:user": "vite build --config vite.config.user.js",
-    "build:all": "npm run build:user && npm run build:admin && npm run build:superadmin",
     "preview:admin": "vite preview --config vite.config.admin.js",
     "preview:superadmin": "vite preview --config vite.config.superadmin.js",
     "preview:user": "vite preview --config vite.config.user.js",
@@ -44,7 +43,6 @@
     "react-dom": "^18.3.1",
     "react-draggable": "^4.4.6",
     "react-router-dom": "^6.26.0",
-    "react-scripts": "^5.0.1",
     "uuid": "^10.0.0",
     "vite": "^5.3.4"
   },
