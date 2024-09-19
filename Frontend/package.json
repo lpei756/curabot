@@ -44,6 +44,7 @@
     "react-draggable": "^4.4.6",
     "react-router-dom": "^6.26.0",
     "uuid": "^10.0.0",
+    "dotenv": "^16.4.5",
     "vite": "^5.3.4"
   },
   "devDependencies": {
