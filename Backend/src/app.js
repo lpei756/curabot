@@ -28,6 +28,7 @@ const __dirname = path.resolve();
 app.get('/', (req, res) => {
     res.send('Welcome to the Curabot Backend API');
 });
+
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.use('/api/auth', authRoutes);
