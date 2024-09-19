@@ -10,7 +10,7 @@
     "seed": "node scripts/createDoctorsAndAdmins.js"
   },
   "engines": {
-    "node": "22.x",
+    "node": "20.x",
     "npm": "10.x"
   },
   "keywords": [],
