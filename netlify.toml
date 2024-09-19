@@ -10,7 +10,7 @@ publish = "dist"  # 用户端的发布目录
 
 [context.production.environment]
 NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api"
+REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
 # 管理员端的生产环境配置
 [context.admin]
@@ -19,7 +19,7 @@ publish = "dist/admin"  # 管理员端的发布目录
 
 [context.admin.environment]
 NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api"
+REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
 # 超级管理员端的生产环境配置
 [context.superadmin]
@@ -28,4 +28,4 @@ publish = "dist/superadmin"  # 超级管理员端的发布目录
 
 [context.superadmin.environment]
 NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api"
+REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
