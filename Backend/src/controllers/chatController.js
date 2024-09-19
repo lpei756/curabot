@@ -62,8 +62,8 @@ export const handleChat = async (req, res) => {
     }
 
     await ChatSession.findByIdAndUpdate(
-      sessionId,
-      { $push: { messages: { sender: 'user', message: userMessage, isAnonymous } } }
+        sessionId,
+        { $push: { messages: { sender: 'user', message: userMessage, isAnonymous } } }
     );
 
     const clinicResponse = await findClinicDetailsUsingNLP(userMessage);
@@ -71,8 +71,8 @@ export const handleChat = async (req, res) => {
       console.log('Clinic Response:', clinicResponse);
       const responses = clinicResponse.responses.join('<br/>');
       await ChatSession.findByIdAndUpdate(
-        sessionId,
-        { $push: { messages: { sender: 'bot', message: responses, isAnonymous } } }
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: responses, isAnonymous } } }
       );
       return res.json({ reply: responses, sessionId });
     }
@@ -92,7 +92,8 @@ export const handleChat = async (req, res) => {
       'auto appointment',
       'booking',
       'book',
-      'schedule'
+      'schedule',
+      'make an appointment'
     ];
 
     const cancelAppointmentKeywords = [
@@ -109,8 +110,7 @@ export const handleChat = async (req, res) => {
       'repeat prescription',
       'repeat medicine',
       'refill prescription',
-      'refill medicine',
-      'repeat'
+      'refill medicine'
     ];
 
     const threshold = 2;
@@ -122,8 +122,8 @@ export const handleChat = async (req, res) => {
     if (userMessage === 'crazy thursday') {
       const moneyEmojis = '💰'.repeat(50);
       await ChatSession.findByIdAndUpdate(
-        sessionId,
-        { $push: { messages: { sender: 'bot', message: moneyEmojis, isAnonymous } } }
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: moneyEmojis, isAnonymous } } }
       );
       return res.json({ reply: moneyEmojis, sessionId });
     }
@@ -132,8 +132,8 @@ export const handleChat = async (req, res) => {
       const bookingReply = 'For booking a new appointment, you can send messages such as "Booking" or "Book appointment" in the chatbot to request an auto-booking. You can also navigate to the appointment booking page to find an available slot.';
 
       await ChatSession.findByIdAndUpdate(
-        sessionId,
-        { $push: { messages: { sender: 'bot', message: bookingReply, isAnonymous } } }
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: bookingReply, isAnonymous } } }
       );
 
       return res.json({ reply: bookingReply, sessionId });
@@ -152,8 +152,8 @@ export const handleChat = async (req, res) => {
 
         const appointmentsReply = await getAppointmentsForUser(userId, authToken);
         await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: appointmentsReply, isAnonymous } } }
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: appointmentsReply, isAnonymous } } }
         );
         return res.json({ reply: appointmentsReply, sessionId });
       } catch (error) {
@@ -179,8 +179,8 @@ export const handleChat = async (req, res) => {
         }
 
         const repeatRespons = repeatResponsRaw
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-          .slice(0, 3);
+            .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+            .slice(0, 3);
 
         const formattedResponse = repeatRespons.map(prescription => {
           const encodedData = encodeURIComponent(JSON.stringify({
@@ -202,8 +202,8 @@ export const handleChat = async (req, res) => {
         }).join('</br></br>');
 
         await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: formattedResponse, isAnonymous } } }
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: formattedResponse, isAnonymous } } }
         );
         return res.json({ reply: formattedResponse, sessionId });
       } catch (error) {
@@ -226,8 +226,8 @@ export const handleChat = async (req, res) => {
         if (!availableSlots || availableSlots.length === 0) {
           const noSlotsReply = 'Sorry, there are no available slots at the moment. Please try again later.';
           await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: noSlotsReply, isAnonymous } } }
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noSlotsReply, isAnonymous } } }
           );
           return res.json({ reply: noSlotsReply, sessionId });
         }
@@ -242,8 +242,8 @@ export const handleChat = async (req, res) => {
         if (!nearestSlot) {
           const noMatchReply = 'Sorry, there are no available slots matching your preferences at the moment. Please try again later.';
           await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: noMatchReply, isAnonymous } } }
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noMatchReply, isAnonymous } } }
           );
           return res.json({ reply: noMatchReply, sessionId });
         }
@@ -291,8 +291,8 @@ export const handleChat = async (req, res) => {
                   <p>If you are not satisfied with this slot, you can <a href="${BASE_URL}/appointment/new">choose a different slot here</a>.</p>
               `;
         await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: botResponse, isAnonymous } } }
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: botResponse, isAnonymous } } }
         );
 
         return res.json({ reply: botResponse, sessionId });
@@ -333,8 +333,8 @@ export const handleChat = async (req, res) => {
         if (!appointments || appointments.length === 0) {
           const noAppointmentsReply = 'You have no scheduled appointments to cancel.';
           await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: noAppointmentsReply, isAnonymous } } }
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: noAppointmentsReply, isAnonymous } } }
           );
           return res.json({ reply: noAppointmentsReply, sessionId });
         }
@@ -368,8 +368,8 @@ export const handleChat = async (req, res) => {
               `;
         });
         await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: reply, isAnonymous } } }
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: reply, isAnonymous } } }
         );
         return res.json({ reply, sessionId });
       } catch (error) {
@@ -394,8 +394,8 @@ export const handleChat = async (req, res) => {
     if (isEmergency) {
       const emergencyResponse = 'It sounds like you might be experiencing a medical emergency. Please go to the nearest hospital or call emergency services (111) immediately.';
       await ChatSession.findByIdAndUpdate(
-        sessionId,
-        { $push: { messages: { sender: 'bot', message: emergencyResponse, isAnonymous } } }
+          sessionId,
+          { $push: { messages: { sender: 'bot', message: emergencyResponse, isAnonymous } } }
       );
       return res.json({ reply: emergencyResponse, sessionId });
     }
@@ -409,7 +409,7 @@ export const handleChat = async (req, res) => {
 
         if (Array.isArray(doctors) && doctors.length > 0) {
           const doctorDetails = doctors.map(doctor =>
-            `<div>
+              `<div>
               <p><strong>Name:</strong> ${doctor.doctorName}</p>
               <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
               <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
@@ -423,8 +423,8 @@ export const handleChat = async (req, res) => {
             `;
 
           await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: responseMessage, isAnonymous } } }
           );
           return res.json({ reply: responseMessage, sessionId });
         } else {
@@ -435,8 +435,8 @@ export const handleChat = async (req, res) => {
           if (!availableSlots || availableSlots.length === 0) {
             const noSpecialisationReply = 'I’m sorry, but I couldn’t find any relevant specialisations and there are no available slots at the moment. Please try again later.';
             await ChatSession.findByIdAndUpdate(
-              sessionId,
-              { $push: { messages: { sender: 'bot', message: noSpecialisationReply, isAnonymous } } }
+                sessionId,
+                { $push: { messages: { sender: 'bot', message: noSpecialisationReply, isAnonymous } } }
             );
             return res.json({ reply: noSpecialisationReply, sessionId });
           }
@@ -447,8 +447,8 @@ export const handleChat = async (req, res) => {
           if (!nearestSlot) {
             const noMatchReply = 'Sorry, I couldn’t find any doctors relevant to your symptoms, and there are no available appointments right now. Please try again later.';
             await ChatSession.findByIdAndUpdate(
-              sessionId,
-              { $push: { messages: { sender: 'bot', message: noMatchReply, isAnonymous } } }
+                sessionId,
+                { $push: { messages: { sender: 'bot', message: noMatchReply, isAnonymous } } }
             );
             return res.json({ reply: noMatchReply, sessionId });
           }
@@ -496,8 +496,8 @@ export const handleChat = async (req, res) => {
             `;
 
           await ChatSession.findByIdAndUpdate(
-            sessionId,
-            { $push: { messages: { sender: 'bot', message: nearestSlotResponse, isAnonymous } } }
+              sessionId,
+              { $push: { messages: { sender: 'bot', message: nearestSlotResponse, isAnonymous } } }
           );
           return res.json({ reply: nearestSlotResponse, sessionId });
         }
@@ -509,8 +509,8 @@ export const handleChat = async (req, res) => {
       try {
         const generalResponse = await processChatWithOpenAI(userMessage);
         await ChatSession.findByIdAndUpdate(
-          sessionId,
-          { $push: { messages: { sender: 'bot', message: generalResponse, isAnonymous } } }
+            sessionId,
+            { $push: { messages: { sender: 'bot', message: generalResponse, isAnonymous } } }
         );
         return res.json({ reply: generalResponse, sessionId });
       } catch (error) {

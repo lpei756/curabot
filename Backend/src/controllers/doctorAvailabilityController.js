@@ -27,9 +27,11 @@ export const getDoctorAvailability = async (req, res) => {
     try {
         const doctorID = req.params.doctorID;
         const availability = await getAvailabilityByDoctorID(doctorID);
-        if (!availability) {
+
+        if (availability.length === 0) {
             return res.status(404).json({ message: 'Availability not found' });
         }
+
         res.status(200).json(availability);
     } catch (error) {
         console.error('Error fetching doctor availability:', error);
@@ -52,12 +54,18 @@ export const getDoctorAvailabilityByAddress = async (req, res) => {
         const { address } = req.params;
         const decodedAddress = decodeURIComponent(address);
         console.log('Searching for clinics with partial address:', decodedAddress);
+
         const availability = await getAvailabilityByAddress(decodedAddress);
         if (!availability || availability.length === 0) {
+            console.log('No availability found for this address:', decodedAddress);
             return res.status(404).json({ message: 'No availability found for this address' });
         }
         res.status(200).json(availability);
     } catch (error) {
+        if (error.statusCode === 404) {
+            return res.status(404).json({ message: 'No availability found for this location' });
+        }
+
         console.error('Error fetching doctor availability by address:', error);
         res.status(500).json({ message: 'Internal server error', error: error.message });
     }
@@ -82,7 +90,14 @@ export const updateDoctorAvailability = async (req, res) => {
         const { startTime, endTime, isBooked, bookedBy } = req.body;
         console.log('Received data:', req.body);
         if (!startTime || !endTime) {
-            return res.status(400).json({ message: 'Missing required fields: startTime or endTime' });
+            return res.status(422).json({
+                status: 'failed',
+                error: 'Invalid request. Please review request and try again.',
+                validationErrors: [
+                    { message: '"startTime" is required' },
+                    { message: '"endTime" is required' }
+                ]
+            });
         }
         const start = new Date(startTime);
         const end = new Date(endTime);

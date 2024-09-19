@@ -7,7 +7,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 
-// Mocking modules
 jest.mock('../models/Admin');
 jest.mock('../models/Doctor');
 jest.mock('../models/Clinic');
