@@ -4,11 +4,11 @@ NODE_VERSION = "20"
 NPM_FLAGS = "--production=false"
 
 # 用户端的生产环境配置
-[context.production]
+[context.user]
 command = "npm run build:user"  # 用户端的构建命令
 publish = "dist/user"  # 用户端的发布目录
 
-[context.production.environment]
+[context.user.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
