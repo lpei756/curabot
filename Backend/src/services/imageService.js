@@ -87,8 +87,10 @@ export const deleteImage = async (imageId) => {
 
 export const getImageStream = async (filename) => {
     try {
+
         const file = await gfs.find({ filename }).toArray();
         if (!file || files.length === 0) {
+          
             throw new Error('File not found');
         }
         return gfs.openDownloadStreamByName(filename);
