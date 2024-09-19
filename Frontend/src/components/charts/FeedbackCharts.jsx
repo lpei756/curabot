@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography, Grid, Paper } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -9,7 +9,7 @@ const FeedbackCharts = ({ data }) => {
         console.log('Monthly Data:', data.monthly);
         console.log('Quarterly Data:', data.quarterly);
       }, [data]);
-      
+
 
   if (!data || !data.trends || !Array.isArray(data.trends) || data.trends.length === 0) {
     return (
@@ -21,7 +21,7 @@ const FeedbackCharts = ({ data }) => {
 
   const chartColors = ['#3f51b5', '#f50057', '#00bcd4', '#4caf50', '#ff9800'];
 
-  
+
   const createPieChartData = (feedbackData) => {
     if (!feedbackData || typeof feedbackData !== 'object') {
       return [];
@@ -97,7 +97,7 @@ const FeedbackCharts = ({ data }) => {
       <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
         User Feedback Overview
       </Typography>
-      
+
       <Grid container spacing={4} justifyContent="center">
         {createPieChart('Weekly Overview', data.weekly)}
         {createPieChart('Monthly Overview', data.monthly)}
@@ -126,7 +126,7 @@ const FeedbackCharts = ({ data }) => {
               color: chartColors[4],
             },
           ]}
-          xAxis={[{ 
+          xAxis={[{
             data: allTrendData.map(item => item.x),
             scaleType: 'point',
             tickLabelStyle: {

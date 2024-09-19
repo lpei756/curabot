@@ -16,6 +16,7 @@ conn.once('open', () => {
 
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
+    options: { useNewUrlParser: true, useUnifiedTopology: true },
     file: (req, file) => {
         console.log('GridFS Storing file:', file.originalname);
         return {
@@ -71,6 +72,7 @@ export const deleteImage = async (imageId) => {
             throw new Error('Image not found');
         }
 
+
         gfs.delete(new mongoose.Types.ObjectId(deletedImage._id), (err) => {
             if (err) {
                 console.error(`Error deleting file from GridFS: ${err.message}`);
@@ -86,8 +88,8 @@ export const deleteImage = async (imageId) => {
 
 export const getImageStream = async (filename) => {
     try {
-        const files = await gfs.find({ filename }).toArray();
-        if (!files || files.length === 0) {
+        const file = await gfs.find({ filename }).toArray();
+        if (!file || files.length === 0) {
             throw new Error('File not found');
         }
         return gfs.openDownloadStreamByName(filename);

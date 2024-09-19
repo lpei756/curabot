@@ -5,7 +5,6 @@ import { fetchAdminNotifications, sendDoctorMessage, markNotificationAsRead, del
 import { fetchAllPatients } from '../../services/AdminService.js';
 import { AdminContext } from "../../context/AdminContext.jsx";
 import { useNavigate } from "react-router-dom";
-
 const apiUrl = import.meta.env.VITE_API_URL;
 function AdminNotification() {
     const [notifications, setNotifications] = useState([]);

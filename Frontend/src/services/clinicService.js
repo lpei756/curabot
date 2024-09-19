@@ -1,5 +1,7 @@
+
 import axiosApiInstance from '../utils/axiosInstance.js';
 import { API_PATH } from '../utils/urlRoutes.js';
+
 
 export const getClinics = async () => {
   try {

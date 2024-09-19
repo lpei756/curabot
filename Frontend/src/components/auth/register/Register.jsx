@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { TextField, Button, Box, Typography, Stepper, Step, StepLabel, LinearProgress } from '@mui/material';
 import PropTypes from 'prop-types';
 import { register, sendVerificationCode } from '../../../services/authService.js';
-
 const steps = ['Account Set Up', 'Personal Information'];
 
 const Register = ({ onSuccess }) => {

@@ -6,7 +6,6 @@ import ImageDisplay from '../image/ImageDisplay.jsx';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/loading.json';
 import { fetchPatientData } from '../../services/AdminService.js';
-
 function ReadPatient({ returnPath }) {
     const { patientId } = useParams();
     const [patientData, setPatientData] = useState(null);
