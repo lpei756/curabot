@@ -42,7 +42,6 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
         const formData = new FormData();
         formData.append('image', selectedFile);
         formData.append('userId', userId);
-        console.log([...formData]);
 
         try {
             const response = await axios.post(API_PATH.images.uploadImage, formData, {

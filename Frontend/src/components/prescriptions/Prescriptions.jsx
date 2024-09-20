@@ -48,7 +48,6 @@ const Prescriptions = () => {
             formData.append('receiverModel', "Doctor");
 
             const response = await sendUserMessage(formData, token);
-            console.log("Message sent successfully:", response);
         } catch (err) {
             console.error("Error sending repeat request:", err.message);
             setError(`Unable to send repeat request: ${err.message}`);

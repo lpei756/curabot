@@ -12,17 +12,13 @@ export const uploadTestResultService = async (testResultData) => {
         await testResult.save();
 
         const pdfText = await extractTextFromPDF(`uploads/${testResult.fileName}`);
-        console.log('Extracted text:', pdfText);
-
         const analysis = await generateAnalysis(pdfText, testResultData.patientID);
-        console.log('Generated analysis:', analysis);
-
         const summary = await generateSummary(analysis);
-        console.log('Generated summary:', summary);
 
         testResult.pdfText = pdfText;
         testResult.analysis = analysis;
         testResult.summary = summary;
+        
         await testResult.save();
 
         return { error: false, testResult };
@@ -44,7 +40,6 @@ const extractTextFromPDF = async (filePath) => {
                   console.error('Error extracting text from PDF:', err);
                   return reject(err);
                 }
-                console.log('Extracted pages:', pages);
                 resolve(pages.join(' '));
             });
         });

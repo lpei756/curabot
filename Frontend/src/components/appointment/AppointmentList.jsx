@@ -31,7 +31,6 @@ const AppointmentList = () => {
 
   const handleDelete = async (appointmentID) => {
     try {
-      console.log(`Attempting to delete appointment with ID: ${appointmentID}`);
       await deleteAppointment(appointmentID);
       setAppointments(appointments.filter(app => app.appointmentID !== appointmentID));
       window.location.reload();

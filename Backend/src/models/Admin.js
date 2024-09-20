@@ -32,7 +32,6 @@ AdminSchema.pre('remove', async function (next) {
   try {
     if (this.role === 'doctor' && this.doctor) {
       await DoctorModel.findByIdAndDelete(this.doctor);
-      console.log(`Doctor with ID ${this.doctor} was deleted`);
     }
     next();
   } catch (err) {

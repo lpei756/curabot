@@ -108,7 +108,6 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
         });
 
         const messageContent = response.choices[0].message.content.trim();
-        console.log('Message content:', messageContent);
 
         let symptoms = 'No symptoms detected.';
         let isEmergency = false;
@@ -208,7 +207,6 @@ export const identifySpecialisation = async (symptoms, userLocation) => {
                 }
 
                 const distance = haversineDistance(userLocation.lat, userLocation.lng, clinicLocation.lat, clinicLocation.lng);
-                console.log(`Distance for Doctor ${doctorID}: ${distance} km`);
 
                 doctors.push({
                     doctorName: `${doctorData.firstName} ${doctorData.lastName}`,

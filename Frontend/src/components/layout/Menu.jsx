@@ -18,7 +18,6 @@ const UserOptionsList = ({ options }) => {
         const fetchUnreadNotifications = async () => {
             try {
                 const notifications = await fetchUserNotifications(userId);
-                console.log('Fetched notifications:', notifications);
                 const unreadNotifications = notifications.filter(notification => !notification.isRead);
                 setUnreadCount(unreadNotifications.length);
             } catch (err) {

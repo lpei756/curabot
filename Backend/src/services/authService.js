@@ -28,7 +28,7 @@ export const readUser = async (id) => {
 };
 
 export const updateUser = async (id, updateData) => {
-    const user = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password'); // Exclude the password field
+    const user = await User.findByIdAndUpdate(id, updateData, { new: true, runValidators: true }).select('-password');
     if (!user) throw new Error('User not found');
     return user;
 };
@@ -39,7 +39,6 @@ export const logout = () => {
 
 export const getUserGP = async (id) => {
     try {
-      console.log("Fetching user with ID:", id);
       if (!id || typeof id !== 'string') {
         throw new Error('Invalid userId');
       }
@@ -48,8 +47,6 @@ export const getUserGP = async (id) => {
       if (!user) {
         throw new Error('User not found');
       }
-
-      console.log("User found:", user);
 
       const gp = await Doctor.findOne({ doctorID: user.gp });
 

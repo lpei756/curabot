@@ -2,7 +2,6 @@ import { saveImageService, getImagesByUser, deleteImage, getImageStream } from '
 
 export const saveImage = async (req, res) => {
     try {
-        console.log('req.file:', req.file);
         if (!req.file) {
             return res.status(400).json({ message: 'No file uploaded.' });
         }

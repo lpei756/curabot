@@ -53,11 +53,9 @@ export const getDoctorAvailabilityByAddress = async (req, res) => {
     try {
         const { address } = req.params;
         const decodedAddress = decodeURIComponent(address);
-        console.log('Searching for clinics with partial address:', decodedAddress);
 
         const availability = await getAvailabilityByAddress(decodedAddress);
         if (!availability || availability.length === 0) {
-            console.log('No availability found for this address:', decodedAddress);
             return res.status(404).json({ message: 'No availability found for this address' });
         }
         res.status(200).json(availability);
@@ -88,7 +86,6 @@ export const updateDoctorAvailability = async (req, res) => {
     try {
         const { doctorID, slotId } = req.params;
         const { startTime, endTime, isBooked, bookedBy } = req.body;
-        console.log('Received data:', req.body);
         if (!startTime || !endTime) {
             return res.status(422).json({
                 status: 'failed',

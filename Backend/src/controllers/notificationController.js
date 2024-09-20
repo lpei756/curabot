@@ -10,8 +10,6 @@ import Doctor from '../models/Doctor.js';
 
 export const sendMessage = async (req, res) => {
     try {
-        console.log('Request body:', req.body);
-        console.log('Uploaded file:', req.file);
         const { senderId, senderModel, receiverId, receiverModel, message, notificationType } = req.body;
         if (!senderId || !senderModel || !receiverId || !receiverModel || !message) {
             return res.status(400).json({
@@ -39,7 +37,6 @@ export const sendMessage = async (req, res) => {
             notificationType,
             pdfFilePath
         });
-        console.log('Notification saved successfully:', notification);
         res.status(201).json({ notification });
     } catch (error) {
         console.error('Error sending message:', error.message);
@@ -51,9 +48,7 @@ export const getUserNotifications = async (req, res) => {
     try {
         const { userId } = req.params;
         const { receiverModel } = req.query;
-        console.log(`Fetching notifications for ${receiverModel} with ID: ${userId}`);
         const notifications = await getNotificationsService(userId, receiverModel || 'User');
-        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${userId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
@@ -80,7 +75,6 @@ export const getAdminNotifications = async (req, res) => {
             }
         }
         const notifications = await getNotificationsService(actualId, receiverModel || 'Doctor');
-        console.log(`Notifications found: ${notifications.length} for ${receiverModel} with ID: ${actualId}`);
         res.status(200).json({ notifications });
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
@@ -92,10 +86,8 @@ export const getAdminNotifications = async (req, res) => {
 export const markAsRead = async (req, res) => {
     try {
         const { notificationId } = req.params;
-        console.log(`Marking notification as read with ID: ${notificationId}`);
         const notification = await markAsReadService(notificationId);
         if (!notification) {
-            console.log(`Notification not found for ID: ${notificationId}`);
             return res.status(404).json({ message: 'Notification not found' });
         }
         res.status(200).json({ notification });
@@ -108,13 +100,10 @@ export const markAsRead = async (req, res) => {
 export const deleteNotification = async (req, res) => {
     try {
         const { notificationId } = req.params;
-        console.log(`Deleting notification with ID: ${notificationId}`);
         const result = await deleteNotificationService(notificationId);
         if (!result) {
-            console.log(`Notification not found for ID: ${notificationId}`);
             return res.status(404).json({ message: 'Notification not found' });
         }
-        console.log('Notification deleted:', result);
         res.status(200).json({ message: 'Notification deleted successfully' });
     } catch (error) {
         console.error('Error deleting notification:', error.message);

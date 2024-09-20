@@ -17,8 +17,6 @@ const PrescriptionList = () => {
         const fetchPrescriptions = async () => {
             try {
                 const data = await getUserPrescriptions(userId, adminToken);
-                console.log('Fetched prescriptions:', data);
-
                 const sortedData = Array.isArray(data)
                     ? data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
                     : [];
@@ -44,9 +42,7 @@ const PrescriptionList = () => {
                 userId: userId,
                 prescriptionId: prescription._id,
             };
-            console.log('Sending repeat prescription with data:', data);
             const response = await repeatPrescriptionService(data, adminToken);
-            console.log('Repeat prescription generated successfully:', response);
             alert('Repeat prescription generated successfully!');
         } catch (error) {
             console.error('Error generating repeat prescription:', error);
