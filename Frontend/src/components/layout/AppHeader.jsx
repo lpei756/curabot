@@ -165,7 +165,6 @@ function AppHeader() {
         const fetchUnreadNotifications = async () => {
             try {
                 const notifications = await fetchUserNotifications(contextUserId || userId);
-                console.log('Fetched notifications:', notifications);
                 const unreadNotifications = notifications.filter(notification => !notification.isRead);
                 setUnreadCount(unreadNotifications.length);
             } catch (err) {
@@ -191,7 +190,6 @@ function AppHeader() {
         setIsAdminLoggedIn(true);
         setAdminId(id);
         localStorage.setItem('adminId', id);
-        console.log('Admin ID:', adminId);
         localStorage.setItem('isAdminLoggedIn', 'true');
     };
 

@@ -18,16 +18,13 @@ conn.once('open', () => {
 export const upload = multer({
     storage: multer.diskStorage({
         destination: (req, file, cb) => {
-            console.log('Setting upload destination');
             cb(null, 'uploads/');
         },
         filename: (req, file, cb) => {
-            console.log('Generating file name:', Date.now() + '-' + file.originalname);
             cb(null, Date.now() + '-' + file.originalname);
         }
     }),
     fileFilter: (req, file, cb) => {
-        console.log('File filter:', file.mimetype);
         if (file.mimetype === 'application/pdf') {
             cb(null, true);
         } else {
@@ -39,9 +36,7 @@ export const upload = multer({
 
 export const getNotifications = async (receiverId, receiverModel) => {
     try {
-        console.log(`Fetching notifications for ${receiverModel} with ID: ${receiverId}`);
         const notifications = await Notification.find({ receiver: receiverId, receiverModel }).sort({ date: -1 });
-        console.log(`Notifications fetched successfully, found ${notifications.length} notifications.`);
         return notifications;
     } catch (error) {
         console.error('Error fetching notifications:', error.message);
@@ -50,7 +45,6 @@ export const getNotifications = async (receiverId, receiverModel) => {
 };
 
 const getUserOrAdmin = async (id, model) => {
-    console.log(`Fetching ${model} with ID: ${id}`);
     let result;
     try {
         if (model === 'Doctor') {
@@ -86,16 +80,15 @@ const getUserOrAdmin = async (id, model) => {
 };
 
 export const sendMessage = async ({
-                                      senderId,
-                                      senderModel,
-                                      receiverId,
-                                      receiverModel,
-                                      message,
-                                      notificationType,
-                                      appointmentID,
-                                      pdfFilePath
-                                  }) => {
-    console.log(`Inside sendMessage: notificationType is ${notificationType}`);
+    senderId,
+    senderModel,
+    receiverId,
+    receiverModel,
+    message,
+    notificationType,
+    appointmentID,
+    pdfFilePath
+}) => {
     let senderName;
     if (senderId === 'system') {
         senderName = 'System';
@@ -142,7 +135,6 @@ export const sendMessage = async ({
     const notification = new Notification(notificationData);
     try {
         await notification.save();
-        console.log('Notification saved successfully.');
         return notification;
     } catch (error) {
         console.error(`Failed to save notification: ${error.message}`);
@@ -152,15 +144,11 @@ export const sendMessage = async ({
 
 export const markAsRead = async (notificationId) => {
     try {
-        console.log('Marking notification as read with ID:', notificationId);
-
         const notification = await Notification.findByIdAndUpdate(notificationId, { isRead: true }, { new: true });
         if (!notification) {
             console.error('Notification not found with ID:', notificationId);
             throw new Error('Notification not found');
         }
-
-        console.log('Notification marked as read:', notification);
         return notification;
     } catch (error) {
         console.error('Error marking notification as read:', error.message);
@@ -170,7 +158,6 @@ export const markAsRead = async (notificationId) => {
 
 export const deleteNotification = async (notificationId) => {
     try {
-        console.log('Deleting notification with ID:', notificationId);
         const notification = await Notification.findByIdAndDelete(notificationId);
         if (!notification) {
             console.error('Notification not found with ID:', notificationId);
@@ -183,10 +170,8 @@ export const deleteNotification = async (notificationId) => {
                     console.error(`Error deleting PDF file from GridFS: ${err.message}`);
                     throw new Error(`Error deleting PDF file from GridFS: ${err.message}`);
                 }
-                console.log('PDF file deleted successfully from GridFS');
             });
         }
-        console.log('Notification deleted successfully:', notification);
         return notification;
     } catch (error) {
         console.error('Error deleting notification:', error.message);

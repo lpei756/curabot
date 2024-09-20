@@ -16,18 +16,6 @@ export const createAppointment = async ({
   patientName
 }) => {
   try {
-    console.log('Appointment Data to be sent:', {
-      dateTime,
-      clinic,
-      assignedGP,
-      slotId,
-      status,
-      notes,
-      prescriptionsIssued,
-      patientID,
-      patientName
-    });
-
     if (!patientID) {
       return { error: true, status: 400, message: 'Patient ID is required' };
     }
@@ -71,16 +59,13 @@ export const createAppointment = async ({
 
 export const getAppointmentsForUser = async (patientID) => {
   try {
-    console.log("patientID received:", patientID);
     if (typeof patientID !== 'string' || !patientID) {
       throw new Error('Invalid patientID format');
     }
     const appointments = await Appointment.find({ patientID })
       .populate('clinic')
       .exec();
-    console.log('Fetched appointments!');
     const appointmentsWithDoctorNames = await Promise.all(appointments.map(async (appointment) => {
-      console.log('Fetching doctor with ID:', appointment.assignedGP);
       const doctorResult = await getDoctorByIdService(appointment.assignedGP);
       if (doctorResult.error) {
         console.log('Error fetching doctor:', doctorResult.message);
@@ -173,10 +158,8 @@ export const getAppointmentsForAUser = async () => {
     if (appointments.length === 0) {
       return { error: true, status: 404, message: 'No appointments found' };
     }
-    console.log('Fetched appointments for all users');
     const appointmentsWithDoctorNames = await Promise.all(
         appointments.map(async (appointment) => {
-          console.log('Fetching doctor with ID:', appointment.assignedGP);
           const doctorResult = await getDoctorByIdService(appointment.assignedGP);
           if (doctorResult.error) {
             console.log('Error fetching doctor:', doctorResult.message);

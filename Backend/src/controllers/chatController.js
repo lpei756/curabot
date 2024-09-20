@@ -41,11 +41,9 @@ export const handleChat = async (req, res) => {
         }
 
         if (sessionId && sessionStore[sessionId] && !isSessionExpired(sessionStore[sessionId])) {
-            console.log(`Session ${sessionId} is still active.`);
             updateSession(sessionId);
         } else {
             sessionId = uuidv4();
-            console.log(`Created new session: ${sessionId}`);
             updateSession(sessionId);
             await ChatSession.create({
                 _id: sessionId,
@@ -68,7 +66,6 @@ export const handleChat = async (req, res) => {
 
         const clinicResponse = await findClinicDetailsUsingNLP(userMessage);
         if (clinicResponse && clinicResponse.responses && clinicResponse.responses.length > 0) {
-            console.log('Clinic Response:', clinicResponse);
             const responses = clinicResponse.responses.join('<br/>');
             await ChatSession.findByIdAndUpdate(
                 sessionId,
@@ -314,8 +311,6 @@ export const handleChat = async (req, res) => {
 
             try {
                 const appointmentsData = await getAppointmentsForUser(userId, authToken);
-
-                console.log('Raw Appointments Data:', appointmentsData);
 
                 const $ = cheerio.load(appointmentsData);
                 const appointments = [];

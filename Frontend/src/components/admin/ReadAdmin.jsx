@@ -15,8 +15,6 @@ function ReadAdmin() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("Admin ID from useParams:", adminId);
-
         if (!adminId) {
             setError("Admin ID is undefined");
             setLoading(false);
@@ -26,10 +24,8 @@ function ReadAdmin() {
         const loadAdminData = async () => {
             try {
                 const response = await fetchAdminData(adminId);
-                console.log("API response:", response);
 
                 if (response) {
-                    console.log("Admin data found:", response);
                     setAdminData(response);
                 } else {
                     setError("Admin data is undefined or not returned from the API.");
@@ -79,7 +75,6 @@ function ReadAdmin() {
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!adminData) {
-        console.log("Admin data is not available:", adminData);
         return <Typography>No admin data available</Typography>;
     }
 

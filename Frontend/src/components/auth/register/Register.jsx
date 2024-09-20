@@ -96,7 +96,6 @@ const Register = ({ onSuccess }) => {
 
         try {
             const data = await register(convertedFormData);
-            console.log('Registered user:', data.user.firstName, data.user.lastName, data.user.email);
             navigate('/');
             if (onSuccess) {
                 onSuccess(data.user);

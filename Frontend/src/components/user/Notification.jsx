@@ -27,12 +27,9 @@ function Notification() {
         }
         const loadNotifications = async () => {
             try {
-                console.log("Fetching notifications for user ID:", userId);
                 const notifications = await fetchUserNotifications(userId);
-                console.log("Notifications data received:", notifications);
                 if (Array.isArray(notifications)) {
                     setNotifications(notifications);
-                    console.log("Notifications state updated:", notifications);
                 } else {
                     console.error("Unexpected notifications data format:", notifications);
                     setError("Unexpected data format received for notifications.");
@@ -46,12 +43,9 @@ function Notification() {
         };
         const loadDoctors = async () => {
             try {
-                console.log("Fetching doctors from the server...");
                 const response = await fetchDoctors();
-                console.log("Doctors data received:", response);
                 if (response && response.doctors && Array.isArray(response.doctors)) {
                     setDoctors(response.doctors);
-                    console.log("Doctors set in state:", response.doctors);
                 } else {
                     setDoctors([]);
                     setError("Invalid doctors data format");
@@ -88,13 +82,11 @@ function Notification() {
             formData.append('senderModel', "User");
             formData.append('receiverModel', "Doctor");
             if (pdfFile) {
-                console.log("Attaching PDF file:", pdfFile.name);
                 formData.append('pdfFile', pdfFile);
             } else {
                 console.warn("No PDF file selected.");
             }
             const response = await sendUserMessage(formData, authToken);
-            console.log("Message sent successfully:", response);
             setNewMessage('');
             setSelectedDoctor('');
             setPdfFile(null);
@@ -118,14 +110,12 @@ function Notification() {
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            console.log("Marking notification as read, ID:", notificationId);
             await markNotificationAsRead(notificationId);
             setNotifications(notifications.map(notification =>
                 notification._id === notificationId
                     ? { ...notification, isRead: true }
                     : notification
             ));
-            console.log("Notification marked as read successfully");
         } catch (err) {
             console.error("Error marking notification as read:", err.message);
             setError(err.message);
@@ -134,10 +124,8 @@ function Notification() {
 
     const handleDeleteNotification = async (notificationId) => {
         try {
-            console.log("Deleting notification, ID:", notificationId);
             await deleteNotification(notificationId);
             setNotifications(notifications.filter(notification => notification._id !== notificationId));
-            console.log("Notification deleted successfully");
         } catch (err) {
             console.error("Error deleting notification:", err.message);
             setError(err.message);
@@ -151,7 +139,6 @@ function Notification() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            console.log('Selected PDF file:', file.name);
             setPdfFile(file);
         } else {
             console.error('No file selected.');
@@ -180,7 +167,6 @@ function Notification() {
             formData.append('receiverModel', "Doctor");
 
             const response = await sendUserMessage(formData, authToken);
-            console.log("Reply sent successfully:", response);
 
             setNotifications(notifications.map(notif =>
                 notif._id === notification._id
@@ -329,7 +315,6 @@ function Notification() {
                             labelId="select-doctor-label"
                             value={selectedDoctor}
                             onChange={(e) => {
-                                console.log("Doctor selected:", e.target.value);
                                 setSelectedDoctor(e.target.value);
                             }}
                             label="Select Doctor"

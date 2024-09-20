@@ -17,15 +17,12 @@ function EditAdmin({ adminData, setAdminData, adminId, setEditMode }) {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(`Field changed: ${name}, New value: ${value}`);
         setUpdatedData({ ...updatedData, [name]: value });
     };
 
     const handleUpdate = async () => {
-        console.log('Updating admin with data:', updatedData);
         try {
             const data = await updateAdminData(adminId, updatedData);
-            console.log('Update successful, returned data:', data);
             setAdminData(data);
             setEditMode(false);
             navigate('/superadmin/panel');

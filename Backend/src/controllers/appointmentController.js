@@ -97,7 +97,6 @@ export const updateAppointment = async (req, res) => {
 export const deleteAppointment = async (req, res) => {
   try {
     const { appointmentID } = req.params;
-    console.log(`Attempting to cancel appointment with ID: ${appointmentID}`);
     const result = await deleteAppointmentService(appointmentID);
     if (result.error) {
       return res.status(result.status).json({ message: result.message });

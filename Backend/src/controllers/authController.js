@@ -18,9 +18,7 @@ export const login = async (req, res) => {
     const user = await loginService({ email, password });
     if (!user) throw new Error('User not found');
     const token = generateToken(user._id, user.role);
-    console.log('JWT token generated:', token);
     res.status(200).json({ user, token });
-    console.log('Response sent with user data and token');
   } catch (error) {
     console.error('Error during login:', error.message);
     res.status(400).json({ message: error.message });
@@ -32,7 +30,6 @@ export const readUser = async (req, res) => {
     const { id } = req.params;
     const user = await readUserService(id);
     if (!user) {
-      console.log('User not found for ID:', id);
       return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ user });
@@ -45,7 +42,6 @@ export const readUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log('Fetching user with ID:', id);
     const updateData = req.body;
     const user = await updateUserService(id, updateData);
     res.status(200).json(user);
@@ -66,7 +62,6 @@ export const logout = (req, res) => {
 export const getGP = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log("Request user ID:", id);
     if (!id || typeof id !== 'string') {
       return res.status(400).json({ message: 'Invalid user ID' });
     }

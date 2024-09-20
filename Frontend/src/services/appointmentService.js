@@ -40,7 +40,6 @@ export const createAppointment = async (appointmentData) => {
 
 export const fetchUserAppointments = async () => {
   const token = localStorage.getItem('authToken');
-  console.log('Token:', token);
   if (!parseToken(token)) {
     console.error('Invalid Token');
     alert('Your session has expired, please log in again.');

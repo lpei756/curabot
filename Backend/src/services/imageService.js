@@ -17,7 +17,6 @@ conn.once('open', () => {
 const storage = new GridFsStorage({
     url: process.env.MONGO_URI,
     file: (req, file) => {
-        console.log('GridFS Storing file:', file.originalname);
         return {
             filename: Date.now() + '-' + file.originalname,
             bucketName: 'uploads'
@@ -29,16 +28,12 @@ const storage = new GridFsStorage({
 export const upload = multer({
     storage,
     fileFilter: (req, file, cb) => {
-        console.log('File filter:', file);
         cb(null, true);
     }
 });
 
 export const saveImageService = async (userId, filename) => {
-    console.log('Saving image for user:', userId, 'with filename:', filename);
-
     const imageUrl = `${process.env.BASE_URL}/uploads/${filename}`;
-    console.log('Constructed image URL:', imageUrl);
 
     const newImage = new Image({
         userId: userId,

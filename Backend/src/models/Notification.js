@@ -30,8 +30,6 @@ NotificationSchema.index(
 );
 
 NotificationSchema.pre('save', function (next) {
-    console.log('Preparing to save Notification:');
-    console.log(`SenderModel: ${this.senderModel}, Receiver: ${this.receiver}, AppointmentID: ${this.appointmentID}, NotificationType: ${this.notificationType}`);
     if (this.senderModel === 'System') {
         this.sender = 'system';
     } else if (!mongoose.isValidObjectId(this.sender)) {

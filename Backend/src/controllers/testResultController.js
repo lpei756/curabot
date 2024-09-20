@@ -17,8 +17,6 @@ const upload = multer({
 }).single('file');
 
 export const uploadTestResult = async (req, res) => {
-  console.log('Validating request body:', req.body);
-
   upload(req, res, async function (err) {
     if (err instanceof multer.MulterError) {
       console.error('Multer error:', err.message);
@@ -27,9 +25,6 @@ export const uploadTestResult = async (req, res) => {
       console.error('Unknown error:', err);
       return res.status(500).json({ message: 'Internal server error' });
     }
-
-    console.log('Request body after upload:', req.body);
-    console.log('Uploaded file:', req.file);
 
     const { patientID, doctorID, testName } = req.body;
     const file = req.file;

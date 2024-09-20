@@ -1,17 +1,32 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography, Grid, Paper } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
+import { fetchFeedbackData } from '../../services/chatService.js';
+import { AdminContext } from '../../context/AdminContext.jsx';
 
-const FeedbackCharts = ({ data }) => {
+const FeedbackCharts = () => {
+    const [feedbackData, setFeedbackData] = useState(null);
+    const { role } = useContext(AdminContext);
+
     useEffect(() => {
-        console.log('Weekly Data:', data.weekly);
-        console.log('Monthly Data:', data.monthly);
-        console.log('Quarterly Data:', data.quarterly);
-    }, [data]);
+        const fetchData = async () => {
+            try {
+                const fetchedData = await fetchFeedbackData();
+                if (fetchedData && typeof fetchedData === 'object') {
+                    setFeedbackData(fetchedData);
+                } else {
+                    console.error('Invalid feedback data:', fetchedData);
+                }
+            } catch (err) {
+                console.error('Error fetching data:', err);
+            }
+        };
 
+        fetchData();
+    }, [role]);
 
-    if (!data || !data.trends || !Array.isArray(data.trends) || data.trends.length === 0) {
+    if (!feedbackData || !feedbackData.trends || !Array.isArray(feedbackData.trends) || feedbackData.trends.length === 0) {
         return (
             <Box sx={{ padding: 2, textAlign: 'center' }}>
                 <Typography variant="body1">No feedback data available.</Typography>
@@ -19,8 +34,7 @@ const FeedbackCharts = ({ data }) => {
         );
     }
 
-    const chartColors = ['#3f51b5', '#f50057', '#00bcd4', '#4caf50', '#ff9800'];
-
+    const chartColors = ['#03035d', '#448fe3', '#48cfcb', '#6482ad', '#6482ad'];
 
     const createPieChartData = (feedbackData) => {
         if (!feedbackData || typeof feedbackData !== 'object') {
@@ -32,7 +46,6 @@ const FeedbackCharts = ({ data }) => {
         const totalPositive = lastFeedback.positive || 0;
         const totalNegative = lastFeedback.negative || 0;
 
-
         return [
             { id: 'positive', value: totalPositive, label: `Positive: ${totalPositive}`, color: chartColors[0] },
             { id: 'negative', value: totalNegative, label: `Negative: ${totalNegative}`, color: chartColors[1] },
@@ -40,7 +53,7 @@ const FeedbackCharts = ({ data }) => {
     };
 
     const createPieChart = (title, feedbackData) => (
-        <Grid item xs={12} md={4} key={title}>
+        <Grid item xs={12} md={4} key={title} >
             <Paper elevation={3} sx={{ padding: 2, height: '100%' }}>
                 <Typography variant="h6" align="center" gutterBottom sx={{ textTransform: 'capitalize' }}>
                     {title}
@@ -86,22 +99,22 @@ const FeedbackCharts = ({ data }) => {
             }));
     };
 
-    const weeklyTrend = createTrendData(data.weekly, 'Week');
-    const monthlyTrend = createTrendData(data.monthly, 'Month');
-    const quarterlyTrend = createTrendData(data.quarterly, 'Quarter');
+    const weeklyTrend = createTrendData(feedbackData.weekly, 'Week');
+    const monthlyTrend = createTrendData(feedbackData.monthly, 'Month');
+    const quarterlyTrend = createTrendData(feedbackData.quarterly, 'Quarter');
 
     const allTrendData = [...weeklyTrend, ...monthlyTrend, ...quarterlyTrend];
 
     return (
-        <Box sx={{ padding: 4, backgroundColor: '#f5f5f5' }}>
+        <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', marginLeft: '250px' }}>
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
                 User Feedback Overview
             </Typography>
 
             <Grid container spacing={4} justifyContent="center">
-                {createPieChart('Weekly Overview', data.weekly)}
-                {createPieChart('Monthly Overview', data.monthly)}
-                {createPieChart('Quarterly Overview', data.quarterly)}
+                {createPieChart('Weekly Overview', feedbackData.weekly)}
+                {createPieChart('Monthly Overview', feedbackData.monthly)}
+                {createPieChart('Quarterly Overview', feedbackData.quarterly)}
             </Grid>
 
             <Paper elevation={3} sx={{ marginTop: 4, padding: 2 }}>
