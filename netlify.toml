@@ -11,7 +11,7 @@ NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
 [context.admin]
-command = "npm run build:admin"]
+command = "npm run build:admin"
 publish = "dist/admin"
 
 [context.admin.environment]
