@@ -38,7 +38,6 @@ export const getAllAvailabilityByDate = async (date) => {
 
 export const getAvailabilityByAddress = async (partialAddress) => {
     try {
-        console.log('Searching for clinics with partial address:', partialAddress);
         const clinic = await Clinic.findOne({
             address: { $regex: partialAddress, $options: 'i' }
         }).exec();
@@ -50,13 +49,10 @@ export const getAvailabilityByAddress = async (partialAddress) => {
             throw error;
         }
 
-        console.log('Clinic found:', clinic);
         const doctorIDs = clinic.doctors.map(doctor => doctor.doctorID);
 
-        console.log('Doctor IDs from clinic:', doctorIDs);
         const availability = await DoctorAvailability.find({ doctorID: { $in: doctorIDs } }).exec();
 
-        console.log('Availability found:', availability);
         return availability;
     } catch (error) {
         console.error('Error fetching availability by address:', error);
@@ -235,7 +231,6 @@ export const findNearestSlot = async (slots, userLocation, user) => {
             const gpScore = hasGp && user.gp === slot.doctorID ? -10 : 0;
 
             const combinedScore = timeScore + distanceScore + gpScore;
-            console.log(`Combined Score for slot ${slot._id}: ${combinedScore}`);
 
             if (combinedScore < bestScore) {
                 bestScore = combinedScore;
@@ -246,7 +241,5 @@ export const findNearestSlot = async (slots, userLocation, user) => {
             console.error(`Error processing slot ${slot._id}:`, error);
         }
     }
-
-    console.log('Best Slot with Distance and GP Preference:', bestSlot);
     return bestSlot;
 };

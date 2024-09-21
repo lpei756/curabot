@@ -26,7 +26,6 @@ const AdminPanel = () => {
             try {
                 const response = await fetchMe();
                 const adminData = response.admin;
-                console.log("Fetched admin data:", adminData);
                 setDoctorFirstName(adminData.firstName);
                 setDoctorLastName(adminData.lastName);
                 setIsLoading(false);

@@ -44,11 +44,10 @@ const AdminRegister = ({ onSuccess }) => {
     const handleChange = (e) => {
         const { name, value } = e.target;
 
-        // Special handling for clinic to store its ObjectId
         if (name === 'clinic') {
             setFormData({
                 ...formData,
-                clinic: value,  // This will store the ObjectId
+                clinic: value,
             });
         } else {
             setFormData({
@@ -81,11 +80,8 @@ const AdminRegister = ({ onSuccess }) => {
             return;
         }
 
-        console.log('Submitting form data:', formData);
-
         try {
             const data = await adminRegister(formData);
-            console.log('Registered admin:', data.admin.firstName, data.admin.lastName, data.admin.email);
             navigate('/');
             if (onSuccess) {
                 onSuccess(data.admin);

@@ -1,30 +1,26 @@
-# 设置全局变量
 [build.environment]
 NODE_VERSION = "20"
 NPM_FLAGS = "--production=false"
 
-# 用户端的生产环境配置
 [context.user]
-command = "npm run build:user"  # 用户端的构建命令
-publish = "dist/user"  # 用户端的发布目录
+command = "npm run build:user"
+publish = "dist/user"
 
 [context.user.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
-# 管理员端的生产环境配置
 [context.admin]
-command = "npm run build:admin"  # 管理员端的构建命令
-publish = "dist/admin"  # 管理员端的发布目录
+command = "npm run build:admin"
+publish = "dist/admin"
 
 [context.admin.environment]
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
-# 超级管理员端的生产环境配置
 [context.superadmin]
-command = "npm run build:superadmin"  # 超级管理员端的构建命令
-publish = "dist/superadmin"  # 超级管理员端的发布目录
+command = "npm run build:superadmin"
+publish = "dist/superadmin"
 
 [context.superadmin.environment]
 NODE_ENV = "production"

@@ -12,15 +12,11 @@ beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create();
     const uri = mongoServer.getUri();
     await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-    console.log('MongoDB memory server started and connected.');
 });
 
 afterAll(async () => {
-    console.log('Disconnecting mongoose...');
     await mongoose.disconnect();
-    console.log('Stopping MongoDB memory server...');
     await mongoServer.stop();
-    console.log('MongoDB memory server stopped.');
 });
 
 beforeEach(async () => {

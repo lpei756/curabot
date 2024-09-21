@@ -27,12 +27,9 @@ function AdminNotification() {
 
         const loadNotifications = async () => {
             try {
-                console.log("Fetching notifications for user ID:", adminId);
                 const notifications = await fetchAdminNotifications(adminId);
-                console.log("Notifications data received:", notifications);
                 if (Array.isArray(notifications)) {
                     setNotifications(notifications);
-                    console.log("Notifications state updated:", notifications);
                 } else {
                     console.error("Unexpected notifications data format:", notifications);
                     setError("Unexpected data format received for notifications.");
@@ -47,9 +44,7 @@ function AdminNotification() {
 
         const loadPatients = async () => {
             try {
-                console.log("Fetching Patients from the server...");
                 const response = await fetchAllPatients();
-                console.log("Patients data received:", response);
                 setPatients(response);
             } catch (err) {
                 console.error("Error fetching patients:", err.message);
@@ -80,13 +75,11 @@ function AdminNotification() {
             formData.append('senderModel', "Doctor");
             formData.append('receiverModel', "User");
             if (pdfFile) {
-                console.log("Attaching PDF file:", pdfFile.name);
                 formData.append('pdfFile', pdfFile);
             } else {
                 console.warn("No PDF file selected.");
             }
             const response = await sendDoctorMessage(formData, adminToken);
-            console.log("Message sent successfully:", response);
             setNewMessage('');
             setSelectedPatient('');
             setPdfFile(null);
@@ -99,13 +92,12 @@ function AdminNotification() {
     };
 
     const handleViewPrescription = (notification) => {
-        console.log("Notification received in handleRepeatPrescription:", notification);
         let patient = notification.patient;
         if (!patient && notification.senderModel === "User") {
             patient = Patients.find(p => p._id === notification.sender);
         }
         if (patient && patient._id) {
-            console.log("Navigating to prescription page with patient:", patient);
+
             navigate(`/prescriptions/${patient._id}`);
         } else {
             console.error("Patient information is missing or incomplete", notification);
@@ -119,14 +111,12 @@ function AdminNotification() {
 
     const handleMarkAsRead = async (notificationId) => {
         try {
-            console.log("Marking notification as read, ID:", notificationId);
             await markNotificationAsRead(notificationId);
             setNotifications(notifications.map(notification =>
                 notification._id === notificationId
                     ? { ...notification, isRead: true }
                     : notification
             ));
-            console.log("Notification marked as read successfully");
         } catch (err) {
             console.error("Error marking notification as read:", err.message);
             setError(err.message);
@@ -135,10 +125,8 @@ function AdminNotification() {
 
     const handleDeleteNotification = async (notificationId) => {
         try {
-            console.log("Deleting notification, ID:", notificationId);
             await deleteNotification(notificationId);
             setNotifications(notifications.filter(notification => notification._id !== notificationId));
-            console.log("Notification deleted successfully");
         } catch (err) {
             console.error("Error deleting notification:", err.message);
             setError(err.message);
@@ -146,7 +134,6 @@ function AdminNotification() {
     };
 
     const toggleBlock = (block) => {
-        console.log("Toggling block:", block);
         setExpandedBlock(expandedBlock === block ? null : block);
     };
 
@@ -157,7 +144,6 @@ function AdminNotification() {
     const handleFileChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            console.log('Selected PDF file:', file.name);
             setPdfFile(file);
         } else {
             console.error('No file selected.');
@@ -186,7 +172,6 @@ function AdminNotification() {
             formData.append('receiverModel', "User");
 
             const response = await sendDoctorMessage(formData, adminToken);
-            console.log("Reply sent successfully:", response);
 
             setNotifications(notifications.map(notif =>
                 notif._id === notification._id
@@ -225,7 +210,6 @@ function AdminNotification() {
             >
                 {notifications.length > 0 ? (
                     notifications.map((notification) => {
-                        console.log("Rendering notification:", notification);
                         return (
                             <Box key={notification._id} sx={{ marginBottom: '10px' }}>
                                 <Typography><strong>From:</strong> {notification.senderName}</Typography>
@@ -309,7 +293,6 @@ function AdminNotification() {
                         labelId="select-patient-label"
                         value={selectedPatient}
                         onChange={(e) => {
-                            console.log("Patient selected:", e.target.value);
                             setSelectedPatient(e.target.value);
                         }}
                         label="Select Patient"

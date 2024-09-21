@@ -30,6 +30,7 @@ import AdminTestResultDetailPage from './components/admin/AdminTestResultDeatil.
 import Prescription from './components/admin/Prescription.jsx';
 import Prescriptions from './components/prescriptions/Prescriptions.jsx';
 import PrescriptionList from './components/prescriptions/PrescriptionList.jsx';
+import FeedbackCharts from './components/charts/FeedbackCharts';
 
 function App() {
     return (
@@ -46,6 +47,7 @@ function App() {
                                     <Route path="/admin/register" element={<AdminRegister />} />
                                     <Route path="/admin/panel" element={<AdminPanel />} />
                                     <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
+                                    <Route path="/superadmin/feedback" element={<FeedbackCharts />} />
                                     <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
                                     <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
                                     <Route path="/admin/panel/test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>} />
@@ -84,6 +86,9 @@ const ConditionalHeader = () => {
         '/admin/panel/test-result',
         '/superadmin/panel/patient',
         '/admin/:adminId',
+        '/superadmin/feedback',
+        '/prescriptions/admin/:adminId',
+        '/prescriptions/:userId'
     ];
 
     const isAdminRoute = adminRoutes.some(route => location.pathname.startsWith(route));

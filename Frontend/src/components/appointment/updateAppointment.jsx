@@ -106,7 +106,6 @@ const UpdateAppointment = () => {
 
         try {
             const result = await updateAppointment(appointmentID, appointmentData);
-            console.log('Appointment Updated:', result);
             navigate('/appointment');
         } catch (error) {
             setError('Failed to update appointment.');

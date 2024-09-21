@@ -5,8 +5,6 @@ import crypto from 'crypto';
 
 dotenv.config({ path: './Backend/.env' });
 
-console.log('MONGO_URI:', process.env.MONGO_URI);
-
 const appointments = [
     {
         patientID: "292379",
@@ -35,7 +33,6 @@ appointments.forEach(appointment => {
 async function insertAppointments() {
     try {
         const result = await AppointmentModel.insertMany(appointments);
-        console.log('Appointments inserted:', result);
     } catch (error) {
         console.error('Error inserting appointments:', error);
     }
@@ -43,7 +40,6 @@ async function insertAppointments() {
 
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
-        console.log('Connected to MongoDB');
         insertAppointments();
     })
     .catch((err) => console.error('MongoDB connection error:', err));

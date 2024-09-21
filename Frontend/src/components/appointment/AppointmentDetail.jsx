@@ -112,8 +112,6 @@ const AppointmentDetail = ({ open, onClose, event }) => {
 
         try {
             const result = await createAppointment(appointmentData);
-            console.log('Appointment Created:', result);
-            console.log('Doctor ID:', doctor._id);
             const formData = new FormData();
             formData.append('senderId', userId);
             formData.append('receiverId', doctor._id);
@@ -122,7 +120,6 @@ const AppointmentDetail = ({ open, onClose, event }) => {
             formData.append('receiverModel', 'Doctor');
 
             await sendUserMessage(formData, authToken);
-            console.log('Notification sent to doctor:', formData);
 
             onClose();
         } catch (error) {

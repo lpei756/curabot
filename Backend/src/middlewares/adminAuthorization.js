@@ -4,20 +4,14 @@ import Admin from '../models/Admin.js';
 const adminAuthorization = (roles) => async (req, res, next) => {
   try {
     const token = req.headers.authorization?.split(' ')[1];
-    console.log('Token:', token);
-
     if (!token) return res.status(401).json({ message: 'Unauthorized' });
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded:', decoded);
-
     if (!decoded.user || !decoded.user._id) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
     const admin = await Admin.findById(decoded.user._id).exec();
-    console.log('Admin:', admin);
-
     if (!admin) {
       return res.status(403).json({ message: 'Forbidden' });
     }

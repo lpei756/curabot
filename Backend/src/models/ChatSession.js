@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 const ChatSessionSchema = new mongoose.Schema({
-    _id: { type: String, required: true },  // Use sessionId as _id
+    _id: { type: String, required: true },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     messages: [
       {

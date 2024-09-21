@@ -21,11 +21,10 @@ function Login({ onClose, onSuccess }) {
         e.preventDefault();
         try {
             const data = await login(email, password);
-            console.log('Login successful:', data);
             authLogin(data.token);
             onSuccess();
             onClose();
-            navigate('/dashboard'); // Navigate to /dashboard after login
+            navigate('/dashboard');
         } catch (error) {
             setError('Login failed: ' + error.message);
         }

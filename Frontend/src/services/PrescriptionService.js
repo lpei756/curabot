@@ -4,8 +4,6 @@ import { API_PATH } from '../utils/urlRoutes.js';
 export const generatePrescription = async (data, adminToken) => {
     try {
         const url = API_PATH.prescriptions.generatePrescription;
-        console.log('Generating prescription to URL:', url);
-        console.log('Data content:', data);
         const response = await axiosApiInstance.post(url, data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -59,8 +57,6 @@ export const getUserPrescriptions = async (userId, token) => {
 export const repeatPrescriptionService = async (data, adminToken) => {
     try {
         const url = API_PATH.prescriptions.repeatPrescription;
-        console.log('Repeating prescription to URL:', url);
-        console.log('Data content:', data);
         const response = await axiosApiInstance.post(url, data, {
             headers: {
                 'Content-Type': 'application/json',
@@ -73,4 +69,3 @@ export const repeatPrescriptionService = async (data, adminToken) => {
         throw new Error(`Unable to repeat prescription: ${error.message}`);
     }
 };
-

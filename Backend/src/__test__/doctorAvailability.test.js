@@ -75,9 +75,6 @@ describe('Doctor Availability Controller', () => {
             .set('Authorization', `Bearer ${token}`)
             .send(mockDoctorAvailability);
 
-        console.log('Response Status:', response.status);
-        console.log('Response Body:', response.body);
-
         expect(response.status).toBe(201);
         expect(response.body.message).toBe('Availability set successfully');
         expect(response.body.availability).toEqual(expect.objectContaining(mockDoctorAvailability));
@@ -91,9 +88,6 @@ describe('Doctor Availability Controller', () => {
             .post('/api/doctor-availability/123456/set')
             .set('Authorization', `Bearer ${token}`)
             .send(invalidAvailability);
-
-        console.log('Response Status:', response.status);
-        console.log('Response Body:', response.body);
 
         expect(response.status).toBe(422);
     }, 10000);

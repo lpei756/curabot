@@ -16,8 +16,6 @@ function ReadPatient({ returnPath }) {
     const navigate = useNavigate();
 
     useEffect(() => {
-        console.log("Patient ID from useParams:", patientId);
-
         if (!patientId) {
             setError("Patient ID is undefined");
             setLoading(false);
@@ -27,10 +25,8 @@ function ReadPatient({ returnPath }) {
         const loadPatientData = async () => {
             try {
                 const response = await fetchPatientData(patientId);
-                console.log("API response:", response);
 
                 if (response) {
-                    console.log("User data found:", response);
                     setPatientData(response);
                 } else {
                     setError("User data is undefined or not returned from the API.");
@@ -78,7 +74,6 @@ function ReadPatient({ returnPath }) {
     if (error) return <Typography>Error: {error}</Typography>;
 
     if (!patientData) {
-        console.log("Patient data is not available:", patientData);
         return <Typography>No patient data available</Typography>;
     }
 

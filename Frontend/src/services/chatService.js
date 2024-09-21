@@ -23,14 +23,11 @@ export const sendChatMessage = async (message, authToken, userLocation, sessionI
 };
 
 export const sendFeedbackToServer = async (messageId, feedback) => {
-  console.log('Sending feedback:', { messageId, feedback });
-
   try {
       const response = await axios.post('${apiUrl}/api/feedback', {
           messageId,
           feedback
       });
-      console.log('Server response:', response.data);
       return response.data;
   } catch (error) {
       console.error('Error sending feedback:', error);
