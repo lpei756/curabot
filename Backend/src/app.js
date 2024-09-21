@@ -45,13 +45,11 @@ app.use('/api/prescriptions', prescriptionsRoutes);
 
 app.post('/api/feedback', (req, res) => {
     const { messageId, feedback } = req.body;
-    console.log(`Received feedback for message ${messageId}: ${feedback}`);
 
     res.status(200).send({ status: 'success', message: 'Feedback received' });
 });
 
 cron.schedule('0 0 * * *', () => {
-    console.log('Running the chat history cleanup...');
     deleteOldChatHistories();
   });
 

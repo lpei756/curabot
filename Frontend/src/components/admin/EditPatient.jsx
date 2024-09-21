@@ -35,7 +35,6 @@ function EditPatient({ patientData, setPatientData, patientId, setEditMode, retu
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(`Field changed: ${name}, New value: ${value}`);
         setUpdatedData({ ...updatedData, [name]: value });
     };
 
@@ -44,10 +43,8 @@ function EditPatient({ patientData, setPatientData, patientId, setEditMode, retu
         if (!cleanedData.insurance.policyNumber) {
             delete cleanedData.insurance.policyNumber;
         }
-        console.log('Updating patient with data:', updatedData);
         try {
             const data = await updatePatientData(patientId, updatedData);
-            console.log('Update successful, returned data:', data);
             setPatientData(data);
             setEditMode(false);
             navigate(returnPath);

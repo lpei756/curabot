@@ -25,7 +25,6 @@ const schemaValidator = (path = true) => {
     }
 
     if (paramsSchema) {
-      console.log('Validating request params:', req.params);
       const { error, value } = paramsSchema.validate(req.params, validationOptions);
 
       if (error) {
@@ -44,7 +43,6 @@ const schemaValidator = (path = true) => {
     }
 
     if (!paramsSchema && schema) {
-      console.log('Validating request body:', req.body);
       const { error, value } = schema.validate(req.body, validationOptions);
 
       if (error) {

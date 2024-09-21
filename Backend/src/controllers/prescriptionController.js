@@ -37,7 +37,6 @@ export const getUserPrescriptions = async (req, res) => {
 
 export const generatePrescription = async (req, res) => {
     try {
-        console.log('Prescription request received:', req.body);
         const { doctorId, userId, medications, instructions } = req.body;
         if (!doctorId || !userId || !medications || !instructions) {
             return res.status(400).json({
@@ -61,7 +60,6 @@ export const generatePrescription = async (req, res) => {
             message,
             notificationType: 'prescription'
         });
-        console.log('Prescription and notification sent successfully:', { prescription, notification });
         res.status(201).json({ message: 'Prescription generated successfully', prescription, notification });
     } catch (error) {
         console.error('Error generating prescription:', error.message);
@@ -71,7 +69,6 @@ export const generatePrescription = async (req, res) => {
 
 export const repeatPrescription = async (req, res) => {
     try {
-        console.log('Repeat prescription request received:', req.body);
         const { doctorId, userId, prescriptionId } = req.body;
         if (!doctorId || !userId || !prescriptionId) {
             return res.status(400).json({
@@ -94,7 +91,6 @@ export const repeatPrescription = async (req, res) => {
             message,
             notificationType: 'prescription'
         });
-        console.log('Repeat prescription and notification sent successfully:', { prescription, notification });
         res.status(201).json({ message: 'Repeat prescription generated successfully', prescription, notification });
     } catch (error) {
         console.error('Error generating repeat prescription:', error.message);

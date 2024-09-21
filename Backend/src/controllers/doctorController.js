@@ -8,11 +8,8 @@ export const getDoctorsByClinic = async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(clinicId)) {
     return res.status(400).json({ error: 'Invalid clinic ID format' });
   }
-
-  console.log('Fetching doctors for clinicId:', clinicId);
   try {
     const clinic = await Clinic.findById(clinicId);
-    console.log('Clinic found:', clinic);
 
     if (!clinic) {
       return res.status(404).json({ error: 'Clinic not found' });

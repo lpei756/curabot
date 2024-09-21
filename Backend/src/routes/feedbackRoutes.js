@@ -1,4 +1,3 @@
-// feedbackRoutes.js
 import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
 import Feedback from '../models/feedback.js';
@@ -15,15 +14,12 @@ router.post('/', async (req, res) => {
     const { messageId, feedback } = req.body;
 
     try {
-        // 将反馈存储到数据库
         const newFeedback = new Feedback({
             messageId,
             feedback,
         });
 
         await newFeedback.save();
-
-        console.log(`Received feedback for message ${messageId}: ${feedback}`);
 
         res.status(200).send({ status: 'success', message: 'Feedback received' });
     } catch (err) {
@@ -32,7 +28,6 @@ router.post('/', async (req, res) => {
     }
 });
 
-// GET 路由 - 获取反馈汇总数据
 router.get('/summary', async (req, res) => {
     try {
         const feedbacks = await Feedback.find({});
@@ -47,7 +42,6 @@ router.get('/summary', async (req, res) => {
             const month = feedback.createdAt.getMonth();
             const quarter = Math.floor((feedback.createdAt.getMonth() + 3) / 3);
 
-            // 对 weeklySummary 进行处理
             weeklySummary[week] = weeklySummary[week] || { positive: 0, negative: 0 };
             if (feedback.feedback) {
                 weeklySummary[week].positive++;
@@ -55,7 +49,6 @@ router.get('/summary', async (req, res) => {
                 weeklySummary[week].negative++;
             }
 
-            // 对 monthlySummary 进行处理
             monthlySummary[month] = monthlySummary[month] || { positive: 0, negative: 0 };
             if (feedback.feedback) {
                 monthlySummary[month].positive++;
@@ -63,7 +56,6 @@ router.get('/summary', async (req, res) => {
                 monthlySummary[month].negative++;
             }
 
-            // 对 quarterlySummary 进行处理
             quarterlySummary[quarter] = quarterlySummary[quarter] || { positive: 0, negative: 0 };
             if (feedback.feedback) {
                 quarterlySummary[quarter].positive++;
@@ -71,7 +63,6 @@ router.get('/summary', async (req, res) => {
                 quarterlySummary[quarter].negative++;
             }
 
-            // 对 trendSummary 进行处理
             trendSummary.push({
                 _id: feedback._id,
                 positive: feedback.feedback ? 1 : 0,
@@ -90,6 +81,5 @@ function getWeek(date) {
     const numberOfDays = Math.floor((date - oneJan) / (24 * 60 * 60 * 1000));
     return Math.ceil((date.getDay() + 1 + numberOfDays) / 7);
 }
-
 
 export default router;

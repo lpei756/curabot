@@ -22,7 +22,6 @@ function AdminLogin({ onClose, onSuccess }) {
         e.preventDefault();
         try {
             const data = await adminLogin(email, password);
-            console.log('Admin login successful:', data);
             authLogin(data.token);
             onSuccess();
             onClose();

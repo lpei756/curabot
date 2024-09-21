@@ -118,14 +118,14 @@ const AdminHeader = () => {
                     <Box>
                         <Button
                             color="inherit"
-                            onClick={() => handleNavigation('/admin/clinic-stuff')}
+                            onClick={() => handleNavigation('/superadmin/panel')}
                             sx={{ justifyContent: 'flex-start', color: 'black', display: 'block', marginBottom: '10px' }}
                         >
                             Clinic Staff
                         </Button>
                         <Button
                             color="inherit"
-                            onClick={() => handleNavigation('/admin/ai-performance')}
+                            onClick={() => handleNavigation('/superadmin/feedback')}
                             sx={{ justifyContent: 'flex-start', color: 'black', display: 'block', marginBottom: '10px' }}
                         >
                             AI Performance
@@ -134,7 +134,6 @@ const AdminHeader = () => {
                 ) : null}
             </Box>
 
-            {/* Logout Button */}
             <Box sx={{ marginTop: 'auto', paddingBottom: '20px' }}>
                 <Button
                     color="inherit"

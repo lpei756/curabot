@@ -36,15 +36,11 @@ describe('Appointment Controller', () => {
         mongoServer = await MongoMemoryServer.create();
         const uri = mongoServer.getUri();
         await mongoose.connect(uri);
-        console.log('MongoDB memory server started and connected.');
     });
 
     afterAll(async () => {
-        console.log('Disconnecting mongoose...');
         await mongoose.disconnect();
-        console.log('Stopping MongoDB memory server...');
         await mongoServer.stop();
-        console.log('MongoDB memory server stopped.');
     });
 
     beforeEach(async () => {
@@ -59,7 +55,6 @@ describe('Appointment Controller', () => {
 
     afterEach(() => {
         jest.clearAllMocks();
-        console.log('Clearing all mocks.');
     });
 
     describe('POST /api/appointments/create', () => {
@@ -93,7 +88,6 @@ describe('Appointment Controller', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(appointmentData);
 
-            console.log('Response:', res.body);
             expect(res.status).toBe(201);
             expect(res.body).toHaveProperty('appointmentID');
             expect(res.body.appointmentID).toBe('appointment123');
@@ -114,7 +108,6 @@ describe('Appointment Controller', () => {
                     slotId: 'slot123'
                 });
 
-            console.log('Response:', res.body);
             expect(res.status).toBe(401);
             expect(res.body).toHaveProperty('message', 'User not authenticated');
         });
@@ -140,7 +133,6 @@ describe('Appointment Controller', () => {
                 .get(`/api/appointments/${mockAppointmentId}`)
                 .set('Authorization', `Bearer ${authToken}`);
 
-            console.log('Response:', res.body);
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty('appointmentID', mockAppointmentId);
         });
@@ -220,7 +212,6 @@ describe('Appointment Controller', () => {
                 .set('Authorization', `Bearer ${authToken}`)
                 .send(updateData);
 
-            console.log('Response:', res.body);
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty('appointmentID', mockAppointmentId);
         });

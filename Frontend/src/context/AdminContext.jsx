@@ -48,12 +48,9 @@ AdminProvider.propTypes = {
 function parseAdminToken(token) {
     try {
         const payload = JSON.parse(atob(token.split('.')[1]));
-        console.log('Token payload:', payload);
         const adminId = payload?.user?._id;
         const role = payload?.user?.role || 'admin';
         if (adminId && role) {
-            console.log("Parsed Admin ID:", adminId);
-            console.log("Parsed Role:", role);
             return { adminId, role };
         } else {
             console.error('Admin ID not found in token payload');

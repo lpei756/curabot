@@ -2,12 +2,9 @@ import axiosApiInstance from '../utils/axiosInstance.js';
 import { tokenStorage } from '../utils/localStorage.js';
 import { API_PATH } from '../utils/urlRoutes.js';
 
-console.log('Stored Token:', tokenStorage.get());
-
 export const login = async (email, password) => {
   try {
     const url = API_PATH.auth.login;
-    console.log('Request URL:', url);
     const response = await axiosApiInstance.post(url, { email, password });
     tokenStorage.save(response.data.token);
     return response.data;
@@ -20,7 +17,6 @@ export const login = async (email, password) => {
 export const register = async (userData) => {
   try {
     const url = API_PATH.auth.register;
-    console.log('Request URL:', url);
     const response = await axiosApiInstance.post(url, userData);
     return response.data;
   } catch (error) {

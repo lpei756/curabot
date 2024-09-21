@@ -19,7 +19,6 @@ const Prescription = () => {
 
     useEffect(() => {
         if (patient && patient._id) {
-            console.log("Received patient information:", patient);
         } else {
             console.error("Patient information is missing");
         }
@@ -34,7 +33,7 @@ const Prescription = () => {
                     ...prevData,
                     doctorName: `${adminData.firstName} ${adminData.lastName}`,
                 }));
-                setIsLoading(false); // Data loaded
+                setIsLoading(false);
             } catch (error) {
                 console.error('Error fetching admin data:', error);
                 setIsLoading(false);

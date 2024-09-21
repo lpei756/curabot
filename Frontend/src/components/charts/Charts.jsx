@@ -2,13 +2,6 @@ import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
 
 const Charts = ({ data }) => {
-
-    console.log('Data:', data);
-    console.log('Weekly Data:', data?.weekly);
-    console.log('Monthly Data:', data?.monthly);
-    console.log('Quarterly Data:', data?.quarterly);
-    console.log('Trends Data:', data?.trends);
-
     const weeklyData = Array.isArray(data.weekly) ? data.weekly : [];
     const monthlyData = Array.isArray(data.monthly) ? data.monthly : [];
     const quarterlyData = Array.isArray(data.quarterly) ? data.quarterly : [];
@@ -16,7 +9,6 @@ const Charts = ({ data }) => {
 
     return (
         <div>
-            {/* 每周反馈饼图 */}
             <PieChart
                 series={[
                     {
@@ -32,7 +24,6 @@ const Charts = ({ data }) => {
                 style={{ marginBottom: '50px' }}
             />
 
-            {/* 每月反馈饼图 */}
             <PieChart
                 series={[
                     {
@@ -48,7 +39,6 @@ const Charts = ({ data }) => {
                 style={{ marginBottom: '50px' }}
             />
 
-            {/* 每季度反馈饼图 */}
             <PieChart
                 series={[
                     {
@@ -64,7 +54,6 @@ const Charts = ({ data }) => {
                 style={{ marginBottom: '50px' }}
             />
 
-            {/* 反馈趋势柱状图 */}
             <BarChart
                 series={[
                     {

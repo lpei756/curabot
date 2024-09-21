@@ -74,9 +74,6 @@ export const login = async ({ email, password }) => {
     const admin = await AdminModel.findOne({ email }).select('+password');
     if (!admin) throw new Error('Admin not found');
 
-    console.log('Admin password from DB:', admin.password);
-    console.log('Password from request:', password);
-
     const isMatch = await bcrypt.compare(password, admin.password);
     if (!isMatch) {
         console.error('Password does not match for email:', email);
@@ -88,7 +85,6 @@ export const login = async ({ email, password }) => {
 
 export const me = async (adminId) => {
     try {
-        console.log('Fetching admin with ID:', adminId);
         const admin = await AdminModel.findById(adminId).select('-password');
         if (!admin) {
             console.error('Admin not found for ID:', adminId);
@@ -121,7 +117,6 @@ export const updateAdmin = async (id, updateData) => {
 
 export const deleteAdmin = async (id) => {
     try {
-        console.log(`Attempting to delete admin with ID: ${id}`);
         if (!mongoose.Types.ObjectId.isValid(id)) {
             throw new Error('Invalid ID format');
         }
@@ -132,11 +127,9 @@ export const deleteAdmin = async (id) => {
         if (admin.role === 'doctor' && admin.doctor) {
             const doctor = await DoctorModel.findByIdAndDelete(admin.doctor);
             if (doctor) {
-                console.log(`Doctor with ID ${admin.doctor} was deleted successfully`);
             }
         }
         await AdminModel.findByIdAndDelete(id);
-        console.log(`Admin with ID: ${id} was deleted successfully`);
         return admin;
     } catch (error) {
         console.error(`Error deleting admin with ID: ${id}`, error.message);
@@ -161,9 +154,7 @@ export const getAllAdmins = async () => {
 
 export const getAllPatients = async () => {
     try {
-        console.log('Starting to fetch all patients from the database...');
         const patients = await UserModel.find();
-        console.log('Patients fetched successfully！');
         return patients;
     } catch (error) {
         console.error('Error in getAllPatientsService:', error.message);

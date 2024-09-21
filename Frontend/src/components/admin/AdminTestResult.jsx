@@ -71,19 +71,19 @@ function AdminTestResultsPage() {
                                 marginBottom: 3,
                                 padding: 2,
                                 border: '1px solid',
-                                borderColor: result.reviewed ? '#03a65d' : '#f0ad4e', // Green for reviewed, orange for not reviewed
+                                borderColor: result.reviewed ? '#03a65d' : '#f0ad4e',
                                 borderRadius: 2,
                                 color: 'black',
                                 maxWidth: '900px',
                                 maxHeight: '350px',
                                 display: 'flex',
                                 cursor: 'pointer',
-                                backgroundColor: result.reviewed ? '#d4edda' : '#f8d7da', // Light green for reviewed, light red for not reviewed
+                                backgroundColor: result.reviewed ? '#d4edda' : '#f8d7da',
                                 '&:hover': {
                                     backgroundColor: result.reviewed ? '#c3e6cb' : '#f5c6cb'
                                 }
                             }}
-                            onClick={() => handleOpenDetailPage(result._id)} // Navigate to the detail page on click
+                            onClick={() => handleOpenDetailPage(result._id)}
                         >
                             <Box sx={{ display: 'flex', gap: 2 }}>
                                 <Box sx={{ flex: 1, width: '150px', height: '350px', overflow: 'hidden' }}>

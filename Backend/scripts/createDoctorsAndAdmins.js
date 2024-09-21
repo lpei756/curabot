@@ -328,7 +328,6 @@ async function createAdminsForExistingDoctors() {
         for (const doctor of existingDoctors) {
             const existingAdmin = await AdminModel.findOne({ doctor: doctor._id });
             if (existingAdmin) {
-                console.log(`Admin for Doctor ${doctor.firstName} ${doctor.lastName} already exists, skipping...`);
                 continue;
             }
             const email = `${doctor.firstName.toLowerCase()}${doctor.doctorID}@clinic.com`;
@@ -341,7 +340,6 @@ async function createAdminsForExistingDoctors() {
                 doctor: doctor._id,
             });
             await admin.save();
-            console.log(`Admin created for Doctor ${doctor.firstName} ${doctor.lastName} with email: ${email}`);
         }
     } catch (error) {
         console.error('Error creating admins for doctors:', error);
@@ -350,7 +348,6 @@ async function createAdminsForExistingDoctors() {
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        console.log('Connected to MongoDB');
         createAdminsForExistingDoctors();
     })
     .catch((err) => console.error('MongoDB connection error:', err));

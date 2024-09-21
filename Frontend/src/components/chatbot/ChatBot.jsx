@@ -175,11 +175,9 @@ function ChatBot() {
 
     useEffect(() => {
         if (scrollToMessageId && messageRefs.current[scrollToMessageId]) {
-            // Scroll to the specific message when `scrollToMessageId` is set
             messageRefs.current[scrollToMessageId].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setScrollToMessageId(null); // Clear the scrollToMessageId after scrolling
+            setScrollToMessageId(null);
         } else if (shouldScrollToBottom && messagesEndRef.current) {
-            // Regular scroll to the bottom when new messages are sent/received
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages, scrollToMessageId, shouldScrollToBottom]);
@@ -211,7 +209,6 @@ function ChatBot() {
             formData.append('receiverModel', "Doctor");
 
             const response = await sendUserMessage(formData, authToken);
-            console.log("Message sent successfully:", response);
         } catch (err) {
             console.error("Error sending repeat request:", err.message);
             setError(`Unable to send repeat request: ${err.message}`);
@@ -240,7 +237,6 @@ function ChatBot() {
             };
 
             const response = await createAppointment(appointmentData);
-            console.log('Appointment created successfully:', response);
 
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -341,7 +337,6 @@ function ChatBot() {
         }
 
         if (message.feedbackSent) {
-            console.log('Feedback has already been sent for this message');
             return;
         }
 
@@ -353,7 +348,6 @@ function ChatBot() {
 
         try {
             const response = await sendFeedbackToServer(message.id, feedback);
-            console.log('Feedback response:', response);
         } catch (error) {
             console.error('Failed to send feedback:', error);
         }
@@ -394,12 +388,12 @@ function ChatBot() {
         setMessages(formattedMessages);
         setSelectedSessionId(date);
         if (messageId) {
-            setScrollToMessageId(messageId);  // We set this to scroll to the exact message later
+            setScrollToMessageId(messageId);
         } else {
-            setScrollToMessageId(null);  // If no specific message, reset scroll target
+            setScrollToMessageId(null);
         }
 
-        setShouldScrollToBottom(false);  // Disable automatic scrolling to the bottom
+        setShouldScrollToBottom(false);
     };
 
     const handleSearchChange = (event) => {
@@ -426,23 +420,18 @@ function ChatBot() {
                         message.message.toLowerCase().includes(searchTerm.toLowerCase())
                     )
                     .map(message => {
-                        // Find the search term index
                         const searchIndex = message.message.toLowerCase().indexOf(searchTerm.toLowerCase());
-                        const totalCharacters = 20; // Total number of characters before and after the search term
-                        const half = Math.floor(totalCharacters / 2); // To balance before and after the search term
+                        const totalCharacters = 20;
+                        const half = Math.floor(totalCharacters / 2);
 
-                        // Calculate start and end indices for truncation
                         const start = Math.max(0, searchIndex - half);
                         const end = Math.min(message.message.length, searchIndex + searchTerm.length + half);
 
-                        // Extract text before, the term itself, and after the search term
                         const beforeText = message.message.slice(start, searchIndex);
                         const afterText = message.message.slice(searchIndex + searchTerm.length, end);
 
-                        // Create the truncated message with ellipses if necessary
                         const truncatedMessage = `${start > 0 ? '...' : ''}${beforeText}${message.message.substr(searchIndex, searchTerm.length)}${afterText}${end < message.message.length ? '...' : ''}`;
 
-                        // Return the truncated message along with original message metadata
                         return {
                             ...message,
                             truncatedMessage
@@ -671,13 +660,7 @@ function ChatBot() {
 
                 <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
                     {messages.map((msg, index) => {
-                        // Add logging for timestamps
-                        //if (index > 0) {
-                        //    console.log(`Comparing Message ${index - 1} at ${messages[index - 1].timestamp} with Message ${index} at ${msg.timestamp}`);
-                        //}
                         const showTimestamp = index === 0 || isSignificantTimeGap(messages[index - 1].timestamp, msg.timestamp);
-                        //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
-
                         return (
                             <React.Fragment key={index}>
                                 {showTimestamp && (
