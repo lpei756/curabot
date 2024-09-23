@@ -325,7 +325,7 @@ function Notification() {
                             }}
                         >
                             {doctors.map((doctor) => (
-                                <MenuItem key={doctor._id} value={doctor._id} sx={{ color: '#f8f6f6' }}>
+                                <MenuItem key={doctor._id} value={doctor._id} sx={{ color: '#03035d' }}>
                                     {`${doctor.firstName} ${doctor.lastName}`}
                                 </MenuItem>
                             ))}
