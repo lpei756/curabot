@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // 添加 useNavigate
+import { useParams, useNavigate } from 'react-router-dom';
 import { Box, Typography, Container, CircularProgress, Button } from '@mui/material';
 import { repeatPrescriptionService, getUserPrescriptions } from '../../services/PrescriptionService.js';
 import { AdminContext } from '../../context/AdminContext.jsx';
