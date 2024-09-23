@@ -104,8 +104,8 @@ function Notification() {
         handleSendMessage(message, doctorId);
     };
 
-    const handleBackToHomepage = () => {
-        navigate('/');
+    const handleBackToDashboard = () => {
+        navigate('/dashboard');
     };
 
     const handleMarkAsRead = async (notificationId) => {
@@ -387,13 +387,10 @@ function Notification() {
                     sx={{
                         backgroundColor: '#03035d',
                         color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#03035d',
-                        }
                     }}
-                    onClick={handleBackToHomepage}
+                    onClick={handleBackToDashboard}
                 >
-                    Back to Homepage
+                    Back to Dashboard
                 </Button>
             </Box>
         </Box>
