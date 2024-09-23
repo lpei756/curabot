@@ -6,6 +6,7 @@ import { fetchAllPatients } from '../../services/AdminService.js';
 import { AdminContext } from "../../context/AdminContext.jsx";
 import { useNavigate } from "react-router-dom";
 const apiUrl = import.meta.env.VITE_API_URL;
+
 function AdminNotification() {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -213,7 +214,7 @@ function AdminNotification() {
                                 {notification.pdfFile && (
                                     <Button
                                         variant="outlined"
-                                        sx={{ borderColor: '#007bff', color: '#007bff', marginRight: '10px' }}
+                                        sx={{ borderColor: '#03035d', color: '#03035d', marginRight: '10px' }}
                                         onClick={() => window.open(`${apiUrl}${notification.pdfFile}`, '_blank')}
                                     >
                                         View PDF
@@ -229,7 +230,7 @@ function AdminNotification() {
                                 </Button>
                                 <Button
                                     variant="outlined"
-                                    sx={{ borderColor: '#ff0000', color: '#ff0000' }}
+                                    sx={{ borderColor: '#03035d', color: '#03035d' }}
                                     onClick={() => handleDeleteNotification(notification._id)}
                                 >
                                     Delete
@@ -238,7 +239,7 @@ function AdminNotification() {
                                 {notification.message.includes("repeat") && (
                                     <Button
                                         variant="contained"
-                                        sx={{ backgroundColor: '#f0ad4e', color: '#fff', marginLeft: '10px' }}
+                                        sx={{ backgroundColor: '#03035d', color: '#fff', marginLeft: '10px' }}
                                         onClick={() => handleViewPrescription(notification)}
                                     >
                                         VIEW PRESCRIPTION

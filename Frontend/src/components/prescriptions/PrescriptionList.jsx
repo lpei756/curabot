@@ -101,7 +101,7 @@ const PrescriptionList = () => {
                                 </Box>
                                 <Button
                                     variant="contained"
-                                    sx={{ marginTop: '10px', backgroundColor: '#007bff', color: '#fff' }}
+                                    sx={{ marginTop: '10px', backgroundColor: '#03035d', color: '#fff' }}
                                     onClick={() => sendRepeatPrescription(prescription)}
                                 >
                                     Send Repeat
