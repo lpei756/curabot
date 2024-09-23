@@ -294,7 +294,7 @@ function AdminNotification() {
                         label="Select Patient"
                     >
                         {Patients.map((patient) => (
-                            <MenuItem key={patient._id} value={patient._id}>
+                            <MenuItem key={patient._id} value={patient._id} sx={{ color: '#03035d' }}>
                                 {`${patient.firstName} ${patient.lastName}`}
                             </MenuItem>
                         ))}
