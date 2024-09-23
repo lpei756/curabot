@@ -1,8 +1,9 @@
 import axios from 'axios';
 import OpenAI from 'openai';
 import ChatSession from '../models/ChatSession.js';
-import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
 import ClinicModel from '../models/Clinic.js';
+import FaQSchema from '../models/FaQs.js';
+import DoctorsSpecialisations from '../models/DoctorsSpecialisations.js';
 import { geocodeAddress, haversineDistance } from './doctorAvailabilityService.js';
 import { getDoctorByIdService } from './doctorService.js';
 import { getClinicByIdService } from './clinicService.js';
@@ -272,12 +273,42 @@ export const findClinicDetailsUsingNLP = async (userMessage) => {
 
         let clinicResponses = `The clinics in ${location} are listed below:<br/><br/>`;
         clinics.forEach(clinic => {
-            clinicResponses += `Name: ${clinic.name}<br/>Address: ${clinic.address}<br/><br/>`;
+            clinicResponses += `<p>Name</p>: ${clinic.name}<br/><p>Address</p>: ${clinic.address}<br/><br/>`;
         });
 
         return { responses: [clinicResponses] };
     } catch (error) {
         console.error('Error processing clinic details:', error);
         throw new Error('Error processing clinic details');
+    }
+};
+
+export const findFAQ = async (userMessage) => {
+    try {
+        const openAIResponse = await openai.chat.completions.create({
+            model: 'gpt-4',
+            messages: [
+                {
+                    role: 'system',
+                    content: 'Identify the most relevant FAQ based on the user message and return the question without any prefixes, quotes, or additional formatting.'
+                },
+                {
+                    role: 'user',
+                    content: userMessage
+                }
+            ],
+        });
+
+        const faqQuestion = openAIResponse.choices[0].message.content.trim();
+        const cleanedFAQQuestion = faqQuestion.replace(/^(Q:|A:)?\s*/i, '').trim();
+        
+        const faq = await FaQSchema.findOne({
+            question: { $regex: new RegExp(cleanedFAQQuestion, 'i') }
+        });
+
+        return faq ? faq.answer : null;
+    } catch (error) {
+        console.error('Error fetching FAQ:', error);
+        return null;
     }
 };
