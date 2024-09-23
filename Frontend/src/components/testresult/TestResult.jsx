@@ -143,12 +143,20 @@ function TestResultsPage() {
             <Dialog open={openDialog} onClose={handleCloseDialog} fullWidth maxWidth="lg" sx={{ color: '#f8f6f6' }}>
                 <DialogContent>
                     {selectedResult && (
-                        <Box sx={{ display: 'flex', gap: 10 }}>
-                            <Box sx={{ flex: 1, width: '400px', height: '700px' }}>
+                        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', lg: 'row' }, gap: { xs: 2, lg: 10 } }}>
+                            <Box
+                                sx={{
+                                    flex: 1,
+                                    width: { xs: '100%', lg: '400px' },
+                                    height: { xs: '200px', lg: '700px' },
+                                    maxWidth: '100%',
+                                    overflow: 'hidden'
+                                }}
+                            >
                                 <PDFViewer pdfUrl={`${apiUrl}/uploads/${selectedResult.fileName}`} />
                             </Box>
                             <Box sx={{ flex: 1 }}>
-                                <Typography variant="h6" gutterBottom >
+                                <Typography variant="h6" gutterBottom>
                                     <strong style={{ color: '#03035d' }}>Test Name:</strong> {selectedResult.testName}
                                 </Typography>
                                 <Typography variant="body1">
@@ -156,20 +164,22 @@ function TestResultsPage() {
                                 </Typography>
                                 <Typography variant="body1" sx={{ marginTop: 2 }}>
                                     <strong style={{ color: '#03035d' }}>Summary:</strong>
-                                    <br></br>
+                                    <br />
                                     {selectedResult.summary}
                                 </Typography>
                                 <Typography variant="body1" sx={{ marginTop: 2 }}>
                                     <strong style={{ color: '#03035d' }}>Analysis:</strong>
                                     {renderAnalysisText(selectedResult.analysis)}
-                                    <br></br>
+                                    <br />
                                 </Typography>
                             </Box>
                         </Box>
                     )}
                 </DialogContent>
                 <DialogActions sx={{ justifyContent: 'center' }}>
-                    <Button onClick={handleCloseDialog} sx={{ borderRadius: '20px', backgroundColor: '#03035d', color: '#f8f6f6' }} >Close</Button>
+                    <Button onClick={handleCloseDialog} sx={{ borderRadius: '20px', backgroundColor: '#03035d', color: '#f8f6f6' }}>
+                        Close
+                    </Button>
                 </DialogActions>
             </Dialog>
         </Box>

@@ -49,12 +49,16 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                 backgroundColor: '#f8f6f6',
                 padding: '0 16px',
                 justifyContent: 'space-between',
+                flexDirection: { xs: 'column', sm: 'column', md: 'row', lg: 'row' }
             }}
         >
             <Box
                 sx={{
                     display: 'flex',
                     alignItems: 'center',
+                    flexDirection: 'row',
+                    justifyContent: 'center',
+                    mb: { xs: 2, lg: 0 },
                 }}
             >
                 <StyledButton
@@ -66,16 +70,11 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                         borderTopLeftRadius: '50px',
                         borderBottomLeftRadius: '50px',
                         marginRight: '-1px',
-                        marginBottom: '10px'
                     }}
                 >
                     Back
                 </StyledButton>
-                <StyledButton
-                    onClick={() => onNavigate('TODAY')}
-                    variant="outlined"
-                    sx={{ marginBottom: '10px' }}
-                >
+                <StyledButton onClick={() => onNavigate('TODAY')} variant="outlined">
                     Today
                 </StyledButton>
                 <StyledButton
@@ -87,23 +86,31 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                         borderTopRightRadius: '50px',
                         borderBottomRightRadius: '50px',
                         marginLeft: '-1px',
-                        marginBottom: '10px'
                     }}
                 >
                     Next
                 </StyledButton>
+            </Box>
+            <Box
+                sx={{
+                    display: 'flex',
+                    flexDirection: 'row',
+                    alignItems: { xs: 'flex-start', sm: 'center' },
+                    width: '100%'
+                }}
+            >
                 <StyledButton
                     onClick={onShowGpSlots}
                     variant="outlined"
-                    sx={{ marginBottom: '10px', marginLeft: '20px', borderRadius: '50px' }}
+                    sx={{ marginBottom: { xs: '10px', sm: '0' }, marginLeft: { xs: '10%', lg: '2%' }, borderRadius: '50px' }}
                     startIcon={<Diversity1Icon />}
                 >
                     My GP
                 </StyledButton>
                 <FormControl
                     sx={{
-                        mb: 2,
-                        ml: 2,
+                        mb: { xs: 2, sm: 0 },
+                        ml: { xs: 2 },
                         minWidth: 100,
                         backgroundColor: '#f8f6f6',
                         borderRadius: '50px',
@@ -152,12 +159,12 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                     onClick={onSearchAddress}
                     variant="contained"
                     color="primary"
-                    sx={{ marginBottom: '10px', marginLeft: '10px', borderRadius: '50px' }}
+                    sx={{ marginBottom: { xs: '10px', sm: '0' }, marginLeft: { xs: '10px' }, borderRadius: '50px' }}
                 >
                     Search
                 </StyledButton>
             </Box>
-            <Box sx={{ fontSize: '20px', color: '#03035d' }}>
+            <Box sx={{ fontSize: '20px', color: '#03035d', mt: { xs: 2, sm: 0 } }}>
                 {label}
             </Box>
         </Box>

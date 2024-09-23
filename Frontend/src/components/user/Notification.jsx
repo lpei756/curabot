@@ -204,13 +204,13 @@ function Notification() {
                 padding: '20px',
                 borderRadius: '8px',
                 display: 'flex',
-                flexDirection: 'row',
+                flexDirection: {xs: 'column', lg:'row'},
                 justifyContent: 'space-between',
                 height: '100%',
                 gap: '20px',
                 alignItems: 'center',
             }}>
-                <Box sx={{ width: '100%', maxHeight: '700px', overflowY: 'auto' }}>
+                <Box sx={{ width: '100%', maxHeight: {xs: '300px', lg: '700px'}, overflowY: 'auto' }}>
                     <Typography variant="h6" gutterBottom>Received Notifications</Typography>
                     {notifications.length > 0 ? (
                         notifications.map((notification) => (
