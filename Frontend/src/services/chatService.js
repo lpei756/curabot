@@ -24,7 +24,7 @@ export const sendChatMessage = async (message, authToken, userLocation, sessionI
 
 export const sendFeedbackToServer = async (messageId, feedback) => {
   try {
-      const response = await axios.post('${apiUrl}/api/feedback', {
+      const response = await axios.post(API_PATH.chat.feedback, {
           messageId,
           feedback
       });

@@ -87,7 +87,7 @@ const AdminPanel = () => {
     };
 
     return (
-        <Box sx={{ padding: 4, marginLeft: '250px' }}>
+        <Box sx={{ padding: 4, marginLeft: '50px' }}>
             <Box
                 sx={{
                     display: 'flex',
