@@ -1,5 +1,5 @@
 import leven from 'leven';
-import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP, findClinicDetailsUsingNLP } from '../services/chatService.js';
+import { getAppointmentsForUser, processChatWithOpenAI, getHistoryBySessionId, identifySpecialisation, detectSymptomsUsingNLP, findClinicDetailsUsingNLP, findFAQ } from '../services/chatService.js';
 import { extractUserIdFromToken } from '../middlewares/authMiddleware.js';
 import { getAllAvailableSlots, findNearestSlot } from '../services/doctorAvailabilityService.js';
 import { getDoctorByIdService } from '../services/doctorService.js';
@@ -74,12 +74,19 @@ export const handleChat = async (req, res) => {
             return res.json({ reply: responses, sessionId });
         }
 
+        const faqResponse = await findFAQ(userMessage);
+        if (faqResponse) {
+            await ChatSession.findByIdAndUpdate(
+                sessionId,
+                { $push: { messages: { sender: 'bot', message: faqResponse, isAnonymous } } }
+            );
+            return res.json({ reply: faqResponse, sessionId });
+        }
+
         const appointmentRequestKeywords = [
             'show my appointments',
             'list my appointments',
-            'my appointments',
-            'appointments',
-            'appointment'
+            'my appointments'
         ];
 
         const autoAppointmentKeywords = [
@@ -88,19 +95,14 @@ export const handleChat = async (req, res) => {
             'find available slot',
             'auto appointment',
             'booking',
-            'book',
-            'schedule',
             'make an appointment'
         ];
 
         const cancelAppointmentKeywords = [
-            'cancel appointment',
+            'cancel',
             'remove appointment',
             'delete appointment',
-            'cancel my appointment',
-            'cancel',
-            'remove',
-            'delete'
+            'cancel my appointment'
         ];
 
         const repeatPrescriptionKeywords = [
@@ -189,13 +191,13 @@ export const handleChat = async (req, res) => {
                     }));
 
                     return `
-                Here are your last three prescriptions, which one would you like to repeat:
-                <strong>Medications</strong>: ${prescription.medications} </br>
-                <strong>Instructions</strong>: ${prescription.instructions} </br>
-                <strong>Doctor</strong>: ${prescription.doctorName} </br>
-                <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}</br>
-                <button onclick="window.repeatPrescription('${encodedData}')">Repeat</button>
-            `;
+                        Here are your last three prescriptions, which one would you like to repeat:
+                        <strong>Medications</strong>: ${prescription.medications} </br>
+                        <strong>Instructions</strong>: ${prescription.instructions} </br>
+                        <strong>Doctor</strong>: ${prescription.doctorName} </br>
+                        <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}</br>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="window.repeatPrescription('${encodedData}')">Repeat</button>
+                    `;
                 }).join('</br></br>');
 
                 await ChatSession.findByIdAndUpdate(
@@ -337,30 +339,30 @@ export const handleChat = async (req, res) => {
                 let reply = 'Here are your scheduled appointments. Click "Cancel" to cancel any appointment:\n';
                 appointments.forEach(appointment => {
                     reply += `
-                  <p><strong>Date:</strong> ${new Date(appointment.startTime).toLocaleDateString()}</p>
-                  <p><strong>Time:</strong> ${new Date(appointment.startTime).toLocaleTimeString()}</p>
-                  <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
-                  (async function() {
-                      try {
-                          const response = await fetch('${BASE_URL}/api/appointments/${appointment.appointmentID}', {
-                          method: 'DELETE', 
-                          headers: {
-                              'Content-Type': 'application/json',
-                              'Authorization': '${authToken}'
-                          }
-                      });
-                      const data = await response.json();
-                      if (response.ok) {
-                          alert('Your appointment has been successfully cancelled.');
-                      } else {
-                          alert('Error: ' + data.message);
-                      }
-                  } catch (error) {
-                      alert('Sorry, something went wrong. Please try again.');
-                  }
-                  })()
-                  ">Cancel</button>
-              `;
+                        <p><strong>Date:</strong> ${new Date(appointment.startTime).toLocaleDateString()}</p>
+                        <p><strong>Time:</strong> ${new Date(appointment.startTime).toLocaleTimeString()}</p>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
+                        (async function() {
+                            try {
+                                const response = await fetch('${BASE_URL}/api/appointments/${appointment.appointmentID}', {
+                                method: 'DELETE', 
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'Authorization': '${authToken}'
+                                }
+                            });
+                            const data = await response.json();
+                            if (response.ok) {
+                                alert('Your appointment has been successfully cancelled.');
+                            } else {
+                                alert('Error: ' + data.message);
+                            }
+                        } catch (error) {
+                            alert('Sorry, something went wrong. Please try again.');
+                        }
+                        })()
+                        ">Cancel</button>
+                    `;
                 });
                 await ChatSession.findByIdAndUpdate(
                     sessionId,
@@ -405,11 +407,11 @@ export const handleChat = async (req, res) => {
                 if (Array.isArray(doctors) && doctors.length > 0) {
                     const doctorDetails = doctors.map(doctor =>
                         `<div>
-              <p><strong>Name:</strong> ${doctor.doctorName}</p>
-              <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
-              <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
-              <button  style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px" onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select</button>
-            </div>`
+                        <p><strong>Name:</strong> ${doctor.doctorName}</p>
+                        <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
+                        <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select</button>
+                        </div>`
                     ).join('');
 
                     const responseMessage = `
@@ -457,39 +459,38 @@ export const handleChat = async (req, res) => {
                     const distance = nearestSlot.tempDistance || 'N/A';
 
                     const nearestSlotResponse = `
-            Sorry, I couldn’t find a doctor relevant to your symptoms, but I found an nearest available slot:
-            <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
-            <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
-            <p><strong>Distance:</strong> ${distance} km</p>
-            <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
-                (async function() {
-                    try {
-                        const response = await fetch('${BASE_URL}/api/appointments/create', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Authorization': '${authToken}'
-                            },
-                            body: JSON.stringify({
-                                dateTime: '${nearestSlot.startTime.toISOString()}',
-                                clinic: '${clinicId}',
-                                assignedGP: '${nearestSlot.doctorID}',
-                                slotId: '${nearestSlot._id}'
-                            })
-                        });
-                        const data = await response.json();
-                        if (response.ok) {
-                            alert('Your appointment has been successfully booked.');
-                        } else {
-                            alert('Error: ' + data.message);
-                        }
-                    } catch (error) {
-                        alert('Sorry, something went wrong. Please try again.');
-                    }
-                })()
-            ">Book Now</button>
-            `;
-
+                        Sorry, I couldn’t find a doctor relevant to your symptoms, but I found an nearest available slot:
+                        <p><strong>Date:</strong> ${new Date(nearestSlot.startTime).toLocaleDateString()}</p>
+                        <p><strong>Time:</strong> ${new Date(nearestSlot.startTime).toLocaleTimeString()}</p>
+                        <p><strong>Distance:</strong> ${distance} km</p>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="
+                            (async function() {
+                                try {
+                                    const response = await fetch('${BASE_URL}/api/appointments/create', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'Authorization': '${authToken}'
+                                        },
+                                        body: JSON.stringify({
+                                            dateTime: '${nearestSlot.startTime.toISOString()}',
+                                            clinic: '${clinicId}',
+                                            assignedGP: '${nearestSlot.doctorID}',
+                                            slotId: '${nearestSlot._id}'
+                                        })
+                                    });
+                                    const data = await response.json();
+                                    if (response.ok) {
+                                        alert('Your appointment has been successfully booked.');
+                                    } else {
+                                        alert('Error: ' + data.message);
+                                    }
+                                } catch (error) {
+                                    alert('Sorry, something went wrong. Please try again.');
+                                }
+                            })()
+                        ">Book Now</button>
+                        `;
                     await ChatSession.findByIdAndUpdate(
                         sessionId,
                         { $push: { messages: { sender: 'bot', message: nearestSlotResponse, isAnonymous } } }

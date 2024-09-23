@@ -17,6 +17,7 @@ import { DayPicker } from 'react-day-picker';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../App.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const Dashboard = () => {
     const { userId } = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
@@ -46,6 +47,10 @@ const Dashboard = () => {
 
     const handlePrescriptionRedirect = () => {
         navigate('/prescriptions');
+    };
+
+    const handleBookingRedirect = () => {
+        navigate('/appointment/new');
     };
 
     useEffect(() => {
@@ -200,7 +205,7 @@ const Dashboard = () => {
                 width: '100%',
                 maxWidth: '1200px',
                 margin: 'auto',
-                padding: '20px',
+                padding: { xs: '10px', md: '20px'},
                 backgroundColor: '#f8f6f6',
                 boxSizing: 'border-box'
             }}
@@ -208,7 +213,7 @@ const Dashboard = () => {
             <Box
                 sx={{
                     display: 'flex',
-                    flexDirection: 'row',
+                    flexDirection: { xs: 'column', md:'row', sm: 'column', lg:'row' },
                     width: '100%',
                     marginBottom: '20px'
                 }}
@@ -217,16 +222,16 @@ const Dashboard = () => {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        width: '40%',
+                        width: {xs:'94%', sm: '96.5%', md: '36%', lg:'40%'},
                         border: `1px solid ${hovered.appointment ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                         borderRadius: '50px',
-                        padding: '20px',
+                        padding: {xs: '15px', md: '15px', lg:'20px'},
                         transition: 'border-color 0.3s'
                     }}
                     onMouseEnter={() => setHovered(prev => ({ ...prev, appointment: true }))}
                     onMouseLeave={() => setHovered(prev => ({ ...prev, appointment: false }))}
                 >
-                    <Box sx={{ marginBottom: '10px', height: '385px', overflow: 'hidden' }}>
+                    <Box sx={{ marginBottom: '10px', height: '385px', overflow: 'hidden', width:{xs: '420px', sm: '700px', md: '410px', lg: '420px'} }}>
                         <DayPicker
                             mode="single"
                             classNames={{
@@ -246,7 +251,6 @@ const Dashboard = () => {
                             marginY: '10px'
                         }}
                     />
-
                     <Box sx={{ marginTop: '10px', height: '160px', overflowY: 'auto' }}>
                         {selectedDate && filteredAppointments.length > 0 ? (
                             filteredAppointments.map((appointment) => (
@@ -324,7 +328,34 @@ const Dashboard = () => {
                                     ))}
                                 </Box>
                             ) : (
-                                <Typography variant="h5">No appointment for the day.</Typography>
+                                <Box>
+                                    <Typography variant="h5">
+                                        No appointment for the day.
+                                        <Box
+                                            sx={{
+                                                marginLeft: '95%',
+                                                marginTop: '-7%'
+                                            }}
+                                            onClick={handleAppointmentRedirect}
+                                        >
+                                            <ArrowForwardIcon />
+                                        </Box>
+                                    </Typography>
+                                    <button
+                                        onClick={handleBookingRedirect}
+                                        style={{
+                                            margin: '10px',
+                                            padding: '10px 20px',
+                                            backgroundColor: '#03035d',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        Booking +
+                                    </button>
+                                </Box>
                             )
                         )}
                     </Box>
@@ -332,19 +363,20 @@ const Dashboard = () => {
 
                 <Box
                     sx={{
-                        width: '60%',
+                        width: {xs:'100%', md:'60%', lg:'60%'},
                         maxWidth: '100%',
                         display: 'flex',
                         flexDirection: 'column',
                         alignItems: 'stretch',
-                        marginLeft: '20px'
+                        marginLeft: {xs:'0px', md: '20px',lg:'20px'},
+                        marginTop: {xs: '20px', md: '0px', lg: '0px'}
                     }}
                 >
                     <Box
                         sx={{
                             width: '100%',
-                            height: '55%',
-                            padding: '20px',
+                            height: {xs: '55%', md: '60%', lg: '55%'},
+                            padding: {lg:'20px'},
                             border: `1px solid ${hovered.profile ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                             borderRadius: '50px',
                             marginBottom: '20px',
@@ -358,7 +390,7 @@ const Dashboard = () => {
                                 <Typography
                                     variant="h5"
                                     sx={{
-                                        marginTop: '-20px',
+                                        marginTop: {sm:'20px', md: '-5px',lg:'-20px'},
                                         marginBottom: '-20px',
                                         display: 'flex',
                                         alignItems: 'center',
@@ -375,7 +407,7 @@ const Dashboard = () => {
                                     <Box
                                         sx={{
                                             position: 'absolute',
-                                            right: 0,
+                                            right: {xs: 20, lg: 0},
                                             top: '50%',
                                             transform: 'translateY(-50%)',
                                             cursor: 'pointer',
@@ -411,10 +443,10 @@ const Dashboard = () => {
                                             color: 'black'
                                         }}
                                     >
-                                        <Typography variant="h6" sx={{ fontWeight: 'bold', color: '#03035d' }}>
+                                        <Typography variant="h6" sx={{ marginLeft: {xs: '15px'}, fontWeight: 'bold', color: '#03035d' }}>
                                             {label}
                                         </Typography>
-                                        <Typography variant="h6">
+                                        <Typography variant="h6" sx= {{ marginRight: {xs: '15px'} }}>
                                             {value}
                                         </Typography>
                                     </Box>
@@ -428,15 +460,15 @@ const Dashboard = () => {
                     <Box
                         sx={{
                             display: 'flex',
-                            flexDirection: 'row',
-                            width: '106%',
+                            flexDirection: {xs:'column', md: 'row', lg:'row'},
+                            width: {xs: '106%', sm: '110%', md: '100%', lg: '106%'},
                             gap: '20px',
                             height: '28%'
                         }}
                     >
                         <Box
                             sx={{
-                                width: '50%',
+                                width: {xs: '86%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.testResult ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
@@ -455,7 +487,7 @@ const Dashboard = () => {
                                 Test Results
                                 <Box
                                     sx={{
-                                        marginLeft: '30%'
+                                        marginLeft: {xs: '52%', sm: '70%', md: '30%', lg: '30%'}
                                     }}
                                     onClick={handleTestResultRedirect}
                                 >
@@ -489,7 +521,7 @@ const Dashboard = () => {
 
                         <Box
                             sx={{
-                                width: '50%',
+                                width: {xs: '86%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.prescription ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
@@ -508,7 +540,7 @@ const Dashboard = () => {
                                 Prescription
                                 <Box
                                     sx={{
-                                        marginLeft: '22%'
+                                        marginLeft: {xs: '45%', sm: '67%', md: '20%', lg:'22%'}
                                     }}
                                     onClick={handlePrescriptionRedirect}
                                 >
