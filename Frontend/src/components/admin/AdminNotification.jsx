@@ -104,11 +104,6 @@ function AdminNotification() {
         }
     };
 
-
-    const handleBackToAdminPanel = () => {
-        navigate('/admin/panel');
-    };
-
     const handleMarkAsRead = async (notificationId) => {
         try {
             await markNotificationAsRead(notificationId);
@@ -339,20 +334,6 @@ function AdminNotification() {
                     <Typography sx={{ marginTop: '10px', color: 'green' }}>Message sent successfully!</Typography>
                 )}
             </Box>
-            <Button
-                variant="contained"
-                sx={{
-                    mt: 4,
-                    backgroundColor: '#03035d',
-                    color: 'white',
-                    '&:hover': {
-                        backgroundColor: '#03035d',
-                    }
-                }}
-                onClick={handleBackToAdminPanel}
-            >
-                Back to Admin Panel
-            </Button>
         </Box>
 
     );

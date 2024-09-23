@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import AppBar from '@mui/material/AppBar';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
@@ -20,7 +20,7 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage.js';
 import { fetchUserNotifications } from '../../services/NotificationService.js';
 
-const BadgeStyled = styled(Badge)(({ theme }) => ({
+const BadgeStyled = styled(Badge)(() => ({
     '& .MuiBadge-badge': {
         borderRadius: '50%',
         top: 15,
@@ -50,7 +50,7 @@ const AnimatedButton = styled('button')(({ variant }) => ({
     },
 }));
 
-const FRWIconButton = styled(IconButton)(({ theme }) => ({
+const FRWIconButton = styled(IconButton)(() => ({
     color: 'black',
     backgroundColor: 'transparent',
     transition: 'color 0.3s ease',
@@ -130,13 +130,12 @@ function AppHeader() {
     const [unreadCount, setUnreadCount] = useState(0);
     const { userId: contextUserId } = useContext(AuthContext);
     const navigate = useNavigate();
-    const currentPort = window.location.port;
+    const location = useLocation();
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         const adminToken = localStorage.getItem('adminToken');
         const storedUserId = localStorage.getItem('userId');
-        const storedAdminId = localStorage.getItem('adminId');
         const userLoginStatus = localStorage.getItem('isUserLoggedIn');
         const adminLoginStatus = localStorage.getItem('isAdminLoggedIn');
 
@@ -148,9 +147,6 @@ function AppHeader() {
         }
         if (storedUserId) {
             setUserId(storedUserId);
-        }
-        if (storedAdminId) {
-            setAdminId(storedAdminId);
         }
         if (userLoginStatus === 'true') {
             setIsUserLoggedIn(true);
@@ -217,6 +213,15 @@ function AppHeader() {
         }
     };
 
+    useEffect(() => {
+        if (adminId) {
+            console.log("Admin ID:", adminId);
+        }
+    }, [adminId]);
+
+    const isAdminPage = location.pathname.startsWith('/adminhomepage');
+    const isSuperAdminPage = location.pathname.startsWith('/superadminhomepage');
+
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
@@ -270,15 +275,15 @@ function AppHeader() {
                             </AnimatedButton>
                         ) : (
                             <Box sx={{ display: 'flex', gap: 2 }}>
-                                {currentPort === '5174' || currentPort === '5175' ? null : (
+                                {isAdminPage || isSuperAdminPage ? null : (
                                     <Link to="/register">
                                         <AnimatedButton>
                                             <span>Register</span>
                                         </AnimatedButton>
                                     </Link>
                                 )}
-                                <AnimatedButton variant="login" onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}>
-                                    <span>{currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}</span>
+                                <AnimatedButton variant="login" onClick={isAdminPage || isSuperAdminPage ? toggleAdminLoginModal : toggleUserLoginModal}>
+                                    <span>{isAdminPage || isSuperAdminPage ? 'Admin Login' : 'Login'}</span>
                                 </AnimatedButton>
                             </Box>
                         )}

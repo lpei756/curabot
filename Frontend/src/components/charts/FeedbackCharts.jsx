@@ -92,7 +92,7 @@ const FeedbackCharts = () => {
 
     const createTrendData = (feedbackData, label) => {
         return Object.entries(feedbackData)
-            .filter(([_, value]) => value.positive !== 0 || value.negative !== 0)
+            .filter(([value]) => value.positive !== 0 || value.negative !== 0)
             .map(([key, value]) => ({
                 x: `${label} ${parseInt(key) + 1}`,
                 y: calculateSatisfactionPercentage(value.positive, value.negative),
@@ -106,7 +106,7 @@ const FeedbackCharts = () => {
     const allTrendData = [...weeklyTrend, ...monthlyTrend, ...quarterlyTrend];
 
     return (
-        <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', marginLeft: '250px' }}>
+        <Box sx={{ padding: 4, backgroundColor: '#f5f5f5', marginLeft: '50px' }}>
             <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: 'bold', color: '#333' }}>
                 User Feedback Overview
             </Typography>
@@ -117,7 +117,7 @@ const FeedbackCharts = () => {
                 {createPieChart('Quarterly Overview', feedbackData.quarterly)}
             </Grid>
 
-            <Paper elevation={3} sx={{ marginTop: 4, padding: 2 }}>
+            <Paper elevation={3} sx={{ marginTop: 8, padding: 2 }}>
                 <Typography variant="h6" gutterBottom sx={{ textAlign: 'center' }}>
                     Feedback Trends
                 </Typography>
