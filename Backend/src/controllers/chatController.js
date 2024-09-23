@@ -196,7 +196,7 @@ export const handleChat = async (req, res) => {
                         <strong>Instructions</strong>: ${prescription.instructions} </br>
                         <strong>Doctor</strong>: ${prescription.doctorName} </br>
                         <strong>Issued</strong>: ${new Date(prescription.createdAt).toLocaleDateString()}</br>
-                        <button onclick="window.repeatPrescription('${encodedData}')">Repeat</button>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="window.repeatPrescription('${encodedData}')">Repeat</button>
                     `;
                 }).join('</br></br>');
 
@@ -410,7 +410,7 @@ export const handleChat = async (req, res) => {
                         <p><strong>Name:</strong> ${doctor.doctorName}</p>
                         <p><strong>Clinic:</strong> ${doctor.clinicName}</p>
                         <p><strong>Distance:</strong> ${doctor.distance.toFixed(2)} km</p>
-                        <button  style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px" onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select</button>
+                        <button style="background-color: #03035d; color: #f8f6f6; padding: 10px 20px; border: none; border-radius: 20px; cursor: pointer;" onclick="window.handleDoctorSelection('${doctor.doctorID}')">Select</button>
                         </div>`
                     ).join('');
 
