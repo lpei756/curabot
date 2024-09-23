@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
@@ -18,12 +18,11 @@ import { styled } from '@mui/material/styles';
 import ImageUpload from '../image/ImageUpload';
 import { AuthContext } from '../../context/AuthContext';
 import { fetchChatHistoryBySessionId, sendChatMessage, sendFeedbackToServer, fetchUserChatHistories } from '../../services/chatService';
-import { fetchGpSlotsByDoctorId } from '../../services/availabilityService.js';
-import { createAppointment } from '../../services/appointmentService.js';
-import { getDoctorById } from '../../services/doctorService.js';
+import { fetchGpSlotsByDoctorId } from '../../services/availabilityService';
+import { createAppointment } from '../../services/appointmentService';
+import { getDoctorById } from '../../services/doctorService';
 import animationData from '../../assets/loading.json';
 import "../../App.css";
-import { sendUserMessage } from '../../services/NotificationService.js';
 import { v4 as uuidv4 } from 'uuid';
 
 const StyledIconButton = styled(IconButton)(({ theme }) => ({
@@ -76,14 +75,9 @@ function ChatBot() {
     const [searchTerm, setSearchTerm] = useState("");
     const [searchSuggestion, setSearchSuggestion] = useState(null);
     const scrollContainerRef = useRef(null);
-    const messageRefs = useRef({});
     const messagesEndRef = useRef(null);
     const { userId } = useContext(AuthContext);
     const [doctorAvailability, setDoctorAvailability] = useState(null);
-    const [searchClicked, setSearchClicked] = useState(false);
-    const [error, setError] = useState(null);
-    const [scrollToMessageId, setScrollToMessageId] = useState(null);
-    const [shouldScrollToBottom, setShouldScrollToBottom] = useState(true);
 
     const quickChats = [
         "How can I book an appointment",
@@ -145,10 +139,10 @@ function ChatBot() {
     }, [userId, authToken, chatHistoriesFetched]);
 
     useEffect(() => {
-        if (shouldScrollToBottom && messagesEndRef.current) {
+        if (messagesEndRef.current) {
             messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
         }
-    }, [messages, shouldScrollToBottom]);
+    }, [messages]);
 
     const isSignificantTimeGap = (previousTimestamp, currentTimestamp) => {
         const timeGapInMs = new Date(currentTimestamp).getTime() - new Date(previousTimestamp).getTime();
@@ -173,52 +167,10 @@ function ChatBot() {
         }
     };
 
-    useEffect(() => {
-        if (scrollToMessageId && messageRefs.current[scrollToMessageId]) {
-            messageRefs.current[scrollToMessageId].scrollIntoView({ behavior: 'smooth', block: 'center' });
-            setScrollToMessageId(null);
-        } else if (shouldScrollToBottom && messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-        }
-    }, [messages, scrollToMessageId, shouldScrollToBottom]);
-
     React.useEffect(() => {
         window.handleDoctorSelection = handleDoctorSelection;
         return () => {
             delete window.handleDoctorSelection;
-        };
-    }, []);
-
-    const handleRepeatPrescription = async (encodedData) => {
-        const { id, doctorId, patientName, medications, instructions } = JSON.parse(decodeURIComponent(encodedData));
-
-        const message = "Can you please repeat this prescription for me?";
-
-        if (!doctorId) {
-            console.error("Doctor ID is missing for this prescription.");
-            setError("Doctor ID is missing for this prescription.");
-            return;
-        }
-
-        try {
-            const formData = new FormData();
-            formData.append('senderId', userId);
-            formData.append('receiverId', doctorId);
-            formData.append('message', message);
-            formData.append('senderModel', "User");
-            formData.append('receiverModel', "Doctor");
-
-            const response = await sendUserMessage(formData, authToken);
-        } catch (err) {
-            console.error("Error sending repeat request:", err.message);
-            setError(`Unable to send repeat request: ${err.message}`);
-        }
-    };
-
-    React.useEffect(() => {
-        window.repeatPrescription = handleRepeatPrescription;
-        return () => {
-            delete window.repeatPrescription;
         };
     }, []);
 
@@ -237,6 +189,7 @@ function ChatBot() {
             };
 
             const response = await createAppointment(appointmentData);
+            console.log('Appointment created successfully:', response);
 
             setMessages((prevMessages) => [
                 ...prevMessages,
@@ -268,8 +221,6 @@ function ChatBot() {
         setInputValue('');
         setIsLoading(true);
 
-        setShouldScrollToBottom(true);
-
         try {
             const position = await new Promise((resolve, reject) => {
                 navigator.geolocation.getCurrentPosition(resolve, reject);
@@ -292,8 +243,6 @@ function ChatBot() {
                 { id: uuidv4(), type: 'bot', message: response.data.reply, isHtml: true, feedbackSent: false }
             ]);
 
-            setShouldScrollToBottom(true);
-
         } catch (error) {
             let errorMessage = 'Sorry, something went wrong. Please try again.';
             if (error.message === 'Unauthorized') {
@@ -303,7 +252,6 @@ function ChatBot() {
                 ...prevMessages,
                 { id: uuidv4(), type: 'bot', message: errorMessage }
             ]);
-            setShouldScrollToBottom(true);
         } finally {
             setIsLoading(false);
         }
@@ -329,29 +277,57 @@ function ChatBot() {
         setIsImageDialogOpen(true);
     };
 
-    const handleFeedback = async (index, feedback) => {
+    const handleFeedback = (index, feedback) => {
         const message = messages[index];
         if (!message.id) {
             console.error('Message ID is missing, cannot send feedback');
             return;
         }
-
+    
         if (message.feedbackSent) {
+            console.log('Feedback has already been sent for this message');
             return;
         }
-
+    
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback, feedbackSent: true } : msg
             )
         );
-
-        try {
-            const response = await sendFeedbackToServer(message.id, feedback);
-        } catch (error) {
+    
+        const positiveFeedbacks = [
+            'Thank you for your feedback!',
+            'We appreciate your input!',
+            'Glad you liked it!',
+            'Thanks for the thumbs up!',
+            'We are happy you found it helpful!',
+        ];
+    
+        const negativeFeedbacks = [
+            'Sorry to hear that. We will improve.',
+            'Thanks for letting us know. We\'ll try harder!',
+            'We apologize for the inconvenience.',
+            'We are working on improving the experience.',
+            'Your feedback helps us get better.',
+        ];
+    
+        // 随机选择一条反馈语句
+        const feedbackResponse = feedback
+            ? positiveFeedbacks[Math.floor(Math.random() * positiveFeedbacks.length)]
+            : negativeFeedbacks[Math.floor(Math.random() * negativeFeedbacks.length)];
+    
+        // 添加 isFeedback 标记
+        setMessages((prevMessages) => [
+            ...prevMessages,
+            { id: uuidv4(), type: 'bot', message: feedbackResponse, isFeedback: true }
+        ]);
+    
+        // 可选择性地将反馈发送到服务器
+        sendFeedbackToServer(message.id, feedback).catch(error => {
             console.error('Failed to send feedback:', error);
-        }
+        });
     };
+    
 
     const toggleDrawer = () => {
         setDrawerOpen((prevDrawerOpen) => !prevDrawerOpen);
@@ -376,7 +352,7 @@ function ChatBot() {
         return groupedByDate;
     };
 
-    const showChatHistoryForDate = (date, messageId = null) => {
+    const showChatHistoryForDate = (date) => {
         const messagesForDate = recentChatSessions[date] || [];
 
         const formattedMessages = messagesForDate.map(msg => ({
@@ -387,62 +363,36 @@ function ChatBot() {
 
         setMessages(formattedMessages);
         setSelectedSessionId(date);
-        if (messageId) {
-            setScrollToMessageId(messageId);
-        } else {
-            setScrollToMessageId(null);
-        }
-
-        setShouldScrollToBottom(false);
     };
 
     const handleSearchChange = (event) => {
         const searchTerm = event.target.value.trim();
         setSearchTerm(searchTerm);
-        setSearchClicked(false);
+        // Automatically clear filtered results when the search input is cleared
         setFilteredChatSessions([]);
         if (searchTerm === '') {
             setSearchSuggestion(null);
 
         } else {
-            setSearchSuggestion(`Search for: "${searchTerm}"`);
+            setSearchSuggestion(`Search for: "${searchTerm}"`);  // Create suggestion
         }
     };
 
+    // Perform search on recentChatSessions
     const handleSearchClick = () => {
         const filteredSessions = {};
-        setSearchClicked(true);
 
         if (searchTerm.trim() !== '') {
             Object.keys(recentChatSessions).forEach(date => {
-                const filteredMessages = recentChatSessions[date]
-                    .filter(message =>
-                        message.message.toLowerCase().includes(searchTerm.toLowerCase())
-                    )
-                    .map(message => {
-                        const searchIndex = message.message.toLowerCase().indexOf(searchTerm.toLowerCase());
-                        const totalCharacters = 20;
-                        const half = Math.floor(totalCharacters / 2);
-
-                        const start = Math.max(0, searchIndex - half);
-                        const end = Math.min(message.message.length, searchIndex + searchTerm.length + half);
-
-                        const beforeText = message.message.slice(start, searchIndex);
-                        const afterText = message.message.slice(searchIndex + searchTerm.length, end);
-
-                        const truncatedMessage = `${start > 0 ? '...' : ''}${beforeText}${message.message.substr(searchIndex, searchTerm.length)}${afterText}${end < message.message.length ? '...' : ''}`;
-
-                        return {
-                            ...message,
-                            truncatedMessage
-                        };
-                    });
+                const filteredMessages = recentChatSessions[date].filter(message =>
+                    message.message.toLowerCase().includes(searchTerm.toLowerCase())
+                );
                 if (filteredMessages.length > 0) {
                     filteredSessions[date] = filteredMessages;
                 }
             });
 
-            setFilteredChatSessions(filteredSessions);
+            setFilteredChatSessions(filteredSessions);  // Store filtered results
         }
     };
 
@@ -450,27 +400,24 @@ function ChatBot() {
         <>
             {drawerOpen && (
                 <DrawerContainer>
-                    <AppBar
-                        position="sticky"
-                        sx={{
-                            backgroundColor: '#03035D',
-                            boxShadow: 'none',
-                            borderTopLeftRadius: '20px',
-                            borderTopRightRadius: '20px',
-                            height: '60px',
-                            display: 'flex',
-                            flexDirection: 'row',
-                            alignItems: 'center',
-                            padding: '0 16px',
-                        }}
-                    >
+                    <AppBar position="sticky" sx={{
+                        backgroundColor: '#03035D',
+                        boxShadow: 'none',
+                        borderTopLeftRadius: '20px',
+                        borderTopRightRadius: '20px',
+                        height: '60px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        padding: '0 16px',
+                    }}>
                         <TextField
                             size="small"
                             variant="standard"
                             fullWidth
                             value={searchTerm}
                             onChange={handleSearchChange}
-                            placeholder="Search..."
+                            placeholder="Search chat history..."
                             InputProps={{
                                 startAdornment: (
                                     <SearchRoundedIcon sx={{ color: 'white' }} />
@@ -488,7 +435,7 @@ function ChatBot() {
                     </AppBar>
 
                     <List>
-                        {searchTerm !== '' && !searchClicked && (
+                        {searchTerm !== '' ? (
                             <ListItem onClick={handleSearchClick}>
                                 <ListItemText
                                     primary={
@@ -501,69 +448,45 @@ function ChatBot() {
                                     }
                                 />
                             </ListItem>
-                        )}
-
-                        {searchTerm === '' && !searchClicked && Object.keys(recentChatSessions).map((date, index) => (
-                            <ListItem
-                                key={index}
-                                onClick={() => showChatHistoryForDate(date)}
-                                sx={{
-                                    bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
-                                    transition: 'background-color 0.3s ease',
-                                    '&:hover': {
-                                        bgcolor: selectedSessionId === date ? '#03035D' : '#68cde6',
-                                        '& .MuiListItemText-primary': { color: 'white' },
-                                    },
-                                    borderRadius: '8px',
-                                    mb: 1,
-                                }}
-                            >
-                                <ListItemText
-                                    primary={date}
+                        ) : (
+                            Object.keys(recentChatSessions).map((date, index) => (
+                                <ListItem
+                                    key={index}
+                                    onClick={() => showChatHistoryForDate(date)}
                                     sx={{
-                                        color: selectedSessionId === date ? 'white' : 'black',
-                                        transition: 'color 0.3s ease',
+                                        bgcolor: selectedSessionId === date ? '#03035D' : 'transparent',
+                                        transition: 'background-color 0.3s ease',
+                                        '&:hover': {
+                                            bgcolor: selectedSessionId === date ? '#03035D' : '#68cde6',
+                                            '& .MuiListItemText-primary': { color: 'white' },
+                                        },
+                                        borderRadius: '8px',
+                                        mb: 1,
                                     }}
-                                />
-                            </ListItem>
-                        ))}
+                                >
+                                    <ListItemText
+                                        primary={date}
+                                        sx={{
+                                            color: selectedSessionId === date ? 'white' : 'black',
+                                            transition: 'color 0.3s ease',
+                                        }}
+                                    />
+                                </ListItem>
+                            ))
+                        )}
                     </List>
 
                     {Object.keys(filteredChatSessions).length > 0 && (
                         <List>
                             {Object.keys(filteredChatSessions).map((date, index) => (
                                 filteredChatSessions[date].map((message, msgIndex) => (
-                                    <ListItem key={`${date}-${msgIndex}`}
-                                        onClick={() => showChatHistoryForDate(date, message.id)}
-                                        sx={{
-                                            bgcolor: selectedSessionId === `${date}-${msgIndex}` ? '#03035D' : 'transparent',
-                                            transition: 'background-color 0.3s ease',
-                                            '&:hover': {
-                                                bgcolor: selectedSessionId === `${date}-${msgIndex}` ? '#03035D' : '#68cde6',
-                                                '& .MuiListItemText-primary': { color: 'white' },
-                                            },
-                                            borderRadius: '8px',
-                                            mb: 1,
-                                        }}
-                                    >
-                                        {message.sender === 'bot' ? (
-                                            <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 30, height: 30, mr: 1 }} />
-                                        ) : (
-                                            <Avatar alt="User Avatar" sx={{ bgcolor: '#03035D', width: 30, height: 30, mr: 1 }} />
-                                        )}
+                                    <ListItem key={`${date}-${msgIndex}`}>
                                         <Box sx={{ flexGrow: 1 }}>
                                             <Typography variant="body1" sx={{ color: 'black' }}>
-                                                <span dangerouslySetInnerHTML={{ __html: message.truncatedMessage.replace(new RegExp(searchTerm, 'gi'), match => `<span style="color: #03035D">${match}</span>`) }} />
+                                                {message.message}
                                             </Typography>
                                             <Typography variant="caption" sx={{ color: 'gray' }}>
-                                                {new Date(message.timestamp).toLocaleString(undefined, {
-                                                    year: 'numeric',
-                                                    month: 'numeric',
-                                                    day: 'numeric',
-                                                    hour: '2-digit',
-                                                    minute: '2-digit',
-                                                    hour12: false,
-                                                })}
+                                                {new Date(message.timestamp).toLocaleString()}
                                             </Typography>
                                         </Box>
                                     </ListItem>
@@ -571,24 +494,11 @@ function ChatBot() {
                             ))}
                         </List>
                     )}
-
-                    {Object.keys(filteredChatSessions).length === 0 && searchClicked && (
-                        <ListItem>
-                            <ListItemText
-                                primary={
-                                    <span style={{ color: 'black' }}>
-                                        No results found for "{searchTerm}"
-                                    </span>
-                                }
-                            />
-                        </ListItem>
-                    )}
                 </DrawerContainer>
             )}
 
             <Box
                 className="chatbot-container"
-                data-testid = "chatbot-container"
                 sx={{
                     width: '450px',
                     height: '675px',
@@ -661,7 +571,13 @@ function ChatBot() {
 
                 <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
                     {messages.map((msg, index) => {
+                        // Add logging for timestamps
+                        //if (index > 0) {
+                        //    console.log(`Comparing Message ${index - 1} at ${messages[index - 1].timestamp} with Message ${index} at ${msg.timestamp}`);
+                        //}
                         const showTimestamp = index === 0 || isSignificantTimeGap(messages[index - 1].timestamp, msg.timestamp);
+                        //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
+
                         return (
                             <React.Fragment key={index}>
                                 {showTimestamp && (
@@ -675,8 +591,6 @@ function ChatBot() {
                                     mb={2}
                                     alignItems="flex-start"
                                     justifyContent={msg.type === 'bot' ? 'flex-start' : 'flex-end'}
-                                    ref={el => (messageRefs.current[msg.id] = el)}
-                                    key={msg.id}
                                 >
                                     {msg.type === 'bot' && (
                                         <Avatar alt="Bot Avatar" src="icon.png" sx={{ width: 45, height: 45 }} />
@@ -706,26 +620,27 @@ function ChatBot() {
                                             <Typography>{msg.message}</Typography>
                                         )}
 
-                                        {msg.type === 'bot' && index !== 0 && (
-                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                                <StyledIconButton
-                                                    onClick={() => handleFeedback(index, true)}
-                                                    aria-label="thumbs up"
-                                                >
-                                                    <ThumbIcon isActive={msg.liked === true}>
-                                                        <ThumbUpOutlinedIcon />
-                                                    </ThumbIcon>
-                                                </StyledIconButton>
-                                                <StyledIconButton
-                                                    onClick={() => handleFeedback(index, false)}
-                                                    aria-label="thumbs down"
-                                                >
-                                                    <ThumbIcon isActive={msg.liked === false}>
-                                                        <ThumbDownOutlinedIcon />
-                                                    </ThumbIcon>
-                                                </StyledIconButton>
-                                            </Box>
-                                        )}
+                                    {msg.type === 'bot' && !msg.isFeedback && index !== 0 && (
+                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                            <StyledIconButton
+                                                onClick={() => handleFeedback(index, true)}
+                                                aria-label="thumbs up"
+                                            >
+                                                <ThumbIcon isActive={msg.liked === true}>
+                                                    <ThumbUpOutlinedIcon />
+                                                </ThumbIcon>
+                                            </StyledIconButton>
+                                            <StyledIconButton
+                                                onClick={() => handleFeedback(index, false)}
+                                                aria-label="thumbs down"
+                                            >
+                                                <ThumbIcon isActive={msg.liked === false}>
+                                                    <ThumbDownOutlinedIcon />
+                                                </ThumbIcon>
+                                            </StyledIconButton>
+                                        </Box>
+                                    )}
+
 
                                     </Paper>
                                     {msg.type === 'user' && (

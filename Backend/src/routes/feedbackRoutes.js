@@ -1,5 +1,6 @@
 import express from 'express';
 import schemaValidations from '../validations/schemaValidations.js';
+import { handleFeedback } from '../controllers/chatController.js'; 
 import Feedback from '../models/feedback.js';
 
 
@@ -21,7 +22,10 @@ router.post('/', async (req, res) => {
 
         await newFeedback.save();
 
-        res.status(200).send({ status: 'success', message: 'Feedback received' });
+        res.status(200).send({
+            status: 'success',
+            message: 'Feedback received'
+        });
     } catch (err) {
         console.error('Error saving feedback:', err);
         res.status(500).send({ status: 'error', message: 'Failed to save feedback' });

@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext, useMemo } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography, Grid, Paper } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
