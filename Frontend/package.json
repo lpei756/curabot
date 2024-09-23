@@ -9,9 +9,9 @@
     "build": "vite build",
     "test": "vitest",
     "eject": "react-scripts eject",
-    "dev:user": "vite --config vite.config.user.js",
-    "build:user": "vite build --config vite.config.user.js",
-    "preview:user": "vite preview --config vite.config.user.js",
+    "dev:user": "vite --config vite.config.js",
+    "build:user": "vite build --config vite.config.js",
+    "preview:user": "vite preview --config vite.config.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

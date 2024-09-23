@@ -10,22 +10,6 @@ publish = "dist/user"
 NODE_ENV = "production"
 REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
-[context.admin]
-command = "npm run build:admin"
-publish = "dist/admin"
-
-[context.admin.environment]
-NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
-
-[context.superadmin]
-command = "npm run build:superadmin"
-publish = "dist/superadmin"
-
-[context.superadmin.environment]
-NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
-
 [[redirects]]
 from = "/*"
 to = "/index.html"
