@@ -588,6 +588,7 @@ function ChatBot() {
 
             <Box
                 className="chatbot-container"
+                data-testid = "chatbot-container"
                 sx={{
                     width: '450px',
                     height: '675px',
@@ -880,9 +881,5 @@ function ChatBot() {
         </>
     );
 }
-
-ChatBot.propTypes = {
-    toggleChatbot: PropTypes.func.isRequired,
-};
 
 export default ChatBot;
