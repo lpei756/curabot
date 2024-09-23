@@ -80,12 +80,12 @@ function ChatBot() {
     const [doctorAvailability, setDoctorAvailability] = useState(null);
 
     const quickChats = [
-        "How can I book a new appointment",
-        "How do I cancel my appointment",
-        "Change my appointment time",
-        "When is my next appointment",
-        "How do I check my insurance details",
-        "How can I get my medical records",
+        "How can I book an appointment",
+        "How can I cancel my appointment",
+        "How can I view my appointments",
+        "How can I repeat my prescription",
+        "How can I edit my personal information",
+        "How can I find the clinic location",
     ];
 
     useEffect(() => {
@@ -796,9 +796,5 @@ function ChatBot() {
         </>
     );
 }
-
-ChatBot.propTypes = {
-    toggleChatbot: PropTypes.func.isRequired,
-};
 
 export default ChatBot;
