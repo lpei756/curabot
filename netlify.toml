@@ -16,7 +16,7 @@ publish = "dist/admin"
 
 [context.admin.environment]
 NODE_ENV = "production"
-REACT_APP_API_URL = "https://curachatbot.herokuapp.com/api/admin/login"
+REACT_APP_API_URL = "https://curachatbot.herokuapp.com"
 
 [context.superadmin]
 command = "npm run build:superadmin"
