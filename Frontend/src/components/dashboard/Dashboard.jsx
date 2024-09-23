@@ -17,6 +17,7 @@ import { DayPicker } from 'react-day-picker';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import '../../App.css';
 
+const apiUrl = import.meta.env.VITE_API_URL;
 const Dashboard = () => {
     const { userId } = useContext(AuthContext);
     const [userData, setUserData] = useState(null);
@@ -46,6 +47,10 @@ const Dashboard = () => {
 
     const handlePrescriptionRedirect = () => {
         navigate('/prescriptions');
+    };
+
+    const handleBookingRedirect = () => {
+        navigate('/appointment/new');
     };
 
     useEffect(() => {
@@ -324,7 +329,25 @@ const Dashboard = () => {
                                     ))}
                                 </Box>
                             ) : (
-                                <Typography variant="h5">No appointment for the day.</Typography>
+                                <Box>
+                                    <Typography variant="h5">
+                                        No appointment for the day.
+                                    </Typography>
+                                    <button
+                                        onClick={handleBookingRedirect}
+                                        style={{
+                                            margin: '10px',
+                                            padding: '10px 20px',
+                                            backgroundColor: '#03035d',
+                                            color: '#fff',
+                                            border: 'none',
+                                            borderRadius: '5px',
+                                            cursor: 'pointer'
+                                        }}
+                                    >
+                                        Booking +
+                                    </button>
+                                </Box>
                             )
                         )}
                     </Box>

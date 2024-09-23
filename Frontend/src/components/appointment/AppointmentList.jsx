@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { fetchUserAppointments, deleteAppointment } from '../../services/appointmentService.js';
 import { useNavigate } from 'react-router-dom';
 
-const apiUrl = import.meta.env.VITE_API_URL;
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +28,10 @@ const AppointmentList = () => {
     navigate(`/appointment/${appointmentID}/update`);
   };
 
+  const handleBookingClick = (appointmentID) => {
+    navigate(`/appointment/new`);
+  };
+
   const handleDelete = async (appointmentID) => {
     try {
       await deleteAppointment(appointmentID);
@@ -37,11 +40,6 @@ const AppointmentList = () => {
     } catch (error) {
       console.error('Error deleting appointment:', error);
     }
-  };
-
-  const handleBookingClick = () => {
-
-    window.location.href = `${apiUrl}/appointment/new`;
   };
 
   const handleAppointmentClick = (appointment) => {
