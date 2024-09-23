@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { fetchUserAppointments, deleteAppointment } from '../../services/appointmentService.js';
 import { useNavigate } from 'react-router-dom';
+import {Box, Button} from "@mui/material";
 
 const AppointmentList = () => {
   const [appointments, setAppointments] = useState([]);
@@ -23,6 +24,10 @@ const AppointmentList = () => {
 
     loadAppointments();
   }, []);
+
+  const handleBackToDashboard = () => {
+    navigate('/dashboard');
+  };
 
   const handleEditClick = (appointmentID) => {
     navigate(`/appointment/${appointmentID}/update`);
@@ -154,10 +159,30 @@ const AppointmentList = () => {
               >
                 Cancel Appointment
               </button>
+
+
             </div>
           </div>
         )}
       </div>
+      <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            mt: 4,
+          }}
+      >
+        <Button
+            variant="contained"
+            sx={{
+              backgroundColor: '#03035d',
+              color: 'white',
+            }}
+            onClick={handleBackToDashboard}
+        >
+          Back to Dashboard
+        </Button>
+      </Box>
     </div>
   );
 };
