@@ -1,14 +1,21 @@
 import { useState, useEffect, useContext } from 'react';
+import {
+    AppBar,
+    Container,
+    Toolbar,
+    Box,
+    Typography,
+    IconButton,
+    Menu,
+    MenuItem,
+    Badge,
+    useTheme,
+    useMediaQuery
+} from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-import AppBar from '@mui/material/AppBar';
-import IconButton from '@mui/material/IconButton';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Badge from '@mui/material/Badge';
-import Typography from '@mui/material/Typography';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import Container from '@mui/material/Container';
+import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/material/styles';
 import Login from '../auth/login/Login';
 import AdminLogin from '../auth/login/AdminLogin';
@@ -129,8 +136,11 @@ function AppHeader() {
     const [userId, setUserId] = useState('');
     const [unreadCount, setUnreadCount] = useState(0);
     const { userId: contextUserId } = useContext(AuthContext);
+    const [anchorEl, setAnchorEl] = useState(null);
     const navigate = useNavigate();
     const currentPort = window.location.port;
+    const theme = useTheme();
+    const isXsOrSm = useMediaQuery(theme.breakpoints.down('md'));
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -175,6 +185,14 @@ function AppHeader() {
             fetchUnreadNotifications();
         }
     }, [contextUserId, userId]);
+
+    const handleMenuClick = (event) => {
+        setAnchorEl(event.currentTarget);
+    };
+
+    const handleMenuClose = () => {
+        setAnchorEl(null);
+    };
 
     const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
@@ -253,6 +271,7 @@ function AppHeader() {
                                     left: '50%',
                                     transform: 'translateX(-50%)',
                                     cursor: 'pointer',
+                                    fontSize: { xs: '1.2rem', sm: '1.5rem', md: '1.5rem', lg: '1.5rem' },
                                     '&:hover': {
                                         color: '#03035d',
                                         backgroundColor: 'transparent',
@@ -264,32 +283,68 @@ function AppHeader() {
                                 FRW Healthcare
                             </Typography>
                         </Box>
-                        {isUserLoggedIn || isAdminLoggedIn ? (
-                            <AnimatedButton variant="login" onClick={handleLogout}>
-                                <span>Logout</span>
-                            </AnimatedButton>
+                        {isXsOrSm ? (
+                            <Box sx={{ display: { xs: 'flex', sm: 'flex' } }}>
+                                <FRWIconButton onClick={handleMenuClick}>
+                                    <MenuIcon />
+                                </FRWIconButton>
+                                <Menu
+                                    anchorEl={anchorEl}
+                                    open={Boolean(anchorEl)}
+                                    onClose={handleMenuClose}
+                                >
+                                    {isUserLoggedIn || isAdminLoggedIn ? (
+                                        <MenuItem onClick={handleLogout}>
+                                            Logout
+                                        </MenuItem>
+                                    ) : (
+                                        <>
+                                            <MenuItem onClick={handleMenuClose}>
+                                                <Link to="/register">
+                                                    Register
+                                                </Link>
+                                            </MenuItem>
+                                            <MenuItem onClick={handleMenuClose}>
+                                                <span onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}>
+                                                    {currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}
+                                                </span>
+                                            </MenuItem>
+                                        </>
+                                    )}
+                                </Menu>
+                            </Box>
                         ) : (
                             <Box sx={{ display: 'flex', gap: 2 }}>
-                                {currentPort === '5174' || currentPort === '5175' ? null : (
-                                    <Link to="/register">
-                                        <AnimatedButton>
-                                            <span>Register</span>
+                                {isUserLoggedIn || isAdminLoggedIn ? (
+                                    <AnimatedButton variant="login" onClick={handleLogout}>
+                                        <span>Logout</span>
+                                    </AnimatedButton>
+                                ) : (
+                                    <>
+                                        {currentPort === '5174' || currentPort === '5175' ? null : (
+                                            <Link to="/register">
+                                                <AnimatedButton>
+                                                    <span>Register</span>
+                                                </AnimatedButton>
+                                            </Link>
+                                        )}
+                                        <AnimatedButton
+                                            variant="login"
+                                            onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}
+                                        >
+                                            <span>{currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}</span>
                                         </AnimatedButton>
-                                    </Link>
+                                    </>
                                 )}
-                                <AnimatedButton variant="login" onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}>
-                                    <span>{currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}</span>
-                                </AnimatedButton>
                             </Box>
                         )}
+
                     </Toolbar>
                 </Container>
             </AppBar>
 
             <LoginModal open={isUserLoginOpen} onClose={toggleUserLoginModal} onSuccess={handleUserLoginSuccess} />
             <AdminLoginModal open={isAdminLoginOpen} onClose={toggleAdminLoginModal} onSuccess={handleAdminLoginSuccess} />
-
-
         </>
     );
 }
