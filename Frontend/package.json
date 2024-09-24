@@ -6,13 +6,16 @@
   "scripts": {
     "clean": "rm -rf dist",
     "start": "vite",
-    "test": "vitest",
-    "eject": "react-scripts eject",
-    "dev": "vite --config vite.config.js",
-    "build": "vite build --config vite.config.js",
+    "dev:user": "vite --config vite.config.user.js",
+    "dev:admin": "vite --config vite.config.admin.js",
+    "dev:superadmin": "vite --config vite.config.superadmin.js",
+    "build:user": "vite build --config vite.config.user.js",
+    "build:admin": "vite build --config vite.config.admin.js",
+    "build:superadmin": "vite build --config vite.config.superadmin.js",
     "preview": "vite preview --config vite.config.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
+
   "dependencies": {
     "@date-io/date-fns": "^3.0.0",
     "@emotion/react": "^11.13.3",
