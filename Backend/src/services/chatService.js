@@ -109,6 +109,7 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
         });
 
         const messageContent = response.choices[0].message.content.trim();
+        console.log('Model response:', messageContent);
 
         let symptoms = 'No symptoms detected.';
         let isEmergency = false;
@@ -121,6 +122,7 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
                 symptoms = parsedResult.symptoms;
             }
             isEmergency = parsedResult.emergency || false;
+            console.log('emergency', isEmergency)
         } catch (e) {
             console.error('Error parsing result:', e);
             console.error('Raw result:', messageContent);

@@ -157,9 +157,7 @@ function ChatBot() {
             setIsLoading(true);
             const data = await fetchGpSlotsByDoctorId(doctorID);
 
-            const availableSlots = data.filter(data => !data.isBooked);
-
-            setDoctorAvailability(availableSlots);
+            setDoctorAvailability(data);
         } catch (error) {
             console.error('Error fetching doctor availability:', error);
         } finally {
