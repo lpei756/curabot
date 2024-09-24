@@ -6,6 +6,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "start": "vite",
+    "test": "vitest",
     "dev:user": "vite --config vite.config.user.js",
     "dev:admin": "vite --config vite.config.admin.js",
     "dev:superadmin": "vite --config vite.config.superadmin.js",
