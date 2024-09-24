@@ -8,6 +8,7 @@ import animationData from '../../assets/loading.json';
 import EditUser from './EditUser';
 import { getDoctorById } from '../../services/doctorService.js';
 import { AuthContext } from "../../context/AuthContext.jsx";
+import { useNavigate } from "react-router-dom";
 
 function ReadUser() {
     const [userData, setUserData] = useState(null);
@@ -17,6 +18,7 @@ function ReadUser() {
     const [editMode, setEditMode] = useState(false);
     const [expandedBlock, setExpandedBlock] = useState(null);
     const { userId } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!userId) {
@@ -44,6 +46,10 @@ function ReadUser() {
 
     const toggleBlock = (block) => {
         setExpandedBlock(expandedBlock === block ? null : block);
+    };
+
+    const handleBackToDashboard = () => {
+        navigate('/dashboard');
     };
 
     if (loading) {
@@ -157,17 +163,37 @@ function ReadUser() {
 
                     <ImageDisplay userId={userId} />
 
-                    <Button
-                        variant="contained"
+                    {/* 按钮区域 */}
+                    <Box
                         sx={{
-                            backgroundColor: '#03035d',
-                            color: '#fff',
+                            display: 'flex',
+                            justifyContent: 'center', // 水平排列并在两端对齐
+                            width: '100%',
                             marginTop: '20px',
                         }}
-                        onClick={() => setEditMode(true)}
                     >
-                        Edit Profile Information
-                    </Button>
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#fff',
+                                color: '#03035d',
+                            }}
+                            onClick={() => setEditMode(true)}
+                        >
+                            Edit Profile Information
+                        </Button>
+
+                        <Button
+                            variant="contained"
+                            sx={{
+                                backgroundColor: '#03035d',
+                                color: 'white',
+                            }}
+                            onClick={handleBackToDashboard}
+                        >
+                            Back to Dashboard
+                        </Button>
+                    </Box>
                 </>
             )}
         </Box>

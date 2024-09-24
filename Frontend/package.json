@@ -9,15 +9,9 @@
     "build": "vite build",
     "test": "vitest",
     "eject": "react-scripts eject",
-    "dev:admin": "vite --config vite.config.admin.js",
-    "dev:superadmin": "vite --config vite.config.superadmin.js",
-    "dev:user": "vite --config vite.config.user.js",
-    "build:admin": "vite build --config vite.config.admin.js",
-    "build:superadmin": "vite build --config vite.config.superadmin.js",
-    "build:user": "vite build --config vite.config.user.js",
-    "preview:admin": "vite preview --config vite.config.admin.js",
-    "preview:superadmin": "vite preview --config vite.config.superadmin.js",
-    "preview:user": "vite preview --config vite.config.user.js",
+    "dev:user": "vite --config vite.config.js",
+    "build:user": "vite build --config vite.config.js",
+    "preview:user": "vite preview --config vite.config.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {

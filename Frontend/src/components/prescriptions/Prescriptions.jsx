@@ -3,12 +3,14 @@ import { Box, Typography, Container, CircularProgress, Button } from '@mui/mater
 import { getAllPrescriptions } from '../../services/PrescriptionService.js';
 import { sendUserMessage } from '../../services/NotificationService.js';
 import { AuthContext } from '../../context/AuthContext.jsx';
+import { useNavigate } from 'react-router-dom'; // Add this if using react-router for navigation
 
 const Prescriptions = () => {
     const [prescriptions, setPrescriptions] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { token, userId } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPrescriptions = async () => {
@@ -47,11 +49,15 @@ const Prescriptions = () => {
             formData.append('senderModel', "User");
             formData.append('receiverModel', "Doctor");
 
-            const response = await sendUserMessage(formData, token);
+            await sendUserMessage(formData, token);
         } catch (err) {
             console.error("Error sending repeat request:", err.message);
             setError(`Unable to send repeat request: ${err.message}`);
         }
+    };
+
+    const handleBackToDashboard = () => {
+        navigate('/dashboard');
     };
 
     if (loading) return <CircularProgress />;
@@ -101,7 +107,7 @@ const Prescriptions = () => {
                             <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 2 }}>
                                 <Button
                                     variant="contained"
-                                    sx={{ backgroundColor: '#f0ad4e', color: '#fff' }}
+                                    sx={{ backgroundColor: '#03035d', color: '#fff' }}
                                     onClick={() => handleRepeatPrescription(prescription)}
                                 >
                                     Repeat
@@ -115,6 +121,25 @@ const Prescriptions = () => {
                     No prescriptions found.
                 </Typography>
             )}
+
+            <Box
+                sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    mt: 4,
+                }}
+            >
+                <Button
+                    variant="contained"
+                    sx={{
+                        backgroundColor: '#03035d',
+                        color: 'white',
+                    }}
+                    onClick={handleBackToDashboard}
+                >
+                    Back to Dashboard
+                </Button>
+            </Box>
         </Container>
     );
 };

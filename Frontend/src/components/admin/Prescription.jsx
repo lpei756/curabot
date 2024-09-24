@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import { generatePrescription } from '../../services/PrescriptionService.js';
 import { fetchMe } from '../../services/AdminService.js';
@@ -8,6 +8,7 @@ import { AdminContext } from '../../context/AdminContext.jsx';
 const Prescription = () => {
     const { adminId, adminToken } = useContext(AdminContext);
     const location = useLocation();
+    const navigate = useNavigate(); // 使用 navigate
     const { patient } = location.state || {};
     const [prescriptionData, setPrescriptionData] = useState({
         doctorName: '',
@@ -18,8 +19,7 @@ const Prescription = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        if (patient && patient._id) {
-        } else {
+        if (!patient || !patient._id) {
             console.error("Patient information is missing");
         }
     }, [patient]);
@@ -69,6 +69,7 @@ const Prescription = () => {
             try {
                 await generatePrescription(data, adminToken);
                 alert('Prescription saved and notification sent successfully!');
+                navigate('/admin/panel');
             } catch (error) {
                 console.error('Error processing prescription or sending notification:', error);
                 setError('Failed to save prescription or send notification. Please try again.');

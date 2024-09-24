@@ -104,8 +104,8 @@ function Notification() {
         handleSendMessage(message, doctorId);
     };
 
-    const handleBackToHomepage = () => {
-        navigate('/');
+    const handleBackToDashboard = () => {
+        navigate('/dashboard');
     };
 
     const handleMarkAsRead = async (notificationId) => {
@@ -231,7 +231,7 @@ function Notification() {
                                     <Box sx={{ marginBottom: '10px' }}>
                                         <Button
                                             variant="outlined"
-                                            sx={{ borderColor: '#007bff', color: '#007bff' }}
+                                            sx={{ borderColor: '#03035d', color: '#03035d' }}
                                             onClick={() => window.open(`${apiUrl}${notification.pdfFile}`, '_blank')}
                                         >
                                             View PDF
@@ -262,7 +262,7 @@ function Notification() {
 
                                     <Button
                                         variant="outlined"
-                                        sx={{ borderColor: '#ff0000', color: '#ff0000' }}
+                                        sx={{ borderColor: '#03035d', color: '#03035d' }}
                                         onClick={() => handleDeleteNotification(notification._id)}
                                     >
                                         Delete
@@ -271,7 +271,7 @@ function Notification() {
                                     {notification.message.includes("Prescription created by") && (
                                         <Button
                                             variant="contained"
-                                            sx={{ backgroundColor: '#f0ad4e', color: '#fff' }}
+                                            sx={{ backgroundColor: '#03035d', color: '#fff' }}
                                             onClick={() => handleRepeatPrescription(notification)}
                                         >
                                             Repeat
@@ -325,7 +325,7 @@ function Notification() {
                             }}
                         >
                             {doctors.map((doctor) => (
-                                <MenuItem key={doctor._id} value={doctor._id} sx={{ color: '#f8f6f6' }}>
+                                <MenuItem key={doctor._id} value={doctor._id} sx={{ color: '#03035d' }}>
                                     {`${doctor.firstName} ${doctor.lastName}`}
                                 </MenuItem>
                             ))}
@@ -387,13 +387,10 @@ function Notification() {
                     sx={{
                         backgroundColor: '#03035d',
                         color: 'white',
-                        '&:hover': {
-                            backgroundColor: '#03035d',
-                        }
                     }}
-                    onClick={handleBackToHomepage}
+                    onClick={handleBackToDashboard}
                 >
-                    Back to Homepage
+                    Back to Dashboard
                 </Button>
             </Box>
         </Box>
