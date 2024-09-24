@@ -205,7 +205,7 @@ const Dashboard = () => {
                 width: '100%',
                 maxWidth: '1200px',
                 margin: 'auto',
-                padding: { xs: '0px', md: '20px'},
+                padding: { xs: '5px', md: '20px'},
                 backgroundColor: '#f8f6f6',
                 boxSizing: 'border-box'
             }}
@@ -222,7 +222,7 @@ const Dashboard = () => {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        width: {xs:'92%', sm: '96.5%', md: '36%', lg:'40%'},
+                        width: {xs:'91%', sm: '96.5%', md: '36%', lg:'40%'},
                         border: `1px solid ${hovered.appointment ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                         borderRadius: '50px',
                         padding: {xs: '16px', md: '15px', lg:'20px'},
@@ -467,7 +467,7 @@ const Dashboard = () => {
                     >
                         <Box
                             sx={{
-                                width: {xs: '90%', lg:'50%'},
+                                width: {xs: '89%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.testResult ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
@@ -520,12 +520,13 @@ const Dashboard = () => {
 
                         <Box
                             sx={{
-                                width: {xs: '90%', lg:'50%'},
+                                width: {xs: '89%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.prescription ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                                 borderRadius: '50px',
-                                transition: 'border-color 0.3s'
+                                transition: 'border-color 0.3s',
+                                justifyContent: 'space-between'
                             }}
                             onMouseEnter={() => setHovered(prev => ({ ...prev, prescription: true }))}
                             onMouseLeave={() => setHovered(prev => ({ ...prev, prescription: false }))}
@@ -539,7 +540,7 @@ const Dashboard = () => {
                                 Prescription
                                 <Box
                                     sx={{
-                                        marginLeft: {xs: '35%', sm: '58%', md: '20%', lg:'22%'}
+                                        marginLeft: {xs: '34%', sm: '58%', md: '20%', lg:'22%'}
                                     }}
                                     onClick={handlePrescriptionRedirect}
                                 >
