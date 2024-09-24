@@ -1,21 +1,26 @@
 import { render, screen, fireEvent, within, waitFor } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, beforeAll, describe, it, expect, test } from 'vitest';
 import ChatBot from '../../../components/chatbot/ChatBot';
 import { useChatbot } from '../../../context/ChatbotContext';
 import { AuthContext } from '../../../context/AuthContext';
 import { sendChatMessage } from '../../../services/chatService';
 
+// Ensure that navigator exists in the global scope
+if (typeof global.navigator === 'undefined') {
+    global.navigator = {};
+}
+
 beforeAll(() => {
     // Mock the geolocation API
     global.navigator.geolocation = {
-        getCurrentPosition: vi.fn().mockImplementationOnce((success) => 
-            Promise.resolve(success({
+        getCurrentPosition: vi.fn().mockImplementationOnce((success) => {
+            success({
                 coords: {
                     latitude: 52.5200,
                     longitude: 13.4050
                 }
-            }))
-        )
+            });
+        })
     };
 });
 
