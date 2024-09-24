@@ -4,7 +4,6 @@ import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, A
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
-import PropTypes from 'prop-types';
 import ClearRoundedIcon from '@mui/icons-material/ClearRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 import AttachFileRoundedIcon from '@mui/icons-material/AttachFileRounded';
@@ -210,11 +209,9 @@ function ChatBot() {
         const messageToSend = quickMessage || inputValue;
         if (messageToSend.trim() === '') return;
 
-        const messageId = uuidv4();
-
         setMessages((prevMessages) => [
             ...prevMessages,
-            { id: messageId, type: 'user', message: messageToSend }
+            { id: uuidv4(), type: 'user', message: messageToSend }
         ]);
         setInputValue('');
         setIsLoading(true);
@@ -277,7 +274,7 @@ function ChatBot() {
 
     const handleFeedback = (index, feedback) => {
         const message = messages[index];
-        if (!message.id) {
+        if (!message._id) {
             console.error('Message ID is missing, cannot send feedback');
             return;
         }
@@ -318,7 +315,7 @@ function ChatBot() {
             { id: uuidv4(), type: 'bot', message: feedbackResponse, isFeedback: true }
         ]);
 
-        sendFeedbackToServer(message.id, feedback).catch(error => {
+        sendFeedbackToServer(message._id, feedback).catch(error => {
             console.error('Failed to send feedback:', error);
         });
     };
@@ -494,11 +491,11 @@ function ChatBot() {
                 className="chatbot-container"
                 data-testid="chatbot-container"
                 sx={{
-                    width: {xs: '90%', sm: '50%', md: '40%', lg: '30%'},
-                    height: {xs: '85%', sm: '85%', md: '85%', lg: '85%'},
+                    width: { xs: '90%', sm: '50%', md: '40%', lg: '30%' },
+                    height: { xs: '85%', sm: '85%', md: '85%', lg: '85%' },
                     position: 'fixed',
                     bottom: '50px',
-                    right: {xs: '15px', lg: '30px'},
+                    right: { xs: '15px', lg: '30px' },
                     borderRadius: '20px',
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
