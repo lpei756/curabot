@@ -1,7 +1,6 @@
 import '@testing-library/jest-dom';
-import { vi } from 'vitest'; // Vitest version of jest
+import { vi } from 'vitest';
 
-// Mock the HTMLCanvasElement's getContext method (optional if needed for your project)
 HTMLCanvasElement.prototype.getContext = function () {
   return {
     fillRect: vi.fn(),

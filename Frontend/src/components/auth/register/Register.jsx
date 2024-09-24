@@ -1,9 +1,9 @@
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TextField, Button, Box, Typography, Stepper, Step, StepLabel, LinearProgress } from '@mui/material';
+import { TextField, Button, Box, Typography, Stepper, Step, StepLabel, LinearProgress, Grid, useMediaQuery } from '@mui/material';
 import PropTypes from 'prop-types';
 import { register, sendVerificationCode } from '../../../services/authService.js';
+import { useTheme } from '@mui/material/styles';
 
 const steps = ['Account Set Up', 'Personal Information'];
 
@@ -27,6 +27,9 @@ const Register = ({ onSuccess }) => {
     const [isCooldown, setIsCooldown] = useState(false);
     const [timeLeft, setTimeLeft] = useState(0);
     const navigate = useNavigate();
+    
+    const theme = useTheme();
+    const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm')); // Check for small screens
 
     const handleSendVerificationCode = async () => {
         if (!formData.email) {
@@ -164,26 +167,32 @@ const Register = ({ onSuccess }) => {
             case 1:
                 return (
                     <>
-                        <TextField
-                            label="First Name"
-                            variant="standard"
-                            name="firstName"
-                            value={formData.firstName}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            required
-                        />
-                        <TextField
-                            label="Last Name"
-                            variant="standard"
-                            name="lastName"
-                            value={formData.lastName}
-                            onChange={handleChange}
-                            fullWidth
-                            margin="normal"
-                            required
-                        />
+                        <Grid container spacing={isSmallScreen ? 2 : 3}>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="First Name"
+                                    variant="standard"
+                                    name="firstName"
+                                    value={formData.firstName}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    margin="normal"
+                                    required
+                                />
+                            </Grid>
+                            <Grid item xs={12} sm={6}>
+                                <TextField
+                                    label="Last Name"
+                                    variant="standard"
+                                    name="lastName"
+                                    value={formData.lastName}
+                                    onChange={handleChange}
+                                    fullWidth
+                                    margin="normal"
+                                    required
+                                />
+                            </Grid>
+                        </Grid>
                         <TextField
                             label="Date of Birth"
                             variant="standard"
@@ -224,8 +233,17 @@ const Register = ({ onSuccess }) => {
     };
 
     return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ width: '600px', mx: 'auto', mt: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom style={{ color: 'black', textAlign: 'center' }}>
+        <Box
+            component="form"
+            onSubmit={handleSubmit}
+            sx={{
+                width: isSmallScreen ? '90%' : '600px',
+                mx: 'auto',
+                mt: 4,
+                px: isSmallScreen ? 2 : 0,
+            }}
+        >
+            <Typography variant={isSmallScreen ? "h5" : "h4"} component="h1" gutterBottom style={{ color: 'black', textAlign: 'center' }}>
                 Register
             </Typography>
             <LinearProgress
@@ -285,14 +303,13 @@ const Register = ({ onSuccess }) => {
                     variant="contained"
                     sx={{
                         backgroundColor: '#03035d',
-                        color: '#fff',
                         '&:hover': {
-                            backgroundColor: '#020246',
+                            backgroundColor: '#03035d',
                         },
                     }}
                     onClick={activeStep === steps.length - 1 ? handleSubmit : handleNext}
                 >
-                    {activeStep === steps.length - 1 ? 'COMPLETE' : 'Next'}
+                    {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
                 </Button>
             </Box>
         </Box>

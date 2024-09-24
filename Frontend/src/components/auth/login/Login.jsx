@@ -31,7 +31,7 @@ function Login({ onClose, onSuccess }) {
     };
 
     return (
-        <Box component="form" onSubmit={handleLogin}>
+        <Box component="form" onSubmit={handleLogin} sx={{ width: { xs: '90%', sm: '90%', md: '90%', lg: '100%' }, mx: 'auto' }}>
             <Box display="flex" justifyContent="space-between" alignItems="center">
                 <Typography id="login-modal-title" variant="h6" component="h2" style={{ color: 'black', textAlign: 'center' }}>
                     Login
@@ -67,6 +67,7 @@ function Login({ onClose, onSuccess }) {
             <Button
                 variant="contained"
                 type="submit"
+                fullWidth
                 style={{
                     backgroundColor: '#03035d',
                     color: '#fff',

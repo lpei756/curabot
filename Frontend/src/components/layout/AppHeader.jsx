@@ -16,6 +16,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import MapRoundedIcon from '@mui/icons-material/MapRounded';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MenuIcon from '@mui/icons-material/Menu';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { styled } from '@mui/material/styles';
 import Login from '../auth/login/Login';
 import AdminLogin from '../auth/login/AdminLogin';
@@ -26,6 +27,7 @@ import PropTypes from 'prop-types';
 import { AuthContext } from '../../context/AuthContext.jsx';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage.js';
 import { fetchUserNotifications } from '../../services/NotificationService.js';
+
 const BadgeStyled = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
         borderRadius: '50%',
@@ -123,12 +125,12 @@ function AppHeader() {
     const [isAdminLoginOpen, setIsAdminLoginOpen] = useState(false);
     const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
     const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false);
-    const [isDrawerOpen, setIsDrawerOpen] = useState(false);
     const [adminId, setAdminId] = useState('');
     const [userId, setUserId] = useState('');
     const [unreadCount, setUnreadCount] = useState(0);
     const { userId: contextUserId } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
+    const [dropdownEl, setDropdownEl] = useState(null); 
     const navigate = useNavigate();
     const currentPort = window.location.port;
     const theme = useTheme();
@@ -183,9 +185,17 @@ function AppHeader() {
         setAnchorEl(null);
     };
 
+    const handleDropdownClick = (event) => {
+        setDropdownEl(event.currentTarget);
+    };
+
+    const handleDropdownClose = () => {
+        setDropdownEl(null);
+    };
+
     const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
-    const toggleDrawer = () => setIsDrawerOpen(!isDrawerOpen);
+    
     const handleUserLoginSuccess = (id) => {
         setIsUserLoggedIn(true);
         setUserId(id);
@@ -227,22 +237,52 @@ function AppHeader() {
                 <Container maxWidth="xl">
                     <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                            <FRWIconButton onClick={toggleDrawer}>
-                            </FRWIconButton>
-                            <Link to="/map">
-                                <FRWIconButton>
-                                    <MapRoundedIcon />
+                        {isXsOrSm ? (
+                            <>
+                                <FRWIconButton onClick={handleDropdownClick}>
+                                    <MenuIcon />
                                 </FRWIconButton>
-                            </Link>
-                            <Link to="/notification">
-                                <BadgeStyled badgeContent={unreadCount} color="error">
-                                    <IconButton color="inherit">
+                                <Menu
+                                    anchorEl={dropdownEl}
+                                    open={Boolean(dropdownEl)}
+                                    onClose={handleDropdownClose}
+                                >
+                                    <MenuItem onClick={handleDropdownClose}>
+                                        <Link to="/map">
+                                            <FRWIconButton>
+                                                <MapRoundedIcon />
+                                            </FRWIconButton>
+                                            Map
+                                        </Link>
+                                    </MenuItem>
+                                    <MenuItem onClick={handleDropdownClose}>
+                                        <Link to="/notification">
+                                            <BadgeStyled badgeContent={unreadCount} color="error">
+                                                <FRWIconButton>
+                                                    <NotificationsIcon />
+                                                </FRWIconButton>
+                                            </BadgeStyled>
+                                            Notifications
+                                        </Link>
+                                    </MenuItem>
+                                </Menu>
+                            </>
+                        ) : (
+                            <Box sx={{ display: 'flex', gap: 2 }}>
+                                <Link to="/map">
+                                    <FRWIconButton>
+                                        <MapRoundedIcon />
+                                    </FRWIconButton>
+                                </Link>
+                                <Link to="/notification">
+                                    <BadgeStyled badgeContent={unreadCount} color="error">
                                         <FRWIconButton>
                                             <NotificationsIcon />
                                         </FRWIconButton>
-                                    </IconButton>
-                                </BadgeStyled>
-                            </Link>
+                                    </BadgeStyled>
+                                </Link>
+                            </Box>
+                        )}
                             <Typography
                                 variant="h5"
                                 noWrap
@@ -272,7 +312,7 @@ function AppHeader() {
                         {isXsOrSm ? (
                             <Box sx={{ display: { xs: 'flex', sm: 'flex' } }}>
                                 <FRWIconButton onClick={handleMenuClick}>
-                                    <MenuIcon />
+                                    <AccountCircleIcon />
                                 </FRWIconButton>
                                 <Menu
                                     anchorEl={anchorEl}
@@ -284,7 +324,7 @@ function AppHeader() {
                                             Logout
                                         </MenuItem>
                                     ) : (
-                                        <>
+                                        <Box>
                                             <MenuItem onClick={handleMenuClose}>
                                                 <Link to="/register">
                                                     Register
@@ -295,7 +335,7 @@ function AppHeader() {
                                                     {currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}
                                                 </span>
                                             </MenuItem>
-                                        </>
+                                        </Box>
                                     )}
                                 </Menu>
                             </Box>

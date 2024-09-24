@@ -3,7 +3,7 @@ import { Box, Typography, Container, CircularProgress, Button } from '@mui/mater
 import { getAllPrescriptions } from '../../services/PrescriptionService.js';
 import { sendUserMessage } from '../../services/NotificationService.js';
 import { AuthContext } from '../../context/AuthContext.jsx';
-import { useNavigate } from 'react-router-dom'; // Add this if using react-router for navigation
+import { useNavigate } from 'react-router-dom';
 
 const Prescriptions = () => {
     const [prescriptions, setPrescriptions] = useState([]);
