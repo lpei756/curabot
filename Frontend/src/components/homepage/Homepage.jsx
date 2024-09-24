@@ -1,49 +1,56 @@
+import { Box, Typography } from '@mui/material';
 import Lottie from 'lottie-react';
 import animationData from '../../assets/homepage.json';
 
 function Homepage() {
 
     return (
-        <div style={{
-            position: 'relative',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            overflow: 'hidden',
-            height: '100%'
-        }}>
-            <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '80%',
-                transform: 'translate(-50%, -50%)',
-                color: 'black',
-                fontSize: '60px',
-                fontFamily: '"Ubuntu", sans-serif',
-                textAlign: 'center',
+        <Box
+            sx={{
+                position: 'relative',
                 display: 'flex',
-                flexDirection: 'column',
+                justifyContent: 'center',
                 alignItems: 'center',
-                whiteSpace: 'nowrap'
-            }}>
-                <div>secure and smart.</div>
-            </div>
-            <div style={{
-                position: 'absolute',
-                top: '50%',
-                left: '20%',
-                transform: 'translate(-50%, -50%)',
-                color: 'black',
-                fontSize: '60px',
-                fontFamily: '"Ubuntu", sans-serif',
-                textAlign: 'center',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                whiteSpace: 'nowrap'
-            }}>
-                <div>Effortless booking</div>
-            </div>
+                overflow: 'hidden'
+            }}
+        >
+            <Typography
+                sx={{
+                    position: 'absolute',
+                    top: {xs: '75%', sm: '85%', md: '85%', lg: '50%'},
+                    left: {xs: '50%', lg: '80%'},
+                    transform: 'translate(-50%, -50%)',
+                    color: 'black',
+                    fontSize: {xs: '50px', lg: '60px'},
+                    fontFamily: '"Ubuntu", sans-serif',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                secure and smart.
+            </Typography>
+
+            <Typography
+                sx={{
+                    position: 'absolute',
+                    top: {xs: '25%', sm: '15%', md: '15%', lg: '50%'},
+                    left: {xs: '50%', lg: '20%'},
+                    transform: 'translate(-50%, -50%)',
+                    color: 'black',
+                    fontSize: {xs: '50px', lg: '60px'},
+                    fontFamily: '"Ubuntu", sans-serif',
+                    textAlign: 'center',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    whiteSpace: 'nowrap',
+                }}
+            >
+                Effortless booking
+            </Typography>
 
             <Lottie
                 animationData={animationData}
@@ -52,10 +59,10 @@ function Homepage() {
                     height: '700px',
                     zIndex: 1,
                     justifyContent: 'center',
-                    pointerEvents: 'auto'
+                    pointerEvents: 'auto',
                 }}
             />
-        </div>
+        </Box>
     );
 }
 
