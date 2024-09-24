@@ -219,8 +219,8 @@ function AppHeader() {
         }
     }, [adminId]);
 
-    const isAdminPage = location.pathname.startsWith('/adminhomepage');
-    const isSuperAdminPage = location.pathname.startsWith('/superadminhomepage');
+    const isAdminPage = window.location.port === '5174';
+    const isSuperAdminPage = window.location.port === '5175';
 
     return (
         <>
