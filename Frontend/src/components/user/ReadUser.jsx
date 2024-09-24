@@ -163,11 +163,10 @@ function ReadUser() {
 
                     <ImageDisplay userId={userId} />
 
-                    {/* 按钮区域 */}
                     <Box
                         sx={{
                             display: 'flex',
-                            justifyContent: 'center', // 水平排列并在两端对齐
+                            justifyContent: 'center',
                             width: '100%',
                             marginTop: '20px',
                         }}

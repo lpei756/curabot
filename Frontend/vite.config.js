@@ -5,11 +5,11 @@ import react from '@vitejs/plugin-react-swc';
 export default defineConfig({
   plugins: [react()],
   test: {
-    environment: 'jsdom', // Simulates a browser environment
-    globals: true,        // Allows using global test functions like describe and it
-    setupFiles: './src/setupTests.js',  // Path to setup file, if needed
+    environment: 'jsdom',
+    globals: true,
+    setupFiles: './src/setupTests.js',
     transformMode: {
-      web: [/.[tj]sx?/],  // Ensure that it transforms .js, .jsx, .ts, and .tsx
+      web: [/.[tj]sx?/],
     },
   },
 });

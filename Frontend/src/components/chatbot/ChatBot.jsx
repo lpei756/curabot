@@ -311,18 +311,15 @@ function ChatBot() {
             'Your feedback helps us get better.',
         ];
 
-        // 随机选择一条反馈语句
         const feedbackResponse = feedback
             ? positiveFeedbacks[Math.floor(Math.random() * positiveFeedbacks.length)]
             : negativeFeedbacks[Math.floor(Math.random() * negativeFeedbacks.length)];
 
-        // 添加 isFeedback 标记
         setMessages((prevMessages) => [
             ...prevMessages,
             { id: uuidv4(), type: 'bot', message: feedbackResponse, isFeedback: true }
         ]);
 
-        // 可选择性地将反馈发送到服务器
         sendFeedbackToServer(message.id, feedback).catch(error => {
             console.error('Failed to send feedback:', error);
         });
@@ -368,17 +365,15 @@ function ChatBot() {
     const handleSearchChange = (event) => {
         const searchTerm = event.target.value.trim();
         setSearchTerm(searchTerm);
-        // Automatically clear filtered results when the search input is cleared
         setFilteredChatSessions([]);
         if (searchTerm === '') {
             setSearchSuggestion(null);
 
         } else {
-            setSearchSuggestion(`Search for: "${searchTerm}"`);  // Create suggestion
+            setSearchSuggestion(`Search for: "${searchTerm}"`);
         }
     };
 
-    // Perform search on recentChatSessions
     const handleSearchClick = () => {
         const filteredSessions = {};
 
@@ -392,7 +387,7 @@ function ChatBot() {
                 }
             });
 
-            setFilteredChatSessions(filteredSessions);  // Store filtered results
+            setFilteredChatSessions(filteredSessions);
         }
     };
 
@@ -501,11 +496,11 @@ function ChatBot() {
                 className="chatbot-container"
                 data-testid="chatbot-container"
                 sx={{
-                    width: '450px',
-                    height: '675px',
+                    width: {xs: '90%', sm: '50%', md: '40%', lg: '30%'},
+                    height: {xs: '85%', sm: '85%', md: '85%', lg: '85%'},
                     position: 'fixed',
                     bottom: '50px',
-                    right: '30px',
+                    right: {xs: '15px', lg: '30px'},
                     borderRadius: '20px',
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
@@ -572,13 +567,7 @@ function ChatBot() {
 
                 <Box flexGrow={1} p={2} overflow="auto" sx={{ backgroundColor: '#f5f5f5', zIndex: 9997 }}>
                     {messages.map((msg, index) => {
-                        // Add logging for timestamps
-                        //if (index > 0) {
-                        //    console.log(`Comparing Message ${index - 1} at ${messages[index - 1].timestamp} with Message ${index} at ${msg.timestamp}`);
-                        //}
                         const showTimestamp = index === 0 || isSignificantTimeGap(messages[index - 1].timestamp, msg.timestamp);
-                        //console.log(`Message ${index} showTimestamp: ${showTimestamp}`);
-
                         return (
                             <React.Fragment key={index}>
                                 {showTimestamp && (
