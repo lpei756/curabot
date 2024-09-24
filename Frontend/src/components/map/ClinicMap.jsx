@@ -56,39 +56,39 @@ const ClinicMap = () => {
         };
 
         const geocodeAddresses = async (clinics) => {
-            try {
-                const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-                const geocodePromises = clinics.map(async (clinic) => {
-                    const encodedAddress = encodeURIComponent(clinic.address);
-                    const response = await axios.get(
-                        `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`
-                    );
-                    if (response.data.status === "OK") {
-                        const location = response.data.results[0].geometry.location;
-                        return {
-                            id: clinic._id,
-                            name: clinic.name,
-                            address: clinic.address,
-                            email: clinic.email,
-                            fax: clinic.fax,
-                            phone: clinic.phone,
-                            hours: clinic.hours,
-                            service: clinic.service,
-                            lat: location.lat,
-                            lng: location.lng,
-                        };
-                    } else {
-                        console.error("Geocoding error for", clinic.address, ":", response.data.status);
-                        return null;
-                    }
-                });
-
-                const positions = await Promise.all(geocodePromises);
-                setClinicPositions(positions.filter(position => position !== null));
-            } catch (error) {
-                console.error("Error fetching geocoding data:", error);
+    try {
+        const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+        const geocodePromises = clinics.map(async (clinic) => {
+            const encodedAddress = encodeURIComponent(clinic.address);
+            const response = await axios.get(
+                `https://maps.googleapis.com/maps/api/geocode/json?address=${encodedAddress}&key=${apiKey}`
+            );
+            if (response.data.status === "OK" && response.data.results.length > 0) {
+                const location = response.data.results[0].geometry.location;
+                return {
+                    id: clinic._id,
+                    name: clinic.name,
+                    address: clinic.address,
+                    email: clinic.email,
+                    fax: clinic.fax,
+                    phone: clinic.phone,
+                    hours: clinic.hours,
+                    service: clinic.service,
+                    lat: location.lat,
+                    lng: location.lng,
+                };
+            } else {
+                console.error("Geocoding error for", clinic.address, ":", response.data.status);
+                return null;
             }
-        };
+        });
+
+        const positions = await Promise.all(geocodePromises);
+        setClinicPositions(positions.filter(position => position !== null));
+    } catch (error) {
+        console.error("Error fetching geocoding data:", error);
+    }
+};
 
         fetchClinics();
     }, []);
@@ -122,6 +122,7 @@ const ClinicMap = () => {
                     alignItems: 'center',
                     height: '100vh'
                 }}
+                data-testid="lottie-animation"
             >
                 <Lottie
                     animationData={animationData}
@@ -174,16 +175,16 @@ const ClinicMap = () => {
                                                 primaryTypographyProps={{ style: { color: '#03035d' } }}
                                                 secondary={
                                                     <>
-                                                        {clinic.address}<br />
-                                                        {clinic.service}<br />
-                                                        {clinic.hours}<br />
-                                                        {clinic.email}<br />
-                                                        Fax: {clinic.fax}<br />
-                                                        Phone: {clinic.phone}<br />
+                                                        <span>{clinic.address}</span><br />
+                                                        <span>{clinic.service}</span><br />
+                                                        <span>{clinic.hours}</span><br />
+                                                        <span>{clinic.email}</span><br />
+                                                        <span>Fax: {clinic.fax}</span><br />
+                                                        <span>Phone: {clinic.phone}</span><br />
                                                         {userPosition && clinic.distance && (
-                                                            <div>
+                                                            <span>
                                                                 Distance from you: {clinic.distance} km
-                                                            </div>
+                                                            </span>
                                                         )}
                                                     </>
                                                 }
