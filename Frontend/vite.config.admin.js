@@ -8,14 +8,14 @@ export default ({ mode }) => {
     return defineConfig({
         plugins: [react()],
         server: {
-            port: 5174 // 管理员端口
+            port: 5174
         },
         envPrefix: 'VITE_',
         define: {
             'process.env': env,
         },
         build: {
-            outDir: 'dist/admin', // 输出目录为 dist/admin
+            outDir: 'dist/admin',
         },
     });
 };
