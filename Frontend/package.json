@@ -6,12 +6,11 @@
   "scripts": {
     "clean": "rm -rf dist",
     "start": "vite",
-    "build": "vite build",
     "test": "vitest",
     "eject": "react-scripts eject",
-    "dev:user": "vite --config vite.config.js",
-    "build:user": "vite build --config vite.config.js",
-    "preview:user": "vite preview --config vite.config.js",
+    "dev": "vite --config vite.config.js",
+    "build": "vite build --config vite.config.js",
+    "preview": "vite preview --config vite.config.js",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
