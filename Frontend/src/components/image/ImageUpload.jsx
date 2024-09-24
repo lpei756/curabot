@@ -61,7 +61,7 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
+        <Dialog open={open} onClose={onClose} sx={{ zIndex: 9998 }}>
             <DialogTitle>Upload Image</DialogTitle>
             <DialogContent>
                 <input type="file" onChange={handleFileChange} />
