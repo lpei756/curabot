@@ -771,7 +771,7 @@ function ChatBot() {
                 onClose={() => setIsImageUploadOpen(false)}
                 onImageUploaded={handleImageUpload}
             />
-            <Dialog open={isImageDialogOpen} onClose={() => setIsImageDialogOpen(false)} maxWidth="md">
+            <Dialog open={isImageDialogOpen} onClose={() => setIsImageDialogOpen(false)} maxWidth="md" sx={{ zIndex: 9998 }}>
                 <DialogContent>
                     {selectedImage && (
                         <img src={selectedImage} alt="Full Size" style={{ width: '100%', height: 'auto' }} />
