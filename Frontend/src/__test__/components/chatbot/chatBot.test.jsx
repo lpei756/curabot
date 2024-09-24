@@ -5,13 +5,11 @@ import { useChatbot } from '../../../context/ChatbotContext';
 import { AuthContext } from '../../../context/AuthContext';
 import { sendChatMessage } from '../../../services/chatService';
 
-// Ensure that navigator exists in the global scope
 if (typeof global.navigator === 'undefined') {
     global.navigator = {};
 }
 
 beforeAll(() => {
-    // Mock the geolocation API
     global.navigator.geolocation = {
         getCurrentPosition: vi.fn().mockImplementationOnce((success) => {
             success({
@@ -24,10 +22,9 @@ beforeAll(() => {
     };
 });
 
-// Mock the useChatbot function
 vi.mock('../../../context/ChatbotContext', () => ({
     useChatbot: () => ({
-        toggleChatbot: vi.fn(), // Provide a mock function for toggleChatbot
+        toggleChatbot: vi.fn(),
     }),
 }));
 
@@ -37,12 +34,10 @@ vi.mock('../../../services/chatService', () => ({
     }),
 }));
 
-// Mock the AuthContext
 const mockAuthContextValue = {
     authToken: 'test-auth-token',
 };
 
-// Mock the API service to return a bot reply
 vi.mock('../../../services/chatService', () => ({
     sendChatMessage: vi.fn().mockResolvedValue({
         data: { reply: 'Hello from the bot', sessionId: 'test-session-id' }
@@ -60,13 +55,12 @@ test('ChatBot renders without crashing', () => {
             <ChatBot />
         </AuthContext.Provider>
     );
-    expect(screen.getByText('Cura')).toBeInTheDocument(); // Check if the header is rendered
+    expect(screen.getByText('Cura')).toBeInTheDocument();
 });
 
-// Test for when the user is logged in
 test('ChatBot renders the history button when logged in', () => {
     const mockAuthContextValue = {
-        authToken: 'test-auth-token', // Simulate user logged in
+        authToken: 'test-auth-token',
     };
 
     render(
@@ -75,14 +69,12 @@ test('ChatBot renders the history button when logged in', () => {
         </AuthContext.Provider>
     );
 
-    // Check that the History button is visible using getByTestId
     expect(screen.getByTestId('HistoryRoundedIcon')).toBeInTheDocument();
 });
 
-// Test for when the user is not logged in
 test('ChatBot does not render the history button when not logged in', () => {
     const mockAuthContextValue = {
-        authToken: null, // Simulate user not logged in
+        authToken: null,
     };
 
     render(
@@ -91,7 +83,6 @@ test('ChatBot does not render the history button when not logged in', () => {
         </AuthContext.Provider>
     );
 
-    // Check that the History button is not visible
     expect(screen.queryByTestId('HistoryRoundedIcon')).not.toBeInTheDocument();
 });
 
@@ -116,12 +107,12 @@ test('Send button is disabled when input is empty', () => {
     );
 
     const sendButton = screen.queryByLabelText('send');
-    expect(sendButton).not.toBeInTheDocument(); // Button shouldn't appear when input is empty
+    expect(sendButton).not.toBeInTheDocument();
 
     const input = screen.getByPlaceholderText('Type a message...');
     fireEvent.change(input, { target: { value: 'Hello!' } });
 
-    expect(screen.getByLabelText('send')).toBeInTheDocument(); // Button should appear when there's input
+    expect(screen.getByLabelText('send')).toBeInTheDocument();
 });
 
 test('Sending a message adds it to the chat', async () => {
@@ -131,20 +122,15 @@ test('Sending a message adds it to the chat', async () => {
         </AuthContext.Provider>
     );
 
-    // Type a message in the input field
     const input = screen.getByPlaceholderText('Type a message...');
     fireEvent.change(input, { target: { value: 'Hello!' } });
 
-    // Simulate clicking the send button
     fireEvent.click(screen.getByLabelText('send'));
 
-    // Check if user's message is added
     expect(screen.getByText('Hello!')).toBeInTheDocument();
 
-    // Use `within` to search specifically in the chat container
     const chatBox = screen.getByTestId('chatbot-container');
     await within(chatBox).findByText((content) => content.includes('Hello from the bot'));
 
-    // Ensure the bot's reply is in the document
     expect(screen.getByText((content) => content.includes('Hello from the bot'))).toBeInTheDocument();
 });

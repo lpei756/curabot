@@ -8,7 +8,7 @@ import { AdminContext } from '../../context/AdminContext.jsx';
 const Prescription = () => {
     const { adminId, adminToken } = useContext(AdminContext);
     const location = useLocation();
-    const navigate = useNavigate(); // 使用 navigate
+    const navigate = useNavigate();
     const { patient } = location.state || {};
     const [prescriptionData, setPrescriptionData] = useState({
         doctorName: '',

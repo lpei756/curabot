@@ -10,9 +10,8 @@ const PrescriptionList = () => {
     const [patientName, setPatientName] = useState('');
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
     const { adminToken, adminId } = useContext(AdminContext);
-    const navigate = useNavigate(); // 添加 navigate
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchPrescriptions = async () => {
