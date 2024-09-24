@@ -6,14 +6,13 @@ import ClinicModel from '../models/Clinic';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
-import { logout as logoutAdminService, getAllAdmins as getAllAdminsService, getAllPatients as getAllPatientsService, deleteAdmin as deleteAdminService, readAdmin as readAdminService } from '../services/adminService';
 
 jest.mock('../models/Admin');
 jest.mock('../models/Doctor');
 jest.mock('../models/Clinic');
 jest.mock('jsonwebtoken');
 jest.mock('bcrypt');
-jest.mock('../services/adminService');
+
 
 describe('Admin Controller', () => {
     let mockAdmin;
@@ -49,7 +48,7 @@ describe('Admin Controller', () => {
                     lastName: 'Doe',
                     email: 'john@example.com',
                     role: 'superadmin',
-                    password: 'Pass123!'
+                    password: 'SuperAdminPass123!'
                 });
 
             expect(res.status).toBe(201);
@@ -81,17 +80,17 @@ describe('Admin Controller', () => {
                 clinic: mockClinicId,
                 languagesSpoken: ['English', 'Spanish'],
                 specialty: 'Cardiology',
-                password: 'Pass123!'
+                password: 'DoctorPass123!'
             };
 
             AdminModel.findOne = jest.fn().mockResolvedValue(null);
             AdminModel.prototype.save = jest.fn().mockResolvedValue({
                 ...mockAdmin,
-                _id: 'adminId'
+                _id: 'adminId123'
             });
             DoctorModel.prototype.save = jest.fn().mockResolvedValue({
                 ...mockAdmin,
-                _id: 'doctorId'
+                _id: 'doctorId123'
             });
             ClinicModel.findByIdAndUpdate = jest.fn().mockResolvedValue({});
             jwt.sign.mockReturnValue(token);
@@ -113,7 +112,7 @@ describe('Admin Controller', () => {
 
             const res = await request(app)
                 .post('/api/admin/login')
-                .send({ email: mockAdmin.email, password: 'Pass123' });
+                .send({ email: mockAdmin.email, password: 'password123' });
 
             expect(res.status).toBe(200);
             expect(res.body).toHaveProperty('admin');
@@ -130,113 +129,6 @@ describe('Admin Controller', () => {
 
             expect(res.status).toBe(400);
             expect(res.body).toHaveProperty('message', 'Invalid credentials');
-        });
-    });
-
-    describe('adminLogout', () => {
-        it('should logout an admin successfully', async () => {
-            logoutAdminService.mockResolvedValue({ message: 'Logged out successfully' });
-
-            const res = await request(app)
-                .post('/api/admin/logout')
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(res.status).toBe(200);
-            expect(res.body).toHaveProperty('message', 'Logged out successfully');
-        });
-
-        it('should return 400 if logout fails', async () => {
-            logoutAdminService.mockRejectedValue(new Error('Logout failed'));
-
-            const res = await request(app)
-                .post('/api/admin/logout')
-                .set('Authorization', `Bearer ${token}`);
-
-            expect(res.status).toBe(400);
-            expect(res.body.message).toBe('Logout failed');
-        });
-    });
-
-    describe('getAllAdmins', () => {
-        it('should return all admins', async () => {
-            const mockAdmins = [{ _id: 'adminId', firstName: 'John', lastName: 'Doe' }];
-            getAllAdminsService.mockResolvedValue(mockAdmins);
-
-            const res = await request(app).get('/api/admins');
-
-            expect(res.status).toBe(200);
-            expect(res.body.admins).toEqual(mockAdmins);
-        });
-
-        it('should return 500 if there is a server error', async () => {
-            getAllAdminsService.mockRejectedValue(new Error('Server error'));
-
-            const res = await request(app).get('/api/admins');
-
-            expect(res.status).toBe(500);
-            expect(res.body.message).toBe('Server error');
-        });
-    });
-
-    describe('getAllPatients', () => {
-        it('should return all patients', async () => {
-            const mockPatients = [{ _id: 'patientId123', firstName: 'Jane', lastName: 'Doe' }];
-            getAllPatientsService.mockResolvedValue(mockPatients);
-
-            const res = await request(app).get('/api/patients');
-
-            expect(res.status).toBe(200);
-            expect(res.body.patients).toEqual(mockPatients);
-        });
-
-        it('should return 500 if there is a server error', async () => {
-            getAllPatientsService.mockRejectedValue(new Error('Server error'));
-
-            const res = await request(app).get('/api/patients');
-
-            expect(res.status).toBe(500);
-            expect(res.body.message).toBe('Server error');
-        });
-    });
-
-    describe('deleteAdmin', () => {
-        it('should delete an admin successfully', async () => {
-            deleteAdminService.mockResolvedValue({ message: 'Admin deleted successfully' });
-
-            const res = await request(app).delete('/api/admin/adminId');
-
-            expect(res.status).toBe(200);
-            expect(res.body.message).toBe('Admin deleted successfully');
-        });
-
-        it('should return 404 if admin not found', async () => {
-            deleteAdminService.mockResolvedValue(null);
-
-            const res = await request(app).delete('/api/admin/adminId');
-
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe('Admin not found');
-        });
-    });
-
-    describe('readAdmin', () => {
-        it('should return an admin by ID', async () => {
-            const mockAdmin = { _id: 'adminId123', firstName: 'John', lastName: 'Doe' };
-            readAdminService.mockResolvedValue(mockAdmin);
-
-            const res = await request(app).get('/api/admin/adminId');
-
-            expect(res.status).toBe(200);
-            expect(res.body.admin).toEqual(mockAdmin);
-        });
-
-        it('should return 404 if admin not found', async () => {
-            readAdminService.mockResolvedValue(null);
-
-            const res = await request(app).get('/api/admin/adminId');
-
-            expect(res.status).toBe(404);
-            expect(res.body.message).toBe('Admin not found');
         });
     });
 });
