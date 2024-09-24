@@ -68,6 +68,7 @@ const AppointmentList = () => {
                     borderRadius: '5px',
                     cursor: 'pointer'
                 }}
+
             >
                 Booking +
             </button>
