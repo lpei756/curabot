@@ -29,7 +29,7 @@ export const getDoctorAvailability = async (req, res) => {
         const availability = await getAvailabilityByDoctorID(doctorID);
 
         if (availability.length === 0) {
-            return res.status(404).json({ message: 'Availability not found' });
+            return res.status(200).json({ message: 'No availability found for this doctor.' });
         }
 
         res.status(200).json(availability);

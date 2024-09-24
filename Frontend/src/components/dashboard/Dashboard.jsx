@@ -205,7 +205,7 @@ const Dashboard = () => {
                 width: '100%',
                 maxWidth: '1200px',
                 margin: 'auto',
-                padding: { xs: '10px', md: '20px'},
+                padding: { xs: '5px', md: '20px'},
                 backgroundColor: '#f8f6f6',
                 boxSizing: 'border-box'
             }}
@@ -222,27 +222,26 @@ const Dashboard = () => {
                     sx={{
                         display: 'flex',
                         flexDirection: 'column',
-                        width: {xs:'94%', sm: '96.5%', md: '36%', lg:'40%'},
+                        width: {xs:'91%', sm: '96.5%', md: '36%', lg:'40%'},
                         border: `1px solid ${hovered.appointment ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                         borderRadius: '50px',
-                        padding: {xs: '15px', md: '15px', lg:'20px'},
+                        padding: {xs: '16px', md: '15px', lg:'20px'},
                         transition: 'border-color 0.3s'
                     }}
                     onMouseEnter={() => setHovered(prev => ({ ...prev, appointment: true }))}
                     onMouseLeave={() => setHovered(prev => ({ ...prev, appointment: false }))}
                 >
-                    <Box sx={{ marginBottom: '10px', height: '385px', overflow: 'hidden', width:{xs: '420px', sm: '700px', md: '410px', lg: '420px'} }}>
+                    <Box sx={{ marginBottom: '10px', height: {lg:'385px'}, overflow: 'hidden', width:{xs: '345px', sm: '500px', md: '300px', lg: '420px'} }}>
                         <DayPicker
                             mode="single"
                             classNames={{
-                                today: 'my-today'
+                                today: 'my-today',
                             }}
                             selected={selectedDate}
                             onSelect={setSelectedDate}
                             footer={null}
                         />
                     </Box>
-
                     <Box
                         sx={{
                             width: '100%',
@@ -329,12 +328,12 @@ const Dashboard = () => {
                                 </Box>
                             ) : (
                                 <Box>
-                                    <Typography variant="h5">
+                                    <Typography variant="h5" sx= {{ color: 'black'}}>
                                         No appointment for the day.
                                         <Box
                                             sx={{
-                                                marginLeft: '95%',
-                                                marginTop: '-7%'
+                                                marginLeft: {xs: '90%', sm: '90%', md: '90%', lg: '95%'},
+                                                marginTop: {xs: '-7%', sm: '-5%', md: '1%', lg: '-7%'}
                                             }}
                                             onClick={handleAppointmentRedirect}
                                         >
@@ -461,14 +460,14 @@ const Dashboard = () => {
                         sx={{
                             display: 'flex',
                             flexDirection: {xs:'column', md: 'row', lg:'row'},
-                            width: {xs: '106%', sm: '110%', md: '100%', lg: '106%'},
+                            width: {xs: '100%', sm: '110%', md: '100%', lg: '106%'},
                             gap: '20px',
                             height: '28%'
                         }}
                     >
                         <Box
                             sx={{
-                                width: {xs: '86%', lg:'50%'},
+                                width: {xs: '89%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.testResult ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
@@ -521,12 +520,13 @@ const Dashboard = () => {
 
                         <Box
                             sx={{
-                                width: {xs: '86%', lg:'50%'},
+                                width: {xs: '89%', lg:'50%'},
                                 height: '100%',
                                 padding: '20px',
                                 border: `1px solid ${hovered.prescription ? '#03035d' : 'rgba(0, 0, 0, 0.2)'}`,
                                 borderRadius: '50px',
-                                transition: 'border-color 0.3s'
+                                transition: 'border-color 0.3s',
+                                justifyContent: 'space-between'
                             }}
                             onMouseEnter={() => setHovered(prev => ({ ...prev, prescription: true }))}
                             onMouseLeave={() => setHovered(prev => ({ ...prev, prescription: false }))}
@@ -540,7 +540,7 @@ const Dashboard = () => {
                                 Prescription
                                 <Box
                                     sx={{
-                                        marginLeft: {xs: '45%', sm: '67%', md: '20%', lg:'22%'}
+                                        marginLeft: {xs: '34%', sm: '58%', md: '20%', lg:'22%'}
                                     }}
                                     onClick={handlePrescriptionRedirect}
                                 >
