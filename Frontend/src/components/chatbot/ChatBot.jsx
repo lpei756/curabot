@@ -389,13 +389,13 @@ function ChatBot() {
     return (
         <>
             {drawerOpen && (
-                <DrawerContainer>
+                <DrawerContainer sx={{ height: '85%'}}>
                     <AppBar position="sticky" sx={{
                         backgroundColor: '#03035D',
                         boxShadow: 'none',
                         borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px',
-                        height: '60px',
+                        height: '9%',
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',

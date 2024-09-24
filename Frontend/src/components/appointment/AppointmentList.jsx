@@ -56,7 +56,7 @@ const AppointmentList = () => {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
-      <h1 style={{ color: 'black' }}>My Appointments</h1>
+      <h1 style={{ color: 'black', textAlign: 'center' }}>My Appointments</h1>
       <button
         onClick={handleBookingClick}
         style={{
@@ -68,15 +68,16 @@ const AppointmentList = () => {
           borderRadius: '5px',
           cursor: 'pointer'
         }}
-
       >
         Booking +
       </button>
-      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '1200px' }}>
+
+      <div style={{ display: 'flex', justifyContent: 'center', width: '100%', maxWidth: '1200px', flexWrap: 'wrap' }}>
         <ul style={{
           listStyleType: 'none',
           padding: 0,
-          width: selectedAppointment ? '50%' : '50%',
+          width: '100%',
+          maxWidth: selectedAppointment ? '50%' : '100%',
           transition: 'width 0.3s ease',
           display: 'flex',
           flexDirection: 'column',
@@ -100,7 +101,7 @@ const AppointmentList = () => {
                     textAlign: 'center',
                     backgroundColor: '#f9f9f9',
                     cursor: 'pointer',
-                    width: selectedAppointment === appointment ? '80%' : '90%',
+                    width: { xs: '100%', lg: '50%' },
                     transition: 'width 0.3s ease',
                   }}
                   onClick={() => handleAppointmentClick(appointment)}
@@ -116,9 +117,11 @@ const AppointmentList = () => {
               ))
           )}
         </ul>
+
         {selectedAppointment && (
           <div style={{
-            width: '50%',
+            width: '100%',
+            maxWidth: '50%',
             padding: '10px',
             borderLeft: '2px solid #03035d',
             backgroundColor: '#f8f6f6',
@@ -149,12 +152,11 @@ const AppointmentList = () => {
               >
                 Cancel Appointment
               </button>
-
-
             </div>
           </div>
         )}
       </div>
+
       <Box
         sx={{
           display: 'flex',
