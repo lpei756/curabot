@@ -20,7 +20,6 @@ const localizer = dateFnsLocalizer({
 });
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
-    padding: theme.spacing(2),
     boxShadow: theme.shadows[3],
     borderRadius: theme.shape.borderRadius,
 }));
@@ -49,7 +48,7 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                 backgroundColor: '#f8f6f6',
                 padding: '0 16px',
                 justifyContent: 'space-between',
-                flexDirection: { xs: 'column', sm: 'column', md: 'row', lg: 'row' }
+                flexDirection: { xs: 'column', sm: 'column', md: 'row', lg: 'row' },
             }}
         >
             <Box
@@ -102,7 +101,7 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                 <StyledButton
                     onClick={onShowGpSlots}
                     variant="outlined"
-                    sx={{ marginBottom: { xs: '10px', sm: '0' }, marginLeft: { xs: '10%', lg: '2%' }, borderRadius: '50px' }}
+                    sx={{ marginBottom: { xs: '10px', sm: '0' }, marginLeft: { xs: '0%', lg: '2%' }, borderRadius: '50px' }}
                     startIcon={<Diversity1Icon />}
                 >
                     My GP
@@ -120,7 +119,7 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                         id="location-select-label"
                         sx={{
                             color: '#03035d',
-                            fontSize: '16px',
+                            fontSize: '16px'
                         }}
                     >
                         Location
@@ -143,7 +142,7 @@ const CustomToolbar = ({ label, onNavigate, onShowGpSlots, onSelectLocation, sel
                             },
                             '&:hover .MuiOutlinedInput-notchedOutline': {
                                 borderColor: '#03035d',
-                            },
+                            }
                         }}
                     >
                         <MenuItem value="Auckland">Auckland</MenuItem>
@@ -321,16 +320,22 @@ const AvailableSlotsCalendar = () => {
     };
 
     return (
-        <Box p={2} display="flex">
-            <Box flex={1} display="flex" flexDirection="column">
-                <Typography variant="h4" align="center" gutterBottom>
+        <Box p={2} display="flex" justifyContent="center" alignItems="center">
+            <Box flex={1} display="flex" flexDirection="column" sx={{ 
+                    maxWidth: '100vw', 
+                    width: '90%', 
+                    backgroundColor: '#f9f9f9', 
+                    padding: '16px', 
+                    overflowX: 'auto'
+                }}>
+                <Typography variant="h4" align="center" gutterBottom sx={{ color: 'black'}}>
                     Make an Appointment
                 </Typography>
-                <Typography variant="h5" align="center" gutterBottom>
+                <Typography variant="h5" align="center" gutterBottom sx={{ color: 'black'}}>
                     It&apos;s Quick and Easy.
                 </Typography>
 
-                <StyledPaper style={{ backgroundColor: '#f9f9f9' }}>
+                <StyledPaper style={{ backgroundColor: '#f9f9f9', padding: '16px' }}>
                     <BigCalendar
                         localizer={localizer}
                         events={events}
@@ -339,7 +344,7 @@ const AvailableSlotsCalendar = () => {
                         endAccessor="end"
                         min={new Date(0, 0, 0, 8, 0, 0)}
                         max={new Date(0, 0, 0, 16, 0, 0)}
-                        style={{ height: '100%', width: '100%' }}
+                        style={{ height: '100%', width: '100%', maxWidth: '100vw' }}
                         views={['week']}
                         defaultView="week"
                         components={{

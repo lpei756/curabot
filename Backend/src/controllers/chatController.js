@@ -415,9 +415,9 @@ export const handleChat = async (req, res) => {
                     ).join('');
 
                     const responseMessage = `
-                Based on the symptoms you’ve described, it seems like you might need to consult with a doctor in the field of <strong>${specialisation}</strong>. Here are some doctors who could assist you:
-                ${doctorDetails}
-            `;
+                        Based on the symptoms you’ve described, it seems like you might need to consult with a doctor in the field of <strong>${specialisation}</strong>. Here are some doctors who could assist you:
+                        ${doctorDetails}
+                    `;
 
                     await ChatSession.findByIdAndUpdate(
                         sessionId,
@@ -425,7 +425,6 @@ export const handleChat = async (req, res) => {
                     );
                     return res.json({ reply: responseMessage, sessionId });
                 } else {
-                    const noSpecialisationReply = 'I’m sorry, but I couldn’t find any relevant specialisations based on the symptoms you mentioned. It might be helpful to provide more details or consult a healthcare professional directly. If you need any further assistance, feel free to let me know.';
                     console.log('No specialisation found');
                     const availableSlots = await getAllAvailableSlots();
 
