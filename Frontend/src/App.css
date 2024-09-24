@@ -156,6 +156,7 @@ body {
   --rdp-day-width: 60px;
 }
 
+
 .my-today {
   background-color: #03035d !important;
   color: #f8f6f6 !important;
@@ -165,4 +166,11 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+@media (max-width: 600px) {
+  .rdp-root {
+      --rdp-day-height: 50px;
+      --rdp-day-width: 50px;
+  }
 }
