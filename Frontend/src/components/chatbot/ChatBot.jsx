@@ -283,18 +283,18 @@ function ChatBot() {
             console.error('Message ID is missing, cannot send feedback');
             return;
         }
-    
+
         if (message.feedbackSent) {
             console.log('Feedback has already been sent for this message');
             return;
         }
-    
+
         setMessages(prevMessages =>
             prevMessages.map((msg, i) =>
                 i === index ? { ...msg, liked: feedback, feedbackSent: true } : msg
             )
         );
-    
+
         const positiveFeedbacks = [
             'Thank you for your feedback!',
             'We appreciate your input!',
@@ -302,7 +302,7 @@ function ChatBot() {
             'Thanks for the thumbs up!',
             'We are happy you found it helpful!',
         ];
-    
+
         const negativeFeedbacks = [
             'Sorry to hear that. We will improve.',
             'Thanks for letting us know. We\'ll try harder!',
@@ -310,24 +310,24 @@ function ChatBot() {
             'We are working on improving the experience.',
             'Your feedback helps us get better.',
         ];
-    
+
         // 随机选择一条反馈语句
         const feedbackResponse = feedback
             ? positiveFeedbacks[Math.floor(Math.random() * positiveFeedbacks.length)]
             : negativeFeedbacks[Math.floor(Math.random() * negativeFeedbacks.length)];
-    
+
         // 添加 isFeedback 标记
         setMessages((prevMessages) => [
             ...prevMessages,
             { id: uuidv4(), type: 'bot', message: feedbackResponse, isFeedback: true }
         ]);
-    
+
         // 可选择性地将反馈发送到服务器
         sendFeedbackToServer(message.id, feedback).catch(error => {
             console.error('Failed to send feedback:', error);
         });
     };
-    
+
 
     const toggleDrawer = () => {
         setDrawerOpen((prevDrawerOpen) => !prevDrawerOpen);
@@ -499,6 +499,7 @@ function ChatBot() {
 
             <Box
                 className="chatbot-container"
+                data-testid="chatbot-container"
                 sx={{
                     width: '450px',
                     height: '675px',
@@ -620,26 +621,26 @@ function ChatBot() {
                                             <Typography>{msg.message}</Typography>
                                         )}
 
-                                    {msg.type === 'bot' && !msg.isFeedback && index !== 0 && (
-                                        <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
-                                            <StyledIconButton
-                                                onClick={() => handleFeedback(index, true)}
-                                                aria-label="thumbs up"
-                                            >
-                                                <ThumbIcon isActive={msg.liked === true}>
-                                                    <ThumbUpOutlinedIcon />
-                                                </ThumbIcon>
-                                            </StyledIconButton>
-                                            <StyledIconButton
-                                                onClick={() => handleFeedback(index, false)}
-                                                aria-label="thumbs down"
-                                            >
-                                                <ThumbIcon isActive={msg.liked === false}>
-                                                    <ThumbDownOutlinedIcon />
-                                                </ThumbIcon>
-                                            </StyledIconButton>
-                                        </Box>
-                                    )}
+                                        {msg.type === 'bot' && !msg.isFeedback && index !== 0 && (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mt: 1 }}>
+                                                <StyledIconButton
+                                                    onClick={() => handleFeedback(index, true)}
+                                                    aria-label="thumbs up"
+                                                >
+                                                    <ThumbIcon isActive={msg.liked === true}>
+                                                        <ThumbUpOutlinedIcon />
+                                                    </ThumbIcon>
+                                                </StyledIconButton>
+                                                <StyledIconButton
+                                                    onClick={() => handleFeedback(index, false)}
+                                                    aria-label="thumbs down"
+                                                >
+                                                    <ThumbIcon isActive={msg.liked === false}>
+                                                        <ThumbDownOutlinedIcon />
+                                                    </ThumbIcon>
+                                                </StyledIconButton>
+                                            </Box>
+                                        )}
 
 
                                     </Paper>
