@@ -330,7 +330,6 @@ function AppHeader() {
                                         </MenuItem>
                                     ) : (
                                         <Box>
-                                            {/* 如果是管理员或超级管理员，不显示 "Register" 按钮 */}
                                             {!isAdmin && !isSuperAdmin && (
                                                 <MenuItem onClick={handleMenuClose}>
                                                     <Link to="/register">
@@ -355,7 +354,6 @@ function AppHeader() {
                                     </AnimatedButton>
                                 ) : (
                                     <>
-                                        {/* 如果是管理员或超级管理员，不显示 "Register" 按钮 */}
                                         {!isSuperAdmin && !isAdmin && (
                                             <Link to="/register">
                                                 <AnimatedButton>

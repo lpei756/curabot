@@ -1,9 +1,8 @@
 import './App.css';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext.jsx';
 import { ChatbotProvider, useChatbot } from './context/ChatbotContext.jsx';
 import AppHeader from './components/layout/AppHeader.jsx';
-import AdminHeader from './components/layout/AdminHeader.jsx';
 import Register from './components/auth/register/Register.jsx';
 import AdminRegister from './components/auth/register/AdminRegister.jsx';
 import ChatBot from './components/chatbot/ChatBot.jsx';
@@ -31,6 +30,11 @@ import Prescription from './components/admin/Prescription.jsx';
 import Prescriptions from './components/prescriptions/Prescriptions.jsx';
 import PrescriptionList from './components/prescriptions/PrescriptionList.jsx';
 import FeedbackCharts from './components/charts/FeedbackCharts';
+import AdminHomepage from './components/homepage/AdminHomepage.jsx';
+import SuperAdminHomepage from './components/homepage/SuperAdminHomepage.jsx';
+import AdminLayout from './components/layout/AdminLayout.jsx';
+import SuperAdminLayout from './components/layout/SuperAdminLayout.jsx';
+
 
 function App() {
     return (
@@ -39,19 +43,28 @@ function App() {
                 <ChatbotProvider>
                     <Router>
                         <div className="app-container">
-                            <ConditionalHeader />
+                            <AppHeader />
                             <div className="main-content">
                                 <Routes>
                                     <Route path="/" element={<Homepage />} />
+                                    <Route path="/adminhomepage" element={<AdminHomepage />} />
+                                    <Route path="/superadminhomepage" element={<SuperAdminHomepage />} />
                                     <Route path="/register" element={<Register />} />
                                     <Route path="/admin/register" element={<AdminRegister />} />
-                                    <Route path="/admin/panel" element={<AdminPanel />} />
-                                    <Route path="/superadmin/panel" element={<SuperAdminPanel />} />
-                                    <Route path="/superadmin/feedback" element={<FeedbackCharts />} />
-                                    <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
+                                    <Route path="/admin/panel" element={<AdminLayout />}>
+                                        <Route index element={<AdminPanel />} />
+                                        <Route path="test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>}/>
+                                        <Route path="/admin/panel/test-result/:id" element={<AdminTestResultDetailPage returnPath="/admin/panel"/>} />
+                                        <Route path="adminnotification" element={<AdminNotification />} />
+                                        <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
+                                    </Route>
+                                    <Route path="/superadmin/panel" element={<SuperAdminLayout />}>
+                                        <Route index element={<SuperAdminPanel />} />
+                                        <Route path="AI Performance" element={<FeedbackCharts />} />
+                                        <Route path="/superadmin/panel/feedback" element={<FeedbackCharts />} />
+                                    </Route>
+
                                     <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
-                                    <Route path="/admin/panel/test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>} />
-                                    <Route path="/admin/panel/test-result/:id" element={<AdminTestResultDetailPage returnPath="/admin/panel"/>} />
                                     <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                                     <Route path="/admin/:adminId" element={<ReadAdmin />} />
                                     <Route path="/user" element={<ReadUser />} />
@@ -75,31 +88,6 @@ function App() {
         </AuthProvider>
     );
 }
-
-const ConditionalHeader = () => {
-    const location = useLocation();
-    const adminRoutes = [
-        '/admin/panel',
-        '/superadmin/panel',
-        '/admin/panel/adminnotification',
-        '/admin/panel/patient',
-        '/admin/panel/test-result',
-        '/superadmin/panel/patient',
-        '/admin/:adminId',
-        '/superadmin/feedback',
-        '/prescriptions/admin/:adminId',
-        '/prescriptions/:userId'
-    ];
-
-    const isAdminRoute = adminRoutes.some(route => location.pathname.startsWith(route));
-    const port = window.location.port;
-
-    if (isAdminRoute && (port === '5174' || port === '5175')) {
-        return <AdminHeader />;
-    }
-
-    return <AppHeader />;
-};
 
 const ChatbotButtonAndComponent = () => {
     const { isChatbotOpen, toggleChatbot } = useChatbot();
