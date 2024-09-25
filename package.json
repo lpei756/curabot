@@ -30,6 +30,7 @@
     "pdf-text-extract": "^1.5.0",
     "react-scripts": "^5.0.1",
     "uuid": "^10.0.0",
+    "aws-sdk": "^version_number",
     "express": "^4.19.2"
   },
   "scripts": {
