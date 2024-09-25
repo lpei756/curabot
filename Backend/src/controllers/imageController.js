@@ -1,4 +1,4 @@
-import { saveImageService, getImagesByUser, deleteImage, getImageStream } from '../services/imageService.js';
+import { saveImageService, getImagesByUser, deleteImage } from '../services/imageService.js';
 
 export const saveImage = async (req, res) => {
     try {
@@ -9,11 +9,11 @@ export const saveImage = async (req, res) => {
         if (!userId) {
             return res.status(400).json({ message: 'User ID is required.' });
         }
-        const savedImage = await saveImageService(userId, req.file.filename);
+        const savedImage = await saveImageService(userId, req.file);
         res.status(201).json(savedImage);
     } catch (error) {
-        console.error('Error saving image:', error.message);
-        res.status(500).json({ message: error.message });
+        console.error('Error saving image:', error);
+        res.status(500).json({ message: 'An error occurred while saving the image.', details: error.message });
     }
 };
 
@@ -23,7 +23,8 @@ export const getUserImages = async (req, res) => {
         const images = await getImagesByUser(userId);
         res.status(200).json(images);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error retrieving images:', error);
+        res.status(500).json({ message: 'An error occurred while retrieving images.', details: error.message });
     }
 };
 
@@ -33,7 +34,7 @@ export const removeImage = async (req, res) => {
         const deletedImage = await deleteImage(imageId);
         res.status(200).json(deletedImage);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error deleting image:', error);
+        res.status(500).json({ message: 'An error occurred while deleting the image.', details: error.message });
     }
 };
-
