@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, List, ListItem, ListItemText, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
@@ -24,7 +24,7 @@ import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
 
-const StyledIconButton = styled(IconButton)(({ theme }) => ({
+const StyledIconButton = styled(IconButton)(() => ({
     transition: 'all 0.3s ease',
     '&:hover': {
         backgroundColor: 'rgba(25, 118, 210, 0.04)',
@@ -40,7 +40,7 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     },
 }));
 
-const DrawerContainer = styled(Box)(({ theme }) => ({
+const DrawerContainer = styled(Box)(() => ({
     width: '200px',
     height: '675px',
     position: 'fixed',
@@ -432,7 +432,7 @@ function ChatBot() {
                                         <span style={{ color: 'black' }}>
                                             Search for:{" "}
                                             <span style={{ color: '#03035D', fontWeight: 'bold' }}>
-                                                "{searchTerm}"
+                                                &quot;{searchTerm}&quot;
                                             </span>
                                         </span>
                                     }

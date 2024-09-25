@@ -28,7 +28,7 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import { tokenStorage, adminTokenStorage, userDataStorage, adminDataStorage } from '../../utils/localStorage.js';
 import { fetchUserNotifications } from '../../services/NotificationService.js';
 
-const BadgeStyled = styled(Badge)(({ theme }) => ({
+const BadgeStyled = styled(Badge)(() => ({
     '& .MuiBadge-badge': {
         borderRadius: '50%',
         top: 15,
@@ -56,7 +56,7 @@ const AnimatedButton = styled('button')(({ variant }) => ({
         outline: 'none',
     },
 }));
-const FRWIconButton = styled(IconButton)(({ theme }) => ({
+const FRWIconButton = styled(IconButton)(() => ({
     color: 'black',
     backgroundColor: 'transparent',
     transition: 'color 0.3s ease',
@@ -130,9 +130,10 @@ function AppHeader() {
     const [unreadCount, setUnreadCount] = useState(0);
     const { userId: contextUserId } = useContext(AuthContext);
     const [anchorEl, setAnchorEl] = useState(null);
-    const [dropdownEl, setDropdownEl] = useState(null); 
+    const [dropdownEl, setDropdownEl] = useState(null);
     const navigate = useNavigate();
     const currentPort = window.location.port;
+    const currentPath = window.location.pathname;
     const theme = useTheme();
     const isXsOrSm = useMediaQuery(theme.breakpoints.down('md'));
 
@@ -195,7 +196,7 @@ function AppHeader() {
 
     const toggleUserLoginModal = () => setIsUserLoginOpen(!isUserLoginOpen);
     const toggleAdminLoginModal = () => setIsAdminLoginOpen(!isAdminLoginOpen);
-    
+
     const handleUserLoginSuccess = (id) => {
         setIsUserLoggedIn(true);
         setUserId(id);
@@ -231,58 +232,62 @@ function AppHeader() {
         }
     };
 
+    // 检查是否是管理员或超级管理员路径或端口
+    const isAdmin = currentPath === '/adminhomepage' || currentPort === '5174';
+    const isSuperAdmin = currentPath === '/superadminhomepage' || currentPort === '5175';
+
     return (
         <>
             <AppBar position="static" sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
                 <Container maxWidth="xl">
                     <Toolbar disableGutters sx={{ justifyContent: 'space-between' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                        {isXsOrSm ? (
-                            <>
-                                <FRWIconButton onClick={handleDropdownClick}>
-                                    <MenuIcon />
-                                </FRWIconButton>
-                                <Menu
-                                    anchorEl={dropdownEl}
-                                    open={Boolean(dropdownEl)}
-                                    onClose={handleDropdownClose}
-                                >
-                                    <MenuItem onClick={handleDropdownClose}>
-                                        <Link to="/map">
-                                            <FRWIconButton>
-                                                <MapRoundedIcon />
-                                            </FRWIconButton>
-                                            Map
-                                        </Link>
-                                    </MenuItem>
-                                    <MenuItem onClick={handleDropdownClose}>
-                                        <Link to="/notification">
-                                            <BadgeStyled badgeContent={unreadCount} color="error">
-                                                <FRWIconButton>
-                                                    <NotificationsIcon />
-                                                </FRWIconButton>
-                                            </BadgeStyled>
-                                            Notifications
-                                        </Link>
-                                    </MenuItem>
-                                </Menu>
-                            </>
-                        ) : (
-                            <Box sx={{ display: 'flex', gap: 2 }}>
-                                <Link to="/map">
-                                    <FRWIconButton>
-                                        <MapRoundedIcon />
+                            {isXsOrSm ? (
+                                <>
+                                    <FRWIconButton onClick={handleDropdownClick}>
+                                        <MenuIcon />
                                     </FRWIconButton>
-                                </Link>
-                                <Link to="/notification">
-                                    <BadgeStyled badgeContent={unreadCount} color="error">
+                                    <Menu
+                                        anchorEl={dropdownEl}
+                                        open={Boolean(dropdownEl)}
+                                        onClose={handleDropdownClose}
+                                    >
+                                        <MenuItem onClick={handleDropdownClose}>
+                                            <Link to="/map">
+                                                <FRWIconButton>
+                                                    <MapRoundedIcon />
+                                                </FRWIconButton>
+                                                Map
+                                            </Link>
+                                        </MenuItem>
+                                        <MenuItem onClick={handleDropdownClose}>
+                                            <Link to="/notification">
+                                                <BadgeStyled badgeContent={unreadCount} color="error">
+                                                    <FRWIconButton>
+                                                        <NotificationsIcon />
+                                                    </FRWIconButton>
+                                                </BadgeStyled>
+                                                Notifications
+                                            </Link>
+                                        </MenuItem>
+                                    </Menu>
+                                </>
+                            ) : (
+                                <Box sx={{ display: 'flex', gap: 2 }}>
+                                    <Link to="/map">
                                         <FRWIconButton>
-                                            <NotificationsIcon />
+                                            <MapRoundedIcon />
                                         </FRWIconButton>
-                                    </BadgeStyled>
-                                </Link>
-                            </Box>
-                        )}
+                                    </Link>
+                                    <Link to="/notification">
+                                        <BadgeStyled badgeContent={unreadCount} color="error">
+                                            <FRWIconButton>
+                                                <NotificationsIcon />
+                                            </FRWIconButton>
+                                        </BadgeStyled>
+                                    </Link>
+                                </Box>
+                            )}
                             <Typography
                                 variant="h5"
                                 noWrap
@@ -325,14 +330,17 @@ function AppHeader() {
                                         </MenuItem>
                                     ) : (
                                         <Box>
+                                            {/* 如果是管理员或超级管理员，不显示 "Register" 按钮 */}
+                                            {!isAdmin && !isSuperAdmin && (
+                                                <MenuItem onClick={handleMenuClose}>
+                                                    <Link to="/register">
+                                                        Register
+                                                    </Link>
+                                                </MenuItem>
+                                            )}
                                             <MenuItem onClick={handleMenuClose}>
-                                                <Link to="/register">
-                                                    Register
-                                                </Link>
-                                            </MenuItem>
-                                            <MenuItem onClick={handleMenuClose}>
-                                                <span onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}>
-                                                    {currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}
+                                                <span onClick={isAdmin ? toggleAdminLoginModal : toggleUserLoginModal}>
+                                                    {isAdmin ? 'Admin Login' : 'Login'}
                                                 </span>
                                             </MenuItem>
                                         </Box>
@@ -347,7 +355,8 @@ function AppHeader() {
                                     </AnimatedButton>
                                 ) : (
                                     <>
-                                        {currentPort === '5174' || currentPort === '5175' ? null : (
+                                        {/* 如果是管理员或超级管理员，不显示 "Register" 按钮 */}
+                                        {!isSuperAdmin && !isAdmin && (
                                             <Link to="/register">
                                                 <AnimatedButton>
                                                     <span>Register</span>
@@ -356,9 +365,9 @@ function AppHeader() {
                                         )}
                                         <AnimatedButton
                                             variant="login"
-                                            onClick={currentPort === '5174' || currentPort === '5175' ? toggleAdminLoginModal : toggleUserLoginModal}
+                                            onClick={(isAdmin || isSuperAdmin) ? toggleAdminLoginModal : toggleUserLoginModal}
                                         >
-                                            <span>{currentPort === '5174' || currentPort === '5175' ? 'Admin Login' : 'Login'}</span>
+                                            <span>{isSuperAdmin ? 'Super Admin Login' : isAdmin ? 'Admin Login' : 'Login'}</span>
                                         </AnimatedButton>
                                     </>
                                 )}
