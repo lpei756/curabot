@@ -42,16 +42,22 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
 
 const DrawerContainer = styled(Box)(({ theme }) => ({
     width: '200px',
-    height: '675px',
+    height: '100%',
     position: 'fixed',
-    bottom: '50px',
-    right: '480px',
-    borderRadius: '20px',
+    top: '70px', 
+    left: 'auto',  // Move to the left side in mobile view
+    borderRadius: '20px',  // Remove any rounded corners for mobile view
     backgroundColor: '#f5f5f5',
     zIndex: 6667,
     overflow: 'auto',
     transition: 'transform 0.3s ease',
-    transform: 'translateX(0)',
+
+    [theme.breakpoints.up('md')]: {  // Adjust for larger screens
+        width: '300px',  // Set width for larger screens
+        right: 'calc(100% - 60%)',
+        height: '100%',  // Ensure it matches the chatbot's height
+        borderRadius: '20px',
+    },
 }));
 
 function ChatBot() {
@@ -389,13 +395,13 @@ function ChatBot() {
     return (
         <>
             {drawerOpen && (
-                <DrawerContainer sx={{ height: '85%'}}>
+                <DrawerContainer sx={{ height: '85%' }}>
                     <AppBar position="sticky" sx={{
                         backgroundColor: '#03035D',
                         boxShadow: 'none',
                         borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px',
-                        height: '9%',
+                        height: '60px',
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -492,10 +498,10 @@ function ChatBot() {
                 data-testid="chatbot-container"
                 sx={{
                     width: { xs: '90%', sm: '50%', md: '40%', lg: '30%' },
-                    height: { xs: '85%', sm: '85%', md: '85%', lg: '85%' },
+                    height: { xs: '85%', sm: '85%', md: '85%', lg: '85%' },  // Set height to match with the drawer
                     position: 'fixed',
-                    bottom: '50px',
-                    right: { xs: '15px', lg: '30px' },
+                    top: '70px',  // Position it below the app header
+                    right: { xs: '15px', lg: '30px' },  // Ensure right alignment for mobile and desktop
                     borderRadius: '20px',
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
