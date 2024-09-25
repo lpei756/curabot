@@ -75,7 +75,7 @@ const SuperAdminPanel = () => {
     }
 
     return (
-        <Box sx={{ padding: 4, marginLeft: '50px' }}>
+        <Box sx={{ padding: 4, marginLeft: '250px' }}>
             <Typography variant="h4" component="h1" gutterBottom>
                 Super Admin Panel
             </Typography>

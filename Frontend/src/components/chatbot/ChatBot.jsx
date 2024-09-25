@@ -1,6 +1,6 @@
 import React, { useState, useContext, useRef, useEffect, useCallback } from 'react';
 import { useChatbot } from '../../context/ChatbotContext';
-import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, List, ListItem, ListItemText, Button } from '@mui/material';
+import { Box, IconButton, AppBar, Toolbar, Typography, TextField, Paper, Chip, Avatar, Menu, MenuItem, Drawer, List, ListItem, ListItemText, Button } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Lottie from 'lottie-react';
@@ -24,7 +24,7 @@ import animationData from '../../assets/loading.json';
 import "../../App.css";
 import { v4 as uuidv4 } from 'uuid';
 
-const StyledIconButton = styled(IconButton)(() => ({
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
         backgroundColor: 'rgba(25, 118, 210, 0.04)',
@@ -40,18 +40,24 @@ const ThumbIcon = styled('div')(({ theme, isActive }) => ({
     },
 }));
 
-const DrawerContainer = styled(Box)(() => ({
+const DrawerContainer = styled(Box)(({ theme }) => ({
     width: '200px',
-    height: '675px',
+    height: '100%',
     position: 'fixed',
-    bottom: '50px',
-    right: '480px',
-    borderRadius: '20px',
+    top: '70px',
+    left: 'auto',  // Move to the left side in mobile view
+    borderRadius: '20px',  // Remove any rounded corners for mobile view
     backgroundColor: '#f5f5f5',
     zIndex: 6667,
     overflow: 'auto',
     transition: 'transform 0.3s ease',
-    transform: 'translateX(0)',
+
+    [theme.breakpoints.up('md')]: {  // Adjust for larger screens
+        width: '300px',  // Set width for larger screens
+        right: 'calc(100% - 60%)',
+        height: '100%',  // Ensure it matches the chatbot's height
+        borderRadius: '20px',
+    },
 }));
 
 function ChatBot() {
@@ -274,6 +280,7 @@ function ChatBot() {
 
     const handleFeedback = (index, feedback) => {
         const message = messages[index];
+        console.log('Message at index:', index, message);
         if (!message._id) {
             console.error('Message ID is missing, cannot send feedback');
             return;
@@ -389,13 +396,13 @@ function ChatBot() {
     return (
         <>
             {drawerOpen && (
-                <DrawerContainer sx={{ height: '85%'}}>
+                <DrawerContainer sx={{ height: '85%' }}>
                     <AppBar position="sticky" sx={{
                         backgroundColor: '#03035D',
                         boxShadow: 'none',
                         borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px',
-                        height: '9%',
+                        height: '60px',
                         display: 'flex',
                         flexDirection: 'row',
                         alignItems: 'center',
@@ -432,7 +439,7 @@ function ChatBot() {
                                         <span style={{ color: 'black' }}>
                                             Search for:{" "}
                                             <span style={{ color: '#03035D', fontWeight: 'bold' }}>
-                                                &quot;{searchTerm}&quot;
+                                                "{searchTerm}"
                                             </span>
                                         </span>
                                     }
@@ -492,10 +499,10 @@ function ChatBot() {
                 data-testid="chatbot-container"
                 sx={{
                     width: { xs: '90%', sm: '50%', md: '40%', lg: '30%' },
-                    height: { xs: '85%', sm: '85%', md: '85%', lg: '85%' },
+                    height: { xs: '85%', sm: '85%', md: '85%', lg: '85%' },  // Set height to match with the drawer
                     position: 'fixed',
-                    bottom: '50px',
-                    right: { xs: '15px', lg: '30px' },
+                    top: '70px',  // Position it below the app header
+                    right: { xs: '15px', lg: '30px' },  // Ensure right alignment for mobile and desktop
                     borderRadius: '20px',
                     overflow: 'hidden',
                     boxShadow: '0 0 10px rgba(0,0,0,0.1)',
@@ -751,13 +758,13 @@ function ChatBot() {
                     />
                     {inputValue.trim() !== '' && (
                         <IconButton type="submit" aria-label="send"
-                            sx={{
-                                color: '#03035D',
-                                transition: 'all 0.3s ease',
-                                '&:hover': {
-                                    color: '#5BC0DE',
-                                }
-                            }}
+                                    sx={{
+                                        color: '#03035D',
+                                        transition: 'all 0.3s ease',
+                                        '&:hover': {
+                                            color: '#5BC0DE',
+                                        }
+                                    }}
                         >
                             <SendRoundedIcon />
                         </IconButton>
