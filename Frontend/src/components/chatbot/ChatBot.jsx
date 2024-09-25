@@ -274,6 +274,7 @@ function ChatBot() {
 
     const handleFeedback = (index, feedback) => {
         const message = messages[index];
+        console.log('Message at index:', index, message);
         if (!message._id) {
             console.error('Message ID is missing, cannot send feedback');
             return;
