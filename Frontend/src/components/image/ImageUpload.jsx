@@ -10,6 +10,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Typography from '@mui/material/Typography';
 import PropTypes from 'prop-types';
 import { API_PATH } from '../../utils/urlRoutes.js';
+
 function ImageUpload({ open, onClose, onImageUploaded }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [error, setError] = useState(null);
@@ -21,12 +22,13 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
         if (file) {
             const fileType = file.type.split('/')[0];
             const fileSizeMB = file.size / 1024 / 1024;
+
             if (fileType !== 'image') {
                 setError('Please upload a valid image file.');
                 return;
             }
             if (fileSizeMB > 5) {
-                setError('File size exceeds the 5MB limit.');
+                setError('File size exceeds 5MB limit.');
                 return;
             }
             setSelectedFile(file);
@@ -35,7 +37,9 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
     };
 
     const handleUpload = async () => {
-        if (!selectedFile) return;
+        if (!selectedFile) {
+            return;
+        }
 
         setUploading(true);
 
@@ -53,8 +57,7 @@ function ImageUpload({ open, onClose, onImageUploaded }) {
             onImageUploaded(response.data);
             onClose();
         } catch (error) {
-            console.error('Image upload failed:', error);
-            setError('Image upload failed. Please try again.');
+            setError('File upload failed, please try again.');
         } finally {
             setUploading(false);
         }

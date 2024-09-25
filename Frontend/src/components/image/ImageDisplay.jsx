@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
 import PropTypes from 'prop-types';
 import { Box, Typography, CircularProgress } from '@mui/material';
@@ -6,9 +6,7 @@ import { AuthContext } from '../../context/AuthContext.jsx';
 import { API_PATH } from '../../utils/urlRoutes.js';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
 
-const apiUrl = import.meta.env.VITE_API_URL;
-
-function ImageDisplay({ userId }) {
+const ImageDisplay = ({ userId }) => {
     const [images, setImages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -16,13 +14,20 @@ function ImageDisplay({ userId }) {
     const { authToken } = useContext(AuthContext);
 
     useEffect(() => {
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
+
         const fetchUserImages = async () => {
+            setLoading(true);
             try {
                 const response = await axios.get(API_PATH.images.userImages.replace(':id', userId), {
                     headers: {
                         'Authorization': `Bearer ${authToken}`
                     }
                 });
+
                 setImages(response.data);
             } catch (err) {
                 setError(err.message);
@@ -80,7 +85,6 @@ function ImageDisplay({ userId }) {
                             }
                         }}
                     >
-
                         <Box
                             sx={{
                                 position: 'relative',
@@ -98,10 +102,10 @@ function ImageDisplay({ userId }) {
                             onClick={() => handleImageClick(image._id)}
                         >
                             <img
-
-                                src={`${apiUrl}/uploads/${image.filename}`}
+                                src={image.s3Url}
                                 alt={`User uploaded ${image.filename} - ${index}`}
                             />
+
                             <ZoomInIcon
                                 className="zoom-icon"
                                 sx={{
@@ -120,13 +124,14 @@ function ImageDisplay({ userId }) {
             ) : (
                 <Typography>No images available.</Typography>
             )}
-
         </Box>
     );
-}
+};
+
+const MemoizedImageDisplay = React.memo(ImageDisplay);
 
 ImageDisplay.propTypes = {
     userId: PropTypes.string.isRequired,
 };
 
-export default ImageDisplay;
+export default MemoizedImageDisplay;
