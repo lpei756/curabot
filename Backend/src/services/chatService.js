@@ -99,7 +99,10 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
             messages: [
                 {
                     role: 'system',
-                    content: 'Extract symptoms from the following message and determine if they indicate an emergency. Return a JSON object with the symptoms and a flag indicating whether it is an emergency. If no symptoms are found, return "No symptoms detected."'
+                    content: `Extract symptoms from the following message and determine if they indicate an emergency. 
+                    Return a JSON object with the following structure exactly: 
+                    {"symptoms": [list_of_symptoms], "emergency": true_or_false}. 
+                    `
                 },
                 {
                     role: 'user',
@@ -116,12 +119,13 @@ export const detectSymptomsUsingNLP = async (userMessage) => {
 
         try {
             const parsedResult = JSON.parse(messageContent);
+            console.log('Parsed result:', parsedResult);
             if (Array.isArray(parsedResult.symptoms)) {
                 symptoms = parsedResult.symptoms.join(', ');
             } else if (typeof parsedResult.symptoms === 'string') {
                 symptoms = parsedResult.symptoms;
             }
-            isEmergency = parsedResult.emergency || false;
+            isEmergency = parsedResult.emergency ?? false
             console.log('emergency', isEmergency)
         } catch (e) {
             console.error('Error parsing result:', e);
@@ -302,8 +306,10 @@ export const findFAQ = async (userMessage) => {
         });
 
         const faqQuestion = openAIResponse.choices[0].message.content.trim();
+        console.log('faqQuestion', faqQuestion)
         const cleanedFAQQuestion = faqQuestion.replace(/^(Q:|A:)?\s*/i, '').trim();
-        
+        console.log('cleanedFAQQuestion', cleanedFAQQuestion)
+
         const faq = await FaQSchema.findOne({
             question: { $regex: new RegExp(cleanedFAQQuestion, 'i') }
         });

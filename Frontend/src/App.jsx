@@ -34,7 +34,7 @@ import AdminHomepage from './components/homepage/AdminHomepage.jsx';
 import SuperAdminHomepage from './components/homepage/SuperAdminHomepage.jsx';
 import AdminLayout from './components/layout/AdminLayout.jsx';
 import SuperAdminLayout from './components/layout/SuperAdminLayout.jsx';
-import TestResults from './components/testresult/TestResult.jsx';
+
 
 function App() {
     return (
@@ -53,7 +53,8 @@ function App() {
                                     <Route path="/admin/register" element={<AdminRegister />} />
                                     <Route path="/admin/panel" element={<AdminLayout />}>
                                         <Route index element={<AdminPanel />} />
-                                        <Route path="test-result" element={<TestResults />} />
+                                        <Route path="test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>}/>
+                                        <Route path="/admin/panel/test-result/:id" element={<AdminTestResultDetailPage returnPath="/admin/panel"/>} />
                                         <Route path="adminnotification" element={<AdminNotification />} />
                                         <Route path="/admin/panel/adminnotification" element={<AdminNotification />} />
                                     </Route>
@@ -64,8 +65,6 @@ function App() {
                                     </Route>
 
                                     <Route path="/admin/panel/patient/:patientId" element={<ReadPatient returnPath="/admin/panel" />} />
-                                    <Route path="/admin/panel/test-result" element={<AdminTestResultsPage returnPath="/admin/panel"/>} />
-                                    <Route path="/admin/panel/test-result/:id" element={<AdminTestResultDetailPage returnPath="/admin/panel"/>} />
                                     <Route path="/superadmin/panel/patient/:patientId" element={<ReadPatient returnPath="/superadmin/panel" />} />
                                     <Route path="/admin/:adminId" element={<ReadAdmin />} />
                                     <Route path="/user" element={<ReadUser />} />

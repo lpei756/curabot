@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useMemo } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { Box, Typography, Grid, Paper } from '@mui/material';
 import { LineChart } from '@mui/x-charts/LineChart';
@@ -92,7 +92,7 @@ const FeedbackCharts = () => {
 
     const createTrendData = (feedbackData, label) => {
         return Object.entries(feedbackData)
-            .filter(([value]) => value.positive !== 0 || value.negative !== 0)
+            .filter(([_, value]) => value.positive !== 0 || value.negative !== 0)
             .map(([key, value]) => ({
                 x: `${label} ${parseInt(key) + 1}`,
                 y: calculateSatisfactionPercentage(value.positive, value.negative),
