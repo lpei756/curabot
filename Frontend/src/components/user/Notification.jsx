@@ -223,10 +223,11 @@ function Notification() {
                                     borderRadius: '8px'
                                 }}
                             >
-                                <Typography><strong>From:</strong> {notification.senderName}</Typography>
+                                <Typography><strong>From:</strong> {notification.senderName || "System"}</Typography>
                                 <Typography><strong>Message:</strong> {notification.message}</Typography>
                                 <Typography><strong>Date:</strong> {new Date(notification.date).toLocaleString()}</Typography>
 
+                                {/* View PDF button */}
                                 {notification.pdfFile && (
                                     <Box sx={{ marginBottom: '10px' }}>
                                         <Button
@@ -239,18 +240,22 @@ function Notification() {
                                     </Box>
                                 )}
 
-                                <Box sx={{ marginTop: '10px' }}>
-                                    <TextField
-                                        label="Reply"
-                                        variant="outlined"
-                                        fullWidth
-                                        value={notification.replyMessage || ''}
-                                        onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
-                                        sx={{ marginBottom: '10px' }}
-                                    />
-                                </Box>
+                                {/* Reply input field, only if sender is not 'system' */}
+                                {notification.sender !== 'system' && (
+                                    <Box sx={{ marginTop: '10px' }}>
+                                        <TextField
+                                            label="Reply"
+                                            variant="outlined"
+                                            fullWidth
+                                            value={notification.replyMessage || ''}
+                                            onChange={(e) => handleReplyMessageChange(notification._id, e.target.value)}
+                                            sx={{ marginBottom: '10px' }}
+                                        />
+                                    </Box>
+                                )}
 
-                                <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '5px', marginTop: '10px' }}>
+                                {/* Buttons in the same row */}
+                                <Box sx={{ display: 'flex', justifyContent: 'flex-start', gap: '10px', marginTop: '10px' }}>
                                     <Button
                                         variant="contained"
                                         sx={{ backgroundColor: notification.isRead ? '#fff' : '#03035d', color: notification.isRead ? '#000' : '#fff' }}
@@ -278,19 +283,23 @@ function Notification() {
                                         </Button>
                                     )}
 
-                                    <Button
-                                        variant="contained"
-                                        sx={{ backgroundColor: '#03035d', color: '#fff' }}
-                                        onClick={() => handleSendReply(notification)}
-                                    >
-                                        Send Reply
-                                    </Button>
+                                    {/* Only show Send Reply if the sender is not 'system' */}
+                                    {notification.sender !== 'system' && (
+                                        <Button
+                                            variant="contained"
+                                            sx={{ backgroundColor: '#03035d', color: '#fff' }}
+                                            onClick={() => handleSendReply(notification)}
+                                        >
+                                            Send Reply
+                                        </Button>
+                                    )}
                                 </Box>
                             </Box>
                         ))
                     ) : (
                         <Typography>No notifications received.</Typography>
                     )}
+
                 </Box>
 
                 <Box
